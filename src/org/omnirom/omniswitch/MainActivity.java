@@ -16,7 +16,6 @@ import android.util.Log;
 public class MainActivity extends Activity {
 	private static final String TAG = "RecentsMainActivity";
 	
-	public static boolean mServiceStarted;
 	private ActivityReceiver mReceiver;
 
     public class ActivityReceiver extends BroadcastReceiver {
@@ -48,11 +47,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
         
-        if (!mServiceStarted){
-        	Intent svc = new Intent(this, RecentsService.class);
-        	this.startService(svc);
-        	mServiceStarted = true;
-        }
         mReceiver = new ActivityReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(ActivityReceiver.ACTION_FINISH);

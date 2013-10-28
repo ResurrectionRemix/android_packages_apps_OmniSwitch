@@ -25,6 +25,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.UserHandle;
 import android.util.Log;
+import android.view.WindowManagerGlobal;
+import android.view.IWindowManager;
+import android.os.RemoteException;
 
 public class RecentsManager {
 	private static final String TAG = "RecentsManager";
@@ -146,6 +149,10 @@ public class RecentsManager {
         final ActivityManager am = (ActivityManager)
         		mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
+        if (mLoadedTasks.size() == 0){
+        	return;
+        }
+
     	Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
     	while(nextTask.hasNext()){
     		TaskDescription ad = nextTask.next();
@@ -156,6 +163,26 @@ public class RecentsManager {
     	dismissAndGoHome();
     }
 
+    public void killOther(){
+        final ActivityManager am = (ActivityManager)
+        		mContext.getSystemService(Context.ACTIVITY_SERVICE);
+
+        if (mLoadedTasks.size() == 0){
+        	return;
+        }
+    	Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
+    	// skip active task
+    	nextTask.next();
+    	while(nextTask.hasNext()){
+    		TaskDescription ad = nextTask.next();
+            am.removeTask(ad.getPersistentTaskId(), ActivityManager.REMOVE_TASK_KILL_PROCESS);
+           	Log.d(TAG, "kill " + ad.getPackageName());
+    		ad.setKilled();
+    	}
+    	reload();
+    }
+
+    
     public void dismissAndGoHome() {
     	Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
     	homeIntent.addCategory(Intent.CATEGORY_HOME);

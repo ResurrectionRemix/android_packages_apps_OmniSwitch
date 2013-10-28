@@ -24,11 +24,18 @@
             android:layout_height="wrap_content"
             android:text="@string/kill_all" />
 
-      	<Button
+         <Button
+            android:id="@+id/killOther"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/kill_other" />
+        
+        
+      	<!-- <Button
             android:id="@+id/killSwitcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kill_switcher" />
+            android:text="@string/kill_switcher" />-->
         
     </LinearLayout>
 

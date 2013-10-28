@@ -32,6 +32,9 @@ public class RecentsGestureView extends LinearLayout{
 
     final static String TAG = "RecentsGestureView";
 
+    public class RecentsGestureConfig {
+    	
+    }
     public RecentsGestureView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;

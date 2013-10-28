@@ -18,7 +18,11 @@ public class RecentsService extends Service {
 	private RecentsReceiver mReceiver;
 	private RecentsManager mManager;
 	private Handler mHandler;
+	private static boolean mIsRunning;
 
+	public static boolean isRunning() {
+		return mIsRunning;
+	}
 	@Override
     public void onCreate() {
         super.onCreate();
@@ -40,6 +44,7 @@ public class RecentsService extends Service {
         filter.addAction(RecentsReceiver.ACTION_KILL_RECENTS);
 
         registerReceiver(mReceiver, filter);
+        mIsRunning = true;
 	}
 
     @Override
@@ -48,8 +53,8 @@ public class RecentsService extends Service {
         Log.d(TAG, "stopped RecentsService");
         ((WindowManager)getSystemService(WINDOW_SERVICE)).removeView(mGesturePanel);
         unregisterReceiver(mReceiver);
-        MainActivity.mServiceStarted = false;
         mManager.killManager();
+        mIsRunning = false;
     }
 
     @Override

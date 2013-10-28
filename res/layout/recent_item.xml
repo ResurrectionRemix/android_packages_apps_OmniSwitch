@@ -1,13 +1,15 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content" >
 
     <ImageView
         android:id="@+id/recent_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="64dip"
+        android:layout_height="64dip"
         android:src="@drawable/ic_launcher"
+        android:scaleType="centerInside"
+        android:layout_gravity="center_vertical"
         android:focusable="false"/>
 
     <TextView
@@ -15,6 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_vertical"
         android:focusable="false"/>
 
 </LinearLayout>

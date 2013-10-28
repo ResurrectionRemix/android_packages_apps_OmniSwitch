@@ -6,8 +6,9 @@ import java.util.List;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.Settings;
 import android.util.AttributeSet;
@@ -38,6 +39,7 @@ public class RecentsLayout extends LinearLayout {
     private ListView mRecentList;
     private Button mRefreshButton;
     private Button mKillAllButton;
+    private Button mKillOtherButton;
     private Button mKillSwitcherButton;
     private RecentListAdapter mRecentListAdapter;
     private List<TaskDescription> mLoadedTasks;
@@ -49,6 +51,7 @@ public class RecentsLayout extends LinearLayout {
     private PopupMenu mPopup;
     private int mBackgroundColor = Color.BLACK;
     private int mBackgroundOpacity = 60;
+    private boolean mHorizontal;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -81,32 +84,55 @@ public class RecentsLayout extends LinearLayout {
     private void createView() {
     	mView = mInflater.inflate(R.layout.recents_list, this, false);
 
-        mRecentList = (ListView) mView.findViewById(R.id.recent_list);
+    	if (mHorizontal){
 
-        mRecentList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-        	public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-        		Log.d(TAG, "onItemClick");
-				TaskDescription task = mLoadedTasks.get(position);
-				mRecentsManager.switchTask(task);
-				hide();
-        	}
-        });
-        
-        mRecentList.setOnItemLongClickListener(new OnItemLongClickListener() {
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view,
-					int position, long id) {
-        		Log.d(TAG, "onItemLongClick");
-				TaskDescription task = mLoadedTasks.get(position);
-				handleLongPress(task, view);
-				//mRecentsManager.killTask(task);
-				return true;
-			}
-        });       
-        
-        mRecentList.setAdapter(mRecentListAdapter);
+    	} else {
+    		mRecentList = (ListView) mView.findViewById(R.id.recent_list);
 
+    		mRecentList.setOnItemClickListener(new OnItemClickListener() {
+    			@Override
+    			public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+    				Log.d(TAG, "onItemClick");
+    				TaskDescription task = mLoadedTasks.get(position);
+    				mRecentsManager.switchTask(task);
+    				hide();
+    			}
+    		});
+
+    		mRecentList.setOnItemLongClickListener(new OnItemLongClickListener() {
+    			@Override
+    			public boolean onItemLongClick(AdapterView<?> parent, View view,
+    					int position, long id) {
+    				Log.d(TAG, "onItemLongClick");
+    				TaskDescription task = mLoadedTasks.get(position);
+    				handleLongPress(task, view);
+    				return true;
+    			}
+    		});       
+
+    		SwipeDismissListViewTouchListener touchListener =
+    				new SwipeDismissListViewTouchListener(
+    						mRecentList,
+    						new SwipeDismissListViewTouchListener.DismissCallbacks() {
+    							public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+    								for (int position : reverseSortedPositions) {
+    									TaskDescription ad = mRecentListAdapter.getItem(position);
+    									mRecentsManager.killTask(ad);
+    									break;
+    								}
+    							}
+
+    							@Override
+    							public boolean canDismiss(int position) {
+    								return true;
+    							}
+    						});
+    		mRecentList.setOnTouchListener(touchListener);
+    		mRecentList.setOnScrollListener(touchListener.makeScrollListener());
+
+    		mRecentList.setAdapter(mRecentListAdapter);
+    	}
+    	
         /*mRefreshButton = (Button) mView.findViewById(R.id.refresh);
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -120,15 +146,22 @@ public class RecentsLayout extends LinearLayout {
             	mRecentsManager.killAll();
             }
         });
-        
-        mKillSwitcherButton = (Button) mView.findViewById(R.id.killSwitcher);
+
+        mKillOtherButton = (Button) mView.findViewById(R.id.killOther);
+        mKillOtherButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	mRecentsManager.killOther();
+            }
+        });
+
+        /*mKillSwitcherButton = (Button) mView.findViewById(R.id.killSwitcher);
         mKillSwitcherButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	Intent killRecent = new Intent(
                         RecentsService.RecentsReceiver.ACTION_KILL_RECENTS);
                 mContext.sendBroadcast(killRecent);
             }
-        });
+        });*/
 
         mPopupView = new FrameLayout(mContext);
         mPopupView.setBackgroundColor(mBackgroundColor);
@@ -220,7 +253,7 @@ public class RecentsLayout extends LinearLayout {
                     // Either start a new activity in split view, or move the current task
                     // to front, but resized
                     ViewHolder holder = (ViewHolder)selectedView.getTag();
-                    openInSplitView(holder, -1); */
+                    openInSplitView(holder, -1);*/
                 } else {
                     return false;
                 }

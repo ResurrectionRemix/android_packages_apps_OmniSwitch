@@ -8,9 +8,14 @@
     <string name="kill_switcher">Kill Switcher</string>
     <string name="status_bar_recent_remove_item_title">Stop</string>
     <string name="status_bar_recent_inspect_item_title">App info</string>    
-    <string name="status_bar_recent_add_to_split_view">Add to Split View</string>
+    <string name="status_bar_recent_add_to_split_view">Add to split view</string>
+    <string name="status_bar_recent_add_to_split_view_top">Split to top/left</string>
+    <string name="status_bar_recent_add_to_split_view_bottom">Split to bottom/right</string>
     <string name="recents_settings_title">OmniSwitch</string>    
     <string name="start_on_boot_title">Start on boot</string>    
     <string name="toggle_service_title">Enable</string>    
+    <string name="orientation_title">Orientation</string>    
+    <string name="orientation_vertical">Vertical</string>    
+    <string name="orientation_horizontal">Horizontal</string>    
     
 </resources>

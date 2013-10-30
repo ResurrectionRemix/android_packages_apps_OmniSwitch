@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string-array name="orientation_entries" translatable="false">
+        <item>@string/orientation_vertical</item>
+        <item>@string/orientation_horizontal</item>
+    </string-array>
+
+    <!-- Values for user content ratings for restricted users -->
+    <string-array name="orientation_values" translatable="false">
+        <item>vertical</item>
+        <item>horizontal</item>
+    </string-array>
+</resources>

@@ -9,5 +9,12 @@
     <CheckBoxPreference
         android:key="start_on_boot"
         android:title="@string/start_on_boot_title" />
- 
+
+    <ListPreference
+        android:key="orientation"
+        android:title="@string/orientation_title"
+        android:summary="@string/orientation_vertical" 
+        android:entries="@array/orientation_entries"
+        android:entryValues="@array/orientation_values" />
+    
 </PreferenceScreen>

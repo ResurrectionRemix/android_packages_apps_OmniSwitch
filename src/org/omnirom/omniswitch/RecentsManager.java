@@ -25,6 +25,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ComponentName;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
 import android.os.UserHandle;
@@ -294,5 +295,18 @@ public class RecentsManager {
 				| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 		mContext.startActivityAsUser(homeIntent, new UserHandle(
 				UserHandle.USER_CURRENT));
+	}
+
+	public void updatePrefs(SharedPreferences prefs, String key){
+		mLayout.updatePrefs(prefs, key);
+	}
+
+	public void toggleLastApp() {
+		if (mLoadedTasks.size() < 2) {
+			return;
+		}
+		
+		TaskDescription ad = mLoadedTasks.get(1);
+		switchTask(ad);
 	}
 }

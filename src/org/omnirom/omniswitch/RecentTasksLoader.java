@@ -76,10 +76,8 @@ public class RecentTasksLoader {
 		mContext = context;
 		mRecentsManager = manager;
 		mHandler = new Handler();
-
-		ActivityManager activityManager = (ActivityManager) context
-				.getSystemService(Context.ACTIVITY_SERVICE);
-		mIconDpi = activityManager.getLauncherLargeIconDensity();
+        final Resources res = context.getResources();
+		mIconDpi = res.getDisplayMetrics().densityDpi;
 	}
 
 	public ArrayList<TaskDescription> getLoadedTasks() {

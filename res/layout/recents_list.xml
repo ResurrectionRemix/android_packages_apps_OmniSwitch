@@ -2,48 +2,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
-    android:paddingEnd="?android:attr/scrollbarSize"
-    android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
 
-        <!--<Button
-            android:id="@+id/refresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/refresh" />-->
-
-        <Button
+        <ImageButton
             android:id="@+id/killAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kill_all" />
+            android:layout_gravity="center_vertical"
+            android:paddingStart="15dip"
+            android:paddingEnd="15dip"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
+            android:src="@drawable/kill_all"/>
 
-         <Button
+         <ImageButton
             android:id="@+id/killOther"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kill_other" />
-        
-        
-      	<!-- <Button
-            android:id="@+id/killSwitcher"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="15dip"
+            android:paddingEnd="15dip"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
+            android:src="@drawable/kill_other"/>
+                
+        <ImageButton
+            android:id="@+id/lastApp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kill_switcher" />-->
-        
+            android:layout_gravity="center_vertical"
+            android:paddingStart="15dip"
+            android:paddingEnd="15dip"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
+            android:src="@drawable/lastapp"/>
+
+        <ImageButton
+            android:id="@+id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingStart="15dip"
+            android:paddingEnd="15dip"
+            android:scaleType="centerInside"
+            android:background="@android:color/transparent"
+            android:src="@drawable/home"/>
+
     </LinearLayout>
 
     <ListView
             android:id="@+id/recent_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
             android:listSelector="@android:color/transparent"/>
-    
     
 </LinearLayout>

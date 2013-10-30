@@ -26,9 +26,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -40,13 +38,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.os.RemoteException;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -59,10 +59,10 @@ public class RecentsLayout extends LinearLayout {
 	private LayoutInflater mInflater;
 	private ListView mRecentList;
 	private HorizontalListView mRecentListHorizontal;
-	private Button mRefreshButton;
-	private Button mKillAllButton;
-	private Button mKillOtherButton;
-	private Button mKillSwitcherButton;
+	private ImageButton mLastAppButton;
+	private ImageButton mKillAllButton;
+	private ImageButton mKillOtherButton;
+	private ImageButton mHomeButton;
 	private RecentListAdapter mRecentListAdapter;
 	private List<TaskDescription> mLoadedTasks;
 	private Context mContext;
@@ -73,7 +73,7 @@ public class RecentsLayout extends LinearLayout {
 	private int mBackgroundColor = Color.BLACK;
 	private int mBackgroundOpacity = 60;
 	private boolean mHorizontal;
-	private SharedPreferences mPrefs;
+	private View mView;
 
 	public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -112,15 +112,14 @@ public class RecentsLayout extends LinearLayout {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mLoadedTasks = new ArrayList<TaskDescription>();
 		mRecentListAdapter = new RecentListAdapter(mContext,
-				android.R.layout.simple_list_item_multiple_choice, mLoadedTasks);
-		mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+				android.R.layout.simple_list_item_multiple_choice, mLoadedTasks);		
 	}
 
 	private void createView() {
-		View view = null;
+		mView = null;
 		if (mHorizontal) {
-			view = mInflater.inflate(R.layout.recents_list_horizontal, this, false);
-			mRecentListHorizontal = (HorizontalListView)view.findViewById(R.id.recent_list_horizontal);
+			mView = mInflater.inflate(R.layout.recents_list_horizontal, this, false);
+			mRecentListHorizontal = (HorizontalListView)mView.findViewById(R.id.recent_list_horizontal);
 
 			mRecentListHorizontal.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -168,8 +167,8 @@ public class RecentsLayout extends LinearLayout {
 
 			mRecentListHorizontal.setAdapter(mRecentListAdapter);		
 		} else {
-			view = mInflater.inflate(R.layout.recents_list, this, false);
-			mRecentList = (ListView) view.findViewById(R.id.recent_list);
+			mView = mInflater.inflate(R.layout.recents_list, this, false);
+			mRecentList = (ListView) mView.findViewById(R.id.recent_list);
 
 			mRecentList.setOnItemClickListener(new OnItemClickListener() {
 				@Override
@@ -218,33 +217,33 @@ public class RecentsLayout extends LinearLayout {
 			mRecentList.setAdapter(mRecentListAdapter);
 		}
 
-		/*
-		 * mRefreshButton = (Button) mView.findViewById(R.id.refresh);
-		 * mRefreshButton.setOnClickListener(new View.OnClickListener() { public
-		 * void onClick(View v) { mRecentsManager.reload(); } });
-		 */
+		mHomeButton= (ImageButton) mView.findViewById(R.id.home);
+		mHomeButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				mRecentsManager.dismissAndGoHome();
+			}
+		});
 
-		mKillAllButton = (Button) view.findViewById(R.id.killAll);
+		mLastAppButton = (ImageButton) mView.findViewById(R.id.lastApp);
+		mLastAppButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				mRecentsManager.toggleLastApp();
+			}
+		});
+
+		mKillAllButton = (ImageButton) mView.findViewById(R.id.killAll);
 		mKillAllButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				mRecentsManager.killAll();
 			}
 		});
 
-		mKillOtherButton = (Button) view.findViewById(R.id.killOther);
+		mKillOtherButton = (ImageButton) mView.findViewById(R.id.killOther);
 		mKillOtherButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				mRecentsManager.killOther();
 			}
 		});
-
-		/*
-		 * mKillSwitcherButton = (Button) mView.findViewById(R.id.killSwitcher);
-		 * mKillSwitcherButton.setOnClickListener(new View.OnClickListener() {
-		 * public void onClick(View v) { Intent killRecent = new Intent(
-		 * RecentsService.RecentsReceiver.ACTION_KILL_RECENTS);
-		 * mContext.sendBroadcast(killRecent); } });
-		 */
 
 		mPopupView = new FrameLayout(mContext);
 		mPopupView.setBackgroundColor(mBackgroundColor);
@@ -252,7 +251,7 @@ public class RecentsLayout extends LinearLayout {
 		mPopupView.getBackground().setAlpha((int) opacity);
 
 		mPopupView.removeAllViews();
-		mPopupView.addView(view);
+		
 		mPopupView.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -279,12 +278,18 @@ public class RecentsLayout extends LinearLayout {
 		if (mShowing) {
 			return;
 		}
-		mHorizontal = mPrefs.getString("orientation", "vertical").equals("horizontal");
 
 		createView();
 		
-		mPopupView.setFocusableInTouchMode(true);
 		mWindowManager.addView(mPopupView, getParams());
+
+		mPopupView.addView(mView);
+		
+		Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_right_in);
+		animation.setStartOffset(0);
+		mView.startAnimation(animation);
+		
+		mPopupView.setFocusableInTouchMode(true);
 		mShowing = true;
 	}
 
@@ -295,9 +300,26 @@ public class RecentsLayout extends LinearLayout {
 		if (mPopup != null) {
 			mPopup.dismiss();
 		}
-		mWindowManager.removeView(mPopupView);
-		mPopupView = null;
-		mShowing = false;
+
+		Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_right_out);
+		animation.setStartOffset(0);
+		animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+        		mWindowManager.removeView(mPopupView);
+        		mPopupView = null;
+        		mShowing = false;            	
+            }
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+		});
+		mView.startAnimation(animation);
 	}
 
 	private WindowManager.LayoutParams getParams() {
@@ -371,5 +393,9 @@ public class RecentsLayout extends LinearLayout {
 
 	public void handleSwipe(TaskDescription ad) {
 		mRecentsManager.killTask(ad);
+	}
+	
+	public void updatePrefs(SharedPreferences prefs, String key){
+		mHorizontal = prefs.getString("orientation", "vertical").equals("horizontal");		
 	}
 }

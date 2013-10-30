@@ -22,9 +22,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.UserHandle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -35,6 +37,9 @@ public class RecentsService extends Service {
 	private RecentsReceiver mReceiver;
 	private RecentsManager mManager;
 	private Handler mHandler;
+	private SharedPreferences mPrefs;
+	private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
+
 	private static boolean mIsRunning;
 
 	public static boolean isRunning() {
@@ -48,9 +53,6 @@ public class RecentsService extends Service {
 		mGesturePanel = new RecentsGestureView(this, null);
 		Log.d(TAG, "started RecentsService");
 
-		WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-		wm.addView(mGesturePanel, mGesturePanel.getGesturePanelLayoutParams());
-
 		mManager = new RecentsManager(this);
 		mHandler = new Handler();
 
@@ -62,6 +64,20 @@ public class RecentsService extends Service {
 		filter.addAction(RecentsReceiver.ACTION_KILL_RECENTS);
 
 		registerReceiver(mReceiver, filter);
+		
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		updatePrefs(mPrefs, null);
+
+		mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+			public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+				updatePrefs(prefs, key);
+			}
+		};
+
+		mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
+
+		mGesturePanel.show();
+
 		mIsRunning = true;
 	}
 
@@ -69,11 +85,14 @@ public class RecentsService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		Log.d(TAG, "stopped RecentsService");
-		((WindowManager) getSystemService(WINDOW_SERVICE))
-				.removeView(mGesturePanel);
+
+		mGesturePanel.hide();
 		mGesturePanel = null;
+
 		unregisterReceiver(mReceiver);
 		mManager.killManager();
+		mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
+
 		mIsRunning = false;
 	}
 
@@ -124,5 +143,9 @@ public class RecentsService extends Service {
 				context.stopService(svc);
 			}
 		}
+	}
+	public void updatePrefs(SharedPreferences prefs, String key){
+		mManager.updatePrefs(prefs, key);
+		mGesturePanel.updatePrefs(prefs, key);
 	}
 }

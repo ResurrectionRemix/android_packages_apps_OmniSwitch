@@ -22,15 +22,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.util.Log;
 
 public class RecentsGestureView extends LinearLayout {
 	private final static String TAG = "RecentsGestureView";
@@ -42,16 +41,15 @@ public class RecentsGestureView extends LinearLayout {
 	private float[] mDownPoint = new float[2];
 	private boolean mRibbonSwipeStarted = false;
 	private boolean mRecentsStarted;
-	private int mScreenWidth, mScreenHeight;
+	private int mScreenWidth;
+	private int mScreenHeight;
 	private int mSize = 1; // 0=small 1=normal 2=large
 	private int mDragButtonOpacity = 255;
-	private SharedPreferences mPrefs;
+	private boolean mHorizontal = true;
 
 	public RecentsGestureView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mContext = context;
-		mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-		updatePrefs();
 		mDragButton = new ImageView(mContext);
 		Point size = new Point();
 		WindowManager wm = (WindowManager) mContext
@@ -85,10 +83,9 @@ public class RecentsGestureView extends LinearLayout {
 									: event.getX();
 							float y = k < historySize ? event.getHistoricalY(k)
 									: event.getY();
-							float distance = 0f;
-							// distance = mDownPoint[1] - y;
-							distance = mDownPoint[0] - x;
-
+							float distanceY = mDownPoint[1] - y;
+							float distanceX = mDownPoint[0] - x;
+							float distance = mHorizontal ? distanceX : distanceY;
 							if (distance > mTriggerThreshhold
 									&& !mRecentsStarted) {
 								Log.d(TAG, "ACTION_SHOW_RECENTS");
@@ -167,11 +164,24 @@ public class RecentsGestureView extends LinearLayout {
 		addView(mDragButton, dragParams);
 		invalidate();
 	}
-	
-	public void updatePrefs(){
-		String size = mPrefs.getString("drag_handle_size", "1");
+
+	public void updatePrefs(SharedPreferences prefs, String key){
+		String size = prefs.getString("drag_handle_size", "1");
 		mSize = Integer.valueOf(size);
-		String opacity = mPrefs.getString("drag_handle_opacity", "255");
+		String opacity = prefs.getString("drag_handle_opacity", "255");
 		mDragButtonOpacity = Integer.valueOf(opacity);
+		updateLayout();
+	}
+	
+	public void show(){
+		final WindowManager wm = (WindowManager) mContext
+				.getSystemService(Context.WINDOW_SERVICE);
+		wm.addView(this, getGesturePanelLayoutParams());		
+	}
+	
+	public void hide(){
+		final WindowManager wm = (WindowManager) mContext
+				.getSystemService(Context.WINDOW_SERVICE);
+		wm.removeView(this);
 	}
 }

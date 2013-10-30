@@ -71,6 +71,7 @@ public class RecentsService extends Service {
 		Log.d(TAG, "stopped RecentsService");
 		((WindowManager) getSystemService(WINDOW_SERVICE))
 				.removeView(mGesturePanel);
+		mGesturePanel = null;
 		unregisterReceiver(mReceiver);
 		mManager.killManager();
 		mIsRunning = false;

@@ -296,6 +296,7 @@ public class RecentsLayout extends LinearLayout {
 			mPopup.dismiss();
 		}
 		mWindowManager.removeView(mPopupView);
+		mPopupView = null;
 		mShowing = false;
 	}
 

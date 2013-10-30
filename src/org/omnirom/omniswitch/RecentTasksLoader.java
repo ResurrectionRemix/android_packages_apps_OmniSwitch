@@ -210,11 +210,7 @@ public class RecentTasksLoader {
 
 				ArrayList<TaskDescription> tasks = new ArrayList<TaskDescription>();
 
-				// skip the first task - assume it's either the home screen or
-				// the current activity.
-				final int first = 0;
-				for (int i = first, index = 0; i < numTasks
-						&& (index < MAX_TASKS); ++i) {
+				for (int i = 0; i < numTasks; ++i) {
 					if (isCancelled()) {
 						break;
 					}
@@ -244,7 +240,6 @@ public class RecentTasksLoader {
 					if (item != null) {
 						tasks.add(item);
 						loadTaskIcon(item);
-						++index;
 					}
 				}
 				if (!isCancelled()) {

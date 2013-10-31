@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -41,22 +40,14 @@ public class RecentsGestureView extends LinearLayout {
 	private float[] mDownPoint = new float[2];
 	private boolean mRibbonSwipeStarted = false;
 	private boolean mRecentsStarted;
-	private int mScreenWidth;
-	private int mScreenHeight;
 	private int mSize = 1; // 0=small 1=normal 2=large
 	private int mDragButtonOpacity = 255;
-	private boolean mHorizontal = true;
+	private boolean mHorizontal;
 
 	public RecentsGestureView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mContext = context;
 		mDragButton = new ImageView(mContext);
-		Point size = new Point();
-		WindowManager wm = (WindowManager) mContext
-				.getSystemService(Context.WINDOW_SERVICE);
-		wm.getDefaultDisplay().getSize(size);
-		mScreenHeight = size.y;
-		mScreenWidth = size.x;
 		mDragButton.setOnTouchListener(new View.OnTouchListener() {
 
 			@Override
@@ -85,7 +76,7 @@ public class RecentsGestureView extends LinearLayout {
 									: event.getY();
 							float distanceY = mDownPoint[1] - y;
 							float distanceX = mDownPoint[0] - x;
-							float distance = mHorizontal ? distanceX : distanceY;
+							float distance = distanceX;
 							if (distance > mTriggerThreshhold
 									&& !mRecentsStarted) {
 								Log.d(TAG, "ACTION_SHOW_RECENTS");

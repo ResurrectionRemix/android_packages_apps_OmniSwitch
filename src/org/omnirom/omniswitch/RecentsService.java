@@ -23,12 +23,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.UserHandle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.WindowManager;
 
 public class RecentsService extends Service {
 	private final static String TAG = "RecentsService";
@@ -36,7 +33,6 @@ public class RecentsService extends Service {
 	private RecentsGestureView mGesturePanel;
 	private RecentsReceiver mReceiver;
 	private RecentsManager mManager;
-	private Handler mHandler;
 	private SharedPreferences mPrefs;
 	private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
 
@@ -54,7 +50,6 @@ public class RecentsService extends Service {
 		Log.d(TAG, "started RecentsService");
 
 		mManager = new RecentsManager(this);
-		mHandler = new Handler();
 
 		mReceiver = new RecentsReceiver();
 		IntentFilter filter = new IntentFilter();

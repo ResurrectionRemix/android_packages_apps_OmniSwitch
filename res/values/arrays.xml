@@ -13,4 +13,18 @@
         <item>vertical</item>
         <item>horizontal</item>
     </string-array>
+
+    <string-array name="drag_size_entries" translatable="false">
+        <item>@string/drag_size_small</item>
+        <item>@string/drag_size_normal</item>
+        <item>@string/drag_size_large</item>
+    </string-array>
+
+    <!-- Values for user content ratings for restricted users -->
+    <string-array name="drag_size_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    
 </resources>

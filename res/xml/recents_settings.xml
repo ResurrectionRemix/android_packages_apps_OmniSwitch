@@ -16,5 +16,12 @@
         android:summary="@string/orientation_vertical" 
         android:entries="@array/orientation_entries"
         android:entryValues="@array/orientation_values" />
+
+    <ListPreference
+        android:key="drag_handle_size"
+        android:title="@string/drag_size_title"
+        android:summary="@string/drag_size_normal" 
+        android:entries="@array/drag_size_entries"
+        android:entryValues="@array/drag_size_values" />
     
 </PreferenceScreen>

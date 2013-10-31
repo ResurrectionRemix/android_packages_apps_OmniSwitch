@@ -16,11 +16,14 @@
 
 package org.omnirom.omniswitch;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -28,10 +31,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * A {@link android.view.View.OnTouchListener} that makes the list items in a {@link ListView}
@@ -67,7 +66,6 @@ import java.util.List;
  * android.view.ViewPropertyAnimator}.</p>
  */
 public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
-	private static final String TAG = "SwipeDismissListViewTouchListener";
 	// Cached ViewConfiguration and system-wide constant values
     private int mSlop;
     private int mMinFlingVelocity;

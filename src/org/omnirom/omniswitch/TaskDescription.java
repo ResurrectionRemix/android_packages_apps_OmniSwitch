@@ -19,7 +19,6 @@ package org.omnirom.omniswitch;
 
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 public final class TaskDescription {

@@ -34,9 +34,11 @@ public class SettingsActivity extends PreferenceActivity implements
 		OnPreferenceChangeListener {
 	private static final String PREF_SERVICE_STATE = "toggle_service";
 	private static final String PREF_ORIENTATION = "orientation";
+	private static final String PREF_DRAG_HANDLE_SIZE = "drag_handle_size";
 
 	private SwitchPreference mToggleService;
 	private ListPreference mOrientation;
+	private ListPreference mDragHandleSize;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,13 @@ public class SettingsActivity extends PreferenceActivity implements
 		int idx = values.indexOf(prefs.getString("orientation", mOrientation.getEntryValues()[0].toString()));
 		mOrientation.setValueIndex(idx);
 		mOrientation.setSummary(mOrientation.getEntries()[idx]);
+
+		mDragHandleSize = (ListPreference) findPreference(PREF_DRAG_HANDLE_SIZE);
+		mDragHandleSize.setOnPreferenceChangeListener(this);
+		values = Arrays.asList(mDragHandleSize.getEntryValues());
+		idx = values.indexOf(prefs.getString("drag_handle_size", mDragHandleSize.getEntryValues()[1].toString()));
+		mDragHandleSize.setValueIndex(idx);
+		mDragHandleSize.setSummary(mDragHandleSize.getEntries()[idx]);
 	}
 
 	
@@ -83,6 +92,12 @@ public class SettingsActivity extends PreferenceActivity implements
 			int idx = values.indexOf(value);
 			mOrientation.setSummary(mOrientation.getEntries()[idx]);
 			mOrientation.setValueIndex(idx);
+		} else if (preference == mDragHandleSize){
+			String value = (String) newValue;
+			List<CharSequence> values = Arrays.asList(mDragHandleSize.getEntryValues());
+			int idx = values.indexOf(value);
+			mDragHandleSize.setSummary(mDragHandleSize.getEntries()[idx]);
+			mDragHandleSize.setValueIndex(idx);
 		}
 		
 		return false;

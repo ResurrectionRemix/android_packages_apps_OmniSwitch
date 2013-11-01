@@ -23,5 +23,12 @@
         android:summary="@string/drag_size_normal" 
         android:entries="@array/drag_size_entries"
         android:entryValues="@array/drag_size_values" />
+
+    <ListPreference
+        android:key="drag_handle_location"
+        android:title="@string/drag_location_title"
+        android:summary="@string/drag_location_right" 
+        android:entries="@array/drag_location_entries"
+        android:entryValues="@array/drag_location_values" />
     
 </PreferenceScreen>

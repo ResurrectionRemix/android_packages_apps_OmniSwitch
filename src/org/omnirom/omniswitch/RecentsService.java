@@ -114,7 +114,6 @@ public class RecentsService extends Service {
 							| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 
 					startActivity(mainActivity);
-					// mManager.show();
 				}
 			} else if (ACTION_SHOW_RECENTS2.equals(action)) {
 				if (!mManager.isShowing()) {
@@ -122,10 +121,10 @@ public class RecentsService extends Service {
 				}
 			} else if (ACTION_HIDE_RECENTS.equals(action)) {
 				if (mManager.isReady() && mManager.isShowing()) {
-					mManager.hide();
 					Intent finishActivity = new Intent(
 							MainActivity.ActivityReceiver.ACTION_FINISH);
 					sendBroadcast(finishActivity);
+					mManager.hide();
 				}
 			} else if (ACTION_KILL_RECENTS.equals(action)) {
 				if (mManager.isShowing()) {

@@ -20,7 +20,13 @@ package org.omnirom.omniswitch;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -42,7 +48,8 @@ public class RecentsGestureView extends LinearLayout {
 	private boolean mRecentsStarted;
 	private int mSize = 1; // 0=small 1=normal 2=large
 	private int mDragButtonOpacity = 255;
-	private boolean mHorizontal;
+	private int mLocation = 0; // 0 = right 1 = left 
+	private boolean mShowing;
 
 	public RecentsGestureView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -52,6 +59,9 @@ public class RecentsGestureView extends LinearLayout {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
+				// neededd to catch long press
+				v.onTouchEvent(event);
+
 				int action = event.getAction();
 				switch (action) {
 				case MotionEvent.ACTION_DOWN:
@@ -76,7 +86,7 @@ public class RecentsGestureView extends LinearLayout {
 									: event.getY();
 							float distanceY = mDownPoint[1] - y;
 							float distanceX = mDownPoint[0] - x;
-							float distance = distanceX;
+							float distance = Math.abs(distanceX);
 							if (distance > mTriggerThreshhold
 									&& !mRecentsStarted) {
 								Log.d(TAG, "ACTION_SHOW_RECENTS");
@@ -98,6 +108,13 @@ public class RecentsGestureView extends LinearLayout {
 				return true;
 			}
 		});
+		
+		mDragButton.setOnLongClickListener(new OnLongClickListener(){
+			@Override
+			public boolean onLongClick(View v) {
+				mRibbonSwipeStarted = false;
+				return true;
+			}});
 		updateLayout();
 	}
 
@@ -112,8 +129,14 @@ public class RecentsGestureView extends LinearLayout {
 	}
 
 	private int getGravity() {
-		int gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
-		return gravity;
+		if (mLocation == 0){
+			return Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+		}
+		if (mLocation == 1){
+			return Gravity.LEFT | Gravity.CENTER_VERTICAL;
+		}
+
+		return Gravity.RIGHT | Gravity.CENTER_VERTICAL;
 	}
 
 	public WindowManager.LayoutParams getGesturePanelLayoutParams() {
@@ -133,6 +156,8 @@ public class RecentsGestureView extends LinearLayout {
 		LinearLayout.LayoutParams dragParams;
 		int dragHeight = 20;
 		int dragWidth = 80;
+		
+		hide();
 		removeAllViews();
 
 		if (mSize == 0){
@@ -147,32 +172,62 @@ public class RecentsGestureView extends LinearLayout {
 				, (int)(dragWidth * density + 0.5f));
 		setOrientation(VERTICAL);
 
+		Drawable d = mContext.getResources().getDrawable(
+				R.drawable.drag_button_land);
+        if (mLocation == 1){
+        	d = rotate(mContext.getResources(), d, 180);
+        }
+
 		mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
-		mDragButton.setImageDrawable(mContext.getResources().getDrawable(
-				R.drawable.drag_button_land));
+		mDragButton.setImageDrawable(d);
         mDragButton.setImageAlpha(mDragButtonOpacity);
 
 		addView(mDragButton, dragParams);
 		invalidate();
+		show();
 	}
 
+	private Drawable rotate(Resources resources, Drawable image, int deg) {
+	    Bitmap b = ((BitmapDrawable)image).getBitmap();
+		Bitmap bmResult = Bitmap.createBitmap(b.getWidth(), b.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas tempCanvas = new Canvas(bmResult); 
+		tempCanvas.rotate(deg, b.getWidth()/2, b.getHeight()/2);
+		tempCanvas.drawBitmap(b, 0, 0, null);
+	    return new BitmapDrawable(resources, bmResult);
+	}
+	
 	public void updatePrefs(SharedPreferences prefs, String key){
 		String size = prefs.getString("drag_handle_size", "1");
 		mSize = Integer.valueOf(size);
 		String opacity = prefs.getString("drag_handle_opacity", "255");
 		mDragButtonOpacity = Integer.valueOf(opacity);
+		String location = prefs.getString("drag_handle_location", "0");
+		mLocation = Integer.valueOf(location);
+
 		updateLayout();
 	}
 	
 	public void show(){
+		if (mShowing){
+			return;
+		}
 		final WindowManager wm = (WindowManager) mContext
 				.getSystemService(Context.WINDOW_SERVICE);
-		wm.addView(this, getGesturePanelLayoutParams());		
+		wm.addView(this, getGesturePanelLayoutParams());
+		mShowing = true;
 	}
 	
 	public void hide(){
+		if (!mShowing){
+			return;
+		}
 		final WindowManager wm = (WindowManager) mContext
 				.getSystemService(Context.WINDOW_SERVICE);
 		wm.removeView(this);
+		mShowing = false;
+	}
+	
+	public int getLocation(){
+		return mLocation;
 	}
 }

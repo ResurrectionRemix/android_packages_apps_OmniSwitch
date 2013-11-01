@@ -196,7 +196,9 @@ public class RecentsManager {
 			Log.d(TAG, "kill " + ad.getPackageName());
 			ad.setKilled();
 		}
-		reload();
+		Intent hideRecent = new Intent(
+				RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+		mContext.sendBroadcast(hideRecent);
 	}
 
 	/**

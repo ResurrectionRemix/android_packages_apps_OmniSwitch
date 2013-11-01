@@ -20,4 +20,7 @@
     <string name="drag_size_small">Small</string>    
     <string name="drag_size_large">Large</string>    
     <string name="drag_size_title">Drag handle size</string>    
+    <string name="drag_location_title">Drag handle location</string>    
+    <string name="drag_location_right">Right</string>    
+    <string name="drag_location_left">Left</string>    
 </resources>

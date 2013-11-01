@@ -28,6 +28,8 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -57,7 +59,8 @@ public class RecentTasksLoader {
 	private State mState = State.CANCELLED;
 
 	private int mIconDpi;
-
+	private float mDensity;
+	
 	private static RecentTasksLoader sInstance;
 
 	public static RecentTasksLoader getInstance(Context context,
@@ -78,6 +81,7 @@ public class RecentTasksLoader {
 		mHandler = new Handler();
         final Resources res = context.getResources();
 		mIconDpi = res.getDisplayMetrics().densityDpi;
+		mDensity = res.getDisplayMetrics().density;
 	}
 
 	public ArrayList<TaskDescription> getLoadedTasks() {
@@ -263,13 +267,21 @@ public class RecentTasksLoader {
 		}
 	}
 
+	private Drawable resize(Resources resources, Drawable image) {
+		// TODO
+		int size = (int)(60 *  mDensity + 0.5f);
+	    Bitmap b = ((BitmapDrawable)image).getBitmap();
+	    Bitmap bitmapResized = Bitmap.createScaledBitmap(b, size, size, false);
+	    return new BitmapDrawable(resources, bitmapResized);
+	}
+
 	Drawable getFullResDefaultActivityIcon() {
 		return getFullResIcon(Resources.getSystem(), R.drawable.ic_launcher);
 	}
 
 	Drawable getFullResIcon(Resources resources, int iconId) {
 		try {
-			return resources.getDrawableForDensity(iconId, mIconDpi);
+			return resize(resources, resources.getDrawableForDensity(iconId, mIconDpi));
 		} catch (Resources.NotFoundException e) {
 			return getFullResDefaultActivityIcon();
 		}
@@ -292,13 +304,4 @@ public class RecentTasksLoader {
 		}
 		return getFullResDefaultActivityIcon();
 	}
-
-	/*
-	 * void loadTaskThumbnail(TaskDescription td) { final ActivityManager am =
-	 * (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-	 * Bitmap thumbnail = am.getTaskTopThumbnail(td.persistentTaskId);
-	 * 
-	 * synchronized (td) { if (thumbnail != null) { td.setThumbnail(thumbnail);
-	 * } } }
-	 */
 }

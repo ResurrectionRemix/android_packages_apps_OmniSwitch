@@ -45,6 +45,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -63,6 +64,7 @@ public class RecentsLayout extends LinearLayout {
 	private ImageButton mKillAllButton;
 	private ImageButton mKillOtherButton;
 	private ImageButton mHomeButton;
+	private ImageButton mSettingsButton;
 	private RecentListAdapter mRecentListAdapter;
 	private List<TaskDescription> mLoadedTasks;
 	private Context mContext;
@@ -74,6 +76,7 @@ public class RecentsLayout extends LinearLayout {
 	private int mBackgroundOpacity = 60;
 	private boolean mHorizontal;
 	private View mView;
+	private int mLocation = 0; // 0 = right 1 = left 
 
 	public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -85,18 +88,21 @@ public class RecentsLayout extends LinearLayout {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View rowView = null;
+			TaskDescription ad = mLoadedTasks.get(position);
+
 			if (mHorizontal) {
 				rowView = mInflater.inflate(R.layout.recent_item_horizontal, parent, false);
+				final TextView item = (TextView) rowView
+						.findViewById(R.id.recent_item);
+				item.setText(ad.getLabel());
+				item.setCompoundDrawablesWithIntrinsicBounds(null, ad.getIcon() , null, null);
 			} else {
 				rowView = mInflater.inflate(R.layout.recent_item, parent, false);			
+				final TextView item = (TextView) rowView
+						.findViewById(R.id.recent_item);
+				item.setText(ad.getLabel());
+				item.setCompoundDrawablesWithIntrinsicBounds(ad.getIcon(), null , null, null);
 			}
-			TaskDescription ad = mLoadedTasks.get(position);
-			final TextView text = (TextView) rowView
-					.findViewById(R.id.recent_item);
-			text.setText(ad.getLabel());
-			final ImageView icon = (ImageView) rowView
-					.findViewById(R.id.recent_image);
-			icon.setImageDrawable(ad.getIcon());
 			return rowView;
 		}
 	}
@@ -245,6 +251,21 @@ public class RecentsLayout extends LinearLayout {
 			}
 		});
 
+		mSettingsButton = (ImageButton) mView.findViewById(R.id.settings);
+		mSettingsButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Intent hideRecent = new Intent(
+						RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+				mContext.sendBroadcast(hideRecent);
+
+				Intent mainActivity = new Intent(mContext,
+						SettingsActivity.class);
+				mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+						| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+				mContext.startActivity(mainActivity);
+			}
+		});
+		
 		mPopupView = new FrameLayout(mContext);
 		mPopupView.setBackgroundColor(mBackgroundColor);
 		float opacity = (255f * (mBackgroundOpacity * 0.01f));
@@ -285,23 +306,31 @@ public class RecentsLayout extends LinearLayout {
 
 		mPopupView.addView(mView);
 		
-		Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_right_in);
-		animation.setStartOffset(0);
-		mView.startAnimation(animation);
+		mView.startAnimation(getShowAnimation());
 		
 		mPopupView.setFocusableInTouchMode(true);
 		mShowing = true;
 	}
 
-	public void hide() {
-		if (!mShowing) {
-			return;
+	private Animation getShowAnimation() {
+		int animId = R.anim.slide_right_in;
+		
+		if (mLocation == 1){
+			animId = R.anim.slide_left_in;
 		}
-		if (mPopup != null) {
-			mPopup.dismiss();
+		Animation animation = AnimationUtils.loadAnimation(mContext, animId);
+		animation.setStartOffset(0);
+		return animation;
+	}
+	
+	private Animation getHideAnimation() {
+		int animId = R.anim.slide_right_out;
+		
+		if (mLocation == 1){
+			animId = R.anim.slide_left_out;
 		}
 
-		Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.slide_right_out);
+		Animation animation = AnimationUtils.loadAnimation(mContext, animId);
 		animation.setStartOffset(0);
 		animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -319,7 +348,18 @@ public class RecentsLayout extends LinearLayout {
 			public void onAnimationRepeat(Animation animation) {
 			}
 		});
-		mView.startAnimation(animation);
+		return animation;
+	}
+	
+	public void hide() {
+		if (!mShowing) {
+			return;
+		}
+		if (mPopup != null) {
+			mPopup.dismiss();
+		}
+
+		mView.startAnimation(getHideAnimation());
 	}
 
 	private WindowManager.LayoutParams getParams() {
@@ -397,5 +437,7 @@ public class RecentsLayout extends LinearLayout {
 	
 	public void updatePrefs(SharedPreferences prefs, String key){
 		mHorizontal = prefs.getString("orientation", "vertical").equals("horizontal");		
+		String location = prefs.getString("drag_handle_location", "0");
+		mLocation = Integer.valueOf(location);
 	}
 }

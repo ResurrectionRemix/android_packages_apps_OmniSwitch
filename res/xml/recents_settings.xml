@@ -10,12 +10,22 @@
         android:key="start_on_boot"
         android:title="@string/start_on_boot_title" />
 
+    <CheckBoxPreference
+        android:key="animate"
+        android:defaultValue="true"
+        android:title="@string/animate_title" />
+    
     <ListPreference
         android:key="orientation"
         android:title="@string/orientation_title"
         android:summary="@string/orientation_vertical" 
         android:entries="@array/orientation_entries"
         android:entryValues="@array/orientation_values" />
+
+    <org.omnirom.omniswitch.SeekBarPreference
+        android:key="opacity"
+        android:defaultValue="100"
+        android:title="@string/opacity_title" />
 
     <ListPreference
         android:key="drag_handle_size"
@@ -30,5 +40,14 @@
         android:summary="@string/drag_location_right" 
         android:entries="@array/drag_location_entries"
         android:entryValues="@array/drag_location_values" />
+
+    <org.omnirom.omniswitch.SeekBarPreference
+        android:key="drag_handle_opacity"
+        android:defaultValue="100"
+        android:title="@string/drag_handle_opacity_title" />
     
+    <!-- <Preference
+       android:key="favorite_apps"
+       android:title="@string/favorite_apps_title" />-->
+        
 </PreferenceScreen>

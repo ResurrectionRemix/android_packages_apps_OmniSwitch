@@ -197,11 +197,12 @@ public class RecentsGestureView extends LinearLayout {
 	}
 	
 	public void updatePrefs(SharedPreferences prefs, String key){
-		String size = prefs.getString("drag_handle_size", "1");
+		Log.d(TAG, "updatePrefs");
+
+		String size = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_SIZE, "1");
 		mSize = Integer.valueOf(size);
-		String opacity = prefs.getString("drag_handle_opacity", "255");
-		mDragButtonOpacity = Integer.valueOf(opacity);
-		String location = prefs.getString("drag_handle_location", "0");
+		mDragButtonOpacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 60);
+		String location = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
 		mLocation = Integer.valueOf(location);
 
 		updateLayout();

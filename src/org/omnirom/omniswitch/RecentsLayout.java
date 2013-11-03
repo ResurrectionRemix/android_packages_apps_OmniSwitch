@@ -77,6 +77,7 @@ public class RecentsLayout extends LinearLayout {
 	private boolean mHorizontal;
 	private View mView;
 	private int mLocation = 0; // 0 = right 1 = left 
+	private boolean mAnimate = true;
 
 	public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -268,8 +269,7 @@ public class RecentsLayout extends LinearLayout {
 		
 		mPopupView = new FrameLayout(mContext);
 		mPopupView.setBackgroundColor(mBackgroundColor);
-		float opacity = (255f * (mBackgroundOpacity * 0.01f));
-		mPopupView.getBackground().setAlpha((int) opacity);
+		mPopupView.getBackground().setAlpha(mBackgroundOpacity);
 
 		mPopupView.removeAllViews();
 		
@@ -306,10 +306,12 @@ public class RecentsLayout extends LinearLayout {
 
 		mPopupView.addView(mView);
 		
-		mView.startAnimation(getShowAnimation());
-		
-		mPopupView.setFocusableInTouchMode(true);
-		mShowing = true;
+		if (mAnimate){
+			mView.startAnimation(getShowAnimation());
+		} else {
+			mPopupView.setFocusableInTouchMode(true);
+			mShowing = true;
+		}
 	}
 
 	private Animation getShowAnimation() {
@@ -320,6 +322,21 @@ public class RecentsLayout extends LinearLayout {
 		}
 		Animation animation = AnimationUtils.loadAnimation(mContext, animId);
 		animation.setStartOffset(0);
+		animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+        		mPopupView.setFocusableInTouchMode(true);
+        		mShowing = true;
+            }
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+		});
 		return animation;
 	}
 	
@@ -359,7 +376,13 @@ public class RecentsLayout extends LinearLayout {
 			mPopup.dismiss();
 		}
 
-		mView.startAnimation(getHideAnimation());
+		if (mAnimate){
+			mView.startAnimation(getHideAnimation());
+		} else {
+    		mWindowManager.removeView(mPopupView);
+    		mPopupView = null;
+    		mShowing = false;			
+		}
 	}
 
 	private WindowManager.LayoutParams getParams() {
@@ -395,15 +418,6 @@ public class RecentsLayout extends LinearLayout {
 					mRecentsManager.killTask(ad);
 				} else if (item.getItemId() == R.id.recent_inspect_item) {
 					startApplicationDetailsActivity(ad.getPackageName());
-				} else if (item.getItemId() == R.id.recent_add_split_view) {
-					mRecentsManager.openInSplitView(ad, -1);
-					/*
-					 * } else if (item.getItemId() ==
-					 * R.id.recent_add_split_view_top) {
-					 * mRecentsManager.openInSplitView(ad, 0); } else if
-					 * (item.getItemId() == R.id.recent_add_split_view_bottom) {
-					 * mRecentsManager.openInSplitView(ad, 1);
-					 */
 				} else {
 					return false;
 				}
@@ -436,8 +450,12 @@ public class RecentsLayout extends LinearLayout {
 	}
 	
 	public void updatePrefs(SharedPreferences prefs, String key){
-		mHorizontal = prefs.getString("orientation", "vertical").equals("horizontal");		
-		String location = prefs.getString("drag_handle_location", "0");
+		Log.d(TAG, "updatePrefs");
+		mHorizontal = prefs.getString(SettingsActivity.PREF_ORIENTATION, "vertical").equals("horizontal");		
+		String location = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
 		mLocation = Integer.valueOf(location);
+		int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 60);
+		mBackgroundOpacity = (int)(255 * ((float)opacity/100.0f));
+		mAnimate = prefs.getBoolean(SettingsActivity.PREF_ANIMATE, true);
 	}
 }

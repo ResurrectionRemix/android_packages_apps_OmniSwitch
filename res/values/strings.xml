@@ -9,7 +9,6 @@
     <string name="home">Home</string>
     <string name="status_bar_recent_remove_item_title">Stop</string>
     <string name="status_bar_recent_inspect_item_title">App info</string>    
-    <string name="status_bar_recent_add_to_split_view">Add to split view</string>
     <string name="recents_settings_title">OmniSwitch</string>    
     <string name="start_on_boot_title">Start on boot</string>    
     <string name="toggle_service_title">Enable</string>    
@@ -21,6 +20,11 @@
     <string name="drag_size_large">Large</string>    
     <string name="drag_size_title">Drag handle size</string>    
     <string name="drag_location_title">Drag handle location</string>    
-    <string name="drag_location_right">Right</string>    
-    <string name="drag_location_left">Left</string>    
+    <string name="drag_location_right">Right</string>
+    <string name="drag_location_left">Left</string>  
+    <string name="favorite_apps_title">Favorite apps</string>   
+    <string name="opacity_title">Overlay opacity</string>   
+    <string name="drag_handle_opacity_title">Drag handle opacity</string>   
+    <string name="animate_title">Animate</string>   
+    
 </resources>

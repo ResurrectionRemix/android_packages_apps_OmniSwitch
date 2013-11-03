@@ -30,8 +30,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
 import android.os.UserHandle;
 import android.util.Log;
-import android.view.WindowManagerGlobal;
-import android.view.IWindowManager;
 import android.os.RemoteException;
 
 public class RecentsManager {
@@ -117,18 +115,6 @@ public class RecentsManager {
 
 		if (ad.getTaskId() >= 0) {
 			// This is an active task; it should just go to the foreground.
-			// If that task was split viewed, a normal press wil resume it to
-			// normal fullscreen view
-			IWindowManager wm = (IWindowManager) WindowManagerGlobal
-					.getWindowManagerService();
-			try {
-				if (DEBUG)
-					Log.v(TAG,
-							"Restoring window full screen after split, because of normal tap");
-				wm.setTaskSplitView(ad.taskId, false);
-			} catch (RemoteException e) {
-				Log.e(TAG, "Could not setTaskSplitView to fullscreen", e);
-			}
 			am.moveTaskToFront(ad.getTaskId(),
 					ActivityManager.MOVE_TASK_WITH_HOME);
 		} else {
@@ -199,91 +185,6 @@ public class RecentsManager {
 		Intent hideRecent = new Intent(
 				RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
 		mContext.sendBroadcast(hideRecent);
-	}
-
-	/**
-	 * Opens the task linked in the ViewHolder in split view mode.
-	 * 
-	 * @param holder
-	 *            ViewHolder of a task thumbnail
-	 * @param location
-	 *            Where to put the split app (-1 for auto, 0 for top, 1 for
-	 *            bottom (the reference is a phone in portrait))
-	 */
-	public void openInSplitView(TaskDescription ad, int location) {
-		final ActivityManager am = (ActivityManager) mContext
-				.getSystemService(Context.ACTIVITY_SERVICE);
-
-		final IWindowManager wm = (IWindowManager) WindowManagerGlobal
-				.getWindowManagerService();
-
-		Intent hideRecent = new Intent(
-				RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-		mContext.sendBroadcast(hideRecent);
-
-		// If we weren't on the homescreen, resize the previous activity (if not
-		// already split)
-		final List<ActivityManager.RecentTaskInfo> recentTasks = am
-				.getRecentTasks(20, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
-
-		if (recentTasks != null && recentTasks.size() > 0) {
-			final PackageManager pm = mContext.getPackageManager();
-			ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN).addCategory(
-					Intent.CATEGORY_HOME).resolveActivityInfo(pm, 0);
-			int taskInt = 0;
-			ActivityManager.RecentTaskInfo taskInfo = recentTasks.get(1);
-			Log.e("XPLOD", "Resizing previous activity " + taskInfo.baseIntent);
-			Intent intent = new Intent(taskInfo.baseIntent);
-			if (taskInfo.origActivity != null) {
-				intent.setComponent(taskInfo.origActivity);
-			}
-
-			ComponentName component = intent.getComponent();
-
-			if (homeInfo == null
-					|| !homeInfo.packageName.equals(component.getPackageName())
-					|| !homeInfo.name.equals(component.getClassName())) {
-				Log.e("XPLOD", "not home intent, splitting");
-				// This is not the home activity, so split it
-				try {
-					wm.setTaskSplitView(taskInfo.persistentId, true);
-				} catch (RemoteException e) {
-					Log.e(TAG, "Could not set previous task to split view", e);
-				}
-
-				// We move this to front first, then our activity, so it updates
-				am.moveTaskToFront(taskInfo.persistentId, 0, null);
-			}
-		}
-
-		if (ad.getTaskId() >= 0) {
-			// The task is already launched. The Activity will pull its split
-			// information from WindowManagerService once it resumes, so we
-			// set its state here.
-			try {
-				wm.setTaskSplitView(ad.getTaskId(), true);
-			} catch (RemoteException e) {
-				Log.e(TAG, "Could not setTaskSplitView", e);
-			}
-			am.moveTaskToFront(ad.taskId, 0, null);
-		} else {
-			// The app has been killed (we have no taskId for it), so we start
-			// a new one with the SPLIT_VIEW flag
-			Intent intent = ad.intent;
-			intent.addFlags(Intent.FLAG_ACTIVITY_SPLIT_VIEW
-					| Intent.FLAG_ACTIVITY_NEW_TASK);
-
-			if (DEBUG)
-				Log.v(TAG, "Starting split view activity " + intent);
-
-			try {
-				mContext.startActivityAsUser(intent, null, new UserHandle(
-						UserHandle.USER_CURRENT));
-			} catch (SecurityException e) {
-				Log.e(TAG, "Recents does not have the permission to launch "
-						+ intent, e);
-			}
-		}
 	}
 
 	public void dismissAndGoHome() {

@@ -26,5 +26,7 @@
     <string name="opacity_title">Overlay opacity</string>   
     <string name="drag_handle_opacity_title">Drag handle opacity</string>   
     <string name="animate_title">Animate</string>   
-    
+    <string name="adjust_handle_title">Drag handle position</string>   
+    <string name="sc_adjust_title">Drag handle position</string>   
+    <string name="sc_adjust_body">Touch the screen where the drag handle should be placed on the side</string>   
 </resources>

@@ -45,6 +45,10 @@
         android:key="drag_handle_opacity"
         android:defaultValue="100"
         android:title="@string/drag_handle_opacity_title" />
+
+    <Preference
+       android:key="adjust_handle"
+       android:title="@string/adjust_handle_title" />-
     
     <!-- <Preference
        android:key="favorite_apps"

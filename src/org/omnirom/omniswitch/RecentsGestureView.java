@@ -22,7 +22,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
@@ -50,18 +49,21 @@ public class RecentsGestureView extends LinearLayout {
 	private int mDragButtonOpacity = 255;
 	private int mLocation = 0; // 0 = right 1 = left 
 	private boolean mShowing;
+	private float mDensity;
+	private float mPosY = -1.0f;
+
+	private LinearLayout.LayoutParams mDragParams;
 
 	public RecentsGestureView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		mContext = context;
+		mDensity = getResources().getDisplayMetrics().density;
+		
 		mDragButton = new ImageView(mContext);
 		mDragButton.setOnTouchListener(new View.OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// neededd to catch long press
-				v.onTouchEvent(event);
-
 				int action = event.getAction();
 				switch (action) {
 				case MotionEvent.ACTION_DOWN:
@@ -75,6 +77,7 @@ public class RecentsGestureView extends LinearLayout {
 					break;
 				case MotionEvent.ACTION_CANCEL:
 					mRibbonSwipeStarted = false;
+					mRecentsStarted = false;
 					break;
 				case MotionEvent.ACTION_MOVE:
 					if (mRibbonSwipeStarted) {
@@ -108,27 +111,10 @@ public class RecentsGestureView extends LinearLayout {
 				return true;
 			}
 		});
-		
-		mDragButton.setOnLongClickListener(new OnLongClickListener(){
-			@Override
-			public boolean onLongClick(View v) {
-				mRibbonSwipeStarted = false;
-				return true;
-			}});
 		updateLayout();
 	}
 
-	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-	}
-
-	@Override
-	protected void onDetachedFromWindow() {
-		super.onDetachedFromWindow();
-	}
-
-	private int getGravity() {
+	private int getDefaultGravity() {
 		if (mLocation == 0){
 			return Gravity.RIGHT | Gravity.CENTER_VERTICAL;
 		}
@@ -137,6 +123,17 @@ public class RecentsGestureView extends LinearLayout {
 		}
 
 		return Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+	}
+
+	private int getAbsoluteGravity() {
+		if (mLocation == 0){
+			return Gravity.RIGHT | Gravity.TOP;
+		}
+		if (mLocation == 1){
+			return Gravity.LEFT | Gravity.TOP;
+		}
+
+		return Gravity.RIGHT | Gravity.TOP;
 	}
 
 	public WindowManager.LayoutParams getGesturePanelLayoutParams() {
@@ -148,12 +145,17 @@ public class RecentsGestureView extends LinearLayout {
 						| WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 						| WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
 				PixelFormat.TRANSLUCENT);
-		lp.gravity = getGravity();
+		
+		if (mPosY != -1.0f){
+			lp.gravity = getAbsoluteGravity();
+			lp.y = (int)(mPosY - mDragParams.height/2);
+		} else {
+			lp.gravity = getDefaultGravity();
+		}
 		return lp;
 	}
-
+	
 	private void updateLayout() {
-		LinearLayout.LayoutParams dragParams;
 		int dragHeight = 20;
 		int dragWidth = 80;
 		
@@ -167,9 +169,8 @@ public class RecentsGestureView extends LinearLayout {
 			 dragHeight = 20;
 			 dragWidth = 110;			
 		}
-		float density = getResources().getDisplayMetrics().density;
-		dragParams = new LinearLayout.LayoutParams((int)(dragHeight * density + 0.5f)
-				, (int)(dragWidth * density + 0.5f));
+		mDragParams = new LinearLayout.LayoutParams((int)(dragHeight * mDensity + 0.5f)
+				, (int)(dragWidth * mDensity + 0.5f));
 		setOrientation(VERTICAL);
 
 		Drawable d = mContext.getResources().getDrawable(
@@ -182,7 +183,7 @@ public class RecentsGestureView extends LinearLayout {
 		mDragButton.setImageDrawable(d);
         mDragButton.setImageAlpha(mDragButtonOpacity);
 
-		addView(mDragButton, dragParams);
+		addView(mDragButton, mDragParams);
 		invalidate();
 		show();
 	}
@@ -198,7 +199,7 @@ public class RecentsGestureView extends LinearLayout {
 	
 	public void updatePrefs(SharedPreferences prefs, String key){
 		Log.d(TAG, "updatePrefs");
-
+		mPosY = prefs.getFloat("handle_pos_y", -1.0f);
 		String size = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_SIZE, "1");
 		mSize = Integer.valueOf(size);
 		mDragButtonOpacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 60);
@@ -207,13 +208,14 @@ public class RecentsGestureView extends LinearLayout {
 
 		updateLayout();
 	}
-	
+
 	public void show(){
 		if (mShowing){
 			return;
 		}
 		final WindowManager wm = (WindowManager) mContext
 				.getSystemService(Context.WINDOW_SERVICE);
+		
 		wm.addView(this, getGesturePanelLayoutParams());
 		mShowing = true;
 	}

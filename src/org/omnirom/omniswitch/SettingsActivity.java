@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.omnirom.omniswitch.showcase.ShowcaseView;
+import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -33,6 +36,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,6 +51,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -54,7 +59,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class SettingsActivity extends PreferenceActivity implements
-		OnPreferenceChangeListener {
+		OnPreferenceChangeListener, OnShowcaseEventListener {
 	private static final String TAG = "SettingsActivity";
 	
 	public static final String PREF_SERVICE_STATE = "toggle_service";
@@ -64,9 +69,13 @@ public class SettingsActivity extends PreferenceActivity implements
 	public static final String PREF_DRAG_HANDLE_SIZE = "drag_handle_size";
 	public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location";
 	public static final String PREF_DRAG_HANDLE_OPACITY = "drag_handle_opacity";
-
 	private static final String PREF_FAVORITE_APPS = "favorite_apps";
+	private static final String PREF_ADJUST_HANDLE ="adjust_handle";
 
+    private final static int SHOWCASE_INDEX_ADJUST = 0;
+
+    private final static String KEY_SHOWCASE_ADJUST = "SHOWCASE_ADJUST";
+    
 	private static final int DIALOG_APPS = 0;
     
 	private SwitchPreference mToggleService;
@@ -76,12 +85,27 @@ public class SettingsActivity extends PreferenceActivity implements
 	private SeekBarPreference mOpacity;
 	private SeekBarPreference mDragHandleOpacity;
 	private Preference mFavoriteApps;
+	private Preference mAdjustHandle;
     private PackageManager mPackageManager;
 	private PackageAdapter mPackageAdapter;
     private String mPackageList;
     private Map<String, Package> mPackages;
     private SharedPreferences mPrefs;
+    private SettingsGestureView mGestureView;
+    private ShowcaseView mShowcaseView;
+    private int mShowCaseIndex;
+    
+	@Override
+	public void onPause() {
+		mGestureView.hide();
+		super.onPause();
+	}
 
+	@Override
+	public void onDestroy() {
+		mGestureView.hide();
+		super.onDestroy();
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -122,19 +146,27 @@ public class SettingsActivity extends PreferenceActivity implements
 		mDragHandleOpacity.setInitValue(mPrefs.getInt("drag_handle_opacity", 60));
 		mDragHandleOpacity.setOnPreferenceChangeListener(this);
 		
+		mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
+		mAdjustHandle.setEnabled(RecentsService.isRunning());
+		
 		//mFavoriteApps = (Preference) findPreference(PREF_FAVORITE_APPS);
         // Get launch-able applications
         mPackageManager = getPackageManager();
         mPackageAdapter = new PackageAdapter();
 
         mPackages = new HashMap<String, Package>();
-
+        mGestureView = new SettingsGestureView(this, null);
 	}
 
 	@Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference == mFavoriteApps){
         	showDialog(DIALOG_APPS);
+        	return true;
+        } else if (preference == mAdjustHandle){
+        	if (!startShowcaseAdjust()){
+        		mGestureView.show();
+        	}
         	return true;
         }
 		return false;
@@ -157,6 +189,7 @@ public class SettingsActivity extends PreferenceActivity implements
 						RecentsService.RecentsReceiver.ACTION_KILL_RECENTS);
 				sendBroadcast(killRecent);
 			}
+			mAdjustHandle.setEnabled(value);
 			return true;
 		} else if (preference == mOrientation){
 			String value = (String) newValue;
@@ -325,4 +358,44 @@ public class SettingsActivity extends PreferenceActivity implements
             return rowView;
         }
     }
+    
+    private boolean startShowcaseAdjust() {
+        if (!mPrefs.getBoolean(KEY_SHOWCASE_ADJUST, false)) {
+        	mPrefs.edit().putBoolean(KEY_SHOWCASE_ADJUST, true).commit();
+            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+            co.hideOnClickOutside = true;
+            
+            Point size = new Point();
+            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+            wm.getDefaultDisplay().getSize(size);
+
+    		String location = mPrefs.getString(PREF_DRAG_HANDLE_LOCATION, "0");
+            boolean left = location.equals("1");
+            float x = left ? 0 : size.x;
+            float y = size.y/2;
+            mShowcaseView = ShowcaseView.insertShowcaseView(x, y,
+                    this, R.string.sc_adjust_title,
+                    R.string.sc_adjust_body, co);
+
+            // Animate gesture
+            mShowCaseIndex = SHOWCASE_INDEX_ADJUST;
+            mShowcaseView.animateGesture(size.x/2, size.y*2.0f/3.0f, size.x/2, size.y/2.0f);
+            mShowcaseView.setOnShowcaseEventListener(this);
+            return true;
+        }
+        return false;
+    }
+
+	@Override
+	public void onShowcaseViewHide(ShowcaseView showcaseView) {
+		if (mShowCaseIndex == SHOWCASE_INDEX_ADJUST){
+			mGestureView.show();
+		}
+	}
+
+	@Override
+	public void onShowcaseViewShow(ShowcaseView showcaseView) {
+		// TODO Auto-generated method stub
+		
+	}
 }

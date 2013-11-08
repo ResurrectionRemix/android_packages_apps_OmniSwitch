@@ -202,7 +202,8 @@ public class RecentsGestureView extends LinearLayout {
 		mPosY = prefs.getFloat("handle_pos_y", -1.0f);
 		String size = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_SIZE, "1");
 		mSize = Integer.valueOf(size);
-		mDragButtonOpacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 60);
+		int opacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 60);
+		mDragButtonOpacity = (int)(255 * ((float)opacity/100.0f));
 		String location = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
 		mLocation = Integer.valueOf(location);
 

@@ -66,6 +66,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	public static final String PREF_ORIENTATION = "orientation";
 	public static final String PREF_OPACITY = "opacity";
 	public static final String PREF_ANIMATE = "animate";
+	public static final String PREF_ICON_SIZE = "icon_size";
 	public static final String PREF_DRAG_HANDLE_SIZE = "drag_handle_size";
 	public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location";
 	public static final String PREF_DRAG_HANDLE_OPACITY = "drag_handle_opacity";
@@ -82,6 +83,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	private ListPreference mOrientation;
 	private ListPreference mDragHandleSize;
 	private ListPreference mDragHandleLocation;
+	private ListPreference mIconSize;
 	private SeekBarPreference mOpacity;
 	private SeekBarPreference mDragHandleOpacity;
 	private Preference mFavoriteApps;
@@ -124,6 +126,13 @@ public class SettingsActivity extends PreferenceActivity implements
 		mOrientation.setValueIndex(idx);
 		mOrientation.setSummary(mOrientation.getEntries()[idx]);
 
+		mIconSize = (ListPreference) findPreference(PREF_ICON_SIZE);
+		mIconSize.setOnPreferenceChangeListener(this);
+		values = Arrays.asList(mIconSize.getEntryValues());
+		idx = values.indexOf(mPrefs.getString("icon_size", mIconSize.getEntryValues()[1].toString()));
+		mIconSize.setValueIndex(idx);
+		mIconSize.setSummary(mIconSize.getEntries()[idx]);
+		
 		mDragHandleSize = (ListPreference) findPreference(PREF_DRAG_HANDLE_SIZE);
 		mDragHandleSize.setOnPreferenceChangeListener(this);
 		values = Arrays.asList(mDragHandleSize.getEntryValues());
@@ -197,6 +206,13 @@ public class SettingsActivity extends PreferenceActivity implements
 			int idx = values.indexOf(value);
 			mOrientation.setSummary(mOrientation.getEntries()[idx]);
 			mOrientation.setValueIndex(idx);
+			return true;
+		} else if (preference == mIconSize){
+			String value = (String) newValue;
+			List<CharSequence> values = Arrays.asList(mIconSize.getEntryValues());
+			int idx = values.indexOf(value);
+			mIconSize.setSummary(mIconSize.getEntries()[idx]);
+			mIconSize.setValueIndex(idx);
 			return true;
 		} else if (preference == mDragHandleSize){
 			String value = (String) newValue;

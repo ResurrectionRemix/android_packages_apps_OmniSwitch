@@ -29,4 +29,8 @@
     <string name="adjust_handle_title">Drag handle position</string>   
     <string name="sc_adjust_title">Drag handle position</string>   
     <string name="sc_adjust_body">Touch the screen where the drag handle should be placed on the side</string>   
+    <string name="icon_size_normal">Normal</string>    
+    <string name="icon_size_small">Small</string>    
+    <string name="icon_size_large">Large</string>    
+    <string name="icon_size_title">Icon size</string>
 </resources>

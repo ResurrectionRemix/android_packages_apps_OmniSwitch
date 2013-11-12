@@ -22,6 +22,13 @@
         android:entries="@array/orientation_entries"
         android:entryValues="@array/orientation_values" />
 
+    <ListPreference
+        android:key="icon_size"
+        android:title="@string/icon_size_title"
+        android:summary="@string/icon_size_normal" 
+        android:entries="@array/icon_size_entries"
+        android:entryValues="@array/icon_size_values" />
+    
     <org.omnirom.omniswitch.SeekBarPreference
         android:key="opacity"
         android:defaultValue="100"

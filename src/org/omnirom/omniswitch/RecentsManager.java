@@ -202,6 +202,7 @@ public class RecentsManager {
 
 	public void updatePrefs(SharedPreferences prefs, String key){
 		mLayout.updatePrefs(prefs, key);
+		mRecentTasksLoader.updatePrefs(prefs, key);
 	}
 
 	public void toggleLastApp() {

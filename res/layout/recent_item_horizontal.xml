@@ -10,11 +10,10 @@
         android:id="@+id/recent_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:minHeight="60dp"
         android:drawableTop="@drawable/ic_launcher"
         android:scaleType="centerInside"
         android:ellipsize="end"
-        android:lines="1" 
+        android:lines="2" 
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:gravity="center_horizontal"
         android:focusable="false"/>

@@ -24,6 +24,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -60,6 +61,7 @@ public class RecentTasksLoader {
 
 	private int mIconDpi;
 	private float mDensity;
+	private int mIconSize = 60; // in dip
 	
 	private static RecentTasksLoader sInstance;
 
@@ -269,7 +271,7 @@ public class RecentTasksLoader {
 
 	private Drawable resize(Resources resources, Drawable image) {
 		// TODO
-		int size = (int)(60 *  mDensity + 0.5f);
+		int size = (int)(mIconSize *  mDensity + 0.5f);
 	    Bitmap b = ((BitmapDrawable)image).getBitmap();
 		int originalHeight = b.getHeight();
 		int originalWidth = b.getWidth();
@@ -314,5 +316,11 @@ public class RecentTasksLoader {
 			}
 		}
 		return getFullResDefaultActivityIcon();
+	}
+
+	public void updatePrefs(SharedPreferences prefs, String key){
+		Log.d(TAG, "updatePrefs");
+		String iconSize = prefs.getString(SettingsActivity.PREF_ICON_SIZE, "60");
+		mIconSize = Integer.valueOf(iconSize);
 	}
 }

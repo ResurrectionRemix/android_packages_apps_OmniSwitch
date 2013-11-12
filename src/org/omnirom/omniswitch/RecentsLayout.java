@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -40,15 +41,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.os.RemoteException;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -78,6 +76,9 @@ public class RecentsLayout extends LinearLayout {
 	private View mView;
 	private int mLocation = 0; // 0 = right 1 = left 
 	private boolean mAnimate = true;
+	private int mIconSize = 60; // in dip
+	private float mDensity;
+	private int mMaxWidth = mIconSize;
 
 	public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -96,6 +97,7 @@ public class RecentsLayout extends LinearLayout {
 				final TextView item = (TextView) rowView
 						.findViewById(R.id.recent_item);
 				item.setText(ad.getLabel());
+				item.setMaxWidth(mMaxWidth);
 				item.setCompoundDrawablesWithIntrinsicBounds(null, ad.getIcon() , null, null);
 			} else {
 				rowView = mInflater.inflate(R.layout.recent_item, parent, false);			
@@ -120,6 +122,7 @@ public class RecentsLayout extends LinearLayout {
 		mLoadedTasks = new ArrayList<TaskDescription>();
 		mRecentListAdapter = new RecentListAdapter(mContext,
 				android.R.layout.simple_list_item_multiple_choice, mLoadedTasks);		
+		mDensity = mContext.getResources().getDisplayMetrics().density;
 	}
 
 	private void createView() {
@@ -365,9 +368,16 @@ public class RecentsLayout extends LinearLayout {
 		animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
-        		mWindowManager.removeView(mPopupView);
-        		mPopupView = null;
-        		mShowing = false;            	
+            	// to avoid the "Attempting to destroy the window while drawing" error
+            	Handler handler = new Handler();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mWindowManager.removeView(mPopupView);
+                		mPopupView = null;
+                		mShowing = false;            	
+                    }
+                });
             }
 
 			@Override
@@ -470,5 +480,9 @@ public class RecentsLayout extends LinearLayout {
 		int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 60);
 		mBackgroundOpacity = (int)(255 * ((float)opacity/100.0f));
 		mAnimate = prefs.getBoolean(SettingsActivity.PREF_ANIMATE, true);
+		String iconSize = prefs.getString(SettingsActivity.PREF_ICON_SIZE, "60");
+		mIconSize = Integer.valueOf(iconSize);
+		// TODO dont hardcode padding start + padding end here
+		mMaxWidth = (int)((mIconSize + 10) *  mDensity + 0.5f);
 	}
 }

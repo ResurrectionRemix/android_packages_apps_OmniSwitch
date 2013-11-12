@@ -1034,7 +1034,14 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         public boolean onDown(MotionEvent e) {
         	mDownX = e.getRawX();
         	mSwipeListener.setEnabled(true);
-        	mSwipeListener.onTouch(null, e);
+
+            final int index = getChildIndex((int) e.getX(), (int) e.getY());
+            if (index >= 0) {
+            	// set the correct position for the swipe listener
+                int adapterIndex = mLeftViewAdapterIndex + index;
+            	mSwipeListener.setAdapterIndex(adapterIndex);
+                mSwipeListener.onTouch(null, e);
+            }
 
         	return HorizontalListView.this.onDown(e);
         }

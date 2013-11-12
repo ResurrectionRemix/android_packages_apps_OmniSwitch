@@ -168,6 +168,10 @@ public class SwipeDismissHorizontalListViewTouchListener implements View.OnTouch
         dismiss(getViewForPosition(position), position, true);
     }
 
+    public void setAdapterIndex(int adapterIndex) {
+    	mDownPosition = adapterIndex;
+    }
+    
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         if (mViewHeight < 2) {
@@ -176,7 +180,7 @@ public class SwipeDismissHorizontalListViewTouchListener implements View.OnTouch
 
         switch (motionEvent.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
-                if (mPaused) {
+                if (mPaused || mDownPosition == ListView.INVALID_POSITION) {
                     return false;
                 }
                 Log.d(TAG, "ACTION_DOW");
@@ -201,7 +205,6 @@ public class SwipeDismissHorizontalListViewTouchListener implements View.OnTouch
 
                 if (mDownView != null) {
                     mDownY = motionEvent.getRawY();
-                    mDownPosition = mListView.getPositionForView(mDownView);
                     if (mCallbacks.canDismiss(mDownPosition)) {
                         mVelocityTracker = VelocityTracker.obtain();
                         mVelocityTracker.addMovement(motionEvent);

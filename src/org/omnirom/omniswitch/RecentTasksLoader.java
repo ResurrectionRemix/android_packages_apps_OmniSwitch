@@ -271,7 +271,18 @@ public class RecentTasksLoader {
 		// TODO
 		int size = (int)(60 *  mDensity + 0.5f);
 	    Bitmap b = ((BitmapDrawable)image).getBitmap();
-	    Bitmap bitmapResized = Bitmap.createScaledBitmap(b, size, size, false);
+		int originalHeight = b.getHeight();
+		int originalWidth = b.getWidth();
+
+		int l = originalHeight > originalWidth ? originalHeight : originalWidth;		
+		float factor = (float)size / (float)l;
+	    
+		int resizedHeight = (int)(originalHeight * factor);
+		int resizedWidth = (int)(originalWidth * factor);
+
+		Bitmap bitmapResized = Bitmap.createScaledBitmap(b, 
+					resizedWidth, 
+	    			resizedHeight, false);
 	    return new BitmapDrawable(resources, bitmapResized);
 	}
 

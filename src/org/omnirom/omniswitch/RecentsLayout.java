@@ -166,6 +166,7 @@ public class RecentsLayout extends LinearLayout {
 
 						@Override
 						public boolean canDismiss(int position) {
+							Log.d(TAG, "canDismiss " + position);
 							return true;
 						}
 					});
@@ -200,6 +201,17 @@ public class RecentsLayout extends LinearLayout {
 						}
 					});
 
+			mRecentList.setOnKeyListener(new View.OnKeyListener() {
+				@Override
+				public boolean onKey(View v, int keyCode, KeyEvent event) {
+					Log.d(TAG, "onKey");
+					Intent hideRecent = new Intent(
+							RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+					mContext.sendBroadcast(hideRecent);
+					return true;
+				}
+			});
+
 			SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(
 					mRecentList,
 					new SwipeDismissListViewTouchListener.DismissCallbacks() {
@@ -215,6 +227,7 @@ public class RecentsLayout extends LinearLayout {
 
 						@Override
 						public boolean canDismiss(int position) {
+							Log.d(TAG, "canDismiss " + position);
 							return true;
 						}
 					});

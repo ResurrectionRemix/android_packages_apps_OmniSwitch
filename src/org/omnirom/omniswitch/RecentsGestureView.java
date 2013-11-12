@@ -98,6 +98,7 @@ public class RecentsGestureView extends LinearLayout {
 										RecentsService.RecentsReceiver.ACTION_SHOW_RECENTS);
 								mContext.sendBroadcast(showRibbon);
 								mRecentsStarted = true;
+								mRibbonSwipeStarted = false;
 								break;
 							}
 						}

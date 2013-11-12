@@ -40,6 +40,7 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -66,6 +67,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	public static final String PREF_ORIENTATION = "orientation";
 	public static final String PREF_OPACITY = "opacity";
 	public static final String PREF_ANIMATE = "animate";
+	public static final String PREF_START_ON_BOOT = "start_on_boot";
 	public static final String PREF_ICON_SIZE = "icon_size";
 	public static final String PREF_DRAG_HANDLE_SIZE = "drag_handle_size";
 	public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location";
@@ -84,6 +86,8 @@ public class SettingsActivity extends PreferenceActivity implements
 	private ListPreference mDragHandleSize;
 	private ListPreference mDragHandleLocation;
 	private ListPreference mIconSize;
+	private CheckBoxPreference mAnimate;
+	private CheckBoxPreference mStartOnBoot;
 	private SeekBarPreference mOpacity;
 	private SeekBarPreference mDragHandleOpacity;
 	private Preference mFavoriteApps;
@@ -119,6 +123,9 @@ public class SettingsActivity extends PreferenceActivity implements
 		mToggleService.setChecked(RecentsService.isRunning());
 		mToggleService.setOnPreferenceChangeListener(this);
 		
+		mAnimate = (CheckBoxPreference) findPreference(PREF_ANIMATE);
+		mStartOnBoot = (CheckBoxPreference) findPreference(PREF_START_ON_BOOT);
+
 		mOrientation = (ListPreference) findPreference(PREF_ORIENTATION);
 		mOrientation.setOnPreferenceChangeListener(this);
 		List<CharSequence> values = Arrays.asList(mOrientation.getEntryValues());
@@ -156,7 +163,6 @@ public class SettingsActivity extends PreferenceActivity implements
 		mDragHandleOpacity.setOnPreferenceChangeListener(this);
 		
 		mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
-		mAdjustHandle.setEnabled(RecentsService.isRunning());
 		
 		//mFavoriteApps = (Preference) findPreference(PREF_FAVORITE_APPS);
         // Get launch-able applications
@@ -165,6 +171,30 @@ public class SettingsActivity extends PreferenceActivity implements
 
         mPackages = new HashMap<String, Package>();
         mGestureView = new SettingsGestureView(this, null);
+        updateEnablement(false, null);
+	}
+
+	private void updateEnablement(boolean force, Boolean value) {
+		boolean running = false;
+		
+		if (!force){
+			running = RecentsService.isRunning();
+		} else if (value != null){
+			running = value.booleanValue();
+		}
+		mAdjustHandle.setEnabled(running);
+		mDragHandleOpacity.setEnabled(running);
+		mDragHandleOpacity.setInitValue(mPrefs.getInt("drag_handle_opacity", 60));
+
+		mOpacity.setEnabled(running);
+		mOpacity.setInitValue(mPrefs.getInt("opacity", 60));
+
+		mDragHandleLocation.setEnabled(running);
+		mDragHandleSize.setEnabled(running);
+		mIconSize.setEnabled(running);
+		mOrientation.setEnabled(running);
+		mAnimate.setEnabled(running);
+		mStartOnBoot.setEnabled(running);
 	}
 
 	@Override
@@ -198,7 +228,7 @@ public class SettingsActivity extends PreferenceActivity implements
 						RecentsService.RecentsReceiver.ACTION_KILL_RECENTS);
 				sendBroadcast(killRecent);
 			}
-			mAdjustHandle.setEnabled(value);
+	        updateEnablement(true, (Boolean) newValue);
 			return true;
 		} else if (preference == mOrientation){
 			String value = (String) newValue;

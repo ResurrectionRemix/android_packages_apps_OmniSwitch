@@ -9,7 +9,7 @@
     <org.omnirom.omniswitch.HorizontalListView
             android:id="@+id/recent_list_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="120dip"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal" />
     
 </LinearLayout>

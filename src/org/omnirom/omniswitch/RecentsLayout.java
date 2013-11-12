@@ -78,7 +78,8 @@ public class RecentsLayout extends LinearLayout {
 	private boolean mAnimate = true;
 	private int mIconSize = 60; // in dip
 	private float mDensity;
-	private int mMaxWidth = mIconSize;
+	private int mHorizontalMaxWidth = mIconSize;
+	private int mHorizontalScrollerHeight = mIconSize * 2;
 
 	public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -97,7 +98,7 @@ public class RecentsLayout extends LinearLayout {
 				final TextView item = (TextView) rowView
 						.findViewById(R.id.recent_item);
 				item.setText(ad.getLabel());
-				item.setMaxWidth(mMaxWidth);
+				item.setMaxWidth(mHorizontalMaxWidth);
 				item.setCompoundDrawablesWithIntrinsicBounds(null, ad.getIcon() , null, null);
 			} else {
 				rowView = mInflater.inflate(R.layout.recent_item, parent, false);			
@@ -130,7 +131,11 @@ public class RecentsLayout extends LinearLayout {
 		if (mHorizontal) {
 			mView = mInflater.inflate(R.layout.recents_list_horizontal, this, false);
 			mRecentListHorizontal = (HorizontalListView)mView.findViewById(R.id.recent_list_horizontal);
+			LayoutParams params = new LayoutParams(
+					WindowManager.LayoutParams.MATCH_PARENT,
+					mHorizontalScrollerHeight);
 
+			mRecentListHorizontal.setLayoutParams(params);
 			mRecentListHorizontal.setOnItemClickListener(new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view,
@@ -479,10 +484,12 @@ public class RecentsLayout extends LinearLayout {
 		mLocation = Integer.valueOf(location);
 		int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 60);
 		mBackgroundOpacity = (int)(255 * ((float)opacity/100.0f));
+		Log.d(TAG, "mBackgroundOpacity " + mBackgroundOpacity);
 		mAnimate = prefs.getBoolean(SettingsActivity.PREF_ANIMATE, true);
 		String iconSize = prefs.getString(SettingsActivity.PREF_ICON_SIZE, "60");
 		mIconSize = Integer.valueOf(iconSize);
 		// TODO dont hardcode padding start + padding end here
-		mMaxWidth = (int)((mIconSize + 10) *  mDensity + 0.5f);
+		mHorizontalMaxWidth = (int)((mIconSize + 10) *  mDensity + 0.5f);
+		mHorizontalScrollerHeight = (int)((mIconSize + 40) *  mDensity + 0.5f);
 	}
 }

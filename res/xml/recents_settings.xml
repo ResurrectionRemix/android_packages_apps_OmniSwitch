@@ -47,11 +47,10 @@
         android:summary="@string/drag_location_right" 
         android:entries="@array/drag_location_entries"
         android:entryValues="@array/drag_location_values" />
-
-    <org.omnirom.omniswitch.SeekBarPreference
-        android:key="drag_handle_opacity"
-        android:defaultValue="100"
-        android:title="@string/drag_handle_opacity_title" />
+    
+    <org.omnirom.omniswitch.DragHandleColorPreference
+       android:key="drag_handle_color"
+       android:title="@string/drag_handle_color_title" />
 
     <Preference
        android:key="adjust_handle"

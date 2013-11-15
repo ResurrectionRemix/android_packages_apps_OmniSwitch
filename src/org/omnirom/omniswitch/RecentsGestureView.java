@@ -24,6 +24,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -46,11 +47,11 @@ public class RecentsGestureView extends LinearLayout {
 	private boolean mRibbonSwipeStarted = false;
 	private boolean mRecentsStarted;
 	private int mSize = 1; // 0=small 1=normal 2=large
-	private int mDragButtonOpacity = 255;
 	private int mLocation = 0; // 0 = right 1 = left 
 	private boolean mShowing;
 	private float mDensity;
 	private float mPosY = -1.0f;
+	private int mColor;
 
 	private LinearLayout.LayoutParams mDragParams;
 
@@ -182,7 +183,7 @@ public class RecentsGestureView extends LinearLayout {
 
 		mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
 		mDragButton.setImageDrawable(d);
-        mDragButton.setImageAlpha(mDragButtonOpacity);
+		mDragButton.getDrawable().setColorFilter(mColor, Mode.SRC_ATOP);
 
 		addView(mDragButton, mDragParams);
 		invalidate();
@@ -197,17 +198,15 @@ public class RecentsGestureView extends LinearLayout {
 		tempCanvas.drawBitmap(b, 0, 0, null);
 	    return new BitmapDrawable(resources, bmResult);
 	}
-	
+
 	public void updatePrefs(SharedPreferences prefs, String key){
 		Log.d(TAG, "updatePrefs");
 		mPosY = prefs.getFloat("handle_pos_y", -1.0f);
 		String size = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_SIZE, "1");
 		mSize = Integer.valueOf(size);
-		int opacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 60);
-		mDragButtonOpacity = (int)(255 * ((float)opacity/100.0f));
 		String location = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
 		mLocation = Integer.valueOf(location);
-
+		mColor = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, 0xffffff);
 		updateLayout();
 	}
 
@@ -235,4 +234,6 @@ public class RecentsGestureView extends LinearLayout {
 	public int getLocation(){
 		return mLocation;
 	}
+	
+
 }

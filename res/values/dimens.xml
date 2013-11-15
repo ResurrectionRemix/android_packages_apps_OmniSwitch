@@ -17,4 +17,6 @@
 -->
 <resources>
     <dimen name="drag_handle_height">25dp</dimen>
+    <dimen name="color_button_width">16dip</dimen>
+    <dimen name="color_button_height">16dip</dimen>
 </resources>

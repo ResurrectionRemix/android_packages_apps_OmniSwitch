@@ -41,6 +41,7 @@ public class RecentsManager {
 	private Context mContext;
 	private boolean mIsReady;
 	private boolean mIsShowning;
+	private boolean mShowPending;
 
 	public RecentsManager(Context context) {
 		mContext = context;
@@ -52,6 +53,7 @@ public class RecentsManager {
 			Log.d(TAG, "hide");
 			mLayout.hide();
 			mIsShowning = false;
+			mShowPending = false;
 		}
 	}
 
@@ -60,8 +62,7 @@ public class RecentsManager {
 			Log.d(TAG, "show");
 			mIsReady = false;
 			reload();
-			mLayout.show();
-			mIsShowning = true;
+			mShowPending = true;
 		}
 	}
 
@@ -88,6 +89,14 @@ public class RecentsManager {
 		mLoadedTasks.clear();
 		mLoadedTasks.addAll(taskList);
 		mLayout.update(mLoadedTasks);
+
+		// if we need to show wait until all loaded
+		// to prevent updates after showing
+		if (mShowPending){
+			mLayout.show();
+			mIsShowning = true;
+			mShowPending = false;
+		}
 		mIsReady = true;
 	}
 

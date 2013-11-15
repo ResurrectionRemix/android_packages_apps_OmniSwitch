@@ -71,9 +71,9 @@ public class SettingsActivity extends PreferenceActivity implements
 	public static final String PREF_ICON_SIZE = "icon_size";
 	public static final String PREF_DRAG_HANDLE_SIZE = "drag_handle_size";
 	public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location";
-	public static final String PREF_DRAG_HANDLE_OPACITY = "drag_handle_opacity";
 	private static final String PREF_FAVORITE_APPS = "favorite_apps";
 	private static final String PREF_ADJUST_HANDLE ="adjust_handle";
+	public static final String PREF_DRAG_HANDLE_COLOR ="drag_handle_color";
 
     private final static int SHOWCASE_INDEX_ADJUST = 0;
 
@@ -89,10 +89,10 @@ public class SettingsActivity extends PreferenceActivity implements
 	private CheckBoxPreference mAnimate;
 	private CheckBoxPreference mStartOnBoot;
 	private SeekBarPreference mOpacity;
-	private SeekBarPreference mDragHandleOpacity;
 	private Preference mFavoriteApps;
 	private Preference mAdjustHandle;
-    private PackageManager mPackageManager;
+	private Preference mDragHandleColor;
+	private PackageManager mPackageManager;
 	private PackageAdapter mPackageAdapter;
     private String mPackageList;
     private Map<String, Package> mPackages;
@@ -157,12 +157,10 @@ public class SettingsActivity extends PreferenceActivity implements
 		mOpacity = (SeekBarPreference) findPreference(PREF_OPACITY);
 		mOpacity.setInitValue(mPrefs.getInt("opacity", 60));
 		mOpacity.setOnPreferenceChangeListener(this);
-
-		mDragHandleOpacity= (SeekBarPreference) findPreference(PREF_DRAG_HANDLE_OPACITY);
-		mDragHandleOpacity.setInitValue(mPrefs.getInt("drag_handle_opacity", 60));
-		mDragHandleOpacity.setOnPreferenceChangeListener(this);
 		
 		mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
+		
+		mDragHandleColor= (Preference) findPreference(PREF_DRAG_HANDLE_COLOR);
 		
 		//mFavoriteApps = (Preference) findPreference(PREF_FAVORITE_APPS);
         // Get launch-able applications
@@ -183,8 +181,6 @@ public class SettingsActivity extends PreferenceActivity implements
 			running = value.booleanValue();
 		}
 		mAdjustHandle.setEnabled(running);
-		mDragHandleOpacity.setEnabled(running);
-		mDragHandleOpacity.setInitValue(mPrefs.getInt("drag_handle_opacity", 60));
 
 		mOpacity.setEnabled(running);
 		mOpacity.setInitValue(mPrefs.getInt("opacity", 60));
@@ -195,6 +191,7 @@ public class SettingsActivity extends PreferenceActivity implements
 		mOrientation.setEnabled(running);
 		mAnimate.setEnabled(running);
 		mStartOnBoot.setEnabled(running);
+		mDragHandleColor.setEnabled(running);
 	}
 
 	@Override
@@ -261,10 +258,6 @@ public class SettingsActivity extends PreferenceActivity implements
 		} else if (preference == mOpacity){
 			float val = Float.parseFloat((String) newValue);
 			mPrefs.edit().putInt(PREF_OPACITY, (int)val).commit();
-			return true;
-		} else if (preference == mDragHandleOpacity){
-			float val = Float.parseFloat((String) newValue);
-			mPrefs.edit().putInt(PREF_DRAG_HANDLE_OPACITY, (int)val).commit();
 			return true;
 		}
 		

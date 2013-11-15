@@ -33,4 +33,9 @@
     <string name="icon_size_small">Small</string>    
     <string name="icon_size_large">Large</string>    
     <string name="icon_size_title">Icon size</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="drag_handle_color_title">Drag handle color</string>
+    <string name="drag_handle_color_dialog_title">Color</string>
+    
 </resources>

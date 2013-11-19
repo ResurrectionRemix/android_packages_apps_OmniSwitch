@@ -417,7 +417,7 @@ public class RecentsLayout extends LinearLayout {
 		WindowManager.LayoutParams params = new WindowManager.LayoutParams(
 				mHorizontal?WindowManager.LayoutParams.MATCH_PARENT:WindowManager.LayoutParams.WRAP_CONTENT,
 				WindowManager.LayoutParams.WRAP_CONTENT,
-				WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+				WindowManager.LayoutParams.TYPE_PHONE,
 				WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
 				PixelFormat.TRANSLUCENT);
 		params.gravity = getGravity();

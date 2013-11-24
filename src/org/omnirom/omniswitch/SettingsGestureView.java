@@ -29,69 +29,70 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public class SettingsGestureView extends LinearLayout {
-	private final static String TAG = "SettingsGestureView";
+    private final static String TAG = "SettingsGestureView";
 
-	private Context mContext;
-	private boolean mShowing;
-	private float mPosY = -1.0f;
+    private Context mContext;
+    private boolean mShowing;
+    private float mPosY = -1.0f;
 
-	public SettingsGestureView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		mContext = context;
-		
-		setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				int action = event.getAction();
-				switch (action) {
-				case MotionEvent.ACTION_DOWN:
-					float y = event.getY();
-					Log.d(TAG, "y " + y);
-					mPosY = y;
-					PreferenceManager.getDefaultSharedPreferences(mContext).edit().putFloat("handle_pos_y", mPosY).commit();
-					break;
-				case MotionEvent.ACTION_CANCEL:
-				case MotionEvent.ACTION_UP:
-					hide();
-					break;
-				}
-				return true;
-			}
-		});
-		setBackgroundColor(Color.BLACK);
-		getBackground().setAlpha(180);
-	}
+    public SettingsGestureView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        mContext = context;
 
-	public WindowManager.LayoutParams getParams() {
-		WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-				WindowManager.LayoutParams.FILL_PARENT,
-				WindowManager.LayoutParams.FILL_PARENT,
-				WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
-				WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-						| WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-						| WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
-				PixelFormat.TRANSLUCENT);
-		return lp;
-	}
-	
-	public void show(){
-		if (mShowing){
-			return;
-		}
-		final WindowManager wm = (WindowManager) mContext
-				.getSystemService(Context.WINDOW_SERVICE);
-		
-		wm.addView(this, getParams());			
-		mShowing = true;
-	}
-	
-	public void hide(){
-		if (!mShowing){
-			return;
-		}
-		final WindowManager wm = (WindowManager) mContext
-				.getSystemService(Context.WINDOW_SERVICE);
-		wm.removeView(this);
-		mShowing = false;
-	}
+        setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    float y = event.getY();
+                    Log.d(TAG, "y " + y);
+                    mPosY = y;
+                    PreferenceManager.getDefaultSharedPreferences(mContext)
+                            .edit().putFloat("handle_pos_y", mPosY).commit();
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    hide();
+                    break;
+                }
+                return true;
+            }
+        });
+        setBackgroundColor(Color.BLACK);
+        getBackground().setAlpha(180);
+    }
+
+    public WindowManager.LayoutParams getParams() {
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.FILL_PARENT,
+                WindowManager.LayoutParams.FILL_PARENT,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                PixelFormat.TRANSLUCENT);
+        return lp;
+    }
+
+    public void show() {
+        if (mShowing) {
+            return;
+        }
+        final WindowManager wm = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+
+        wm.addView(this, getParams());
+        mShowing = true;
+    }
+
+    public void hide() {
+        if (!mShowing) {
+            return;
+        }
+        final WindowManager wm = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+        wm.removeView(this);
+        mShowing = false;
+    }
 }

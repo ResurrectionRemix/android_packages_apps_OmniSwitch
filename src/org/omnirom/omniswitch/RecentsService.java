@@ -28,118 +28,120 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class RecentsService extends Service {
-	private final static String TAG = "RecentsService";
+    private final static String TAG = "RecentsService";
 
-	private RecentsGestureView mGesturePanel;
-	private RecentsReceiver mReceiver;
-	private RecentsManager mManager;
-	private SharedPreferences mPrefs;
-	private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
+    private RecentsGestureView mGesturePanel;
+    private RecentsReceiver mReceiver;
+    private RecentsManager mManager;
+    private SharedPreferences mPrefs;
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
 
-	private static boolean mIsRunning;
+    private static boolean mIsRunning;
 
-	public static boolean isRunning() {
-		return mIsRunning;
-	}
+    public static boolean isRunning() {
+        return mIsRunning;
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-		mGesturePanel = new RecentsGestureView(this, null);
-		Log.d(TAG, "started RecentsService");
+        mGesturePanel = new RecentsGestureView(this, null);
+        Log.d(TAG, "started RecentsService");
 
-		mManager = new RecentsManager(this);
+        mManager = new RecentsManager(this);
 
-		mReceiver = new RecentsReceiver();
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(RecentsReceiver.ACTION_SHOW_RECENTS);
-		filter.addAction(RecentsReceiver.ACTION_SHOW_RECENTS2);
-		filter.addAction(RecentsReceiver.ACTION_HIDE_RECENTS);
-		filter.addAction(RecentsReceiver.ACTION_KILL_RECENTS);
+        mReceiver = new RecentsReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(RecentsReceiver.ACTION_SHOW_RECENTS);
+        filter.addAction(RecentsReceiver.ACTION_SHOW_RECENTS2);
+        filter.addAction(RecentsReceiver.ACTION_HIDE_RECENTS);
+        filter.addAction(RecentsReceiver.ACTION_KILL_RECENTS);
 
-		registerReceiver(mReceiver, filter);
-		
-		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-		updatePrefs(mPrefs, null);
+        registerReceiver(mReceiver, filter);
 
-		mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-			public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-				updatePrefs(prefs, key);
-			}
-		};
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        updatePrefs(mPrefs, null);
 
-		mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
+        mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs,
+                    String key) {
+                updatePrefs(prefs, key);
+            }
+        };
 
-		mGesturePanel.show();
+        mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
 
-		mIsRunning = true;
-	}
+        mGesturePanel.show();
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		Log.d(TAG, "stopped RecentsService");
+        mIsRunning = true;
+    }
 
-		mGesturePanel.hide();
-		mGesturePanel = null;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "stopped RecentsService");
 
-		unregisterReceiver(mReceiver);
-		mManager.killManager();
-		mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
+        mGesturePanel.hide();
+        mGesturePanel = null;
 
-		mIsRunning = false;
-	}
+        unregisterReceiver(mReceiver);
+        mManager.killManager();
+        mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+        mIsRunning = false;
+    }
 
-	public class RecentsReceiver extends BroadcastReceiver {
-		public static final String ACTION_SHOW_RECENTS = "org.omnirom.omniswitch.ACTION_SHOW_RECENTS";
-		public static final String ACTION_SHOW_RECENTS2 = "org.omnirom.omniswitch.ACTION_SHOW_RECENTS2";
-		public static final String ACTION_HIDE_RECENTS = "org.omnirom.omniswitch.ACTION_HIDE_RECENTS";
-		public static final String ACTION_KILL_RECENTS = "org.omnirom.omniswitch.ACTION_KILL_RECENTS";
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
-		@Override
-		public void onReceive(final Context context, Intent intent) {
-			String action = intent.getAction();
-			Log.d(TAG, "onReceive " + action);
-			if (ACTION_SHOW_RECENTS.equals(action)) {
-				if (!mManager.isShowing()) {
-					Intent mainActivity = new Intent(context,
-							MainActivity.class);
-					mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-							| Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+    public class RecentsReceiver extends BroadcastReceiver {
+        public static final String ACTION_SHOW_RECENTS = "org.omnirom.omniswitch.ACTION_SHOW_RECENTS";
+        public static final String ACTION_SHOW_RECENTS2 = "org.omnirom.omniswitch.ACTION_SHOW_RECENTS2";
+        public static final String ACTION_HIDE_RECENTS = "org.omnirom.omniswitch.ACTION_HIDE_RECENTS";
+        public static final String ACTION_KILL_RECENTS = "org.omnirom.omniswitch.ACTION_KILL_RECENTS";
 
-					startActivity(mainActivity);
-				}
-			} else if (ACTION_SHOW_RECENTS2.equals(action)) {
-				if (!mManager.isShowing()) {
-					mManager.show();
-				}
-			} else if (ACTION_HIDE_RECENTS.equals(action)) {
-				if (mManager.isShowing()) {
-					Intent finishActivity = new Intent(
-							MainActivity.ActivityReceiver.ACTION_FINISH);
-					sendBroadcast(finishActivity);
-					mManager.hide();
-				}
-			} else if (ACTION_KILL_RECENTS.equals(action)) {
-				if (mManager.isShowing()) {
-					mManager.hide();
-				}
-				Intent finishActivity = new Intent(
-						MainActivity.ActivityReceiver.ACTION_FINISH);
-				sendBroadcast(finishActivity);
-				Intent svc = new Intent(context, RecentsService.class);
-				context.stopService(svc);
-			}
-		}
-	}
-	public void updatePrefs(SharedPreferences prefs, String key){
-		mManager.updatePrefs(prefs, key);
-		mGesturePanel.updatePrefs(prefs, key);
-	}
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "onReceive " + action);
+            if (ACTION_SHOW_RECENTS.equals(action)) {
+                if (!mManager.isShowing()) {
+                    Intent mainActivity = new Intent(context,
+                            MainActivity.class);
+                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+
+                    startActivity(mainActivity);
+                }
+            } else if (ACTION_SHOW_RECENTS2.equals(action)) {
+                if (!mManager.isShowing()) {
+                    mManager.show();
+                }
+            } else if (ACTION_HIDE_RECENTS.equals(action)) {
+                if (mManager.isShowing()) {
+                    Intent finishActivity = new Intent(
+                            MainActivity.ActivityReceiver.ACTION_FINISH);
+                    sendBroadcast(finishActivity);
+                    mManager.hide();
+                }
+            } else if (ACTION_KILL_RECENTS.equals(action)) {
+                if (mManager.isShowing()) {
+                    mManager.hide();
+                }
+                Intent finishActivity = new Intent(
+                        MainActivity.ActivityReceiver.ACTION_FINISH);
+                sendBroadcast(finishActivity);
+                Intent svc = new Intent(context, RecentsService.class);
+                context.stopService(svc);
+            }
+        }
+    }
+
+    public void updatePrefs(SharedPreferences prefs, String key) {
+        mManager.updatePrefs(prefs, key);
+        mGesturePanel.updatePrefs(prefs, key);
+    }
 }

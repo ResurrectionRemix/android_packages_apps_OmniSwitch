@@ -34,7 +34,7 @@ import android.widget.ImageView;
 
 public class DragHandleColorPreference extends DialogPreference {
 
-    public static final int DEFAULT_COLOR = 0xFFFFFFFF; //White
+    public static final int DEFAULT_COLOR = 0xFFFFFFFF; // White
 
     private ImageView mLightColorView;
     private int mColorValue;
@@ -47,8 +47,9 @@ public class DragHandleColorPreference extends DialogPreference {
      */
     public DragHandleColorPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-		mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-        mColorValue = mPrefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, DEFAULT_COLOR);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        mColorValue = mPrefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,
+                DEFAULT_COLOR);
         init();
     }
 
@@ -66,30 +67,38 @@ public class DragHandleColorPreference extends DialogPreference {
     }
 
     private void updatePreferenceViews() {
-        final int width = (int) mResources.getDimension(R.dimen.color_button_width);
-        final int height = (int) mResources.getDimension(R.dimen.color_button_height);
+        final int width = (int) mResources
+                .getDimension(R.dimen.color_button_width);
+        final int height = (int) mResources
+                .getDimension(R.dimen.color_button_height);
 
         if (mLightColorView != null) {
             mLightColorView.setEnabled(true);
-            mLightColorView.setImageDrawable(createRectShape(width, height, mColorValue));
+            mLightColorView.setImageDrawable(createRectShape(width, height,
+                    mColorValue));
         }
     }
 
     @Override
     protected void showDialog(Bundle state) {
-        final ColorPickerDialog d = new ColorPickerDialog(getContext(), mColorValue);
+        final ColorPickerDialog d = new ColorPickerDialog(getContext(),
+                mColorValue);
         d.setAlphaSliderVisible(true);
 
-        d.setButton(AlertDialog.BUTTON_POSITIVE, mResources.getString(R.string.ok),
+        d.setButton(AlertDialog.BUTTON_POSITIVE,
+                mResources.getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mColorValue =  d.getColor();
-                updatePreferenceViews();
-                mPrefs.edit().putInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mColorValue).commit();
-            }
-        });
-        d.setButton(AlertDialog.BUTTON_NEGATIVE, mResources.getString(R.string.cancel),
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mColorValue = d.getColor();
+                        updatePreferenceViews();
+                        mPrefs.edit()
+                                .putInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,
+                                        mColorValue).commit();
+                    }
+                });
+        d.setButton(AlertDialog.BUTTON_NEGATIVE,
+                mResources.getString(R.string.cancel),
                 (DialogInterface.OnClickListener) null);
         d.show();
     }
@@ -103,7 +112,8 @@ public class DragHandleColorPreference extends DialogPreference {
         updatePreferenceViews();
     }
 
-    private static ShapeDrawable createRectShape(int width, int height, int color) {
+    private static ShapeDrawable createRectShape(int width, int height,
+            int color) {
         ShapeDrawable shape = new ShapeDrawable(new RectShape());
         shape.setIntrinsicHeight(height);
         shape.setIntrinsicWidth(width);

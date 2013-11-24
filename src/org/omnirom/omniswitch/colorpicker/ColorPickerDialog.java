@@ -36,12 +36,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class ColorPickerDialog extends AlertDialog implements
-        ColorPickerView.OnColorChangedListener, TextWatcher, OnFocusChangeListener {
+        ColorPickerView.OnColorChangedListener, TextWatcher,
+        OnFocusChangeListener {
 
     private ColorPickerView mColorPicker;
     private EditText mHexColorInput;
     private ColorPanelView mNewColor;
     private LayoutInflater mInflater;
+
     /**
      * @param context
      * @param initialColor
@@ -59,16 +61,18 @@ public class ColorPickerDialog extends AlertDialog implements
     }
 
     /**
-     * This function sets up the dialog with the proper values.  
-     *
-     * @param color - the color to set
+     * This function sets up the dialog with the proper values.
+     * 
+     * @param color
+     *            - the color to set
      */
     private void setUp(int color) {
-        mInflater = (LayoutInflater) getContext()
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) getContext().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
         View layout = mInflater.inflate(R.layout.dialog_color_picker, null);
 
-        mColorPicker = (ColorPickerView) layout.findViewById(R.id.color_picker_view);
+        mColorPicker = (ColorPickerView) layout
+                .findViewById(R.id.color_picker_view);
         mHexColorInput = (EditText) layout.findViewById(R.id.hex_color_input);
         mNewColor = (ColorPanelView) layout.findViewById(R.id.color_panel);
 
@@ -81,7 +85,6 @@ public class ColorPickerDialog extends AlertDialog implements
         setTitle(R.string.drag_handle_color_dialog_title);
     }
 
-
     @Override
     public void onColorChanged(int color) {
         final boolean hasAlpha = mColorPicker.isAlphaSliderVisible();
@@ -93,7 +96,9 @@ public class ColorPickerDialog extends AlertDialog implements
     }
 
     public void setAlphaSliderVisible(boolean visible) {
-        mHexColorInput.setFilters(new InputFilter[] { new InputFilter.LengthFilter(visible ? 8 : 6) } );
+        mHexColorInput
+                .setFilters(new InputFilter[] { new InputFilter.LengthFilter(
+                        visible ? 8 : 6) });
         mColorPicker.setAlphaSliderVisible(visible);
     }
 
@@ -102,7 +107,8 @@ public class ColorPickerDialog extends AlertDialog implements
     }
 
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    public void beforeTextChanged(CharSequence s, int start, int count,
+            int after) {
     }
 
     @Override

@@ -49,8 +49,8 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder setShowcaseItem(int itemType,
-            int actionItemId, Activity activity) {
+    public ShowcaseViewBuilder setShowcaseItem(int itemType, int actionItemId,
+            Activity activity) {
         showcaseView.setShowcaseItem(itemType, actionItemId, activity);
         return this;
     }
@@ -65,13 +65,15 @@ public class ShowcaseViewBuilder {
         return this;
     }
 
-    public ShowcaseViewBuilder animateGesture(float offsetStartX, float offsetStartY,
-            float offsetEndX, float offsetEndY) {
-        showcaseView.animateGesture(offsetStartX, offsetStartY, offsetEndX, offsetEndY);
+    public ShowcaseViewBuilder animateGesture(float offsetStartX,
+            float offsetStartY, float offsetEndX, float offsetEndY) {
+        showcaseView.animateGesture(offsetStartX, offsetStartY, offsetEndX,
+                offsetEndY);
         return this;
     }
 
-    public ShowcaseViewBuilder setTextColors(int titleTextColor, int detailTextColor) {
+    public ShowcaseViewBuilder setTextColors(int titleTextColor,
+            int detailTextColor) {
         showcaseView.setTextColors(titleTextColor, detailTextColor);
         return this;
     }

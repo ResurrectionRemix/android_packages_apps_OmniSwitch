@@ -25,20 +25,20 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class BootReceiver extends BroadcastReceiver {
-	private static final String TAG = "RecentsBootReceiver";
+    private static final String TAG = "RecentsBootReceiver";
 
-	@Override
-	public void onReceive(final Context context, Intent intent) {
-		try {
-			SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(context);
-			if (prefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, false)) {
-				Intent loadavg = new Intent(context, RecentsService.class);
-				context.startService(loadavg);
-			}
+    @Override
+    public void onReceive(final Context context, Intent intent) {
+        try {
+            SharedPreferences prefs = PreferenceManager
+                    .getDefaultSharedPreferences(context);
+            if (prefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, false)) {
+                Intent loadavg = new Intent(context, RecentsService.class);
+                context.startService(loadavg);
+            }
 
-		} catch (Exception e) {
-			Log.e(TAG, "Can't start load average service", e);
-		}
-	}
+        } catch (Exception e) {
+            Log.e(TAG, "Can't start load average service", e);
+        }
+    }
 }

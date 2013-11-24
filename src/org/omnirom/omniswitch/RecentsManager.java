@@ -33,186 +33,186 @@ import android.util.Log;
 import android.os.RemoteException;
 
 public class RecentsManager {
-	private static final String TAG = "RecentsManager";
-	private boolean DEBUG = true;
-	private List<TaskDescription> mLoadedTasks;
-	private RecentTasksLoader mRecentTasksLoader;
-	private RecentsLayout mLayout;
-	private Context mContext;
-	private boolean mIsShowning;
+    private static final String TAG = "RecentsManager";
+    private boolean DEBUG = true;
+    private List<TaskDescription> mLoadedTasks;
+    private RecentTasksLoader mRecentTasksLoader;
+    private RecentsLayout mLayout;
+    private Context mContext;
+    private boolean mIsShowning;
 
-	public RecentsManager(Context context) {
-		mContext = context;
-		init();
-	}
+    public RecentsManager(Context context) {
+        mContext = context;
+        init();
+    }
 
-	public void hide() {
-		if (mIsShowning) {
-			Log.d(TAG, "hide");
-			mLayout.hide();
-			mIsShowning = false;
-		}
-	}
+    public void hide() {
+        if (mIsShowning) {
+            Log.d(TAG, "hide");
+            mLayout.hide();
+            mIsShowning = false;
+        }
+    }
 
-	public void show() {
-		if (!mIsShowning) {
-			Log.d(TAG, "show");
+    public void show() {
+        if (!mIsShowning) {
+            Log.d(TAG, "show");
 
-			// clear so that we dont get a reorder
-			// during show
-			mLoadedTasks.clear();
-			mLayout.update(mLoadedTasks);
+            // clear so that we dont get a reorder
+            // during show
+            mLoadedTasks.clear();
+            mLayout.update(mLoadedTasks);
 
-			// show immediately
-			mLayout.show();
-			mIsShowning = true;
+            // show immediately
+            mLayout.show();
+            mIsShowning = true;
 
-			// update task list
-			reload();
-		}
-	}
+            // update task list
+            reload();
+        }
+    }
 
-	public boolean isShowing() {
-		return mIsShowning;
-	}
+    public boolean isShowing() {
+        return mIsShowning;
+    }
 
-	private void init() {
-		Log.d(TAG, "init");
+    private void init() {
+        Log.d(TAG, "init");
 
-		mLoadedTasks = new ArrayList<TaskDescription>();
+        mLoadedTasks = new ArrayList<TaskDescription>();
 
-		mLayout = new RecentsLayout(mContext, null, this);
-		mRecentTasksLoader = RecentTasksLoader.getInstance(mContext, this);
-		mRecentTasksLoader.loadTasksInBackground();
-	}
+        mLayout = new RecentsLayout(mContext, null, this);
+        mRecentTasksLoader = RecentTasksLoader.getInstance(mContext, this);
+        mRecentTasksLoader.loadTasksInBackground();
+    }
 
-	public void killManager() {
-		RecentTasksLoader.killInstance();
-	}
+    public void killManager() {
+        RecentTasksLoader.killInstance();
+    }
 
-	public void update(List<TaskDescription> taskList) {
-		Log.d(TAG, "update");
-		mLoadedTasks.clear();
-		mLoadedTasks.addAll(taskList);
-		mLayout.update(mLoadedTasks);
-	}
+    public void update(List<TaskDescription> taskList) {
+        Log.d(TAG, "update");
+        mLoadedTasks.clear();
+        mLoadedTasks.addAll(taskList);
+        mLayout.update(mLoadedTasks);
+    }
 
-	public void reload() {
-		mRecentTasksLoader.cancelLoadingTasks();
-		mRecentTasksLoader.loadTasksInBackground();
-	}
+    public void reload() {
+        mRecentTasksLoader.cancelLoadingTasks();
+        mRecentTasksLoader.loadTasksInBackground();
+    }
 
-	public void switchTask(TaskDescription ad) {
-		if (ad.isKilled()) {
-			return;
-		}
-		final ActivityManager am = (ActivityManager) mContext
-				.getSystemService(Context.ACTIVITY_SERVICE);
+    public void switchTask(TaskDescription ad) {
+        if (ad.isKilled()) {
+            return;
+        }
+        final ActivityManager am = (ActivityManager) mContext
+                .getSystemService(Context.ACTIVITY_SERVICE);
 
-		Log.d(TAG, "switch to " + ad.getPackageName());
+        Log.d(TAG, "switch to " + ad.getPackageName());
 
-		Intent hideRecent = new Intent(
-				RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-		mContext.sendBroadcast(hideRecent);
+        Intent hideRecent = new Intent(
+                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+        mContext.sendBroadcast(hideRecent);
 
-		if (ad.getTaskId() >= 0) {
-			// This is an active task; it should just go to the foreground.
-			am.moveTaskToFront(ad.getTaskId(),
-					ActivityManager.MOVE_TASK_WITH_HOME);
-		} else {
-			Intent intent = ad.getIntent();
-			intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
-					| Intent.FLAG_ACTIVITY_TASK_ON_HOME
-					| Intent.FLAG_ACTIVITY_NEW_TASK);
-			if (DEBUG)
-				Log.v(TAG, "Starting activity " + intent);
-			try {
-				mContext.startActivityAsUser(intent, new UserHandle(
-						UserHandle.USER_CURRENT));
-			} catch (SecurityException e) {
-				Log.e(TAG, "Recents does not have the permission to launch "
-						+ intent, e);
-			}
-		}
-	}
+        if (ad.getTaskId() >= 0) {
+            // This is an active task; it should just go to the foreground.
+            am.moveTaskToFront(ad.getTaskId(),
+                    ActivityManager.MOVE_TASK_WITH_HOME);
+        } else {
+            Intent intent = ad.getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+                    | Intent.FLAG_ACTIVITY_TASK_ON_HOME
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (DEBUG)
+                Log.v(TAG, "Starting activity " + intent);
+            try {
+                mContext.startActivityAsUser(intent, new UserHandle(
+                        UserHandle.USER_CURRENT));
+            } catch (SecurityException e) {
+                Log.e(TAG, "Recents does not have the permission to launch "
+                        + intent, e);
+            }
+        }
+    }
 
-	public void killTask(TaskDescription ad) {
-		final ActivityManager am = (ActivityManager) mContext
-				.getSystemService(Context.ACTIVITY_SERVICE);
+    public void killTask(TaskDescription ad) {
+        final ActivityManager am = (ActivityManager) mContext
+                .getSystemService(Context.ACTIVITY_SERVICE);
 
-		am.removeTask(ad.getPersistentTaskId(),
-				ActivityManager.REMOVE_TASK_KILL_PROCESS);
-		Log.d(TAG, "kill " + ad.getPackageName());
-		ad.setKilled();
-		mLoadedTasks.remove(ad);
-		mLayout.update(mLoadedTasks);
-	}
+        am.removeTask(ad.getPersistentTaskId(),
+                ActivityManager.REMOVE_TASK_KILL_PROCESS);
+        Log.d(TAG, "kill " + ad.getPackageName());
+        ad.setKilled();
+        mLoadedTasks.remove(ad);
+        mLayout.update(mLoadedTasks);
+    }
 
-	public void killAll() {
-		final ActivityManager am = (ActivityManager) mContext
-				.getSystemService(Context.ACTIVITY_SERVICE);
+    public void killAll() {
+        final ActivityManager am = (ActivityManager) mContext
+                .getSystemService(Context.ACTIVITY_SERVICE);
 
-		if (mLoadedTasks.size() == 0) {
-			return;
-		}
+        if (mLoadedTasks.size() == 0) {
+            return;
+        }
 
-		Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
-		while (nextTask.hasNext()) {
-			TaskDescription ad = nextTask.next();
-			am.removeTask(ad.getPersistentTaskId(),
-					ActivityManager.REMOVE_TASK_KILL_PROCESS);
-			Log.d(TAG, "kill " + ad.getPackageName());
-			ad.setKilled();
-		}
-		dismissAndGoHome();
-	}
+        Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
+        while (nextTask.hasNext()) {
+            TaskDescription ad = nextTask.next();
+            am.removeTask(ad.getPersistentTaskId(),
+                    ActivityManager.REMOVE_TASK_KILL_PROCESS);
+            Log.d(TAG, "kill " + ad.getPackageName());
+            ad.setKilled();
+        }
+        dismissAndGoHome();
+    }
 
-	public void killOther() {
-		final ActivityManager am = (ActivityManager) mContext
-				.getSystemService(Context.ACTIVITY_SERVICE);
+    public void killOther() {
+        final ActivityManager am = (ActivityManager) mContext
+                .getSystemService(Context.ACTIVITY_SERVICE);
 
-		if (mLoadedTasks.size() == 0) {
-			return;
-		}
-		Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
-		// skip active task
-		nextTask.next();
-		while (nextTask.hasNext()) {
-			TaskDescription ad = nextTask.next();
-			am.removeTask(ad.getPersistentTaskId(),
-					ActivityManager.REMOVE_TASK_KILL_PROCESS);
-			Log.d(TAG, "kill " + ad.getPackageName());
-			ad.setKilled();
-		}
-		Intent hideRecent = new Intent(
-				RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-		mContext.sendBroadcast(hideRecent);
-	}
+        if (mLoadedTasks.size() == 0) {
+            return;
+        }
+        Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
+        // skip active task
+        nextTask.next();
+        while (nextTask.hasNext()) {
+            TaskDescription ad = nextTask.next();
+            am.removeTask(ad.getPersistentTaskId(),
+                    ActivityManager.REMOVE_TASK_KILL_PROCESS);
+            Log.d(TAG, "kill " + ad.getPackageName());
+            ad.setKilled();
+        }
+        Intent hideRecent = new Intent(
+                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+        mContext.sendBroadcast(hideRecent);
+    }
 
-	public void dismissAndGoHome() {
-		Intent hideRecent = new Intent(
-				RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-		mContext.sendBroadcast(hideRecent);
+    public void dismissAndGoHome() {
+        Intent hideRecent = new Intent(
+                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+        mContext.sendBroadcast(hideRecent);
 
-		Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
-		homeIntent.addCategory(Intent.CATEGORY_HOME);
-		homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-				| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-		mContext.startActivityAsUser(homeIntent, new UserHandle(
-				UserHandle.USER_CURRENT));
-	}
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        mContext.startActivityAsUser(homeIntent, new UserHandle(
+                UserHandle.USER_CURRENT));
+    }
 
-	public void updatePrefs(SharedPreferences prefs, String key){
-		mLayout.updatePrefs(prefs, key);
-		mRecentTasksLoader.updatePrefs(prefs, key);
-	}
+    public void updatePrefs(SharedPreferences prefs, String key) {
+        mLayout.updatePrefs(prefs, key);
+        mRecentTasksLoader.updatePrefs(prefs, key);
+    }
 
-	public void toggleLastApp() {
-		if (mLoadedTasks.size() < 2) {
-			return;
-		}
-		
-		TaskDescription ad = mLoadedTasks.get(1);
-		switchTask(ad);
-	}
+    public void toggleLastApp() {
+        if (mLoadedTasks.size() < 2) {
+            return;
+        }
+
+        TaskDescription ad = mLoadedTasks.get(1);
+        switchTask(ad);
+    }
 }

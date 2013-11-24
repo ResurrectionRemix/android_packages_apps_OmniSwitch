@@ -10,8 +10,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class SeekBarPreference extends Preference
-        implements OnSeekBarChangeListener {
+public class SeekBarPreference extends Preference implements
+        OnSeekBarChangeListener {
 
     public static int maximum = 100;
     public static int interval = 5;
@@ -30,7 +30,8 @@ public class SeekBarPreference extends Preference
     @Override
     protected View onCreateView(ViewGroup parent) {
 
-        View layout = View.inflate(getContext(), R.layout.slider_preference, null);
+        View layout = View.inflate(getContext(), R.layout.slider_preference,
+                null);
 
         monitorBox = (TextView) layout.findViewById(R.id.monitor_box);
         bar = (SeekBar) layout.findViewById(R.id.seek_bar);
@@ -58,7 +59,8 @@ public class SeekBarPreference extends Preference
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onProgressChanged(SeekBar seekBar, int progress,
+            boolean fromUser) {
 
         progress = Math.round(((float) progress) / interval) * interval;
         seekBar.setProgress(progress);

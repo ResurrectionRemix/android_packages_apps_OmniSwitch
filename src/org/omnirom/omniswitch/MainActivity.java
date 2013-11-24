@@ -26,70 +26,70 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class MainActivity extends Activity {
-	private static final String TAG = "RecentsMainActivity";
+    private static final String TAG = "RecentsMainActivity";
 
-	private ActivityReceiver mReceiver;
+    private ActivityReceiver mReceiver;
 
-	public class ActivityReceiver extends BroadcastReceiver {
-		public static final String ACTION_FINISH = "org.omnirom.omniswitch.ACTION_FINISH_ACTIVITY";
+    public class ActivityReceiver extends BroadcastReceiver {
+        public static final String ACTION_FINISH = "org.omnirom.omniswitch.ACTION_FINISH_ACTIVITY";
 
-		@Override
-		public void onReceive(final Context context, Intent intent) {
-			String action = intent.getAction();
-			Log.d(TAG, "onReceive " + action);
-			if (ACTION_FINISH.equals(action)) {
-				finish();
-			}
-		}
-	}
+        @Override
+        public void onReceive(final Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "onReceive " + action);
+            if (ACTION_FINISH.equals(action)) {
+                finish();
+            }
+        }
+    }
 
-	@Override
-	public void onStart() {
-		Log.d(TAG, "onStart");
-		super.onStart();
-	}
+    @Override
+    public void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
+    }
 
-	@Override
-	public void onStop() {
-		Log.d(TAG, "onStop");
-		super.onStop();
-	}
+    @Override
+    public void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "onCreate");
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
 
-		mReceiver = new ActivityReceiver();
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(ActivityReceiver.ACTION_FINISH);
+        mReceiver = new ActivityReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ActivityReceiver.ACTION_FINISH);
 
-		registerReceiver(mReceiver, filter);
+        registerReceiver(mReceiver, filter);
 
-		super.onCreate(savedInstanceState);
-	}
+        super.onCreate(savedInstanceState);
+    }
 
-	@Override
-	public void onPause() {
-		Log.d(TAG, "onPause");
-		Intent hideRecent = new Intent(
-				RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-		sendBroadcast(hideRecent);
-		super.onPause();
-	}
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause");
+        Intent hideRecent = new Intent(
+                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+        sendBroadcast(hideRecent);
+        super.onPause();
+    }
 
-	@Override
-	public void onResume() {
-		Log.d(TAG, "onResume");
-		Intent hideRecent = new Intent(
-				RecentsService.RecentsReceiver.ACTION_SHOW_RECENTS2);
-		sendBroadcast(hideRecent);
-		super.onResume();
-	}
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume");
+        Intent hideRecent = new Intent(
+                RecentsService.RecentsReceiver.ACTION_SHOW_RECENTS2);
+        sendBroadcast(hideRecent);
+        super.onResume();
+    }
 
-	@Override
-	public void onDestroy() {
-		Log.d(TAG, "onDestroy");
-		unregisterReceiver(mReceiver);
-		super.onDestroy();
-	}
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        unregisterReceiver(mReceiver);
+        super.onDestroy();
+    }
 }

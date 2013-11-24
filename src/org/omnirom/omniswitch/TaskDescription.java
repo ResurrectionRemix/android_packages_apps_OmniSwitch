@@ -22,89 +22,89 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
 public final class TaskDescription {
-	final ResolveInfo resolveInfo;
-	final int taskId; // application task id for curating apps
-	final int persistentTaskId; // persistent id
-	final Intent intent; // launch intent for application
-	final String packageName; // used to override animations (see onClick())
-	final CharSequence description;
-	private Drawable mIcon; // application package icon
-	private CharSequence mLabel; // application package label
-	private boolean mLoaded;
-	private boolean mKilled;
+    final ResolveInfo resolveInfo;
+    final int taskId; // application task id for curating apps
+    final int persistentTaskId; // persistent id
+    final Intent intent; // launch intent for application
+    final String packageName; // used to override animations (see onClick())
+    final CharSequence description;
+    private Drawable mIcon; // application package icon
+    private CharSequence mLabel; // application package label
+    private boolean mLoaded;
+    private boolean mKilled;
 
-	public TaskDescription(int _taskId, int _persistentTaskId,
-			ResolveInfo _resolveInfo, Intent _intent, String _packageName,
-			CharSequence _description) {
-		resolveInfo = _resolveInfo;
-		intent = _intent;
-		taskId = _taskId;
-		persistentTaskId = _persistentTaskId;
+    public TaskDescription(int _taskId, int _persistentTaskId,
+            ResolveInfo _resolveInfo, Intent _intent, String _packageName,
+            CharSequence _description) {
+        resolveInfo = _resolveInfo;
+        intent = _intent;
+        taskId = _taskId;
+        persistentTaskId = _persistentTaskId;
 
-		description = _description;
-		packageName = _packageName;
-	}
+        description = _description;
+        packageName = _packageName;
+    }
 
-	public TaskDescription() {
-		resolveInfo = null;
-		intent = null;
-		taskId = -1;
-		persistentTaskId = -1;
+    public TaskDescription() {
+        resolveInfo = null;
+        intent = null;
+        taskId = -1;
+        persistentTaskId = -1;
 
-		description = null;
-		packageName = null;
-	}
+        description = null;
+        packageName = null;
+    }
 
-	public void setLoaded(boolean loaded) {
-		mLoaded = loaded;
-	}
+    public void setLoaded(boolean loaded) {
+        mLoaded = loaded;
+    }
 
-	public boolean isLoaded() {
-		return mLoaded;
-	}
+    public boolean isLoaded() {
+        return mLoaded;
+    }
 
-	public boolean isNull() {
-		return resolveInfo == null;
-	}
+    public boolean isNull() {
+        return resolveInfo == null;
+    }
 
-	// mark all these as locked?
-	public CharSequence getLabel() {
-		return mLabel;
-	}
+    // mark all these as locked?
+    public CharSequence getLabel() {
+        return mLabel;
+    }
 
-	public void setLabel(CharSequence label) {
-		mLabel = label;
-	}
+    public void setLabel(CharSequence label) {
+        mLabel = label;
+    }
 
-	public Drawable getIcon() {
-		return mIcon;
-	}
+    public Drawable getIcon() {
+        return mIcon;
+    }
 
-	public void setIcon(Drawable icon) {
-		mIcon = icon;
-	}
+    public void setIcon(Drawable icon) {
+        mIcon = icon;
+    }
 
-	public int getTaskId() {
-		return taskId;
-	}
+    public int getTaskId() {
+        return taskId;
+    }
 
-	public Intent getIntent() {
-		return intent;
-	}
+    public Intent getIntent() {
+        return intent;
+    }
 
-	public int getPersistentTaskId() {
-		return persistentTaskId;
-	}
+    public int getPersistentTaskId() {
+        return persistentTaskId;
+    }
 
-	public String getPackageName() {
-		return packageName;
-	}
+    public String getPackageName() {
+        return packageName;
+    }
 
-	public boolean isKilled() {
-		return mKilled;
-	}
+    public boolean isKilled() {
+        return mKilled;
+    }
 
-	public void setKilled() {
-		this.mKilled = true;
-	}
+    public void setKilled() {
+        this.mKilled = true;
+    }
 }

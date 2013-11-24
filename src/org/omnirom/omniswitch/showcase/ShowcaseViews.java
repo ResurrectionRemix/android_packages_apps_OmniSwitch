@@ -35,7 +35,7 @@ public class ShowcaseViews {
     private OnShowcaseAcknowledged showcaseAcknowledgedListener = new OnShowcaseAcknowledged() {
         @Override
         public void onShowCaseAcknowledged(ShowcaseView showcaseView) {
-            //DEFAULT LISTENER - DOESN'T DO ANYTHING!
+            // DEFAULT LISTENER - DOESN'T DO ANYTHING!
         }
     };
 
@@ -48,27 +48,32 @@ public class ShowcaseViews {
         this.showcaseTemplateId = showcaseTemplateLayout;
     }
 
-    public ShowcaseViews(Activity activity, int showcaseTemplateLayout, OnShowcaseAcknowledged acknowledgedListener) {
+    public ShowcaseViews(Activity activity, int showcaseTemplateLayout,
+            OnShowcaseAcknowledged acknowledgedListener) {
         this(activity, showcaseTemplateLayout);
         this.showcaseAcknowledgedListener = acknowledgedListener;
     }
 
     public void addView(ItemViewProperties properties) {
-        ShowcaseView showcaseView = new ShowcaseViewBuilder(activity, showcaseTemplateId).setShowcaseItem(properties.itemType, properties.id, activity)
+        ShowcaseView showcaseView = new ShowcaseViewBuilder(activity,
+                showcaseTemplateId)
+                .setShowcaseItem(properties.itemType, properties.id, activity)
                 .setText(properties.titleResId, properties.messageResId)
-                .setShowcaseIndicatorScale(properties.scale)
-                .build();
-        showcaseView.overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
+                .setShowcaseIndicatorScale(properties.scale).build();
+        showcaseView
+                .overrideButtonClick(createShowcaseViewDismissListener(showcaseView));
         views.add(showcaseView);
     }
 
-    private View.OnClickListener createShowcaseViewDismissListener(final ShowcaseView showcaseView) {
+    private View.OnClickListener createShowcaseViewDismissListener(
+            final ShowcaseView showcaseView) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showcaseView.hide();
                 if (views.isEmpty()) {
-                    showcaseAcknowledgedListener.onShowCaseAcknowledged(showcaseView);
+                    showcaseAcknowledgedListener
+                            .onShowCaseAcknowledged(showcaseView);
                 } else {
                     show();
                 }
@@ -101,11 +106,13 @@ public class ShowcaseViews {
         protected final int itemType;
         protected final float scale;
 
-        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType) {
+        public ItemViewProperties(int id, int titleResId, int messageResId,
+                int itemType) {
             this(id, titleResId, messageResId, itemType, DEFAULT_SCALE);
         }
 
-        public ItemViewProperties(int id, int titleResId, int messageResId, int itemType, float scale) {
+        public ItemViewProperties(int id, int titleResId, int messageResId,
+                int itemType, float scale) {
             this.id = id;
             this.titleResId = titleResId;
             this.messageResId = messageResId;

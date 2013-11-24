@@ -120,7 +120,7 @@ public class RecentsService extends Service {
 					mManager.show();
 				}
 			} else if (ACTION_HIDE_RECENTS.equals(action)) {
-				if (mManager.isReady() && mManager.isShowing()) {
+				if (mManager.isShowing()) {
 					Intent finishActivity = new Intent(
 							MainActivity.ActivityReceiver.ACTION_FINISH);
 					sendBroadcast(finishActivity);

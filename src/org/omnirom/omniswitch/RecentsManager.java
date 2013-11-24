@@ -39,9 +39,7 @@ public class RecentsManager {
 	private RecentTasksLoader mRecentTasksLoader;
 	private RecentsLayout mLayout;
 	private Context mContext;
-	private boolean mIsReady;
 	private boolean mIsShowning;
-	private boolean mShowPending;
 
 	public RecentsManager(Context context) {
 		mContext = context;
@@ -53,16 +51,24 @@ public class RecentsManager {
 			Log.d(TAG, "hide");
 			mLayout.hide();
 			mIsShowning = false;
-			mShowPending = false;
 		}
 	}
 
 	public void show() {
 		if (!mIsShowning) {
 			Log.d(TAG, "show");
-			mIsReady = false;
+
+			// clear so that we dont get a reorder
+			// during show
+			mLoadedTasks.clear();
+			mLayout.update(mLoadedTasks);
+
+			// show immediately
+			mLayout.show();
+			mIsShowning = true;
+
+			// update task list
 			reload();
-			mShowPending = true;
 		}
 	}
 
@@ -89,24 +95,11 @@ public class RecentsManager {
 		mLoadedTasks.clear();
 		mLoadedTasks.addAll(taskList);
 		mLayout.update(mLoadedTasks);
-
-		// if we need to show wait until all loaded
-		// to prevent updates after showing
-		if (mShowPending){
-			mLayout.show();
-			mIsShowning = true;
-			mShowPending = false;
-		}
-		mIsReady = true;
 	}
 
 	public void reload() {
 		mRecentTasksLoader.cancelLoadingTasks();
 		mRecentTasksLoader.loadTasksInBackground();
-	}
-
-	public boolean isReady() {
-		return mIsReady;
 	}
 
 	public void switchTask(TaskDescription ad) {

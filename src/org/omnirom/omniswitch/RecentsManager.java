@@ -127,8 +127,7 @@ public class RecentsManager {
             if (DEBUG)
                 Log.v(TAG, "Starting activity " + intent);
             try {
-                mContext.startActivityAsUser(intent, new UserHandle(
-                        UserHandle.USER_CURRENT));
+                mContext.startActivity(intent);
             } catch (SecurityException e) {
                 Log.e(TAG, "Recents does not have the permission to launch "
                         + intent, e);
@@ -198,8 +197,7 @@ public class RecentsManager {
         homeIntent.addCategory(Intent.CATEGORY_HOME);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        mContext.startActivityAsUser(homeIntent, new UserHandle(
-                UserHandle.USER_CURRENT));
+        mContext.startActivity(homeIntent);
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {

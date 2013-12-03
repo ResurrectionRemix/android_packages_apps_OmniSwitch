@@ -6,6 +6,8 @@
 
     <include layout="@layout/buttons" />
 
+    <include layout="@layout/recents_rambar" />
+    
     <ListView
             android:id="@+id/recent_list"
             android:layout_width="match_parent"

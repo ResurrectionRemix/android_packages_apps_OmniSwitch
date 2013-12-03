@@ -6,6 +6,8 @@
 
     <include layout="@layout/buttons" />
 
+    <include layout="@layout/recents_rambar" />
+    
     <org.omnirom.omniswitch.HorizontalListView
             android:id="@+id/recent_list_horizontal"
             android:layout_width="match_parent"

@@ -17,9 +17,13 @@
  */
 package org.omnirom.omniswitch;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omnirom.omniswitch.ui.LinearColorBar;
+
+import android.app.ActivityManager;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +33,7 @@ import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.format.Formatter;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -80,6 +85,14 @@ public class RecentsLayout extends LinearLayout {
     private float mDensity;
     private int mHorizontalMaxWidth = mIconSize;
     private int mHorizontalScrollerHeight = mIconSize * 2;
+    private LinearColorBar mRamUsageBar;
+    private boolean mShowRambar;
+    private TextView mBackgroundProcessText;
+    private TextView mForegroundProcessText;
+    private Handler mHandler = new Handler();
+    private ActivityManager.MemoryInfo mMemInfo = new ActivityManager.MemoryInfo();
+    private MemInfoReader mMemInfoReader = new MemInfoReader();
+    private long mSecServerMem;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -128,6 +141,28 @@ public class RecentsLayout extends LinearLayout {
         mRecentListAdapter = new RecentListAdapter(mContext,
                 android.R.layout.simple_list_item_multiple_choice, mLoadedTasks);
         mDensity = mContext.getResources().getDisplayMetrics().density;
+
+        final ActivityManager am = (ActivityManager) mContext
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        am.getMemoryInfo(mMemInfo);
+        String sClassName = "android.app.ActivityManager";  
+        try {  
+            Class classToInvestigate = Class.forName(sClassName); 
+            Class[] classes = classToInvestigate.getDeclaredClasses();
+            for (int i=0; i < classes.length; i++){
+            	Class c = classes[i];
+            	if(c.getName().equals("android.app.ActivityManager$MemoryInfo")){
+                    String strNewFieldName = "secondaryServerThreshold";  
+                    Field field = c.getField(strNewFieldName); 
+                    mSecServerMem = field.getLong(mMemInfo);
+                    break;
+            	}
+            }
+        } catch (ClassNotFoundException e) {  
+        } catch (NoSuchFieldException e) { 
+        } catch (Exception e) {  
+        }  
+
     }
 
     private void createView() {
@@ -295,6 +330,13 @@ public class RecentsLayout extends LinearLayout {
             }
         });
 
+        mRamUsageBar = (LinearColorBar) mView.findViewById(R.id.ram_usage_bar);
+        mForegroundProcessText = (TextView) mView.findViewById(R.id.foregroundText);
+        mBackgroundProcessText = (TextView) mView.findViewById(R.id.backgroundText);
+
+        if (!mShowRambar){
+            mRamUsageBar.setVisibility(View.GONE);
+        }
         mPopupView = new FrameLayout(mContext);
         mPopupView.setBackgroundColor(mBackgroundColor);
         mPopupView.getBackground().setAlpha(mBackgroundOpacity);
@@ -321,6 +363,14 @@ public class RecentsLayout extends LinearLayout {
                 return true;
             }
         });
+        mView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG, "onTouch");
+                return false;
+            }
+        });
+
     }
 
     public void show() {
@@ -427,8 +477,9 @@ public class RecentsLayout extends LinearLayout {
                         : WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                 PixelFormat.TRANSLUCENT);
+        params.dimAmount = 0.6f;
         params.gravity = getGravity();
         return params;
     }
@@ -442,6 +493,7 @@ public class RecentsLayout extends LinearLayout {
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
         mRecentListAdapter.notifyDataSetChanged();
+        mHandler.post(updateRamBarTask);
     }
 
     private void handleLongPress(final TaskDescription ad, View view) {
@@ -503,5 +555,29 @@ public class RecentsLayout extends LinearLayout {
         // TODO dont hardcode padding start + padding end here
         mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
         mHorizontalScrollerHeight = (int) ((mIconSize + 40) * mDensity + 0.5f);
+        mShowRambar = prefs.getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
     }
+
+    private final Runnable updateRamBarTask = new Runnable() {
+        @Override
+        public void run() {
+            if (!mShowRambar || mRamUsageBar == null){
+                return;
+            }
+            mMemInfoReader.readMemInfo();
+            long availMem = mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize() - mSecServerMem;
+            long totalMem = mMemInfoReader.getTotalSize();
+
+            String sizeStr = Formatter.formatShortFileSize(mContext, totalMem-availMem);
+            mForegroundProcessText.setText(getResources().getString(
+                    R.string.service_foreground_processes, sizeStr));
+            sizeStr = Formatter.formatShortFileSize(mContext, availMem);
+            mBackgroundProcessText.setText(getResources().getString(
+                    R.string.service_background_processes, sizeStr));
+
+            float fTotalMem = totalMem;
+            float fAvailMem = availMem;
+            mRamUsageBar.setRatios((fTotalMem - fAvailMem) / fTotalMem, 0, 0);
+        }
+    };
 }

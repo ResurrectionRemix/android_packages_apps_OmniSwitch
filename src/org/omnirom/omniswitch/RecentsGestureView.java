@@ -65,6 +65,8 @@ public class RecentsGestureView extends LinearLayout {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                boolean defaultResult = v.onTouchEvent(event);
+
                 int action = event.getAction();
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
@@ -109,10 +111,21 @@ public class RecentsGestureView extends LinearLayout {
                     mRibbonSwipeStarted = false;
                     mRecentsStarted = false;
                     break;
+                default:
+                    return defaultResult;
                 }
                 return true;
             }
         });
+        
+        mDragButton.setOnLongClickListener(new OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View arg0) {
+                Intent showRibbon = new Intent(
+                        RecentsService.RecentsReceiver.ACTION_SHOW_RECENTS);
+                mContext.sendBroadcast(showRibbon);
+                return true;
+            }});
         updateLayout();
     }
 

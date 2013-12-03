@@ -74,6 +74,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private static final String PREF_FAVORITE_APPS = "favorite_apps";
     private static final String PREF_ADJUST_HANDLE = "adjust_handle";
     public static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
+    public static final String PREF_SHOW_RAMBAR = "show_rambar";
 
     private final static int SHOWCASE_INDEX_ADJUST = 0;
 
@@ -100,6 +101,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private SettingsGestureView mGestureView;
     private ShowcaseView mShowcaseView;
     private int mShowCaseIndex;
+    private CheckBoxPreference mShowRambar;
 
     @Override
     public void onPause() {
@@ -175,6 +177,8 @@ public class SettingsActivity extends PreferenceActivity implements
 
         mPackages = new HashMap<String, Package>();
         mGestureView = new SettingsGestureView(this, null);
+        
+        mShowRambar = (CheckBoxPreference) findPreference(PREF_SHOW_RAMBAR);
         updateEnablement(false, null);
     }
 
@@ -198,6 +202,7 @@ public class SettingsActivity extends PreferenceActivity implements
         mAnimate.setEnabled(running);
         mStartOnBoot.setEnabled(running);
         mDragHandleColor.setEnabled(running);
+        mShowRambar.setEnabled(running);
     }
 
     @Override

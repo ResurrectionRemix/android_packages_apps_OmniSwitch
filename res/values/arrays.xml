@@ -4,13 +4,13 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string-array name="orientation_entries" translatable="false">
-        <item>@string/orientation_vertical</item>
         <item>@string/orientation_horizontal</item>
+        <item>@string/orientation_vertical</item>
     </string-array>
 
     <string-array name="orientation_values" translatable="false">
-        <item>vertical</item>
         <item>horizontal</item>
+        <item>vertical</item>
     </string-array>
 
     <string-array name="drag_size_entries" translatable="false">

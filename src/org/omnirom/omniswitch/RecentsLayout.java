@@ -93,6 +93,7 @@ public class RecentsLayout extends LinearLayout {
     private ActivityManager.MemoryInfo mMemInfo = new ActivityManager.MemoryInfo();
     private MemInfoReader mMemInfoReader = new MemInfoReader();
     private long mSecServerMem;
+    private float mPosY = -1.0f;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -480,12 +481,23 @@ public class RecentsLayout extends LinearLayout {
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                 PixelFormat.TRANSLUCENT);
         params.dimAmount = 0.6f;
-        params.gravity = getGravity();
+
+        if (mHorizontal && mPosY != -1.0f) {
+        	params.gravity = getAbsoluteGravity();
+        	params.y = (int) (mPosY - mHorizontalScrollerHeight / 2);
+        } else {
+        	params.gravity = getDefaultGravity();
+        }
+
         return params;
     }
 
-    private int getGravity() {
+    private int getDefaultGravity() {
         return Gravity.CENTER;
+    }
+
+    private int getAbsoluteGravity() {
+        return Gravity.TOP;
     }
 
     public void update(List<TaskDescription> taskList) {
@@ -556,6 +568,7 @@ public class RecentsLayout extends LinearLayout {
         mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
         mHorizontalScrollerHeight = (int) ((mIconSize + 40) * mDensity + 0.5f);
         mShowRambar = prefs.getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
+        mPosY = prefs.getFloat("handle_pos_y", -1.0f);
     }
 
     private final Runnable updateRamBarTask = new Runnable() {

@@ -7,52 +7,67 @@
 	<CheckBoxPreference
 		android:key="start_on_boot"
 		android:title="@string/start_on_boot_title" />
-	<CheckBoxPreference
-		android:defaultValue="true"
-		android:key="animate"
-		android:title="@string/animate_title" />
-	<ListPreference
-		android:entries="@array/orientation_entries"
-		android:entryValues="@array/orientation_values"
-		android:key="orientation"
-		android:summary="@string/orientation_vertical"
-		android:title="@string/orientation_title" />
-	<ListPreference
-		android:entries="@array/icon_size_entries"
-		android:entryValues="@array/icon_size_values"
-		android:key="icon_size"
-		android:summary="@string/icon_size_normal"
-		android:title="@string/icon_size_title" />
-	<org.omnirom.omniswitch.SeekBarPreference
-		android:defaultValue="100"
-		android:key="opacity"
-		android:title="@string/opacity_title" />
-	<CheckBoxPreference
-		android:defaultValue="false"
-		android:key="show_rambar"
-		android:title="@string/show_rambar_title" />
-	<ListPreference
-		android:entries="@array/drag_size_entries"
-		android:entryValues="@array/drag_size_values"
-		android:key="drag_handle_size"
-		android:summary="@string/drag_size_normal"
-		android:title="@string/drag_size_title" />
-	<ListPreference
-		android:entries="@array/drag_location_entries"
-		android:entryValues="@array/drag_location_values"
-		android:key="drag_handle_location"
-		android:summary="@string/drag_location_right"
-		android:title="@string/drag_location_title" />
-	<org.omnirom.omniswitch.DragHandleColorPreference
-		android:key="drag_handle_color"
-		android:title="@string/drag_handle_color_title" />
-	<Preference
-		android:key="adjust_handle"
-		android:title="@string/adjust_handle_title" />
--
-	<!--
-       <Preference
-       android:key="favorite_apps"
-       android:title="@string/favorite_apps_title" />
-	-->
+	<PreferenceCategory
+		android:key="category_overlay"
+		android:title="@string/category_overlay_title" >
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="animate"
+			android:title="@string/animate_title" />
+		<!--
+             <ListPreference
+			android:entries="@array/orientation_entries"
+			android:entryValues="@array/orientation_values"
+			android:key="orientation"
+			android:summary="@string/orientation_vertical"
+			android:title="@string/orientation_title" />
+		-->
+		<ListPreference
+			android:entries="@array/icon_size_entries"
+			android:entryValues="@array/icon_size_values"
+			android:key="icon_size"
+			android:summary="@string/icon_size_normal"
+			android:title="@string/icon_size_title" />
+		<org.omnirom.omniswitch.SeekBarPreference
+			android:defaultValue="100"
+			android:key="opacity"
+			android:title="@string/opacity_title" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="show_rambar"
+			android:title="@string/show_rambar_title" />
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="show_labels"
+			android:title="@string/show_app_labels" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="category_drag_handle"
+		android:title="@string/category_drag_handle_title" >
+		<ListPreference
+			android:entries="@array/drag_size_entries"
+			android:entryValues="@array/drag_size_values"
+			android:key="drag_handle_size"
+			android:summary="@string/drag_size_normal"
+			android:title="@string/drag_size_title" />
+		<ListPreference
+			android:entries="@array/drag_location_entries"
+			android:entryValues="@array/drag_location_values"
+			android:key="drag_handle_location"
+			android:summary="@string/drag_location_right"
+			android:title="@string/drag_location_title" />
+		<org.omnirom.omniswitch.DragHandleColorPreference
+			android:key="drag_handle_color"
+			android:title="@string/drag_handle_color_title" />
+		<Preference
+			android:key="adjust_handle"
+			android:title="@string/adjust_handle_title" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="category_favorite"
+		android:title="@string/category_favorites_title" >
+		<Preference
+			android:key="favorite_apps"
+			android:title="@string/favorite_apps_title" />
+	</PreferenceCategory>
 </PreferenceScreen>

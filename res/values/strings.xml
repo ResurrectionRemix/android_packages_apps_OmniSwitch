@@ -39,4 +39,8 @@
 	<string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> free</string>
 	<string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> used</string>
 	<string name="show_rambar_title">Show memory usage</string>
+	<string name="show_app_labels">Show application title</string>
+	<string name="category_overlay_title">Overlay</string>
+	<string name="category_drag_handle_title">Drag handle</string>
+	<string name="category_favorites_title">Favorites</string>
 </resources>

@@ -1176,14 +1176,17 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         @Override
         public boolean onDown(MotionEvent e) {
             mDownX = e.getRawX();
-            mSwipeListener.setEnabled(true);
-
+            if(mSwipeListener!=null){
+                mSwipeListener.setEnabled(true);
+            }
             final int index = getChildIndex((int) e.getX(), (int) e.getY());
             if (index >= 0) {
                 // set the correct position for the swipe listener
                 int adapterIndex = mLeftViewAdapterIndex + index;
-                mSwipeListener.setAdapterIndex(adapterIndex);
-                mSwipeListener.onTouch(null, e);
+                if(mSwipeListener!=null){
+                    mSwipeListener.setAdapterIndex(adapterIndex);
+                    mSwipeListener.onTouch(null, e);
+                }
             }
 
             return HorizontalListView.this.onDown(e);
@@ -1193,10 +1196,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                 float velocityY) {
             Log.d(TAG, "onFling");
-            if (!mSwipeListener.isSwiping()) {
+            if (mSwipeListener!=null && !mSwipeListener.isSwiping()) {
                 mSwipeListener.setEnabled(false);
             } else {
-                boolean res = mSwipeListener.onTouch(null, e2);
+                boolean res = false;
+                if(mSwipeListener!=null){
+                    res = mSwipeListener.onTouch(null, e2);
+                }
 
                 if (res && e2.getAction() == MotionEvent.ACTION_MOVE) {
                     return true;
@@ -1212,10 +1218,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             Log.d(TAG, "onScroll");
 
             float deltaX = Math.abs(mDownX - e2.getRawX());
-            if (deltaX > mSlop && !mSwipeListener.isSwiping()) {
+            if (deltaX > mSlop && mSwipeListener!=null && !mSwipeListener.isSwiping()) {
                 mSwipeListener.setEnabled(false);
             } else {
-                boolean res = mSwipeListener.onTouch(null, e2);
+                boolean res = false;
+                if(mSwipeListener!=null){
+                    res = mSwipeListener.onTouch(null, e2);
+                }
 
                 if (res && e2.getAction() == MotionEvent.ACTION_MOVE) {
                     return true;
@@ -1289,8 +1298,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         // Detect when the user lifts their finger off the screen after a touch
         if (event.getAction() == MotionEvent.ACTION_UP) {
             Log.d(TAG, "ACTION_UP");
-            mSwipeListener.setEnabled(true);
-            mSwipeListener.onTouch(null, event);
+            if(mSwipeListener!=null){
+                mSwipeListener.setEnabled(true);
+                mSwipeListener.onTouch(null, event);
+            }
             // If not flinging then we are idle now. The user just finished a
             // finger scroll.
             if (mFlingTracker == null || mFlingTracker.isFinished()) {
@@ -1303,9 +1314,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             releaseEdgeGlow();
         } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
             Log.d(TAG, "ACTION_CANCEL");
-            mSwipeListener.setEnabled(true);
-            mSwipeListener.onTouch(null, event);
-
+            if(mSwipeListener!=null){
+                mSwipeListener.setEnabled(true);
+                mSwipeListener.onTouch(null, event);
+            }
             unpressTouchedChild();
             releaseEdgeGlow();
 

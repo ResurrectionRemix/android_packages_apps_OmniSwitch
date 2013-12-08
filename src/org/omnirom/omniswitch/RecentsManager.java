@@ -17,11 +17,13 @@
  */
 package org.omnirom.omniswitch;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import android.app.ActivityManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ComponentName;
@@ -212,5 +214,16 @@ public class RecentsManager {
 
         TaskDescription ad = mLoadedTasks.get(1);
         switchTask(ad);
+    }
+    
+    public void startIntentFromtString(String intent) {
+        try {
+            Intent intentapp = Intent.parseUri(intent, 0);
+            mContext.startActivity(intentapp);
+        } catch (URISyntaxException e) {
+            Log.e(TAG, "URISyntaxException: [" + intent + "]");
+        } catch (ActivityNotFoundException e){
+            Log.e(TAG, "ActivityNotFound: [" + intent + "]");
+        }
     }
 }

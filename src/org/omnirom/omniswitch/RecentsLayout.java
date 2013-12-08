@@ -18,8 +18,12 @@
 package org.omnirom.omniswitch;
 
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.omnirom.omniswitch.ui.LinearColorBar;
 
@@ -28,8 +32,15 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
@@ -63,12 +74,14 @@ public class RecentsLayout extends LinearLayout {
     private LayoutInflater mInflater;
     private ListView mRecentList;
     private HorizontalListView mRecentListHorizontal;
+    private HorizontalListView mFavoriteListHorizontal;
     private ImageButton mLastAppButton;
     private ImageButton mKillAllButton;
     private ImageButton mKillOtherButton;
     private ImageButton mHomeButton;
     private ImageButton mSettingsButton;
     private RecentListAdapter mRecentListAdapter;
+    private FavoriteListAdapter mFavoriteListAdapter;
     private List<TaskDescription> mLoadedTasks;
     private Context mContext;
     private RecentsManager mRecentsManager;
@@ -77,7 +90,7 @@ public class RecentsLayout extends LinearLayout {
     private PopupMenu mPopup;
     private int mBackgroundColor = Color.BLACK;
     private int mBackgroundOpacity = 60;
-    private boolean mHorizontal;
+    private boolean mHorizontal = true;
     private View mView;
     private int mLocation = 0; // 0 = right 1 = left
     private boolean mAnimate = true;
@@ -94,12 +107,17 @@ public class RecentsLayout extends LinearLayout {
     private MemInfoReader mMemInfoReader = new MemInfoReader();
     private long mSecServerMem;
     private float mPosY = -1.0f;
+    private List<String> mFavoriteList;
+    private List<Drawable> mFavoriteIcons;
+    private List<String> mFavoriteNames;
+    private boolean mShowLabels = true;
+    private boolean mShowFavorites;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
         public RecentListAdapter(Context context, int resource,
                 List<TaskDescription> values) {
-            super(context, R.layout.recent_item, resource, values);
+            super(context, mHorizontal ? R.layout.recent_item_horizontal : R.layout.recent_item, resource, values);
         }
 
         @Override
@@ -112,7 +130,9 @@ public class RecentsLayout extends LinearLayout {
                         parent, false);
                 final TextView item = (TextView) rowView
                         .findViewById(R.id.recent_item);
-                item.setText(ad.getLabel());
+                if(mShowLabels){
+                    item.setText(ad.getLabel());
+                }
                 item.setMaxWidth(mHorizontalMaxWidth);
                 item.setCompoundDrawablesWithIntrinsicBounds(null,
                         ad.getIcon(), null, null);
@@ -121,10 +141,36 @@ public class RecentsLayout extends LinearLayout {
                         .inflate(R.layout.recent_item, parent, false);
                 final TextView item = (TextView) rowView
                         .findViewById(R.id.recent_item);
-                item.setText(ad.getLabel());
+                if(mShowLabels){
+                    item.setText(ad.getLabel());
+                }
                 item.setCompoundDrawablesWithIntrinsicBounds(ad.getIcon(),
                         null, null, null);
             }
+            return rowView;
+        }
+    }
+
+    public class FavoriteListAdapter extends ArrayAdapter<String> {
+
+        public FavoriteListAdapter(Context context, int resource,
+                List<String> values) {
+            super(context, R.layout.favorite_item, resource, values);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View rowView = null;
+            rowView = mInflater.inflate(R.layout.favorite_item,
+                    parent, false);
+            final TextView item = (TextView) rowView
+                    .findViewById(R.id.favorite_item);
+            if(mShowLabels){
+                item.setText(mFavoriteNames.get(position));
+            }
+            item.setMaxWidth(mHorizontalMaxWidth);
+            item.setCompoundDrawablesWithIntrinsicBounds(null,
+                        mFavoriteIcons.get(position), null, null);
             return rowView;
         }
     }
@@ -141,6 +187,10 @@ public class RecentsLayout extends LinearLayout {
         mLoadedTasks = new ArrayList<TaskDescription>();
         mRecentListAdapter = new RecentListAdapter(mContext,
                 android.R.layout.simple_list_item_multiple_choice, mLoadedTasks);
+        mFavoriteList = new ArrayList<String>();
+        mFavoriteListAdapter = new FavoriteListAdapter(mContext,
+                android.R.layout.simple_list_item_multiple_choice, mFavoriteList);
+        
         mDensity = mContext.getResources().getDisplayMetrics().density;
 
         final ActivityManager am = (ActivityManager) mContext
@@ -225,6 +275,32 @@ public class RecentsLayout extends LinearLayout {
             mRecentListHorizontal.setSwipeListener(touchListener);
 
             mRecentListHorizontal.setAdapter(mRecentListAdapter);
+            
+            mOpenFavorite = (ImageButton) mView.findViewById(R.id.openFavorites);
+            mOpenFavorite.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mShowFavorites = !mShowFavorites;
+                    mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
+                    mOpenFavorite.setImageDrawable(getResources().getDrawable(mShowFavorites ? R.drawable.arrow_up : R.drawable.arrow_down));
+                }
+            });
+            
+            mFavoriteListHorizontal = (HorizontalListView) mView
+                    .findViewById(R.id.favorite_list_horizontal);
+
+            mFavoriteListHorizontal.setLayoutParams(params);
+            mFavoriteListHorizontal.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent,
+                        View view, int position, long id) {
+                    Log.d(TAG, "onItemClick");
+                    String intent = mFavoriteList.get(position);
+                    mRecentsManager.startIntentFromtString(intent);
+                    hide();
+                }
+            });
+            mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
+
         } else {
             mView = mInflater.inflate(R.layout.recents_list, this, false);
             mRecentList = (ListView) mView.findViewById(R.id.recent_list);
@@ -552,8 +628,8 @@ public class RecentsLayout extends LinearLayout {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         Log.d(TAG, "updatePrefs");
-        mHorizontal = prefs.getString(SettingsActivity.PREF_ORIENTATION,
-                "vertical").equals("horizontal");
+        //mHorizontal = prefs.getString(SettingsActivity.PREF_ORIENTATION,
+        //        "vertical").equals("horizontal");
         String location = prefs.getString(
                 SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
         mLocation = Integer.valueOf(location);
@@ -564,11 +640,19 @@ public class RecentsLayout extends LinearLayout {
         String iconSize = prefs
                 .getString(SettingsActivity.PREF_ICON_SIZE, "60");
         mIconSize = Integer.valueOf(iconSize);
-        // TODO dont hardcode padding start + padding end here
-        mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
-        mHorizontalScrollerHeight = (int) ((mIconSize + 40) * mDensity + 0.5f);
         mShowRambar = prefs.getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
+        mShowLabels = prefs.getBoolean(SettingsActivity.PREF_SHOW_LABELS, true);
         mPosY = prefs.getFloat("handle_pos_y", -1.0f);
+
+        mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
+        mHorizontalScrollerHeight = (int) ((mIconSize + (mShowLabels ? 40 : 10)) * mDensity + 0.5f);
+        
+        mFavoriteList.clear();
+        String favoriteListString = prefs.getString("favorite_apps", "");
+        SettingsActivity.parseFavorites(favoriteListString, mFavoriteList);
+
+        updateFavorites();
+        mFavoriteListAdapter.notifyDataSetChanged();
     }
 
     private final Runnable updateRamBarTask = new Runnable() {
@@ -593,4 +677,53 @@ public class RecentsLayout extends LinearLayout {
             mRamUsageBar.setRatios((fTotalMem - fAvailMem) / fTotalMem, 0, 0);
         }
     };
+    private ImageButton mOpenFavorite;
+
+    private void updateFavorites(){
+        final PackageManager pm = mContext.getPackageManager();
+        List<String> validFavorites = new ArrayList<String>();
+        mFavoriteIcons = new ArrayList<Drawable>();
+        mFavoriteNames = new ArrayList<String>();
+        Iterator<String> nextFavorite = mFavoriteList.iterator();
+        while(nextFavorite.hasNext()){
+            String favorite = nextFavorite.next();
+            Intent intent = null;
+            try {
+                intent = Intent.parseUri(favorite, 0);
+                mFavoriteIcons.add(resize(Resources.getSystem(), pm.getActivityIcon(intent)));
+            } catch (NameNotFoundException e) {
+                Log.e(TAG, "NameNotFoundException: [" + favorite + "]");
+                continue;
+            } catch (URISyntaxException e) {
+                Log.e(TAG, "URISyntaxException: [" + favorite + "]");
+                continue;
+            }
+            validFavorites.add(favorite);
+            String label = SettingsActivity.getActivityLabel(pm, intent);
+            if (label==null){
+                label = favorite;
+            }
+            mFavoriteNames.add(label);
+        }
+        mFavoriteList.clear();
+        mFavoriteList.addAll(validFavorites);
+    }
+
+    private Drawable resize(Resources resources, Drawable image) {
+        // TODO
+        int size = (int) (mIconSize * mDensity + 0.5f);
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+        int originalHeight = b.getHeight();
+        int originalWidth = b.getWidth();
+
+        int l = originalHeight > originalWidth ? originalHeight : originalWidth;
+        float factor = (float) size / (float) l;
+
+        int resizedHeight = (int) (originalHeight * factor);
+        int resizedWidth = (int) (originalWidth * factor);
+
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
+                resizedHeight, false);
+        return new BitmapDrawable(resources, bitmapResized);
+    }
 }

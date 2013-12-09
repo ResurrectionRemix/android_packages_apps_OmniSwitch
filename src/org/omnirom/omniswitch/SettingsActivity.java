@@ -42,7 +42,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -196,7 +195,7 @@ public class SettingsActivity extends PreferenceActivity implements
         mShowRambar = (CheckBoxPreference) findPreference(PREF_SHOW_RAMBAR);
         mShowLabels = (CheckBoxPreference) findPreference(PREF_SHOW_LABELS);
 
-        updateEnablement(false, null);
+        //updateEnablement(false, null);
     }
 
     private void updateEnablement(boolean force, Boolean value) {
@@ -210,8 +209,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mAdjustHandle.setEnabled(running);
 
         mOpacity.setEnabled(running);
-        mOpacity.setInitValue(sPrefs.getInt("opacity", 60));
-
         mDragHandleLocation.setEnabled(running);
         mDragHandleSize.setEnabled(running);
         mIconSize.setEnabled(running);
@@ -256,7 +253,7 @@ public class SettingsActivity extends PreferenceActivity implements
                         RecentsService.RecentsReceiver.ACTION_KILL_RECENTS);
                 sendBroadcast(killRecent);
             }
-            updateEnablement(true, (Boolean) newValue);
+            //updateEnablement(true, (Boolean) newValue);
             return true;
         /*} else if (preference == mOrientation) {
             String value = (String) newValue;

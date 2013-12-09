@@ -20,10 +20,8 @@ package org.omnirom.omniswitch;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.omnirom.omniswitch.ui.LinearColorBar;
 
@@ -32,12 +30,10 @@ import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -88,8 +84,7 @@ public class RecentsLayout extends LinearLayout {
     private FrameLayout mPopupView;
     private boolean mShowing;
     private PopupMenu mPopup;
-    private int mBackgroundColor = Color.BLACK;
-    private int mBackgroundOpacity = 60;
+    private float mBackgroundOpacity = 0.6f;
     private boolean mHorizontal = true;
     private View mView;
     private int mLocation = 0; // 0 = right 1 = left
@@ -175,11 +170,13 @@ public class RecentsLayout extends LinearLayout {
         }
     }
 
-    public RecentsLayout(Context context, AttributeSet attrs,
-            RecentsManager manager) {
-        super(context, attrs);
-        mContext = context;
+    public void setRecentsManager(RecentsManager manager) {
         mRecentsManager = manager;
+    }
+    
+    public RecentsLayout(Context context) {
+        super(context);
+        mContext = context;
         mWindowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
         mInflater = (LayoutInflater) mContext
@@ -213,7 +210,6 @@ public class RecentsLayout extends LinearLayout {
         } catch (NoSuchFieldException e) { 
         } catch (Exception e) {  
         }  
-
     }
 
     private void createView() {
@@ -280,9 +276,13 @@ public class RecentsLayout extends LinearLayout {
             mOpenFavorite.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mShowFavorites = !mShowFavorites;
-                    mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
                     mOpenFavorite.setImageDrawable(getResources().getDrawable(mShowFavorites ? R.drawable.arrow_up : R.drawable.arrow_down));
-                }
+                    if(mAnimate){
+                        mFavoriteListHorizontal.startAnimation(mShowFavorites ? getShowFavoriteAnimation() : getHideFavoriteAnimation());
+                    } else {
+                        mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
+                    }
+                 }
             });
             
             mFavoriteListHorizontal = (HorizontalListView) mView
@@ -415,8 +415,6 @@ public class RecentsLayout extends LinearLayout {
             mRamUsageBar.setVisibility(View.GONE);
         }
         mPopupView = new FrameLayout(mContext);
-        mPopupView.setBackgroundColor(mBackgroundColor);
-        mPopupView.getBackground().setAlpha(mBackgroundOpacity);
 
         mPopupView.removeAllViews();
 
@@ -476,7 +474,6 @@ public class RecentsLayout extends LinearLayout {
             animId = R.anim.slide_left_in;
         }
         Animation animation = AnimationUtils.loadAnimation(mContext, animId);
-        animation.setStartOffset(0);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -503,7 +500,6 @@ public class RecentsLayout extends LinearLayout {
         }
 
         Animation animation = AnimationUtils.loadAnimation(mContext, animId);
-        animation.setStartOffset(0);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -518,6 +514,46 @@ public class RecentsLayout extends LinearLayout {
                         mShowing = false;
                     }
                 });
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        return animation;
+    }
+
+    private Animation getShowFavoriteAnimation() {
+        int animId = R.anim.slide_down;
+        Animation animation = AnimationUtils.loadAnimation(mContext, animId);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mFavoriteListHorizontal.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        return animation;
+    }
+
+    private Animation getHideFavoriteAnimation() {
+        int animId = R.anim.slide_up;
+        Animation animation = AnimationUtils.loadAnimation(mContext, animId);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mFavoriteListHorizontal.setVisibility(View.GONE);
             }
 
             @Override
@@ -556,7 +592,7 @@ public class RecentsLayout extends LinearLayout {
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                 PixelFormat.TRANSLUCENT);
-        params.dimAmount = 0.6f;
+        params.dimAmount = mBackgroundOpacity;
 
         if (mHorizontal && mPosY != -1.0f) {
         	params.gravity = getAbsoluteGravity();
@@ -634,7 +670,7 @@ public class RecentsLayout extends LinearLayout {
                 SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
         mLocation = Integer.valueOf(location);
         int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 60);
-        mBackgroundOpacity = (int) (255 * ((float) opacity / 100.0f));
+        mBackgroundOpacity = (float) opacity / 100.0f;
         Log.d(TAG, "mBackgroundOpacity " + mBackgroundOpacity);
         mAnimate = prefs.getBoolean(SettingsActivity.PREF_ANIMATE, true);
         String iconSize = prefs

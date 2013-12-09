@@ -83,7 +83,8 @@ public class RecentsManager {
 
         mLoadedTasks = new ArrayList<TaskDescription>();
 
-        mLayout = new RecentsLayout(mContext, null, this);
+        mLayout = new RecentsLayout(mContext);
+        mLayout.setRecentsManager(this);
         mRecentTasksLoader = RecentTasksLoader.getInstance(mContext, this);
         mRecentTasksLoader.loadTasksInBackground();
     }

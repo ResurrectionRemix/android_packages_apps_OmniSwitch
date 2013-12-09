@@ -29,8 +29,9 @@
 			android:summary="@string/icon_size_normal"
 			android:title="@string/icon_size_title" />
 		<org.omnirom.omniswitch.SeekBarPreference
-			android:defaultValue="100"
+			android:defaultValue="60"
 			android:key="opacity"
+			android:max="100"
 			android:title="@string/opacity_title" />
 		<CheckBoxPreference
 			android:defaultValue="false"

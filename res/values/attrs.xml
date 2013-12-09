@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <!-- Defines the custom XML attributes supported for a HorizontalListView -->
-    <declare-styleable name="HorizontalListView">
-        <attr name="dividerWidth" format="dimension" />
-        <attr name="android:divider" />
-        <attr name="android:requiresFadingEdge" />
-        <attr name="android:fadingEdgeLength" />
-    </declare-styleable>
-
-    <declare-styleable name="ShowcaseView">
-        <attr name="sv_backgroundColor" format="color|reference" />
-        <attr name="sv_detailTextColor" format="color|reference" />
-        <attr name="sv_titleTextColor" format="color|reference" />
-        <attr name="sv_buttonBackgroundColor" format="color|reference" />
-        <attr name="sv_buttonForegroundColor" format="color|reference" />
-        <attr name="sv_buttonText" format="string|reference" />
-    </declare-styleable>
-
-    <declare-styleable name="CustomTheme">
-        <attr name="showcaseViewStyle" format="reference" />
-    </declare-styleable>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+	<!-- Defines the custom XML attributes supported for a HorizontalListView -->
+	<declare-styleable name="HorizontalListView">
+		<attr name="dividerWidth" format="dimension" />
+		<attr name="android:divider" />
+		<attr name="android:requiresFadingEdge" />
+		<attr name="android:fadingEdgeLength" />
+	</declare-styleable>
+	<declare-styleable name="ShowcaseView">
+		<attr name="sv_backgroundColor" format="color|reference" />
+		<attr name="sv_detailTextColor" format="color|reference" />
+		<attr name="sv_titleTextColor" format="color|reference" />
+		<attr name="sv_buttonBackgroundColor" format="color|reference" />
+		<attr name="sv_buttonForegroundColor" format="color|reference" />
+		<attr name="sv_buttonText" format="string|reference" />
+	</declare-styleable>
+	<declare-styleable name="CustomTheme">
+		<attr name="showcaseViewStyle" format="reference" />
+	</declare-styleable>
 </resources>

@@ -19,7 +19,7 @@ public class SeekBarPreference extends Preference implements
     private TextView monitorBox;
     private SeekBar bar;
 
-    int defaultValue = 60;
+    int currentValue = 60;
 
     private OnPreferenceChangeListener changer;
 
@@ -35,14 +35,15 @@ public class SeekBarPreference extends Preference implements
 
         monitorBox = (TextView) layout.findViewById(R.id.monitor_box);
         bar = (SeekBar) layout.findViewById(R.id.seek_bar);
+        bar.setProgress(currentValue);
+        monitorBox.setText(currentValue + "%");
         bar.setOnSeekBarChangeListener(this);
-        bar.setProgress(defaultValue);
 
         return layout;
     }
 
     public void setInitValue(int progress) {
-        defaultValue = progress;
+        currentValue = progress;
     }
 
     @Override
@@ -63,20 +64,16 @@ public class SeekBarPreference extends Preference implements
             boolean fromUser) {
 
         progress = Math.round(((float) progress) / interval) * interval;
-        seekBar.setProgress(progress);
-
+        currentValue = progress;
         monitorBox.setText(progress + "%");
         changer.onPreferenceChange(this, Integer.toString(progress));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
-
 }

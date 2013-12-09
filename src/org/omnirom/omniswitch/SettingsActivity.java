@@ -413,6 +413,7 @@ public class SettingsActivity extends PreferenceActivity implements
                         }
                         mInstalledPackages.add(item);
                     }
+                    Collections.sort(mInstalledPackages);
                 }
             }).start();
         }

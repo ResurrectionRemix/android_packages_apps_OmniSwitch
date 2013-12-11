@@ -431,6 +431,8 @@ public class SwitchLayout extends LinearLayout {
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
                     mContext.sendBroadcast(hideRecent);
+                    // TODO workaround for flicker on launcher screen
+                    mWindowManager.updateViewLayout(mPopupView, getParams(0));
                 }
                 return true;
             }
@@ -443,6 +445,8 @@ public class SwitchLayout extends LinearLayout {
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
                     mContext.sendBroadcast(hideRecent);
+                    // TODO workaround for flicker on launcher screen
+                    mWindowManager.updateViewLayout(mPopupView, getParams(0));
                 }
                 return true;
             }
@@ -456,7 +460,7 @@ public class SwitchLayout extends LinearLayout {
 
         createView();
 
-        mWindowManager.addView(mPopupView, getParams());
+        mWindowManager.addView(mPopupView, getParams(mBackgroundOpacity));
 
         mPopupView.addView(mView);
 
@@ -585,7 +589,7 @@ public class SwitchLayout extends LinearLayout {
         }
     }
 
-    private WindowManager.LayoutParams getParams() {
+    private WindowManager.LayoutParams getParams(float opacity) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 mHorizontal ? WindowManager.LayoutParams.MATCH_PARENT
                         : WindowManager.LayoutParams.WRAP_CONTENT,
@@ -593,7 +597,7 @@ public class SwitchLayout extends LinearLayout {
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                 PixelFormat.TRANSLUCENT);
-        params.dimAmount = mBackgroundOpacity;
+        params.dimAmount = opacity;
 
         if (mHorizontal && mPosY != -1.0f) {
             params.gravity = getAbsoluteGravity();

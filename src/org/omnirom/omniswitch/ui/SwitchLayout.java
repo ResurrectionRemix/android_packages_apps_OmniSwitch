@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
 
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
@@ -23,7 +23,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.omnirom.omniswitch.ui.LinearColorBar;
+import org.omnirom.omniswitch.MemInfoReader;
+import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.SwitchManager;
+import org.omnirom.omniswitch.SwitchService;
+import org.omnirom.omniswitch.TaskDescription;
 
 import android.app.ActivityManager;
 import android.app.TaskStackBuilder;
@@ -41,7 +46,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.Formatter;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -64,8 +68,8 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-public class RecentsLayout extends LinearLayout {
-    private static final String TAG = "RecentsLayout";
+public class SwitchLayout extends LinearLayout {
+    private static final String TAG = "SwitchLayout";
     private WindowManager mWindowManager;
     private LayoutInflater mInflater;
     private ListView mRecentList;
@@ -80,7 +84,7 @@ public class RecentsLayout extends LinearLayout {
     private FavoriteListAdapter mFavoriteListAdapter;
     private List<TaskDescription> mLoadedTasks;
     private Context mContext;
-    private RecentsManager mRecentsManager;
+    private SwitchManager mRecentsManager;
     private FrameLayout mPopupView;
     private boolean mShowing;
     private PopupMenu mPopup;
@@ -112,7 +116,8 @@ public class RecentsLayout extends LinearLayout {
 
         public RecentListAdapter(Context context, int resource,
                 List<TaskDescription> values) {
-            super(context, mHorizontal ? R.layout.recent_item_horizontal : R.layout.recent_item, resource, values);
+            super(context, mHorizontal ? R.layout.recent_item_horizontal
+                    : R.layout.recent_item, resource, values);
         }
 
         @Override
@@ -125,7 +130,7 @@ public class RecentsLayout extends LinearLayout {
                         parent, false);
                 final TextView item = (TextView) rowView
                         .findViewById(R.id.recent_item);
-                if(mShowLabels){
+                if (mShowLabels) {
                     item.setText(ad.getLabel());
                 }
                 item.setMaxWidth(mHorizontalMaxWidth);
@@ -136,7 +141,7 @@ public class RecentsLayout extends LinearLayout {
                         .inflate(R.layout.recent_item, parent, false);
                 final TextView item = (TextView) rowView
                         .findViewById(R.id.recent_item);
-                if(mShowLabels){
+                if (mShowLabels) {
                     item.setText(ad.getLabel());
                 }
                 item.setCompoundDrawablesWithIntrinsicBounds(ad.getIcon(),
@@ -156,25 +161,24 @@ public class RecentsLayout extends LinearLayout {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = null;
-            rowView = mInflater.inflate(R.layout.favorite_item,
-                    parent, false);
+            rowView = mInflater.inflate(R.layout.favorite_item, parent, false);
             final TextView item = (TextView) rowView
                     .findViewById(R.id.favorite_item);
-            if(mShowLabels){
+            if (mShowLabels) {
                 item.setText(mFavoriteNames.get(position));
             }
             item.setMaxWidth(mHorizontalMaxWidth);
             item.setCompoundDrawablesWithIntrinsicBounds(null,
-                        mFavoriteIcons.get(position), null, null);
+                    mFavoriteIcons.get(position), null, null);
             return rowView;
         }
     }
 
-    public void setRecentsManager(RecentsManager manager) {
+    public void setRecentsManager(SwitchManager manager) {
         mRecentsManager = manager;
     }
-    
-    public RecentsLayout(Context context) {
+
+    public SwitchLayout(Context context) {
         super(context);
         mContext = context;
         mWindowManager = (WindowManager) mContext
@@ -186,30 +190,32 @@ public class RecentsLayout extends LinearLayout {
                 android.R.layout.simple_list_item_multiple_choice, mLoadedTasks);
         mFavoriteList = new ArrayList<String>();
         mFavoriteListAdapter = new FavoriteListAdapter(mContext,
-                android.R.layout.simple_list_item_multiple_choice, mFavoriteList);
-        
+                android.R.layout.simple_list_item_multiple_choice,
+                mFavoriteList);
+
         mDensity = mContext.getResources().getDisplayMetrics().density;
 
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
         am.getMemoryInfo(mMemInfo);
-        String sClassName = "android.app.ActivityManager";  
-        try {  
-            Class classToInvestigate = Class.forName(sClassName); 
+        String sClassName = "android.app.ActivityManager";
+        try {
+            Class classToInvestigate = Class.forName(sClassName);
             Class[] classes = classToInvestigate.getDeclaredClasses();
-            for (int i=0; i < classes.length; i++){
-            	Class c = classes[i];
-            	if(c.getName().equals("android.app.ActivityManager$MemoryInfo")){
-                    String strNewFieldName = "secondaryServerThreshold";  
-                    Field field = c.getField(strNewFieldName); 
+            for (int i = 0; i < classes.length; i++) {
+                Class c = classes[i];
+                if (c.getName()
+                        .equals("android.app.ActivityManager$MemoryInfo")) {
+                    String strNewFieldName = "secondaryServerThreshold";
+                    Field field = c.getField(strNewFieldName);
                     mSecServerMem = field.getLong(mMemInfo);
                     break;
-            	}
+                }
             }
-        } catch (ClassNotFoundException e) {  
-        } catch (NoSuchFieldException e) { 
-        } catch (Exception e) {  
-        }  
+        } catch (ClassNotFoundException e) {
+        } catch (NoSuchFieldException e) {
+        } catch (Exception e) {
+        }
     }
 
     private void createView() {
@@ -271,34 +277,42 @@ public class RecentsLayout extends LinearLayout {
             mRecentListHorizontal.setSwipeListener(touchListener);
 
             mRecentListHorizontal.setAdapter(mRecentListAdapter);
-            
-            mOpenFavorite = (ImageButton) mView.findViewById(R.id.openFavorites);
+
+            mOpenFavorite = (ImageButton) mView
+                    .findViewById(R.id.openFavorites);
             mOpenFavorite.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mShowFavorites = !mShowFavorites;
-                    mOpenFavorite.setImageDrawable(getResources().getDrawable(mShowFavorites ? R.drawable.arrow_up : R.drawable.arrow_down));
-                    if(mAnimate){
-                        mFavoriteListHorizontal.startAnimation(mShowFavorites ? getShowFavoriteAnimation() : getHideFavoriteAnimation());
+                    mOpenFavorite.setImageDrawable(getResources().getDrawable(
+                            mShowFavorites ? R.drawable.arrow_up
+                                    : R.drawable.arrow_down));
+                    if (mAnimate) {
+                        mFavoriteListHorizontal
+                                .startAnimation(mShowFavorites ? getShowFavoriteAnimation()
+                                        : getHideFavoriteAnimation());
                     } else {
-                        mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
+                        mFavoriteListHorizontal
+                                .setVisibility(mShowFavorites ? View.VISIBLE
+                                        : View.GONE);
                     }
-                 }
+                }
             });
-            
+
             mFavoriteListHorizontal = (HorizontalListView) mView
                     .findViewById(R.id.favorite_list_horizontal);
 
             mFavoriteListHorizontal.setLayoutParams(params);
-            mFavoriteListHorizontal.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent,
-                        View view, int position, long id) {
-                    Log.d(TAG, "onItemClick");
-                    String intent = mFavoriteList.get(position);
-                    mRecentsManager.startIntentFromtString(intent);
-                    hide();
-                }
-            });
+            mFavoriteListHorizontal
+                    .setOnItemClickListener(new OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent,
+                                View view, int position, long id) {
+                            Log.d(TAG, "onItemClick");
+                            String intent = mFavoriteList.get(position);
+                            mRecentsManager.startIntentFromtString(intent);
+                            hide();
+                        }
+                    });
             mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
 
         } else {
@@ -327,17 +341,6 @@ public class RecentsLayout extends LinearLayout {
                             return true;
                         }
                     });
-
-            mRecentList.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    Log.d(TAG, "onKey");
-                    Intent hideRecent = new Intent(
-                            RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-                    mContext.sendBroadcast(hideRecent);
-                    return true;
-                }
-            });
 
             SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(
                     mRecentList,
@@ -396,7 +399,7 @@ public class RecentsLayout extends LinearLayout {
         mSettingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent hideRecent = new Intent(
-                        RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                        SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
                 mContext.sendBroadcast(hideRecent);
 
                 Intent mainActivity = new Intent(mContext,
@@ -408,10 +411,12 @@ public class RecentsLayout extends LinearLayout {
         });
 
         mRamUsageBar = (LinearColorBar) mView.findViewById(R.id.ram_usage_bar);
-        mForegroundProcessText = (TextView) mView.findViewById(R.id.foregroundText);
-        mBackgroundProcessText = (TextView) mView.findViewById(R.id.backgroundText);
+        mForegroundProcessText = (TextView) mView
+                .findViewById(R.id.foregroundText);
+        mBackgroundProcessText = (TextView) mView
+                .findViewById(R.id.backgroundText);
 
-        if (!mShowRambar){
+        if (!mShowRambar) {
             mRamUsageBar.setVisibility(View.GONE);
         }
         mPopupView = new FrameLayout(mContext);
@@ -421,31 +426,27 @@ public class RecentsLayout extends LinearLayout {
         mPopupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG, "onTouch");
-                Intent hideRecent = new Intent(
-                        RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-                mContext.sendBroadcast(hideRecent);
+                if (mShowing) {
+                    Log.d(TAG, "onTouch");
+                    Intent hideRecent = new Intent(
+                            SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                    mContext.sendBroadcast(hideRecent);
+                }
                 return true;
             }
         });
         mPopupView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.d(TAG, "onKey");
-                Intent hideRecent = new Intent(
-                        RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
-                mContext.sendBroadcast(hideRecent);
+                if (mShowing) {
+                    Log.d(TAG, "onKey");
+                    Intent hideRecent = new Intent(
+                            SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                    mContext.sendBroadcast(hideRecent);
+                }
                 return true;
             }
         });
-        mView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG, "onTouch");
-                return false;
-            }
-        });
-
     }
 
     public void show() {
@@ -511,7 +512,6 @@ public class RecentsLayout extends LinearLayout {
                     public void run() {
                         mWindowManager.removeView(mPopupView);
                         mPopupView = null;
-                        mShowing = false;
                     }
                 });
             }
@@ -571,6 +571,8 @@ public class RecentsLayout extends LinearLayout {
         if (!mShowing) {
             return;
         }
+        mShowing = false;
+
         if (mPopup != null) {
             mPopup.dismiss();
         }
@@ -580,7 +582,6 @@ public class RecentsLayout extends LinearLayout {
         } else {
             mWindowManager.removeView(mPopupView);
             mPopupView = null;
-            mShowing = false;
         }
     }
 
@@ -595,10 +596,10 @@ public class RecentsLayout extends LinearLayout {
         params.dimAmount = mBackgroundOpacity;
 
         if (mHorizontal && mPosY != -1.0f) {
-        	params.gravity = getAbsoluteGravity();
-        	params.y = (int) (mPosY - mHorizontalScrollerHeight / 2);
+            params.gravity = getAbsoluteGravity();
+            params.y = (int) (mPosY - mHorizontalScrollerHeight / 2);
         } else {
-        	params.gravity = getDefaultGravity();
+            params.gravity = getDefaultGravity();
         }
 
         return params;
@@ -647,7 +648,7 @@ public class RecentsLayout extends LinearLayout {
 
     private void startApplicationDetailsActivity(String packageName) {
         Intent hideRecent = new Intent(
-                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
         mContext.sendBroadcast(hideRecent);
 
         Intent intent = new Intent(
@@ -664,8 +665,8 @@ public class RecentsLayout extends LinearLayout {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         Log.d(TAG, "updatePrefs");
-        //mHorizontal = prefs.getString(SettingsActivity.PREF_ORIENTATION,
-        //        "vertical").equals("horizontal");
+        // mHorizontal = prefs.getString(SettingsActivity.PREF_ORIENTATION,
+        // "vertical").equals("horizontal");
         String location = prefs.getString(
                 SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
         mLocation = Integer.valueOf(location);
@@ -676,13 +677,15 @@ public class RecentsLayout extends LinearLayout {
         String iconSize = prefs
                 .getString(SettingsActivity.PREF_ICON_SIZE, "60");
         mIconSize = Integer.valueOf(iconSize);
-        mShowRambar = prefs.getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
+        mShowRambar = prefs
+                .getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
         mShowLabels = prefs.getBoolean(SettingsActivity.PREF_SHOW_LABELS, true);
         mPosY = prefs.getFloat("handle_pos_y", -1.0f);
 
         mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
-        mHorizontalScrollerHeight = (int) ((mIconSize + (mShowLabels ? 40 : 10)) * mDensity + 0.5f);
-        
+        mHorizontalScrollerHeight = (int) ((mIconSize + (mShowLabels ? 40 : 10))
+                * mDensity + 0.5f);
+
         mFavoriteList.clear();
         String favoriteListString = prefs.getString("favorite_apps", "");
         SettingsActivity.parseFavorites(favoriteListString, mFavoriteList);
@@ -694,14 +697,16 @@ public class RecentsLayout extends LinearLayout {
     private final Runnable updateRamBarTask = new Runnable() {
         @Override
         public void run() {
-            if (!mShowRambar || mRamUsageBar == null){
+            if (!mShowRambar || mRamUsageBar == null) {
                 return;
             }
             mMemInfoReader.readMemInfo();
-            long availMem = mMemInfoReader.getFreeSize() + mMemInfoReader.getCachedSize() - mSecServerMem;
+            long availMem = mMemInfoReader.getFreeSize()
+                    + mMemInfoReader.getCachedSize() - mSecServerMem;
             long totalMem = mMemInfoReader.getTotalSize();
 
-            String sizeStr = Formatter.formatShortFileSize(mContext, totalMem-availMem);
+            String sizeStr = Formatter.formatShortFileSize(mContext, totalMem
+                    - availMem);
             mForegroundProcessText.setText(getResources().getString(
                     R.string.service_foreground_processes, sizeStr));
             sizeStr = Formatter.formatShortFileSize(mContext, availMem);
@@ -715,18 +720,19 @@ public class RecentsLayout extends LinearLayout {
     };
     private ImageButton mOpenFavorite;
 
-    private void updateFavorites(){
+    private void updateFavorites() {
         final PackageManager pm = mContext.getPackageManager();
         List<String> validFavorites = new ArrayList<String>();
         mFavoriteIcons = new ArrayList<Drawable>();
         mFavoriteNames = new ArrayList<String>();
         Iterator<String> nextFavorite = mFavoriteList.iterator();
-        while(nextFavorite.hasNext()){
+        while (nextFavorite.hasNext()) {
             String favorite = nextFavorite.next();
             Intent intent = null;
             try {
                 intent = Intent.parseUri(favorite, 0);
-                mFavoriteIcons.add(resize(Resources.getSystem(), pm.getActivityIcon(intent)));
+                mFavoriteIcons.add(resize(Resources.getSystem(),
+                        pm.getActivityIcon(intent)));
             } catch (NameNotFoundException e) {
                 Log.e(TAG, "NameNotFoundException: [" + favorite + "]");
                 continue;
@@ -736,7 +742,7 @@ public class RecentsLayout extends LinearLayout {
             }
             validFavorites.add(favorite);
             String label = SettingsActivity.getActivityLabel(pm, intent);
-            if (label==null){
+            if (label == null) {
                 label = favorite;
             }
             mFavoriteNames.add(label);
@@ -761,5 +767,9 @@ public class RecentsLayout extends LinearLayout {
         Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
                 resizedHeight, false);
         return new BitmapDrawable(resources, bitmapResized);
+    }
+    
+    public boolean isShowing() {
+        return mShowing;
     }
 }

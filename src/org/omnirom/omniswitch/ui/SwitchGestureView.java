@@ -15,7 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
+
+import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.SwitchService;
+import org.omnirom.omniswitch.R.drawable;
+import org.omnirom.omniswitch.SwitchService.RecentsReceiver;
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,8 +42,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class RecentsGestureView extends LinearLayout {
-    private final static String TAG = "RecentsGestureView";
+public class SwitchGestureView extends LinearLayout {
+    private final static String TAG = "SwitchGestureView";
 
     private Context mContext;
     private ImageView mDragButton;
@@ -55,7 +61,7 @@ public class RecentsGestureView extends LinearLayout {
 
     private LinearLayout.LayoutParams mDragParams;
 
-    public RecentsGestureView(Context context, AttributeSet attrs) {
+    public SwitchGestureView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         mDensity = getResources().getDisplayMetrics().density;
@@ -98,7 +104,7 @@ public class RecentsGestureView extends LinearLayout {
                                 Log.d(TAG, "ACTION_SHOW_RECENTS");
 
                                 Intent showRibbon = new Intent(
-                                        RecentsService.RecentsReceiver.ACTION_SHOW_RECENTS);
+                                        SwitchService.RecentsReceiver.ACTION_SHOW_RECENTS);
                                 mContext.sendBroadcast(showRibbon);
                                 mRecentsStarted = true;
                                 mRibbonSwipeStarted = false;
@@ -122,7 +128,7 @@ public class RecentsGestureView extends LinearLayout {
             @Override
             public boolean onLongClick(View arg0) {
                 Intent showRibbon = new Intent(
-                        RecentsService.RecentsReceiver.ACTION_SHOW_RECENTS);
+                        SwitchService.RecentsReceiver.ACTION_SHOW_RECENTS);
                 mContext.sendBroadcast(showRibbon);
                 return true;
             }});

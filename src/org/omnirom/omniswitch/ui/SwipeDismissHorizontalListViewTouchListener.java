@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -32,6 +32,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 
 /**
  * A {@link android.view.View.OnTouchListener} that makes the list items in a

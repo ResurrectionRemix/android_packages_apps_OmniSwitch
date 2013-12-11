@@ -45,7 +45,7 @@ public class RecentTasksLoader {
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for
                                                             // non-apps
 
-    private RecentsManager mRecentsManager;
+    private SwitchManager mRecentsManager;
     private Context mContext;
 
     private AsyncTask<Void, ArrayList<TaskDescription>, Void> mTaskLoader;
@@ -66,7 +66,7 @@ public class RecentTasksLoader {
     private static RecentTasksLoader sInstance;
 
     public static RecentTasksLoader getInstance(Context context,
-            RecentsManager manager) {
+            SwitchManager manager) {
         if (sInstance == null) {
             sInstance = new RecentTasksLoader(context, manager);
         }
@@ -77,7 +77,7 @@ public class RecentTasksLoader {
         sInstance = null;
     }
 
-    private RecentTasksLoader(Context context, RecentsManager manager) {
+    private RecentTasksLoader(Context context, SwitchManager manager) {
         mContext = context;
         mRecentsManager = manager;
         mHandler = new Handler();

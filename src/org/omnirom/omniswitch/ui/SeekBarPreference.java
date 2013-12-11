@@ -1,4 +1,8 @@
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
+
+import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.R.id;
+import org.omnirom.omniswitch.R.layout;
 
 import android.content.Context;
 import android.content.res.TypedArray;

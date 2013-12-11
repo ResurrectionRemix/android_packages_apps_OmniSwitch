@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -65,8 +65,8 @@ public class SettingsGestureView extends LinearLayout {
 
     public WindowManager.LayoutParams getParams() {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.FILL_PARENT,
-                WindowManager.LayoutParams.FILL_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL

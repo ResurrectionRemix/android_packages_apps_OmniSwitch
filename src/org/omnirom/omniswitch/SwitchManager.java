@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omnirom.omniswitch.ui.SwitchLayout;
+
 import android.app.ActivityManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -34,30 +36,28 @@ import android.os.UserHandle;
 import android.util.Log;
 import android.os.RemoteException;
 
-public class RecentsManager {
-    private static final String TAG = "RecentsManager";
+public class SwitchManager {
+    private static final String TAG = "SwitchManager";
     private boolean DEBUG = true;
     private List<TaskDescription> mLoadedTasks;
     private RecentTasksLoader mRecentTasksLoader;
-    private RecentsLayout mLayout;
+    private SwitchLayout mLayout;
     private Context mContext;
-    private boolean mIsShowning;
 
-    public RecentsManager(Context context) {
+    public SwitchManager(Context context) {
         mContext = context;
         init();
     }
 
     public void hide() {
-        if (mIsShowning) {
+        if (isShowing()) {
             Log.d(TAG, "hide");
             mLayout.hide();
-            mIsShowning = false;
         }
     }
 
     public void show() {
-        if (!mIsShowning) {
+        if (!isShowing()) {
             Log.d(TAG, "show");
 
             // clear so that we dont get a reorder
@@ -67,7 +67,6 @@ public class RecentsManager {
 
             // show immediately
             mLayout.show();
-            mIsShowning = true;
 
             // update task list
             reload();
@@ -75,7 +74,7 @@ public class RecentsManager {
     }
 
     public boolean isShowing() {
-        return mIsShowning;
+        return mLayout.isShowing();
     }
 
     private void init() {
@@ -83,7 +82,7 @@ public class RecentsManager {
 
         mLoadedTasks = new ArrayList<TaskDescription>();
 
-        mLayout = new RecentsLayout(mContext);
+        mLayout = new SwitchLayout(mContext);
         mLayout.setRecentsManager(this);
         mRecentTasksLoader = RecentTasksLoader.getInstance(mContext, this);
         mRecentTasksLoader.loadTasksInBackground();
@@ -115,7 +114,7 @@ public class RecentsManager {
         Log.d(TAG, "switch to " + ad.getPackageName());
 
         Intent hideRecent = new Intent(
-                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
         mContext.sendBroadcast(hideRecent);
 
         if (ad.getTaskId() >= 0) {
@@ -187,13 +186,13 @@ public class RecentsManager {
             ad.setKilled();
         }
         Intent hideRecent = new Intent(
-                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
         mContext.sendBroadcast(hideRecent);
     }
 
     public void dismissAndGoHome() {
         Intent hideRecent = new Intent(
-                RecentsService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
         mContext.sendBroadcast(hideRecent);
 
         Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);

@@ -29,6 +29,8 @@ import java.util.TreeSet;
 
 import org.omnirom.omniswitch.showcase.ShowcaseView;
 import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
+import org.omnirom.omniswitch.ui.SeekBarPreference;
+import org.omnirom.omniswitch.ui.SettingsGestureView;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -133,7 +135,7 @@ public class SettingsActivity extends PreferenceActivity implements
         addPreferencesFromResource(R.xml.recents_settings);
 
         mToggleService = (SwitchPreference) findPreference(PREF_SERVICE_STATE);
-        mToggleService.setChecked(RecentsService.isRunning());
+        mToggleService.setChecked(SwitchService.isRunning());
         mToggleService.setOnPreferenceChangeListener(this);
 
         mAnimate = (CheckBoxPreference) findPreference(PREF_ANIMATE);
@@ -202,7 +204,7 @@ public class SettingsActivity extends PreferenceActivity implements
         boolean running = false;
 
         if (!force) {
-            running = RecentsService.isRunning();
+            running = SwitchService.isRunning();
         } else if (value != null) {
             running = value.booleanValue();
         }
@@ -241,16 +243,16 @@ public class SettingsActivity extends PreferenceActivity implements
         if (preference == mToggleService) {
             boolean value = (Boolean) newValue;
 
-            Intent svc = new Intent(this, RecentsService.class);
+            Intent svc = new Intent(this, SwitchService.class);
             if (value) {
                 Intent killRecent = new Intent(
-                        RecentsService.RecentsReceiver.ACTION_KILL_RECENTS);
+                        SwitchService.RecentsReceiver.ACTION_KILL_RECENTS);
                 sendBroadcast(killRecent);
 
                 startService(svc);
             } else {
                 Intent killRecent = new Intent(
-                        RecentsService.RecentsReceiver.ACTION_KILL_RECENTS);
+                        SwitchService.RecentsReceiver.ACTION_KILL_RECENTS);
                 sendBroadcast(killRecent);
             }
             //updateEnablement(true, (Boolean) newValue);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;

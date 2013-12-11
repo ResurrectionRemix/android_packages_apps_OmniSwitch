@@ -22,7 +22,7 @@
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name" >
 		<service
-			android:name="org.omnirom.omniswitch.RecentsService"
+			android:name="org.omnirom.omniswitch.SwitchService"
 			android:excludeFromRecents="true" />
 		<activity
 			android:name="org.omnirom.omniswitch.MainActivity"

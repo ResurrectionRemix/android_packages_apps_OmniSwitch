@@ -28,7 +28,7 @@
 			android:key="icon_size"
 			android:summary="@string/icon_size_normal"
 			android:title="@string/icon_size_title" />
-		<org.omnirom.omniswitch.SeekBarPreference
+		<org.omnirom.omniswitch.ui.SeekBarPreference
 			android:defaultValue="60"
 			android:key="opacity"
 			android:max="100"
@@ -57,7 +57,7 @@
 			android:key="drag_handle_location"
 			android:summary="@string/drag_location_right"
 			android:title="@string/drag_location_title" />
-		<org.omnirom.omniswitch.DragHandleColorPreference
+		<org.omnirom.omniswitch.ui.DragHandleColorPreference
 			android:key="drag_handle_color"
 			android:title="@string/drag_handle_color_title" />
 		<Preference

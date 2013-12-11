@@ -24,12 +24,15 @@
  * It has been substantially rewritten and added to from the original version.
  */
 // @formatter:on
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.R.styleable;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

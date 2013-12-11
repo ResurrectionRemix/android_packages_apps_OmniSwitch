@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package org.omnirom.omniswitch;
+package org.omnirom.omniswitch.ui;
 
+import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.R.dimen;
+import org.omnirom.omniswitch.R.id;
+import org.omnirom.omniswitch.R.layout;
+import org.omnirom.omniswitch.R.string;
 import org.omnirom.omniswitch.colorpicker.ColorPickerDialog;
 
 import android.app.AlertDialog;

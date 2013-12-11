@@ -17,6 +17,8 @@
  */
 package org.omnirom.omniswitch;
 
+import org.omnirom.omniswitch.ui.SwitchGestureView;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,12 +29,12 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class RecentsService extends Service {
-    private final static String TAG = "RecentsService";
+public class SwitchService extends Service {
+    private final static String TAG = "SwitchService";
 
-    private RecentsGestureView mGesturePanel;
+    private SwitchGestureView mGesturePanel;
     private RecentsReceiver mReceiver;
-    private RecentsManager mManager;
+    private SwitchManager mManager;
     private SharedPreferences mPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
 
@@ -46,10 +48,10 @@ public class RecentsService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        mGesturePanel = new RecentsGestureView(this, null);
-        Log.d(TAG, "started RecentsService");
+        mGesturePanel = new SwitchGestureView(this, null);
+        Log.d(TAG, "started SwitchService");
 
-        mManager = new RecentsManager(this);
+        mManager = new SwitchManager(this);
 
         mReceiver = new RecentsReceiver();
         IntentFilter filter = new IntentFilter();
@@ -80,7 +82,7 @@ public class RecentsService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "stopped RecentsService");
+        Log.d(TAG, "stopped SwitchService");
 
         mGesturePanel.hide();
         mGesturePanel = null;
@@ -128,13 +130,10 @@ public class RecentsService extends Service {
                     mManager.hide();
                 }
             } else if (ACTION_KILL_RECENTS.equals(action)) {
-                if (mManager.isShowing()) {
-                    mManager.hide();
-                }
                 Intent finishActivity = new Intent(
                         MainActivity.ActivityReceiver.ACTION_FINISH);
                 sendBroadcast(finishActivity);
-                Intent svc = new Intent(context, RecentsService.class);
+                Intent svc = new Intent(context, SwitchService.class);
                 context.stopService(svc);
             }
         }

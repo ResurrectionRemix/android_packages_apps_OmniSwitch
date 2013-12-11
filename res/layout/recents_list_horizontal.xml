@@ -5,7 +5,7 @@
 	android:orientation="vertical" >
 	<include layout="@layout/buttons" />
 	<include layout="@layout/recents_rambar" />
-	<org.omnirom.omniswitch.HorizontalListView
+	<org.omnirom.omniswitch.ui.HorizontalListView
 		android:id="@+id/recent_list_horizontal"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -18,7 +18,7 @@
 		android:minHeight="40dip"
 		android:scaleType="centerInside"
 		android:src="@drawable/arrow_down" />
-	<org.omnirom.omniswitch.HorizontalListView
+	<org.omnirom.omniswitch.ui.HorizontalListView
 		android:id="@+id/favorite_list_horizontal"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"

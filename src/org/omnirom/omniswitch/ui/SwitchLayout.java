@@ -29,6 +29,7 @@ import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchManager;
 import org.omnirom.omniswitch.SwitchService;
 import org.omnirom.omniswitch.TaskDescription;
+import org.omnirom.omniswitch.Utils;
 
 import android.app.ActivityManager;
 import android.app.TaskStackBuilder;
@@ -461,7 +462,12 @@ public class SwitchLayout extends LinearLayout {
         createView();
 
         mWindowManager.addView(mPopupView, getParams(mBackgroundOpacity));
-
+        
+        // if it was open remember that
+        if (mShowFavorites){
+        	mFavoriteListHorizontal.setVisibility(View.VISIBLE);
+            mOpenFavorite.setImageDrawable(getResources().getDrawable(R.drawable.arrow_up));
+        }
         mPopupView.addView(mView);
 
         if (mAnimate) {
@@ -692,7 +698,7 @@ public class SwitchLayout extends LinearLayout {
 
         mFavoriteList.clear();
         String favoriteListString = prefs.getString("favorite_apps", "");
-        SettingsActivity.parseFavorites(favoriteListString, mFavoriteList);
+        Utils.parseFavorites(favoriteListString, mFavoriteList);
 
         updateFavorites();
         mFavoriteListAdapter.notifyDataSetChanged();
@@ -745,7 +751,7 @@ public class SwitchLayout extends LinearLayout {
                 continue;
             }
             validFavorites.add(favorite);
-            String label = SettingsActivity.getActivityLabel(pm, intent);
+            String label = Utils.getActivityLabel(pm, intent);
             if (label == null) {
                 label = favorite;
             }

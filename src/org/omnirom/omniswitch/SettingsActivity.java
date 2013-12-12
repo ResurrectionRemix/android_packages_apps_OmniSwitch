@@ -20,34 +20,23 @@ package org.omnirom.omniswitch;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.omnirom.omniswitch.showcase.ShowcaseView;
 import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
+import org.omnirom.omniswitch.ui.FavoriteDialog;
 import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -57,24 +46,14 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 public class SettingsActivity extends PreferenceActivity implements
         OnPreferenceChangeListener, OnShowcaseEventListener {
     private static final String TAG = "SettingsActivity";
 
     public static final String PREF_SERVICE_STATE = "toggle_service";
-    //public static final String PREF_ORIENTATION = "orientation";
+    // public static final String PREF_ORIENTATION = "orientation";
     public static final String PREF_OPACITY = "opacity";
     public static final String PREF_ANIMATE = "animate";
     public static final String PREF_START_ON_BOOT = "start_on_boot";
@@ -84,17 +63,15 @@ public class SettingsActivity extends PreferenceActivity implements
     private static final String PREF_ADJUST_HANDLE = "adjust_handle";
     public static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
     public static final String PREF_SHOW_RAMBAR = "show_rambar";
-    public static final String PREF_FAVORITE_APPS = "favorite_apps";
     public static final String PREF_SHOW_LABELS = "show_labels";
+    public static final String PREF_FAVORITE_APPS_CONFIG = "favorite_apps_config";
 
     private final static int SHOWCASE_INDEX_ADJUST = 0;
 
     private final static String KEY_SHOWCASE_ADJUST = "SHOWCASE_ADJUST";
 
-    private static final int DIALOG_APPS = 0;
-
     private SwitchPreference mToggleService;
-    //private ListPreference mOrientation;
+    // private ListPreference mOrientation;
     private ListPreference mDragHandleSize;
     private ListPreference mDragHandleLocation;
     private ListPreference mIconSize;
@@ -102,22 +79,24 @@ public class SettingsActivity extends PreferenceActivity implements
     private CheckBoxPreference mStartOnBoot;
     private SeekBarPreference mOpacity;
     private Preference mFavoriteApps;
+    private Preference mFavoriteAppsConfig;
     private Preference mAdjustHandle;
     private Preference mDragHandleColor;
-    private PackageManager mPackageManager;
-    private PackageAdapter mPackageAdapter;
     private static List<String> sFavoriteList = new ArrayList<String>();
-    private List<String> mChangedFavoriteList;
     private static SharedPreferences sPrefs;
     private SettingsGestureView mGestureView;
     private ShowcaseView mShowcaseView;
     private int mShowCaseIndex;
     private CheckBoxPreference mShowRambar;
     private CheckBoxPreference mShowLabels;
+    private FavoriteDialog mManageAppDialog;
 
     @Override
     public void onPause() {
         mGestureView.hide();
+        if (mManageAppDialog != null) {
+            mManageAppDialog.dismiss();
+        }
         super.onPause();
     }
 
@@ -141,14 +120,15 @@ public class SettingsActivity extends PreferenceActivity implements
         mAnimate = (CheckBoxPreference) findPreference(PREF_ANIMATE);
         mStartOnBoot = (CheckBoxPreference) findPreference(PREF_START_ON_BOOT);
 
-        /*mOrientation = (ListPreference) findPreference(PREF_ORIENTATION);
-        mOrientation.setOnPreferenceChangeListener(this);
-        List<CharSequence> values = Arrays
-                .asList(mOrientation.getEntryValues());
-        int idx = values.indexOf(mPrefs.getString("orientation",
-                mOrientation.getEntryValues()[0].toString()));
-        mOrientation.setValueIndex(idx);
-        mOrientation.setSummary(mOrientation.getEntries()[idx]);*/
+        /*
+         * mOrientation = (ListPreference) findPreference(PREF_ORIENTATION);
+         * mOrientation.setOnPreferenceChangeListener(this); List<CharSequence>
+         * values = Arrays .asList(mOrientation.getEntryValues()); int idx =
+         * values.indexOf(mPrefs.getString("orientation",
+         * mOrientation.getEntryValues()[0].toString()));
+         * mOrientation.setValueIndex(idx);
+         * mOrientation.setSummary(mOrientation.getEntries()[idx]);
+         */
 
         mIconSize = (ListPreference) findPreference(PREF_ICON_SIZE);
         mIconSize.setOnPreferenceChangeListener(this);
@@ -182,22 +162,19 @@ public class SettingsActivity extends PreferenceActivity implements
 
         mDragHandleColor = (Preference) findPreference(PREF_DRAG_HANDLE_COLOR);
 
-        mFavoriteApps = (Preference) findPreference(PREF_FAVORITE_APPS);
-        // Get launch-able applications
-        mPackageManager = getPackageManager();
-        mPackageAdapter = new PackageAdapter();
-        
+        mFavoriteAppsConfig = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG);
+
         String favoriteListString = sPrefs.getString("favorite_apps", "");
         sFavoriteList.clear();
-        parseFavorites(favoriteListString, sFavoriteList);
+        Utils.parseFavorites(favoriteListString, sFavoriteList);
         removeUninstalledFavorites(this);
 
         mGestureView = new SettingsGestureView(this, null);
-        
+
         mShowRambar = (CheckBoxPreference) findPreference(PREF_SHOW_RAMBAR);
         mShowLabels = (CheckBoxPreference) findPreference(PREF_SHOW_LABELS);
 
-        //updateEnablement(false, null);
+        // updateEnablement(false, null);
     }
 
     private void updateEnablement(boolean force, Boolean value) {
@@ -214,25 +191,26 @@ public class SettingsActivity extends PreferenceActivity implements
         mDragHandleLocation.setEnabled(running);
         mDragHandleSize.setEnabled(running);
         mIconSize.setEnabled(running);
-        //mOrientation.setEnabled(running);
+        // mOrientation.setEnabled(running);
         mAnimate.setEnabled(running);
         mStartOnBoot.setEnabled(running);
         mDragHandleColor.setEnabled(running);
         mShowRambar.setEnabled(running);
         mFavoriteApps.setEnabled(running);
+        mFavoriteAppsConfig.setEnabled(running);
         mShowLabels.setEnabled(running);
     }
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
-        if (preference == mFavoriteApps) {
-            showDialog(DIALOG_APPS);
-            return true;
-        } else if (preference == mAdjustHandle) {
+        if (preference == mAdjustHandle) {
             if (!startShowcaseAdjust()) {
                 mGestureView.show();
             }
+            return true;
+        } else if (preference == mFavoriteAppsConfig) {
+            showManageAppDialog();
             return true;
         }
         return false;
@@ -255,16 +233,15 @@ public class SettingsActivity extends PreferenceActivity implements
                         SwitchService.RecentsReceiver.ACTION_KILL_RECENTS);
                 sendBroadcast(killRecent);
             }
-            //updateEnablement(true, (Boolean) newValue);
+            // updateEnablement(true, (Boolean) newValue);
             return true;
-        /*} else if (preference == mOrientation) {
-            String value = (String) newValue;
-            List<CharSequence> values = Arrays.asList(mOrientation
-                    .getEntryValues());
-            int idx = values.indexOf(value);
-            mOrientation.setSummary(mOrientation.getEntries()[idx]);
-            mOrientation.setValueIndex(idx);
-            return true;*/
+            /*
+             * } else if (preference == mOrientation) { String value = (String)
+             * newValue; List<CharSequence> values = Arrays.asList(mOrientation
+             * .getEntryValues()); int idx = values.indexOf(value);
+             * mOrientation.setSummary(mOrientation.getEntries()[idx]);
+             * mOrientation.setValueIndex(idx); return true;
+             */
         } else if (preference == mIconSize) {
             String value = (String) newValue;
             List<CharSequence> values = Arrays.asList(mIconSize
@@ -299,185 +276,15 @@ public class SettingsActivity extends PreferenceActivity implements
         return false;
     }
 
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
-        Log.d(TAG, "xxx" + sFavoriteList);
-        mChangedFavoriteList = new ArrayList<String>();
-        mChangedFavoriteList.addAll(sFavoriteList);
-        super.onPrepareDialog(id, dialog, args);
-    }
-    
-    @Override
-    public Dialog onCreateDialog(int id) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final Dialog dialog;
-        switch (id) {
-        case DIALOG_APPS:
-            final ListView list = new ListView(this);
-            list.setAdapter(mPackageAdapter);
-            list.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    PackageItem info = (PackageItem) parent.getItemAtPosition(position);
-                    ViewHolder viewHolder = (ViewHolder) view.getTag();
-                    viewHolder.check.setChecked(!viewHolder.check.isChecked());
-                    if(viewHolder.check.isChecked()){
-                        if(!mChangedFavoriteList.contains(info.intent)){
-                            mChangedFavoriteList.add(info.intent);
-                        }
-                    } else {
-                        mChangedFavoriteList.remove(info.intent);
-                    }
-                }
-            });
-            builder.setView(list);
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    sFavoriteList = mChangedFavoriteList;
-                    sPrefs.edit().putString("favorite_apps", flattenFavorites(sFavoriteList)).commit();
-                }
-            })
-            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                }
-            });
-
-            dialog = builder.create();
-            break;
-        default:
-            dialog = null;
-        }
-        return dialog;
-    }
-
-    /**
-     * AppItem class
-     */
-    private static class PackageItem implements Comparable<PackageItem> {
-        CharSequence title;
-        String packageName;
-        Drawable icon;
-        String intent;
-
-        @Override
-        public int compareTo(PackageItem another) {
-            int result = title.toString().compareToIgnoreCase(
-                    another.title.toString());
-            return result != 0 ? result : packageName
-                    .compareTo(another.packageName);
-        }
-    }
-
-    /**
-     * AppAdapter class
-     */
-    private class PackageAdapter extends BaseAdapter {
-        private List<PackageItem> mInstalledPackages = new LinkedList<PackageItem>();
-
-        private void reloadList() {
-            final Handler handler = new Handler();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (mInstalledPackages) {
-                        mInstalledPackages.clear();
-                    }
-
-                    final Intent mainIntent = new Intent(Intent.ACTION_MAIN,
-                            null);
-                    mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                    List<ResolveInfo> installedAppsInfo = mPackageManager
-                            .queryIntentActivities(mainIntent, 0);
-
-                    for (ResolveInfo info : installedAppsInfo) {
-                        ApplicationInfo appInfo = info.activityInfo.applicationInfo;
-
-                        final PackageItem item = new PackageItem();
-                        item.packageName = appInfo.packageName;
-                        
-                        ActivityInfo activity = info.activityInfo;
-                        ComponentName name =
-                                new ComponentName(activity.applicationInfo.packageName, activity.name);
-                        Intent intent = new Intent(Intent.ACTION_MAIN);
-                        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK 
-                                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                        intent.setComponent(name);
-                        item.intent = intent.toUri(0);
-                        try {
-                            item.icon = mPackageManager.getActivityIcon(intent);
-                        } catch (NameNotFoundException e) {
-                            item.icon = appInfo.loadIcon(mPackageManager);
-                        }
-                        item.title = getActivityLabel(mPackageManager, intent);
-                        if(item.title==null){
-                            item.title = appInfo.loadLabel(mPackageManager);
-                        }
-                        mInstalledPackages.add(item);
-                    }
-                    Collections.sort(mInstalledPackages);
-                }
-            }).start();
+    private void showManageAppDialog() {
+        if (mManageAppDialog != null && mManageAppDialog.isShowing()) {
+            return;
         }
 
-        public PackageAdapter() {
-            reloadList();
-        }
-
-        @Override
-        public int getCount() {
-            synchronized (mInstalledPackages) {
-                return mInstalledPackages.size();
-            }
-        }
-
-        @Override
-        public PackageItem getItem(int position) {
-            synchronized (mInstalledPackages) {
-                return mInstalledPackages.get(position);
-            }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            synchronized (mInstalledPackages) {
-                // intent is guaranteed to be unique in mInstalledPackages
-                return mInstalledPackages.get(position).intent.hashCode();
-            }
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if (convertView != null) {
-                holder = (ViewHolder) convertView.getTag();
-            } else {
-                final LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = layoutInflater.inflate(R.layout.app_item, parent,
-                        false);
-                holder = new ViewHolder();
-                convertView.setTag(holder);
-
-                holder.item = (TextView) convertView
-                        .findViewById(R.id.app_item);
-                holder.check = (CheckBox) convertView
-                        .findViewById(R.id.app_check);
-                holder.image = (ImageView) convertView
-                        .findViewById(R.id.app_icon);
-            }
-            PackageItem applicationInfo = getItem(position);
-            holder.item.setText(applicationInfo.title);
-            holder.image.setImageDrawable(applicationInfo.icon);
-            holder.check.setChecked(mChangedFavoriteList.contains(applicationInfo.intent));
-
-            return convertView;
-        }
-    }
-
-    static class ViewHolder {
-        TextView item;
-        CheckBox check;
-        ImageView image;
+        List<String> favoriteList = new ArrayList<String>();
+        favoriteList.addAll(sFavoriteList);
+        mManageAppDialog = new FavoriteDialog(this, favoriteList);
+        mManageAppDialog.show();
     }
 
     private boolean startShowcaseAdjust() {
@@ -519,34 +326,14 @@ public class SettingsActivity extends PreferenceActivity implements
         // TODO Auto-generated method stub
 
     }
-    
-    public static void parseFavorites(String favoriteListString, List<String> favoriteList){
-        String[] split = favoriteListString.split("##");
-        for(int i = 0; i < split.length; i++){
-            favoriteList.add(split[i]);
-        }
-    }
-    
-    public static String flattenFavorites(List<String> favoriteList) {
-        Iterator<String> nextFavorite=favoriteList.iterator();
-        StringBuffer buffer = new StringBuffer();
-        while(nextFavorite.hasNext()){
-            String favorite = nextFavorite.next();
-            buffer.append(favorite + "##");
-        }
-        if(buffer.length()!=0){
-            return buffer.substring(0, buffer.length()-2).toString();
-        }
-        return buffer.toString();
-    }
-    
+
     public static void removeUninstalledFavorites(final Context context) {
         Log.d(TAG, "" + sFavoriteList);
         final PackageManager pm = context.getPackageManager();
         boolean changed = false;
         List<String> newFavoriteList = new ArrayList<String>();
-        Iterator<String> nextFavorite=sFavoriteList.iterator();
-        while(nextFavorite.hasNext()){
+        Iterator<String> nextFavorite = sFavoriteList.iterator();
+        while (nextFavorite.hasNext()) {
             String favorite = nextFavorite.next();
             Intent intent = null;
             try {
@@ -563,23 +350,21 @@ public class SettingsActivity extends PreferenceActivity implements
             }
             newFavoriteList.add(favorite);
         }
-        if(changed){
+        if (changed) {
             sFavoriteList.clear();
             sFavoriteList.addAll(newFavoriteList);
-            sPrefs.edit().putString("favorite_apps", flattenFavorites(sFavoriteList)).commit();
+            sPrefs.edit()
+                    .putString("favorite_apps", Utils.flattenFavorites(sFavoriteList))
+                    .commit();
         }
     }
     
-    public static String getActivityLabel(PackageManager pm, Intent intent){
-        ActivityInfo ai = intent.resolveActivityInfo(pm, PackageManager.GET_ACTIVITIES);
-        String label = null;
-
-        if (ai != null) {
-            label = ai.loadLabel(pm).toString();
-            if (label == null) {
-                label = ai.name;
-            }
-        }
-        return label;
+    public void applyChanges(List<String> favoriteList){
+        sFavoriteList.clear();
+        sFavoriteList.addAll(favoriteList);
+        sPrefs.edit()
+                .putString("favorite_apps",
+                        Utils.flattenFavorites(sFavoriteList))
+                .commit();
     }
 }

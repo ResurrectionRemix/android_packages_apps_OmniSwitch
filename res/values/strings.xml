@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--  Copyright (C) 2013 The OmniROM Project
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 	<string name="app_name">OmniSwitch</string>
 	<string name="refresh">Refresh</string>
@@ -21,7 +36,6 @@
 	<string name="drag_location_title">Drag handle location</string>
 	<string name="drag_location_right">Right</string>
 	<string name="drag_location_left">Left</string>
-	<string name="favorite_apps_title">Favorite apps</string>
 	<string name="opacity_title">Overlay opacity</string>
 	<string name="drag_handle_opacity_title">Drag handle opacity</string>
 	<string name="animate_title">Animate</string>
@@ -39,8 +53,12 @@
 	<string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> free</string>
 	<string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> used</string>
 	<string name="show_rambar_title">Show memory usage</string>
-	<string name="show_app_labels">Show application title</string>
+	<string name="show_app_labels">Show app label</string>
 	<string name="category_overlay_title">Overlay</string>
 	<string name="category_drag_handle_title">Drag handle</string>
-	<string name="category_favorites_title">Favorites</string>
+	<string name="category_favorite_title">Favorites</string>
+	<string name="favorite_apps_config_title">Manage favorites</string>
+	<string name="favorite_apps_config_dialog_title">Manage favorites</string>
+	<string name="favorite_apps_add_dialog_title">Add apps</string>
+	<string name="favorite_add">Add\u2026</string>
 </resources>

@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--  Copyright (C) 2013 The OmniROM Project
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
 	android:title="@string/recents_settings_title" >
 	<SwitchPreference
@@ -66,9 +81,9 @@
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_favorite"
-		android:title="@string/category_favorites_title" >
+		android:title="@string/category_favorite_title" >
 		<Preference
-			android:key="favorite_apps"
-			android:title="@string/favorite_apps_title" />
+			android:key="favorite_apps_config"
+			android:title="@string/favorite_apps_config_title" />
 	</PreferenceCategory>
 </PreferenceScreen>

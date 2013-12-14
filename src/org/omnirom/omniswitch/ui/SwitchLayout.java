@@ -41,6 +41,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -69,7 +70,7 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-public class SwitchLayout extends LinearLayout {
+public class SwitchLayout {
     private static final String TAG = "SwitchLayout";
     private WindowManager mWindowManager;
     private LayoutInflater mInflater;
@@ -112,6 +113,7 @@ public class SwitchLayout extends LinearLayout {
     private List<String> mFavoriteNames;
     private boolean mShowLabels = true;
     private boolean mShowFavorites;
+    private int mScreenHeight;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -180,7 +182,6 @@ public class SwitchLayout extends LinearLayout {
     }
 
     public SwitchLayout(Context context) {
-        super(context);
         mContext = context;
         mWindowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -195,6 +196,10 @@ public class SwitchLayout extends LinearLayout {
                 mFavoriteList);
 
         mDensity = mContext.getResources().getDisplayMetrics().density;
+        
+        Point size = new Point();
+        mWindowManager.getDefaultDisplay().getSize(size);
+        mScreenHeight = size.y;
 
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
@@ -222,11 +227,11 @@ public class SwitchLayout extends LinearLayout {
     private void createView() {
         mView = null;
         if (mHorizontal) {
-            mView = mInflater.inflate(R.layout.recents_list_horizontal, this,
+            mView = mInflater.inflate(R.layout.recents_list_horizontal, null,
                     false);
             mRecentListHorizontal = (HorizontalListView) mView
                     .findViewById(R.id.recent_list_horizontal);
-            LayoutParams params = new LayoutParams(
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     mHorizontalScrollerHeight);
 
@@ -284,7 +289,7 @@ public class SwitchLayout extends LinearLayout {
             mOpenFavorite.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mShowFavorites = !mShowFavorites;
-                    mOpenFavorite.setImageDrawable(getResources().getDrawable(
+                    mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
                             mShowFavorites ? R.drawable.arrow_up
                                     : R.drawable.arrow_down));
                     if (mAnimate) {
@@ -317,7 +322,7 @@ public class SwitchLayout extends LinearLayout {
             mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
 
         } else {
-            mView = mInflater.inflate(R.layout.recents_list, this, false);
+            mView = mInflater.inflate(R.layout.recents_list, null, false);
             mRecentList = (ListView) mView.findViewById(R.id.recent_list);
 
             mRecentList.setOnItemClickListener(new OnItemClickListener() {
@@ -400,7 +405,7 @@ public class SwitchLayout extends LinearLayout {
         mSettingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent hideRecent = new Intent(
-                        SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                        SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                 mContext.sendBroadcast(hideRecent);
 
                 Intent mainActivity = new Intent(mContext,
@@ -430,7 +435,7 @@ public class SwitchLayout extends LinearLayout {
                 if (mShowing) {
                     Log.d(TAG, "onTouch");
                     Intent hideRecent = new Intent(
-                            SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                            SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
                     // TODO workaround for flicker on launcher screen
                     mWindowManager.updateViewLayout(mPopupView, getParams(0));
@@ -444,7 +449,7 @@ public class SwitchLayout extends LinearLayout {
                 if (mShowing) {
                     Log.d(TAG, "onKey");
                     Intent hideRecent = new Intent(
-                            SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                            SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
                     // TODO workaround for flicker on launcher screen
                     mWindowManager.updateViewLayout(mPopupView, getParams(0));
@@ -466,7 +471,7 @@ public class SwitchLayout extends LinearLayout {
         // if it was open remember that
         if (mShowFavorites){
         	mFavoriteListHorizontal.setVisibility(View.VISIBLE);
-            mOpenFavorite.setImageDrawable(getResources().getDrawable(R.drawable.arrow_up));
+            mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(R.drawable.arrow_up));
         }
         mPopupView.addView(mView);
 
@@ -475,6 +480,9 @@ public class SwitchLayout extends LinearLayout {
         } else {
             mPopupView.setFocusableInTouchMode(true);
             mShowing = true;
+            Intent showRibbon = new Intent(
+                    SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
+            mContext.sendBroadcast(showRibbon);
         }
     }
 
@@ -490,6 +498,9 @@ public class SwitchLayout extends LinearLayout {
             public void onAnimationEnd(Animation animation) {
                 mPopupView.setFocusableInTouchMode(true);
                 mShowing = true;
+                Intent showRibbon = new Intent(
+                        SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
+                mContext.sendBroadcast(showRibbon);
             }
 
             @Override
@@ -658,14 +669,14 @@ public class SwitchLayout extends LinearLayout {
 
     private void startApplicationDetailsActivity(String packageName) {
         Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
         mContext.sendBroadcast(hideRecent);
 
         Intent intent = new Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts(
                         "package", packageName, null));
         intent.setComponent(intent.resolveActivity(mContext.getPackageManager()));
-        TaskStackBuilder.create(getContext())
+        TaskStackBuilder.create(mContext)
                 .addNextIntentWithParentStack(intent).startActivities();
     }
 
@@ -690,7 +701,7 @@ public class SwitchLayout extends LinearLayout {
         mShowRambar = prefs
                 .getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
         mShowLabels = prefs.getBoolean(SettingsActivity.PREF_SHOW_LABELS, true);
-        mPosY = prefs.getFloat("handle_pos_y", -1.0f);
+        mPosY = prefs.getFloat("handle_pos_y", (float)(mScreenHeight / 2.0));
 
         mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
         mHorizontalScrollerHeight = (int) ((mIconSize + (mShowLabels ? 40 : 10))
@@ -717,10 +728,10 @@ public class SwitchLayout extends LinearLayout {
 
             String sizeStr = Formatter.formatShortFileSize(mContext, totalMem
                     - availMem);
-            mForegroundProcessText.setText(getResources().getString(
+            mForegroundProcessText.setText(mContext.getResources().getString(
                     R.string.service_foreground_processes, sizeStr));
             sizeStr = Formatter.formatShortFileSize(mContext, availMem);
-            mBackgroundProcessText.setText(getResources().getString(
+            mBackgroundProcessText.setText(mContext.getResources().getString(
                     R.string.service_background_processes, sizeStr));
 
             float fTotalMem = totalMem;

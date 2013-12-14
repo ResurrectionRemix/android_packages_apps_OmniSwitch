@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Queue;
 
 import org.omnirom.omniswitch.R;
-import org.omnirom.omniswitch.R.styleable;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -102,7 +101,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     /** The velocity to use for overscroll absorption */
     private static final float FLING_DEFAULT_ABSORB_VELOCITY = 30f;
-
     /** The friction amount to use for the fling tracker */
     private static final float FLING_FRICTION = 0.009f;
 

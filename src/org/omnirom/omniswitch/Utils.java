@@ -28,6 +28,9 @@ public class Utils {
 
     public static void parseFavorites(String favoriteListString,
             List<String> favoriteList) {
+        if (favoriteListString.indexOf("##") == -1){
+            return;
+        }
         String[] split = favoriteListString.split("##");
         for (int i = 0; i < split.length; i++) {
             favoriteList.add(split[i]);

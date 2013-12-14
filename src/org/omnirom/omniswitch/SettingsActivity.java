@@ -32,7 +32,6 @@ import org.omnirom.omniswitch.ui.SettingsGestureView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
@@ -65,6 +64,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_SHOW_RAMBAR = "show_rambar";
     public static final String PREF_SHOW_LABELS = "show_labels";
     public static final String PREF_FAVORITE_APPS_CONFIG = "favorite_apps_config";
+    public static final String PREF_SHOW_DRAG_HANDLE = "show_drag_handle";
 
     private final static int SHOWCASE_INDEX_ADJUST = 0;
 
@@ -169,12 +169,12 @@ public class SettingsActivity extends PreferenceActivity implements
         Utils.parseFavorites(favoriteListString, sFavoriteList);
         removeUninstalledFavorites(this);
 
-        mGestureView = new SettingsGestureView(this, null);
+        mGestureView = new SettingsGestureView(this);
 
         mShowRambar = (CheckBoxPreference) findPreference(PREF_SHOW_RAMBAR);
         mShowLabels = (CheckBoxPreference) findPreference(PREF_SHOW_LABELS);
 
-        // updateEnablement(false, null);
+        updateEnablement(false, null);
     }
 
     private void updateEnablement(boolean force, Boolean value) {
@@ -185,20 +185,7 @@ public class SettingsActivity extends PreferenceActivity implements
         } else if (value != null) {
             running = value.booleanValue();
         }
-        mAdjustHandle.setEnabled(running);
-
-        mOpacity.setEnabled(running);
-        mDragHandleLocation.setEnabled(running);
-        mDragHandleSize.setEnabled(running);
-        mIconSize.setEnabled(running);
-        // mOrientation.setEnabled(running);
-        mAnimate.setEnabled(running);
-        mStartOnBoot.setEnabled(running);
-        mDragHandleColor.setEnabled(running);
-        mShowRambar.setEnabled(running);
-        mFavoriteApps.setEnabled(running);
-        mFavoriteAppsConfig.setEnabled(running);
-        mShowLabels.setEnabled(running);
+        mAdjustHandle.setEnabled(!running);
     }
 
     @Override
@@ -224,16 +211,16 @@ public class SettingsActivity extends PreferenceActivity implements
             Intent svc = new Intent(this, SwitchService.class);
             if (value) {
                 Intent killRecent = new Intent(
-                        SwitchService.RecentsReceiver.ACTION_KILL_RECENTS);
+                        SwitchService.RecentsReceiver.ACTION_KILL_ACTIVITY);
                 sendBroadcast(killRecent);
 
                 startService(svc);
             } else {
                 Intent killRecent = new Intent(
-                        SwitchService.RecentsReceiver.ACTION_KILL_RECENTS);
+                        SwitchService.RecentsReceiver.ACTION_KILL_ACTIVITY);
                 sendBroadcast(killRecent);
             }
-            // updateEnablement(true, (Boolean) newValue);
+            updateEnablement(true, (Boolean) newValue);
             return true;
             /*
              * } else if (preference == mOrientation) { String value = (String)

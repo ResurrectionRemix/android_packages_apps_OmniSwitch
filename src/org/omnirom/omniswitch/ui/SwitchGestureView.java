@@ -20,8 +20,6 @@ package org.omnirom.omniswitch.ui;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchService;
-import org.omnirom.omniswitch.R.drawable;
-import org.omnirom.omniswitch.SwitchService.RecentsReceiver;
 
 import android.content.Context;
 import android.content.Intent;
@@ -30,43 +28,67 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class SwitchGestureView extends LinearLayout {
+public class SwitchGestureView {
     private final static String TAG = "SwitchGestureView";
 
     private Context mContext;
+    private WindowManager mWindowManager;
     private ImageView mDragButton;
+    private LinearLayout mView;
+    private int mTriggerThreshholdX = 20;
+    private int mTriggerThreshholdY = 20;
 
-    private int mTriggerThreshhold = 20;
     private float[] mDownPoint = new float[2];
-    private boolean mRibbonSwipeStarted = false;
+    private boolean mRibbonSwipeStarted;
     private boolean mRecentsStarted;
     private int mSize = 1; // 0=small 1=normal 2=large
     private int mLocation = 0; // 0 = right 1 = left
     private boolean mShowing;
     private float mDensity;
     private float mPosY = -1.0f;
+    private float mStartY = -1.0f;
+    private float mEndY = -1.0f;
     private int mColor;
+    private Drawable mDragHandle;
+    private Drawable mDragHandleOverlay;
+    private int mScreenHeight;
+    private boolean mShowDragHandle = true;
 
-    private LinearLayout.LayoutParams mDragParams;
-
-    public SwitchGestureView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public SwitchGestureView(Context context) {
         mContext = context;
-        mDensity = getResources().getDisplayMetrics().density;
+        mWindowManager = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
 
-        mDragButton = new ImageView(mContext);
+        mDensity = mContext.getResources().getDisplayMetrics().density;
+        Point size = new Point();
+        mWindowManager.getDefaultDisplay().getSize(size);
+        mScreenHeight = size.y;
+
+        mDragHandle = mContext.getResources().getDrawable(
+                R.drawable.drag_handle);
+        mDragHandleOverlay = mContext.getResources().getDrawable(
+                R.drawable.drag_handle_overlay);
+
+        LayoutInflater inflater = (LayoutInflater) mContext
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mView = (LinearLayout) inflater.inflate(R.layout.gesture_view, null, false);
+
+        mDragButton= new ImageView(mContext);
         mDragButton.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -74,19 +96,25 @@ public class SwitchGestureView extends LinearLayout {
                 boolean defaultResult = v.onTouchEvent(event);
 
                 int action = event.getAction();
+                Log.d(TAG, "button onTouch");
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     if (!mRibbonSwipeStarted) {
+                        updateDragHandleImage(true);
+                        mView.invalidate();
+
                         mDownPoint[0] = event.getX();
                         mDownPoint[1] = event.getY();
                         mRibbonSwipeStarted = true;
-                        Log.d(TAG, "start " + mDownPoint[0] + " "
+                        Log.d(TAG, "button down " + mDownPoint[0] + " "
                                 + mDownPoint[1]);
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     mRibbonSwipeStarted = false;
                     mRecentsStarted = false;
+                    updateDragHandleImage(false);
+                    mView.invalidate();
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (mRibbonSwipeStarted) {
@@ -96,16 +124,15 @@ public class SwitchGestureView extends LinearLayout {
                                     : event.getX();
                             float y = k < historySize ? event.getHistoricalY(k)
                                     : event.getY();
-                            float distanceY = mDownPoint[1] - y;
-                            float distanceX = mDownPoint[0] - x;
-                            float distance = Math.abs(distanceX);
-                            if (distance > mTriggerThreshhold
+                            float distanceY = Math.abs(mDownPoint[1] - y);
+                            float distanceX = Math.abs(mDownPoint[0] - x);
+                            Log.d(TAG, ""+distanceX + " " + distanceY);
+                            if (distanceX > mTriggerThreshholdX
+                                    //&& distanceY < mTriggerThreshholdY
                                     && !mRecentsStarted) {
-                                Log.d(TAG, "ACTION_SHOW_RECENTS");
-
-                                Intent showRibbon = new Intent(
-                                        SwitchService.RecentsReceiver.ACTION_SHOW_RECENTS);
-                                mContext.sendBroadcast(showRibbon);
+                                Intent showIntent = new Intent(
+                                        SwitchService.RecentsReceiver.ACTION_SHOW_OVERLAY);
+                                mContext.sendBroadcast(showIntent);
                                 mRecentsStarted = true;
                                 mRibbonSwipeStarted = false;
                                 break;
@@ -114,8 +141,11 @@ public class SwitchGestureView extends LinearLayout {
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    mRibbonSwipeStarted = false;
-                    mRecentsStarted = false;
+                    if (!mRecentsStarted){
+                        mRibbonSwipeStarted = false;
+                        updateDragHandleImage(false);
+                        mView.invalidate();
+                    }
                     break;
                 default:
                     return defaultResult;
@@ -127,23 +157,15 @@ public class SwitchGestureView extends LinearLayout {
         mDragButton.setOnLongClickListener(new OnLongClickListener(){
             @Override
             public boolean onLongClick(View arg0) {
-                Intent showRibbon = new Intent(
-                        SwitchService.RecentsReceiver.ACTION_SHOW_RECENTS);
-                mContext.sendBroadcast(showRibbon);
+                if (!mRecentsStarted){
+                    Log.d(TAG, "button long down");
+                    Intent showIntent = new Intent(
+                            SwitchService.RecentsReceiver.ACTION_SHOW_OVERLAY);
+                    mContext.sendBroadcast(showIntent);
+                }
                 return true;
             }});
         updateLayout();
-    }
-
-    private int getDefaultGravity() {
-        if (mLocation == 0) {
-            return Gravity.RIGHT | Gravity.CENTER_VERTICAL;
-        }
-        if (mLocation == 1) {
-            return Gravity.LEFT | Gravity.CENTER_VERTICAL;
-        }
-
-        return Gravity.RIGHT | Gravity.CENTER_VERTICAL;
     }
 
     private int getAbsoluteGravity() {
@@ -167,46 +189,41 @@ public class SwitchGestureView extends LinearLayout {
                         | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT);
 
-        if (mPosY != -1.0f) {
-            lp.gravity = getAbsoluteGravity();
-            lp.y = (int) (mPosY - mDragParams.height / 2);
-        } else {
-            lp.gravity = getDefaultGravity();
-        }
+        lp.gravity = getAbsoluteGravity();
+        lp.y = (int) (mPosY - (mEndY - mStartY) / 2.0f);
+        lp.height = (int)(mEndY - mStartY);
+        lp.width = (int) (20 * mDensity + 0.5f);
+        
         return lp;
     }
 
     private void updateLayout() {
-        int dragHeight = 20;
-        int dragWidth = 80;
-
         hide();
-        removeAllViews();
+        mView.removeView(mDragButton);
+        updateDragHandleImage(false);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        mView.addView(mDragButton, params);
+        mView.invalidate();
+        show();
+    }
+    
+    private void updateDragHandleImage(boolean shown){
+        Drawable d = shown ? mDragHandle : mDragHandleOverlay;
 
-        if (mSize == 0) {
-            dragHeight = 20;
-            dragWidth = 50;
-        } else if (mSize == 2) {
-            dragHeight = 20;
-            dragWidth = 110;
+        if (mShowDragHandle){
+            d = mDragHandle;
         }
-        mDragParams = new LinearLayout.LayoutParams((int) (dragHeight
-                * mDensity + 0.5f), (int) (dragWidth * mDensity + 0.5f));
-        setOrientation(VERTICAL);
-
-        Drawable d = mContext.getResources().getDrawable(
-                R.drawable.drag_button_land);
         if (mLocation == 1) {
             d = rotate(mContext.getResources(), d, 180);
         }
 
         mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
         mDragButton.setImageDrawable(d);
-        mDragButton.getDrawable().setColorFilter(mColor, Mode.SRC_ATOP);
-
-        addView(mDragButton, mDragParams);
-        invalidate();
-        show();
+        if (shown || mShowDragHandle){
+            mDragButton.getDrawable().setColorFilter(mColor, Mode.SRC_ATOP);
+        }
     }
 
     private Drawable rotate(Resources resources, Drawable image, int deg) {
@@ -221,15 +238,27 @@ public class SwitchGestureView extends LinearLayout {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         Log.d(TAG, "updatePrefs");
-        mPosY = prefs.getFloat("handle_pos_y", -1.0f);
+        mPosY = prefs.getFloat("handle_pos_y", (float)(mScreenHeight / 2.0));
         String size = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_SIZE,
                 "1");
         mSize = Integer.valueOf(size);
+        if (mSize == 0) {
+            mStartY = mPosY - (float)(20 * mDensity + 0.5);
+            mEndY = mPosY + (float)(20 * mDensity + 0.5);
+        } else if (mSize == 1) {
+            mStartY = mPosY - (float)(50 * mDensity + 0.5);
+            mEndY = mPosY + (float)(50 * mDensity + 0.5);
+        } else if (mSize == 2) {
+            mStartY = mPosY - (float)(80 * mDensity + 0.5);
+            mEndY = mPosY + (float)(80 * mDensity + 0.5);
+        }
+
         String location = prefs.getString(
                 SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
         mLocation = Integer.valueOf(location);
         mColor = prefs
-                .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, 0xffffff);
+                .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mContext.getResources().getColor(R.color.holo_blue_light));
+        mShowDragHandle = prefs.getBoolean(SettingsActivity.PREF_SHOW_DRAG_HANDLE, true);
         updateLayout();
     }
 
@@ -237,10 +266,8 @@ public class SwitchGestureView extends LinearLayout {
         if (mShowing) {
             return;
         }
-        final WindowManager wm = (WindowManager) mContext
-                .getSystemService(Context.WINDOW_SERVICE);
 
-        wm.addView(this, getGesturePanelLayoutParams());
+        mWindowManager.addView(mView, getGesturePanelLayoutParams());
         mShowing = true;
     }
 
@@ -248,14 +275,19 @@ public class SwitchGestureView extends LinearLayout {
         if (!mShowing) {
             return;
         }
-        final WindowManager wm = (WindowManager) mContext
-                .getSystemService(Context.WINDOW_SERVICE);
-        wm.removeView(this);
+
+        mWindowManager.removeView(mView);
         mShowing = false;
     }
 
     public int getLocation() {
         return mLocation;
     }
-
+    
+    public void overlayShown() {
+        mRecentsStarted = false;
+        mRibbonSwipeStarted = false;
+        updateDragHandleImage(false);
+        mView.invalidate();
+    }
 }

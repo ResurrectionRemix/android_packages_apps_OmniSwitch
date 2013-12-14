@@ -48,17 +48,18 @@ public class SwitchService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        mGesturePanel = new SwitchGestureView(this, null);
+        mGesturePanel = new SwitchGestureView(this);
         Log.d(TAG, "started SwitchService");
 
         mManager = new SwitchManager(this);
 
         mReceiver = new RecentsReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(RecentsReceiver.ACTION_SHOW_RECENTS);
-        filter.addAction(RecentsReceiver.ACTION_SHOW_RECENTS2);
-        filter.addAction(RecentsReceiver.ACTION_HIDE_RECENTS);
-        filter.addAction(RecentsReceiver.ACTION_KILL_RECENTS);
+        filter.addAction(RecentsReceiver.ACTION_SHOW_OVERLAY);
+        filter.addAction(RecentsReceiver.ACTION_SHOW_OVERLAY2);
+        filter.addAction(RecentsReceiver.ACTION_HIDE_OVERLAY);
+        filter.addAction(RecentsReceiver.ACTION_KILL_ACTIVITY);
+        filter.addAction(RecentsReceiver.ACTION_OVERLAY_SHOWN);
 
         registerReceiver(mReceiver, filter);
 
@@ -100,16 +101,17 @@ public class SwitchService extends Service {
     }
 
     public class RecentsReceiver extends BroadcastReceiver {
-        public static final String ACTION_SHOW_RECENTS = "org.omnirom.omniswitch.ACTION_SHOW_RECENTS";
-        public static final String ACTION_SHOW_RECENTS2 = "org.omnirom.omniswitch.ACTION_SHOW_RECENTS2";
-        public static final String ACTION_HIDE_RECENTS = "org.omnirom.omniswitch.ACTION_HIDE_RECENTS";
-        public static final String ACTION_KILL_RECENTS = "org.omnirom.omniswitch.ACTION_KILL_RECENTS";
+        public static final String ACTION_SHOW_OVERLAY = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY";
+        public static final String ACTION_SHOW_OVERLAY2 = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY2";
+        public static final String ACTION_HIDE_OVERLAY = "org.omnirom.omniswitch.ACTION_HIDE_OVERLAY";
+        public static final String ACTION_KILL_ACTIVITY = "org.omnirom.omniswitch.ACTION_KILL_ACTIVITY";
+        public static final String ACTION_OVERLAY_SHOWN = "org.omnirom.omniswitch.ACTION_OVERLAY_SHOWN";
 
         @Override
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
             Log.d(TAG, "onReceive " + action);
-            if (ACTION_SHOW_RECENTS.equals(action)) {
+            if (ACTION_SHOW_OVERLAY.equals(action)) {
                 if (!mManager.isShowing()) {
                     Intent mainActivity = new Intent(context,
                             MainActivity.class);
@@ -118,23 +120,25 @@ public class SwitchService extends Service {
 
                     startActivity(mainActivity);
                 }
-            } else if (ACTION_SHOW_RECENTS2.equals(action)) {
+            } else if (ACTION_SHOW_OVERLAY2.equals(action)) {
                 if (!mManager.isShowing()) {
                     mManager.show();
                 }
-            } else if (ACTION_HIDE_RECENTS.equals(action)) {
+            } else if (ACTION_HIDE_OVERLAY.equals(action)) {
                 if (mManager.isShowing()) {
                     Intent finishActivity = new Intent(
                             MainActivity.ActivityReceiver.ACTION_FINISH);
                     sendBroadcast(finishActivity);
                     mManager.hide();
                 }
-            } else if (ACTION_KILL_RECENTS.equals(action)) {
+            } else if (ACTION_KILL_ACTIVITY.equals(action)) {
                 Intent finishActivity = new Intent(
                         MainActivity.ActivityReceiver.ACTION_FINISH);
                 sendBroadcast(finishActivity);
                 Intent svc = new Intent(context, SwitchService.class);
                 context.stopService(svc);
+            } else if (ACTION_OVERLAY_SHOWN.equals(action)){
+                mGesturePanel.overlayShown();
             }
         }
     }

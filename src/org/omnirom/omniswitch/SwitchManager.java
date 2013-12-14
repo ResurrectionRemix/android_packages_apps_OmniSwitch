@@ -114,7 +114,7 @@ public class SwitchManager {
         Log.d(TAG, "switch to " + ad.getPackageName());
 
         Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
         mContext.sendBroadcast(hideRecent);
 
         if (ad.getTaskId() >= 0) {
@@ -186,13 +186,13 @@ public class SwitchManager {
             ad.setKilled();
         }
         Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
         mContext.sendBroadcast(hideRecent);
     }
 
     public void dismissAndGoHome() {
         Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_RECENTS);
+                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
         mContext.sendBroadcast(hideRecent);
 
         Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);

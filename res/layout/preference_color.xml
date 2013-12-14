@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--  Copyright (C) 2013 The OmniROM Project
+<!--
+  Copyright (C) 2013 The OmniROM Project
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -13,43 +14,42 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- -->
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/app_light_pref"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
-    android:background="?android:attr/selectableItemBackground" >
-
-    <RelativeLayout
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dip"
-        android:layout_weight="1">
-
-        <TextView android:id="@+android:id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:ellipsize="marquee"
-            android:fadingEdge="horizontal" />
-
-        <TextView android:id="@+android:id/summary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@android:id/title"
-            android:layout_alignStart="@android:id/title"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:attr/textColorSecondary"
-            android:maxLines="1" />
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/light_color"
-        android:layout_width="32dip"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
-
+	android:id="@+id/app_light_pref"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="?android:attr/selectableItemBackground"
+	android:gravity="center_vertical"
+	android:minHeight="?android:attr/listPreferredItemHeight"
+	android:paddingLeft="10dp"
+	android:paddingRight="18dp" >
+    >
+	<RelativeLayout
+		android:layout_width="0dip"
+		android:layout_height="wrap_content"
+		android:layout_weight="1" >
+		<TextView
+			android:id="@+android:id/title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:ellipsize="marquee"
+			android:fadingEdge="horizontal"
+			android:singleLine="true"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+		<TextView
+			android:id="@+android:id/summary"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignStart="@android:id/title"
+			android:layout_below="@android:id/title"
+			android:maxLines="1"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="?android:attr/textColorSecondary" />
+	</RelativeLayout>
+	<ImageView
+		android:id="@+id/light_color"
+		android:layout_width="32dip"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center" />
 </LinearLayout>

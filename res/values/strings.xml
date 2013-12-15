@@ -27,13 +27,6 @@
 	<string name="recents_settings_title">OmniSwitch</string>
 	<string name="start_on_boot_title">Start on boot</string>
 	<string name="toggle_service_title">Enable</string>
-	<string name="orientation_title">Orientation</string>
-	<string name="orientation_vertical">Vertical</string>
-	<string name="orientation_horizontal">Horizontal</string>
-	<string name="drag_size_normal">Normal</string>
-	<string name="drag_size_small">Small</string>
-	<string name="drag_size_large">Large</string>
-	<string name="drag_size_title">Drag handle size</string>
 	<string name="drag_location_title">Drag handle location</string>
 	<string name="drag_location_right">Right</string>
 	<string name="drag_location_left">Left</string>
@@ -41,8 +34,10 @@
 	<string name="drag_handle_opacity_title">Drag handle opacity</string>
 	<string name="animate_title">Animate</string>
 	<string name="adjust_handle_title">Drag handle position</string>
-	<string name="sc_adjust_title">Drag handle position</string>
-	<string name="sc_adjust_body">Touch the screen where the drag handle should be placed on the side</string>
+	<string name="sc_drag_handle_title">Drag handle</string>
+	<string name="sc_drag_handle_body">Swipe horizontally or long-press to open</string>
+	<string name="sc_favorite_title">Favorite apps</string>
+	<string name="sc_favorite_body">Open favorite apps view.\nFavorite apps can be added in settings</string>
 	<string name="icon_size_normal">Normal</string>
 	<string name="icon_size_small">Small</string>
 	<string name="icon_size_large">Large</string>

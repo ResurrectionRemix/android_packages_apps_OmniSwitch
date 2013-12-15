@@ -20,6 +20,8 @@ package org.omnirom.omniswitch.ui;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchService;
+import org.omnirom.omniswitch.showcase.ShowcaseView;
+import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +34,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,8 +45,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-public class SwitchGestureView {
+public class SwitchGestureView implements OnShowcaseEventListener {
     private final static String TAG = "SwitchGestureView";
+    private final static String KEY_SHOWCASE_HANDLE = "showcase_handle_done";
 
     private Context mContext;
     private WindowManager mWindowManager;
@@ -53,25 +57,27 @@ public class SwitchGestureView {
     private int mTriggerThreshholdY = 20;
 
     private float[] mDownPoint = new float[2];
-    private boolean mRibbonSwipeStarted;
-    private boolean mRecentsStarted;
-    private int mSize = 1; // 0=small 1=normal 2=large
+    private boolean mSwipeStarted;
+    private boolean mShowStarted;
     private int mLocation = 0; // 0 = right 1 = left
     private boolean mShowing;
     private float mDensity;
-    private float mPosY = -1.0f;
-    private float mStartY = -1.0f;
-    private float mEndY = -1.0f;
+    private int mStartY;
+    private int mEndY;
     private int mColor;
     private Drawable mDragHandle;
     private Drawable mDragHandleOverlay;
     private int mScreenHeight;
     private boolean mShowDragHandle = true;
+    private ShowcaseView mShowcaseView;
+    private SharedPreferences mPrefs;
+    private boolean mShowcaseDone;
 
     public SwitchGestureView(Context context) {
         mContext = context;
         mWindowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
 
         mDensity = mContext.getResources().getDisplayMetrics().density;
         Point size = new Point();
@@ -99,25 +105,25 @@ public class SwitchGestureView {
                 Log.d(TAG, "button onTouch");
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    if (!mRibbonSwipeStarted) {
+                    if (!mSwipeStarted) {
                         updateDragHandleImage(true);
                         mView.invalidate();
 
                         mDownPoint[0] = event.getX();
                         mDownPoint[1] = event.getY();
-                        mRibbonSwipeStarted = true;
+                        mSwipeStarted = true;
                         Log.d(TAG, "button down " + mDownPoint[0] + " "
                                 + mDownPoint[1]);
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
-                    mRibbonSwipeStarted = false;
-                    mRecentsStarted = false;
+                    mSwipeStarted = false;
+                    mShowStarted = false;
                     updateDragHandleImage(false);
                     mView.invalidate();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (mRibbonSwipeStarted) {
+                    if (mSwipeStarted) {
                         final int historySize = event.getHistorySize();
                         for (int k = 0; k < historySize + 1; k++) {
                             float x = k < historySize ? event.getHistoricalX(k)
@@ -129,20 +135,20 @@ public class SwitchGestureView {
                             Log.d(TAG, ""+distanceX + " " + distanceY);
                             if (distanceX > mTriggerThreshholdX
                                     //&& distanceY < mTriggerThreshholdY
-                                    && !mRecentsStarted) {
+                                    && !mShowStarted) {
                                 Intent showIntent = new Intent(
                                         SwitchService.RecentsReceiver.ACTION_SHOW_OVERLAY);
                                 mContext.sendBroadcast(showIntent);
-                                mRecentsStarted = true;
-                                mRibbonSwipeStarted = false;
+                                mShowStarted = true;
+                                mSwipeStarted = false;
                                 break;
                             }
                         }
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (!mRecentsStarted){
-                        mRibbonSwipeStarted = false;
+                    if (!mShowStarted){
+                        mSwipeStarted = false;
                         updateDragHandleImage(false);
                         mView.invalidate();
                     }
@@ -157,7 +163,7 @@ public class SwitchGestureView {
         mDragButton.setOnLongClickListener(new OnLongClickListener(){
             @Override
             public boolean onLongClick(View arg0) {
-                if (!mRecentsStarted){
+                if (!mShowStarted){
                     Log.d(TAG, "button long down");
                     Intent showIntent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_SHOW_OVERLAY);
@@ -190,7 +196,7 @@ public class SwitchGestureView {
                 PixelFormat.TRANSLUCENT);
 
         lp.gravity = getAbsoluteGravity();
-        lp.y = (int) (mPosY - (mEndY - mStartY) / 2.0f);
+        lp.y = mStartY;
         lp.height = (int)(mEndY - mStartY);
         lp.width = (int) (20 * mDensity + 0.5f);
         
@@ -238,20 +244,9 @@ public class SwitchGestureView {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         Log.d(TAG, "updatePrefs");
-        mPosY = prefs.getFloat("handle_pos_y", (float)(mScreenHeight / 2.0));
-        String size = prefs.getString(SettingsActivity.PREF_DRAG_HANDLE_SIZE,
-                "1");
-        mSize = Integer.valueOf(size);
-        if (mSize == 0) {
-            mStartY = mPosY - (float)(20 * mDensity + 0.5);
-            mEndY = mPosY + (float)(20 * mDensity + 0.5);
-        } else if (mSize == 1) {
-            mStartY = mPosY - (float)(50 * mDensity + 0.5);
-            mEndY = mPosY + (float)(50 * mDensity + 0.5);
-        } else if (mSize == 2) {
-            mStartY = mPosY - (float)(80 * mDensity + 0.5);
-            mEndY = mPosY + (float)(80 * mDensity + 0.5);
-        }
+        int defaultHeight = (int) (100 * mDensity + 0.5);
+        mStartY = prefs.getInt("handle_pos_start", mScreenHeight / 2 - defaultHeight / 2);
+        mEndY = prefs.getInt("handle_pos_end", mScreenHeight / 2 + defaultHeight / 2);
 
         String location = prefs.getString(
                 SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
@@ -268,6 +263,13 @@ public class SwitchGestureView {
         }
 
         mWindowManager.addView(mView, getGesturePanelLayoutParams());
+        if(!mShowcaseDone){
+            mView.postDelayed(new Runnable(){
+                @Override
+                public void run() {
+                    startShowcaseDragHandle();
+                }}, 200);
+        }
         mShowing = true;
     }
 
@@ -285,9 +287,38 @@ public class SwitchGestureView {
     }
     
     public void overlayShown() {
-        mRecentsStarted = false;
-        mRibbonSwipeStarted = false;
+        mShowStarted = false;
+        mSwipeStarted = false;
         updateDragHandleImage(false);
         mView.invalidate();
+    }
+
+    private boolean startShowcaseDragHandle() {
+        if (!mPrefs.getBoolean(KEY_SHOWCASE_HANDLE, false)) {
+            mPrefs.edit().putBoolean(KEY_SHOWCASE_HANDLE, true).commit();
+            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+            co.hideOnClickOutside = true;
+
+            Point size = new Point();
+            mWindowManager.getDefaultDisplay().getSize(size);
+
+            mShowcaseView = ShowcaseView.insertShowcaseView(mLocation == 1 ? 0 : size.x, mStartY + (mEndY - mStartY)/2, mWindowManager, mContext,
+                    R.string.sc_drag_handle_title, R.string.sc_drag_handle_body, co);
+
+            mShowcaseView.animateGesture(size.x / 2, size.y * 2.0f / 3.0f,
+                    size.x / 2, size.y / 2.0f);
+            mShowcaseView.setOnShowcaseEventListener(this);
+            mShowcaseDone = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
     }
 }

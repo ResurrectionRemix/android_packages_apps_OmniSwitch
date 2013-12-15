@@ -36,7 +36,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -48,16 +47,14 @@ import android.util.Log;
 import android.view.WindowManager;
 
 public class SettingsActivity extends PreferenceActivity implements
-        OnPreferenceChangeListener, OnShowcaseEventListener {
+        OnPreferenceChangeListener /*, OnShowcaseEventListener*/ {
     private static final String TAG = "SettingsActivity";
 
     public static final String PREF_SERVICE_STATE = "toggle_service";
-    // public static final String PREF_ORIENTATION = "orientation";
     public static final String PREF_OPACITY = "opacity";
     public static final String PREF_ANIMATE = "animate";
     public static final String PREF_START_ON_BOOT = "start_on_boot";
     public static final String PREF_ICON_SIZE = "icon_size";
-    public static final String PREF_DRAG_HANDLE_SIZE = "drag_handle_size";
     public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location";
     private static final String PREF_ADJUST_HANDLE = "adjust_handle";
     public static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
@@ -71,29 +68,23 @@ public class SettingsActivity extends PreferenceActivity implements
     private final static String KEY_SHOWCASE_ADJUST = "SHOWCASE_ADJUST";
 
     private SwitchPreference mToggleService;
-    // private ListPreference mOrientation;
-    private ListPreference mDragHandleSize;
     private ListPreference mDragHandleLocation;
     private ListPreference mIconSize;
-    private CheckBoxPreference mAnimate;
-    private CheckBoxPreference mStartOnBoot;
     private SeekBarPreference mOpacity;
-    private Preference mFavoriteApps;
     private Preference mFavoriteAppsConfig;
     private Preference mAdjustHandle;
-    private Preference mDragHandleColor;
     private static List<String> sFavoriteList = new ArrayList<String>();
     private static SharedPreferences sPrefs;
     private SettingsGestureView mGestureView;
-    private ShowcaseView mShowcaseView;
-    private int mShowCaseIndex;
-    private CheckBoxPreference mShowRambar;
-    private CheckBoxPreference mShowLabels;
+    //private ShowcaseView mShowcaseView;
+    //private int mShowCaseIndex;
     private FavoriteDialog mManageAppDialog;
 
     @Override
     public void onPause() {
-        mGestureView.hide();
+        if (mGestureView != null) {
+            mGestureView.hide();
+        }
         if (mManageAppDialog != null) {
             mManageAppDialog.dismiss();
         }
@@ -102,7 +93,6 @@ public class SettingsActivity extends PreferenceActivity implements
 
     @Override
     public void onDestroy() {
-        mGestureView.hide();
         super.onDestroy();
     }
 
@@ -116,9 +106,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mToggleService = (SwitchPreference) findPreference(PREF_SERVICE_STATE);
         mToggleService.setChecked(SwitchService.isRunning());
         mToggleService.setOnPreferenceChangeListener(this);
-
-        mAnimate = (CheckBoxPreference) findPreference(PREF_ANIMATE);
-        mStartOnBoot = (CheckBoxPreference) findPreference(PREF_START_ON_BOOT);
 
         /*
          * mOrientation = (ListPreference) findPreference(PREF_ORIENTATION);
@@ -138,14 +125,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mIconSize.setValueIndex(idx);
         mIconSize.setSummary(mIconSize.getEntries()[idx]);
 
-        mDragHandleSize = (ListPreference) findPreference(PREF_DRAG_HANDLE_SIZE);
-        mDragHandleSize.setOnPreferenceChangeListener(this);
-        values = Arrays.asList(mDragHandleSize.getEntryValues());
-        idx = values.indexOf(sPrefs.getString("drag_handle_size",
-                mDragHandleSize.getEntryValues()[1].toString()));
-        mDragHandleSize.setValueIndex(idx);
-        mDragHandleSize.setSummary(mDragHandleSize.getEntries()[idx]);
-
         mDragHandleLocation = (ListPreference) findPreference(PREF_DRAG_HANDLE_LOCATION);
         mDragHandleLocation.setOnPreferenceChangeListener(this);
         values = Arrays.asList(mDragHandleLocation.getEntryValues());
@@ -160,20 +139,12 @@ public class SettingsActivity extends PreferenceActivity implements
 
         mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
 
-        mDragHandleColor = (Preference) findPreference(PREF_DRAG_HANDLE_COLOR);
-
         mFavoriteAppsConfig = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG);
 
         String favoriteListString = sPrefs.getString("favorite_apps", "");
         sFavoriteList.clear();
         Utils.parseFavorites(favoriteListString, sFavoriteList);
         removeUninstalledFavorites(this);
-
-        mGestureView = new SettingsGestureView(this);
-
-        mShowRambar = (CheckBoxPreference) findPreference(PREF_SHOW_RAMBAR);
-        mShowLabels = (CheckBoxPreference) findPreference(PREF_SHOW_LABELS);
-
         updateEnablement(false, null);
     }
 
@@ -192,9 +163,10 @@ public class SettingsActivity extends PreferenceActivity implements
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
         if (preference == mAdjustHandle) {
-            if (!startShowcaseAdjust()) {
+            //if (!startShowcaseAdjust()) {
+                mGestureView = new SettingsGestureView(this);
                 mGestureView.show();
-            }
+            //}
             return true;
         } else if (preference == mFavoriteAppsConfig) {
             showManageAppDialog();
@@ -237,14 +209,6 @@ public class SettingsActivity extends PreferenceActivity implements
             mIconSize.setSummary(mIconSize.getEntries()[idx]);
             mIconSize.setValueIndex(idx);
             return true;
-        } else if (preference == mDragHandleSize) {
-            String value = (String) newValue;
-            List<CharSequence> values = Arrays.asList(mDragHandleSize
-                    .getEntryValues());
-            int idx = values.indexOf(value);
-            mDragHandleSize.setSummary(mDragHandleSize.getEntries()[idx]);
-            mDragHandleSize.setValueIndex(idx);
-            return true;
         } else if (preference == mDragHandleLocation) {
             String value = (String) newValue;
             List<CharSequence> values = Arrays.asList(mDragHandleLocation
@@ -274,45 +238,46 @@ public class SettingsActivity extends PreferenceActivity implements
         mManageAppDialog.show();
     }
 
-    private boolean startShowcaseAdjust() {
-        if (!sPrefs.getBoolean(KEY_SHOWCASE_ADJUST, false)) {
-            sPrefs.edit().putBoolean(KEY_SHOWCASE_ADJUST, true).commit();
-            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-            co.hideOnClickOutside = true;
+//    private boolean startShowcaseAdjust() {
+//        if (!sPrefs.getBoolean(KEY_SHOWCASE_ADJUST, false)) {
+//            sPrefs.edit().putBoolean(KEY_SHOWCASE_ADJUST, true).commit();
+//            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
+//            co.hideOnClickOutside = true;
+//
+//            Point size = new Point();
+//            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+//            wm.getDefaultDisplay().getSize(size);
+//
+//            String location = sPrefs.getString(PREF_DRAG_HANDLE_LOCATION, "0");
+//            boolean left = location.equals("1");
+//            float x = left ? 0 : size.x;
+//            float y = size.y / 2;
+//            mShowcaseView = ShowcaseView.insertShowcaseView(x, y, this,
+//                    R.string.sc_adjust_title, R.string.sc_adjust_body, co);
+//
+//            // Animate gesture
+//            mShowCaseIndex = SHOWCASE_INDEX_ADJUST;
+//            mShowcaseView.animateGesture(size.x / 2, size.y * 2.0f / 3.0f,
+//                    size.x / 2, size.y / 2.0f);
+//            mShowcaseView.setOnShowcaseEventListener(this);
+//            return true;
+//        }
+//        return false;
+//    }
 
-            Point size = new Point();
-            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-            wm.getDefaultDisplay().getSize(size);
+//    @Override
+//    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+//        if (mShowCaseIndex == SHOWCASE_INDEX_ADJUST) {
+//            mGestureView = new SettingsGestureView(this);
+//            mGestureView.show();
+//        }
+//    }
 
-            String location = sPrefs.getString(PREF_DRAG_HANDLE_LOCATION, "0");
-            boolean left = location.equals("1");
-            float x = left ? 0 : size.x;
-            float y = size.y / 2;
-            mShowcaseView = ShowcaseView.insertShowcaseView(x, y, this,
-                    R.string.sc_adjust_title, R.string.sc_adjust_body, co);
-
-            // Animate gesture
-            mShowCaseIndex = SHOWCASE_INDEX_ADJUST;
-            mShowcaseView.animateGesture(size.x / 2, size.y * 2.0f / 3.0f,
-                    size.x / 2, size.y / 2.0f);
-            mShowcaseView.setOnShowcaseEventListener(this);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-        if (mShowCaseIndex == SHOWCASE_INDEX_ADJUST) {
-            mGestureView.show();
-        }
-    }
-
-    @Override
-    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-        // TODO Auto-generated method stub
-
-    }
+//    @Override
+//    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+//        // TODO Auto-generated method stub
+//
+//    }
 
     public static void removeUninstalledFavorites(final Context context) {
         Log.d(TAG, "" + sFavoriteList);

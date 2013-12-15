@@ -35,6 +35,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -46,11 +47,13 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -76,7 +79,7 @@ public class ShowcaseView extends RelativeLayout implements
 
     private float showcaseX = -1;
     private float showcaseY = -1;
-    private float showcaseRadius = -1;
+    public float showcaseRadius = -1;
     private float metricScale = 1.0f;
     private float legacyShowcaseX = -1;
     private float legacyShowcaseY = -1;
@@ -128,6 +131,7 @@ public class ShowcaseView extends RelativeLayout implements
         metricScale = getContext().getResources().getDisplayMetrics().density;
         mEndButton = (Button) LayoutInflater.from(context).inflate(
                 R.layout.showcase_button, null);
+        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
 
         ConfigOptions options = new ConfigOptions();
         options.showcaseId = getId();
@@ -197,6 +201,30 @@ public class ShowcaseView extends RelativeLayout implements
         return sv;
     }
 
+    private static WindowManager.LayoutParams getShowcaseOverlayParams() {
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                0,
+                PixelFormat.TRANSLUCENT);
+
+        lp.gravity = Gravity.CENTER;
+        return lp;
+    }
+
+    public static ShowcaseView insertShowcaseView(float x, float y,
+            WindowManager windowManager, Context context, int title, int detailText, ConfigOptions options) {
+        ShowcaseView sv = new ShowcaseView(context);
+        if (options != null)
+            sv.setConfigOptions(options);
+        windowManager.addView(sv, getShowcaseOverlayParams());
+        //sv.setShowcasePosition(x != 0 ? (x - sv.showcaseRadius) : x, y);
+        sv.setShowcasePosition(x, y);
+
+        sv.setText(title, detailText);
+        return sv;
+    }
     public static ShowcaseView insertShowcaseView(int showcaseViewId,
             Activity activity, String title, String detailText,
             ConfigOptions options) {
@@ -345,7 +373,6 @@ public class ShowcaseView extends RelativeLayout implements
         }
         showcase = getContext().getResources().getDrawable(R.drawable.cling);
 
-        showcaseRadius = metricScale * INNER_CIRCLE_RADIUS;
         PorterDuffXfermode mBlender = new PorterDuffXfermode(
                 PorterDuff.Mode.MULTIPLY);
         setOnTouchListener(this);

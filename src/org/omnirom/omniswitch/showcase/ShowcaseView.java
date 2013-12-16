@@ -96,7 +96,6 @@ public class ShowcaseView extends RelativeLayout implements
     private String mTitleText, mSubText;
     private int detailTextColor = -1;
     private int titleTextColor = -1;
-    private DynamicLayout mDynamicTitleLayout;
     private DynamicLayout mDynamicDetailLayout;
     private float[] mBestTextPosition;
     private boolean mAlteredText = false;
@@ -219,7 +218,6 @@ public class ShowcaseView extends RelativeLayout implements
         if (options != null)
             sv.setConfigOptions(options);
         windowManager.addView(sv, getShowcaseOverlayParams());
-        //sv.setShowcasePosition(x != 0 ? (x - sv.showcaseRadius) : x, y);
         sv.setShowcasePosition(x, y);
 
         sv.setText(title, detailText);

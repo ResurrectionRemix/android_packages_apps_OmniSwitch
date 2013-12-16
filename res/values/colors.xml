@@ -17,4 +17,5 @@
 -->
 <resources>
 	<color name="holo_blue_light">#ff33b5e5</color>
+	<color name="settings_gesture_view_bg">#80505050</color>
 </resources>

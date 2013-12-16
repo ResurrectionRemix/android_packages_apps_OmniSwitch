@@ -78,6 +78,8 @@ import java.util.List;
 public class SwipeDismissHorizontalListViewTouchListener implements
         View.OnTouchListener {
     private static final String TAG = "SwipeDismissHorizontalListViewTouchListener";
+    private static final boolean DEBUG = false;
+
     // Cached ViewConfiguration and system-wide constant values
     private int mSlop;
     private int mMinFlingVelocity;
@@ -152,7 +154,9 @@ public class SwipeDismissHorizontalListViewTouchListener implements
      *            Whether or not to watch for gestures.
      */
     public void setEnabled(boolean enabled) {
-        Log.d(TAG, "enabled " + enabled);
+        if(DEBUG){
+            Log.d(TAG, "enabled " + enabled);
+        }
         mPaused = !enabled;
     }
 
@@ -204,7 +208,9 @@ public class SwipeDismissHorizontalListViewTouchListener implements
             if (mPaused || mDownPosition == ListView.INVALID_POSITION) {
                 return false;
             }
-            Log.d(TAG, "ACTION_DOW");
+            if(DEBUG){
+                Log.d(TAG, "ACTION_DOW");
+            }
             // TODO: ensure this is a finger, and set a flag
 
             // Find the child view that was touched (perform a hit test)
@@ -241,7 +247,9 @@ public class SwipeDismissHorizontalListViewTouchListener implements
                 break;
             }
 
-            Log.d(TAG, "ACTION_UP");
+            if(DEBUG){
+                Log.d(TAG, "ACTION_UP");
+            }
 
             float deltaY = motionEvent.getRawY() - mDownY;
             mVelocityTracker.addMovement(motionEvent);
@@ -305,7 +313,9 @@ public class SwipeDismissHorizontalListViewTouchListener implements
             float deltaY = motionEvent.getRawY() - mDownY;
             if (Math.abs(deltaY) > mSlop) {
                 mSwiping = true;
-                Log.d(TAG, "ACTION_MOVE mSwiping " + deltaY + " " + mSlop);
+                if(DEBUG){
+                    Log.d(TAG, "ACTION_MOVE mSwiping " + deltaY + " " + mSlop);
+                }
 
                 mListView.requestDisallowInterceptTouchEvent(true);
             }

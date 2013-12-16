@@ -92,6 +92,8 @@ import android.widget.Scroller;
 // @formatter:on
 public class HorizontalListView extends AdapterView<ListAdapter> {
     private static final String TAG = "HorizontalListView";
+    private static final boolean DEBUG = false;
+
     /**
      * Defines where to insert items into the ViewGroup, as defined in
      * {@code ViewGroup #addViewInLayout(View, int, LayoutParams, boolean)}
@@ -1196,7 +1198,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
                 float velocityY) {
-            Log.d(TAG, "onFling");
+            if(DEBUG){
+                Log.d(TAG, "onFling");
+            }
             if (mSwipeListener!=null && !mSwipeListener.isSwiping()) {
                 mSwipeListener.setEnabled(false);
             } else {
@@ -1216,7 +1220,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,
                 float distanceX, float distanceY) {
-            Log.d(TAG, "onScroll");
+            if(DEBUG){
+                Log.d(TAG, "onScroll");
+            }
 
             float deltaX = Math.abs(mDownX - e2.getRawX());
             if (deltaX > mSlop && mSwipeListener!=null && !mSwipeListener.isSwiping()) {
@@ -1298,7 +1304,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     public boolean onTouchEvent(MotionEvent event) {
         // Detect when the user lifts their finger off the screen after a touch
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            Log.d(TAG, "ACTION_UP");
+            if(DEBUG){
+                Log.d(TAG, "ACTION_UP");
+            }
             if(mSwipeListener!=null){
                 mSwipeListener.setEnabled(true);
                 mSwipeListener.onTouch(null, event);
@@ -1314,7 +1322,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
             releaseEdgeGlow();
         } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
-            Log.d(TAG, "ACTION_CANCEL");
+            if(DEBUG){
+                Log.d(TAG, "ACTION_CANCEL");
+            }
             if(mSwipeListener!=null){
                 mSwipeListener.setEnabled(true);
                 mSwipeListener.onTouch(null, event);

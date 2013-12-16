@@ -23,8 +23,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.omnirom.omniswitch.showcase.ShowcaseView;
-import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 import org.omnirom.omniswitch.ui.FavoriteDialog;
 import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
@@ -34,7 +32,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -44,10 +41,9 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.util.Log;
-import android.view.WindowManager;
 
 public class SettingsActivity extends PreferenceActivity implements
-        OnPreferenceChangeListener /*, OnShowcaseEventListener*/ {
+        OnPreferenceChangeListener  {
     private static final String TAG = "SettingsActivity";
 
     public static final String PREF_SERVICE_STATE = "toggle_service";
@@ -55,20 +51,18 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_ANIMATE = "animate";
     public static final String PREF_START_ON_BOOT = "start_on_boot";
     public static final String PREF_ICON_SIZE = "icon_size";
-    public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location";
+    public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location_new";
     private static final String PREF_ADJUST_HANDLE = "adjust_handle";
     public static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
     public static final String PREF_SHOW_RAMBAR = "show_rambar";
     public static final String PREF_SHOW_LABELS = "show_labels";
     public static final String PREF_FAVORITE_APPS_CONFIG = "favorite_apps_config";
     public static final String PREF_SHOW_DRAG_HANDLE = "show_drag_handle";
-
-    private final static int SHOWCASE_INDEX_ADJUST = 0;
-
-    private final static String KEY_SHOWCASE_ADJUST = "SHOWCASE_ADJUST";
+    public static final String PREF_HANDLE_POS_END = "handle_pos_end";
+    public static final String PREF_HANDLE_POS_START = "handle_pos_start";
+    public static final String PREF_FAVORITE_APPS = "favorite_apps";
 
     private SwitchPreference mToggleService;
-    private ListPreference mDragHandleLocation;
     private ListPreference mIconSize;
     private SeekBarPreference mOpacity;
     private Preference mFavoriteAppsConfig;
@@ -76,8 +70,6 @@ public class SettingsActivity extends PreferenceActivity implements
     private static List<String> sFavoriteList = new ArrayList<String>();
     private static SharedPreferences sPrefs;
     private SettingsGestureView mGestureView;
-    //private ShowcaseView mShowcaseView;
-    //private int mShowCaseIndex;
     private FavoriteDialog mManageAppDialog;
 
     @Override
@@ -125,14 +117,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mIconSize.setValueIndex(idx);
         mIconSize.setSummary(mIconSize.getEntries()[idx]);
 
-        mDragHandleLocation = (ListPreference) findPreference(PREF_DRAG_HANDLE_LOCATION);
-        mDragHandleLocation.setOnPreferenceChangeListener(this);
-        values = Arrays.asList(mDragHandleLocation.getEntryValues());
-        idx = values.indexOf(sPrefs.getString("drag_handle_location",
-                mDragHandleLocation.getEntryValues()[0].toString()));
-        mDragHandleLocation.setValueIndex(idx);
-        mDragHandleLocation.setSummary(mDragHandleLocation.getEntries()[idx]);
-
         mOpacity = (SeekBarPreference) findPreference(PREF_OPACITY);
         mOpacity.setInitValue(sPrefs.getInt("opacity", 60));
         mOpacity.setOnPreferenceChangeListener(this);
@@ -141,7 +125,7 @@ public class SettingsActivity extends PreferenceActivity implements
 
         mFavoriteAppsConfig = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG);
 
-        String favoriteListString = sPrefs.getString("favorite_apps", "");
+        String favoriteListString = sPrefs.getString(PREF_FAVORITE_APPS, "");
         sFavoriteList.clear();
         Utils.parseFavorites(favoriteListString, sFavoriteList);
         removeUninstalledFavorites(this);
@@ -209,15 +193,6 @@ public class SettingsActivity extends PreferenceActivity implements
             mIconSize.setSummary(mIconSize.getEntries()[idx]);
             mIconSize.setValueIndex(idx);
             return true;
-        } else if (preference == mDragHandleLocation) {
-            String value = (String) newValue;
-            List<CharSequence> values = Arrays.asList(mDragHandleLocation
-                    .getEntryValues());
-            int idx = values.indexOf(value);
-            mDragHandleLocation
-                    .setSummary(mDragHandleLocation.getEntries()[idx]);
-            mDragHandleLocation.setValueIndex(idx);
-            return true;
         } else if (preference == mOpacity) {
             float val = Float.parseFloat((String) newValue);
             sPrefs.edit().putInt(PREF_OPACITY, (int) val).commit();
@@ -237,47 +212,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mManageAppDialog = new FavoriteDialog(this, favoriteList);
         mManageAppDialog.show();
     }
-
-//    private boolean startShowcaseAdjust() {
-//        if (!sPrefs.getBoolean(KEY_SHOWCASE_ADJUST, false)) {
-//            sPrefs.edit().putBoolean(KEY_SHOWCASE_ADJUST, true).commit();
-//            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-//            co.hideOnClickOutside = true;
-//
-//            Point size = new Point();
-//            WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-//            wm.getDefaultDisplay().getSize(size);
-//
-//            String location = sPrefs.getString(PREF_DRAG_HANDLE_LOCATION, "0");
-//            boolean left = location.equals("1");
-//            float x = left ? 0 : size.x;
-//            float y = size.y / 2;
-//            mShowcaseView = ShowcaseView.insertShowcaseView(x, y, this,
-//                    R.string.sc_adjust_title, R.string.sc_adjust_body, co);
-//
-//            // Animate gesture
-//            mShowCaseIndex = SHOWCASE_INDEX_ADJUST;
-//            mShowcaseView.animateGesture(size.x / 2, size.y * 2.0f / 3.0f,
-//                    size.x / 2, size.y / 2.0f);
-//            mShowcaseView.setOnShowcaseEventListener(this);
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    @Override
-//    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-//        if (mShowCaseIndex == SHOWCASE_INDEX_ADJUST) {
-//            mGestureView = new SettingsGestureView(this);
-//            mGestureView.show();
-//        }
-//    }
-
-//    @Override
-//    public void onShowcaseViewShow(ShowcaseView showcaseView) {
-//        // TODO Auto-generated method stub
-//
-//    }
 
     public static void removeUninstalledFavorites(final Context context) {
         Log.d(TAG, "" + sFavoriteList);
@@ -306,7 +240,7 @@ public class SettingsActivity extends PreferenceActivity implements
             sFavoriteList.clear();
             sFavoriteList.addAll(newFavoriteList);
             sPrefs.edit()
-                    .putString("favorite_apps", Utils.flattenFavorites(sFavoriteList))
+                    .putString(PREF_FAVORITE_APPS, Utils.flattenFavorites(sFavoriteList))
                     .commit();
         }
     }
@@ -315,7 +249,7 @@ public class SettingsActivity extends PreferenceActivity implements
         sFavoriteList.clear();
         sFavoriteList.addAll(favoriteList);
         sPrefs.edit()
-                .putString("favorite_apps",
+                .putString(PREF_FAVORITE_APPS,
                         Utils.flattenFavorites(sFavoriteList))
                 .commit();
     }

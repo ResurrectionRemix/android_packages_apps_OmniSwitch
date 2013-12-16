@@ -31,12 +31,14 @@ import android.util.Log;
 
 public class SwitchService extends Service {
     private final static String TAG = "SwitchService";
+    private static boolean DEBUG = false;
 
     private SwitchGestureView mGesturePanel;
     private RecentsReceiver mReceiver;
     private SwitchManager mManager;
     private SharedPreferences mPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
+    private Configuration mConfiguration;
 
     private static boolean mIsRunning;
 
@@ -52,6 +54,7 @@ public class SwitchService extends Service {
         Log.d(TAG, "started SwitchService");
 
         mManager = new SwitchManager(this);
+        mConfiguration = Configuration.getInstance(this);
 
         mReceiver = new RecentsReceiver();
         IntentFilter filter = new IntentFilter();
@@ -110,7 +113,9 @@ public class SwitchService extends Service {
         @Override
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d(TAG, "onReceive " + action);
+            if(DEBUG){
+                Log.d(TAG, "onReceive " + action);
+            }
             if (ACTION_SHOW_OVERLAY.equals(action)) {
                 if (!mManager.isShowing()) {
                     Intent mainActivity = new Intent(context,
@@ -144,6 +149,8 @@ public class SwitchService extends Service {
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {
+        // MUST be before the rest
+        mConfiguration.updatePrefs(prefs, key);
         mManager.updatePrefs(prefs, key);
         mGesturePanel.updatePrefs(prefs, key);
     }

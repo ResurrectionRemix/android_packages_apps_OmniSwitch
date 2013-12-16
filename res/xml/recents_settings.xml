@@ -53,12 +53,6 @@
 	<PreferenceCategory
 		android:key="category_drag_handle"
 		android:title="@string/category_drag_handle_title" >
-		<ListPreference
-			android:entries="@array/drag_location_entries"
-			android:entryValues="@array/drag_location_values"
-			android:key="drag_handle_location"
-			android:summary="@string/drag_location_right"
-			android:title="@string/drag_location_title" />
 		<Preference
 			android:key="adjust_handle"
 			android:title="@string/adjust_handle_title" />

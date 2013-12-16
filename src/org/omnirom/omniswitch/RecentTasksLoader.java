@@ -24,13 +24,10 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -38,8 +35,8 @@ import android.os.Process;
 import android.util.Log;
 
 public class RecentTasksLoader {
-    static final String TAG = "RecentTasksLoader";
-    static final boolean DEBUG = true;
+    private static final String TAG = "RecentTasksLoader";
+    private static final boolean DEBUG = false;
 
     private static final int DISPLAY_TASKS = 20;
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for
@@ -59,9 +56,7 @@ public class RecentTasksLoader {
 
     private State mState = State.CANCELLED;
 
-    private int mIconDpi;
-    private float mDensity;
-    private int mIconSize = 60; // in dip
+    private Configuration mConfiguration;
 
     private static RecentTasksLoader sInstance;
 
@@ -81,9 +76,7 @@ public class RecentTasksLoader {
         mContext = context;
         mRecentsManager = manager;
         mHandler = new Handler();
-        final Resources res = context.getResources();
-        mIconDpi = res.getDisplayMetrics().densityDpi;
-        mDensity = res.getDisplayMetrics().density;
+        mConfiguration = Configuration.getInstance(mContext);
     }
 
     public ArrayList<TaskDescription> getLoadedTasks() {
@@ -269,32 +262,16 @@ public class RecentTasksLoader {
         }
     }
 
-    private Drawable resize(Resources resources, Drawable image) {
-        // TODO
-        int size = (int) (mIconSize * mDensity + 0.5f);
-        Bitmap b = ((BitmapDrawable) image).getBitmap();
-        int originalHeight = b.getHeight();
-        int originalWidth = b.getWidth();
-
-        int l = originalHeight > originalWidth ? originalHeight : originalWidth;
-        float factor = (float) size / (float) l;
-
-        int resizedHeight = (int) (originalHeight * factor);
-        int resizedWidth = (int) (originalWidth * factor);
-
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
-                resizedHeight, false);
-        return new BitmapDrawable(resources, bitmapResized);
-    }
-
     Drawable getFullResDefaultActivityIcon() {
         return getFullResIcon(Resources.getSystem(), R.drawable.ic_launcher);
     }
 
     Drawable getFullResIcon(Resources resources, int iconId) {
         try {
-            return resize(resources,
-                    resources.getDrawableForDensity(iconId, mIconDpi));
+            return Utils.resize(resources,
+                    resources.getDrawableForDensity(iconId, mConfiguration.mIconDpi),
+                    mConfiguration.mIconSize,
+                    mConfiguration.mDensity);
         } catch (Resources.NotFoundException e) {
             return getFullResDefaultActivityIcon();
         }
@@ -316,12 +293,5 @@ public class RecentTasksLoader {
             }
         }
         return getFullResDefaultActivityIcon();
-    }
-
-    public void updatePrefs(SharedPreferences prefs, String key) {
-        Log.d(TAG, "updatePrefs");
-        String iconSize = prefs
-                .getString(SettingsActivity.PREF_ICON_SIZE, "60");
-        mIconSize = Integer.valueOf(iconSize);
     }
 }

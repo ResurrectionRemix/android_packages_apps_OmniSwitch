@@ -23,6 +23,11 @@ import java.util.List;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 public class Utils {
 
@@ -62,5 +67,32 @@ public class Utils {
             }
         }
         return label;
+    }
+    
+    public static Drawable rotate(Resources resources, Drawable image, int deg) {
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+        Bitmap bmResult = Bitmap.createBitmap(b.getWidth(), b.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas tempCanvas = new Canvas(bmResult);
+        tempCanvas.rotate(deg, b.getWidth() / 2, b.getHeight() / 2);
+        tempCanvas.drawBitmap(b, 0, 0, null);
+        return new BitmapDrawable(resources, bmResult);
+    }
+
+    public static Drawable resize(Resources resources, Drawable image, int iconSize, float density) {
+        int size = (int) (iconSize * density + 0.5f);
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+        int originalHeight = b.getHeight();
+        int originalWidth = b.getWidth();
+
+        int l = originalHeight > originalWidth ? originalHeight : originalWidth;
+        float factor = (float) size / (float) l;
+
+        int resizedHeight = (int) (originalHeight * factor);
+        int resizedWidth = (int) (originalWidth * factor);
+
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
+                resizedHeight, false);
+        return new BitmapDrawable(resources, bitmapResized);
     }
 }

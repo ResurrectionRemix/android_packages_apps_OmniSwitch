@@ -38,7 +38,7 @@ import android.os.RemoteException;
 
 public class SwitchManager {
     private static final String TAG = "SwitchManager";
-    private boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private List<TaskDescription> mLoadedTasks;
     private RecentTasksLoader mRecentTasksLoader;
     private SwitchLayout mLayout;
@@ -51,14 +51,18 @@ public class SwitchManager {
 
     public void hide() {
         if (isShowing()) {
-            Log.d(TAG, "hide");
+            if(DEBUG){
+                Log.d(TAG, "hide");
+            }
             mLayout.hide();
         }
     }
 
     public void show() {
         if (!isShowing()) {
-            Log.d(TAG, "show");
+            if(DEBUG){
+                Log.d(TAG, "show");
+            }
 
             // clear so that we dont get a reorder
             // during show
@@ -78,7 +82,9 @@ public class SwitchManager {
     }
 
     private void init() {
-        Log.d(TAG, "init");
+        if(DEBUG){
+            Log.d(TAG, "init");
+        }
 
         mLoadedTasks = new ArrayList<TaskDescription>();
 
@@ -93,7 +99,9 @@ public class SwitchManager {
     }
 
     public void update(List<TaskDescription> taskList) {
-        Log.d(TAG, "update");
+        if(DEBUG){
+            Log.d(TAG, "update");
+        }
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
         mLayout.update(mLoadedTasks);
@@ -111,7 +119,9 @@ public class SwitchManager {
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
-        Log.d(TAG, "switch to " + ad.getPackageName());
+        if(DEBUG){
+            Log.d(TAG, "switch to " + ad.getPackageName());
+        }
 
         Intent hideRecent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
@@ -143,7 +153,9 @@ public class SwitchManager {
 
         am.removeTask(ad.getPersistentTaskId(),
                 ActivityManager.REMOVE_TASK_KILL_PROCESS);
-        Log.d(TAG, "kill " + ad.getPackageName());
+        if(DEBUG){
+            Log.d(TAG, "kill " + ad.getPackageName());
+        }
         ad.setKilled();
         mLoadedTasks.remove(ad);
         mLayout.update(mLoadedTasks);
@@ -162,7 +174,9 @@ public class SwitchManager {
             TaskDescription ad = nextTask.next();
             am.removeTask(ad.getPersistentTaskId(),
                     ActivityManager.REMOVE_TASK_KILL_PROCESS);
-            Log.d(TAG, "kill " + ad.getPackageName());
+            if(DEBUG){
+                Log.d(TAG, "kill " + ad.getPackageName());
+            }
             ad.setKilled();
         }
         dismissAndGoHome();
@@ -182,7 +196,9 @@ public class SwitchManager {
             TaskDescription ad = nextTask.next();
             am.removeTask(ad.getPersistentTaskId(),
                     ActivityManager.REMOVE_TASK_KILL_PROCESS);
-            Log.d(TAG, "kill " + ad.getPackageName());
+            if(DEBUG){
+                Log.d(TAG, "kill " + ad.getPackageName());
+            }
             ad.setKilled();
         }
         Intent hideRecent = new Intent(
@@ -204,7 +220,6 @@ public class SwitchManager {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         mLayout.updatePrefs(prefs, key);
-        mRecentTasksLoader.updatePrefs(prefs, key);
     }
 
     public void toggleLastApp() {

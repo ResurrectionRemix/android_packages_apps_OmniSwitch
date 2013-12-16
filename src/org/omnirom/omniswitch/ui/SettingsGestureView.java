@@ -19,19 +19,15 @@ package org.omnirom.omniswitch.ui;
 
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,8 +39,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class SettingsGestureView {
-    private final static String TAG = "SwitchGestureView";
-
     private WindowManager mWindowManager;
     private ImageView mDragButton;
     private ImageView mDragButtonStart;
@@ -52,6 +46,7 @@ public class SettingsGestureView {
 
     private Button mOkButton;
     private Button mCancelButton;
+    private Button mLocationButton;
     private LinearLayout mView;
     private LinearLayout mDragHandleViewLeft;
     private LinearLayout mDragHandleViewRight;
@@ -70,7 +65,6 @@ public class SettingsGestureView {
     private SharedPreferences mPrefs;
     private float mDownY;
     private float mDeltaY;
-    private LinearLayout.LayoutParams mParams;
     private int mSlop;
     private int mDragHandleMinHeight;
     private int mDragHandleLimiterHeight;
@@ -106,6 +100,7 @@ public class SettingsGestureView {
 
         mOkButton = (Button) mView.findViewById(R.id.ok_button);
         mCancelButton = (Button) mView.findViewById(R.id.cancel_button);
+        mLocationButton = (Button) mView.findViewById(R.id.location_button);
         
         mDragButton = new ImageView(mContext);
         mDragButton.setOnTouchListener(new View.OnTouchListener() {
@@ -175,7 +170,7 @@ public class SettingsGestureView {
                     float deltaY = event.getRawY() - mDownY;
                     if(Math.abs(deltaY) > mSlop){
                         if(((mStartY + deltaY) < (mEndY - mDragHandleMinHeight))
-                                && (mStartY + deltaY > 0)){
+                                && (mStartY + deltaY - mDragHandleLimiterHeight > 0)){
                             mDeltaY = deltaY;
                             mDragButtonStart.setTranslationY(mDeltaY);
                         }
@@ -211,7 +206,7 @@ public class SettingsGestureView {
                     float deltaY = event.getRawY() - mDownY;
                     if(Math.abs(deltaY) > mSlop){
                         if(((mEndY + deltaY) > (mStartY + mDragHandleMinHeight))
-                                && (mEndY + deltaY < mScreenHeight)){
+                                && (mEndY + deltaY + mDragHandleLimiterHeight < mScreenHeight)){
                             mDeltaY = deltaY;
                             mDragButtonEnd.setTranslationY(mDeltaY);
                         }
@@ -222,7 +217,6 @@ public class SettingsGestureView {
             }
         });
 
-        
         mOkButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -230,8 +224,9 @@ public class SettingsGestureView {
 
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    mPrefs.edit().putInt("handle_pos_start", mStartY).commit();
-                    mPrefs.edit().putInt("handle_pos_end", mEndY).commit();
+                    mPrefs.edit().putInt(SettingsActivity.PREF_HANDLE_POS_START, mStartY).commit();
+                    mPrefs.edit().putInt(SettingsActivity.PREF_HANDLE_POS_END, mEndY).commit();
+                    mPrefs.edit().putInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, mLocation).commit();
                     hide();
                 }
                 return true;
@@ -246,6 +241,26 @@ public class SettingsGestureView {
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     hide();
+                }
+                return true;
+            }
+        });
+        
+        mLocationButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+
+                switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    if (mLocation == 1){
+                        mLocation = 0;
+                        mLocationButton.setText(mContext.getResources().getString(R.string.location_left));
+                    } else {
+                        mLocation = 1;
+                        mLocationButton.setText(mContext.getResources().getString(R.string.location_right));
+                    }
+                    updateLayout();
                 }
                 return true;
             }
@@ -274,8 +289,17 @@ public class SettingsGestureView {
         getDragHandleContainer().addView(mDragButtonStart);
         getDragHandleContainer().addView(mDragButton);
         getDragHandleContainer().addView(mDragButtonEnd);
+
+        if(mLocation == 1){
+            mDragHandleViewRight.setBackgroundColor(mContext.getResources().getColor(R.color.settings_gesture_view_bg));
+            mDragHandleViewLeft.setBackgroundColor(mContext.getResources().getColor(android.R.color.transparent));
+        } else {
+            mDragHandleViewLeft.setBackgroundColor(mContext.getResources().getColor(R.color.settings_gesture_view_bg));
+            mDragHandleViewRight.setBackgroundColor(mContext.getResources().getColor(android.R.color.transparent));
+        }
     }
 
+    
     private LinearLayout getDragHandleContainer() {
         if(mLocation == 1){
             return mDragHandleViewLeft;
@@ -284,12 +308,12 @@ public class SettingsGestureView {
         }
     }
     private void updateDragHandleLayoutParams() {
-        mParams = new LinearLayout.LayoutParams(
-                (int) (20 * mDensity + 0.5), (int) (mEndY - mStartY));
-        mParams.gravity = mLocation == 1 ? Gravity.LEFT : Gravity.RIGHT;
-        mDragButton.setLayoutParams(mParams);
-
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                (int) (20 * mDensity + 0.5), (int) (mEndY - mStartY));
+        params.gravity = mLocation == 1 ? Gravity.LEFT : Gravity.RIGHT;
+        mDragButton.setLayoutParams(params);
+
+        params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 mDragHandleLimiterHeight );
         params.topMargin = mStartY - mDragHandleLimiterHeight;
@@ -309,9 +333,9 @@ public class SettingsGestureView {
         Drawable d2 = mDragHandleEnd;
 
         if (mLocation == 1) {
-            d = rotate(mContext.getResources(), d, 180);
-            d1 = rotate(mContext.getResources(), d1, 180);
-            d2 = rotate(mContext.getResources(), d2, 180);
+            d = Utils.rotate(mContext.getResources(), d, 180);
+            d1 = Utils.rotate(mContext.getResources(), mDragHandleEnd, 180);
+            d2 = Utils.rotate(mContext.getResources(), mDragHandleStart, 180);
         }
 
         mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -325,24 +349,20 @@ public class SettingsGestureView {
         mDragButtonEnd.setImageDrawable(d2);
     }
 
-    private Drawable rotate(Resources resources, Drawable image, int deg) {
-        Bitmap b = ((BitmapDrawable) image).getBitmap();
-        Bitmap bmResult = Bitmap.createBitmap(b.getWidth(), b.getHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas tempCanvas = new Canvas(bmResult);
-        tempCanvas.rotate(deg, b.getWidth() / 2, b.getHeight() / 2);
-        tempCanvas.drawBitmap(b, 0, 0, null);
-        return new BitmapDrawable(resources, bmResult);
-    }
-
+    // cannot use Configuration since service must not
+    // be running at this point
     private void updateFromPrefs() {
         int defaultHeight = (int) (100 * mDensity + 0.5);
-        mStartY = mPrefs.getInt("handle_pos_start", mScreenHeight / 2 - defaultHeight / 2);
-        mEndY = mPrefs.getInt("handle_pos_end", mScreenHeight / 2 + defaultHeight / 2);
+        mStartY = mPrefs.getInt(SettingsActivity.PREF_HANDLE_POS_START, mScreenHeight / 2 - defaultHeight / 2);
+        mEndY = mPrefs.getInt(SettingsActivity.PREF_HANDLE_POS_END, mScreenHeight / 2 + defaultHeight / 2);
 
-        String location = mPrefs.getString(
-                SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
-        mLocation = Integer.valueOf(location);
+        mLocation = mPrefs.getInt(
+                SettingsActivity.PREF_DRAG_HANDLE_LOCATION, 0);
+        if (mLocation == 1){
+            mLocationButton.setText(mContext.getResources().getString(R.string.location_right));
+        } else {
+            mLocationButton.setText(mContext.getResources().getString(R.string.location_left));
+        }
         mColor = mPrefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,
                 mContext.getResources().getColor(R.color.holo_blue_light));
     }

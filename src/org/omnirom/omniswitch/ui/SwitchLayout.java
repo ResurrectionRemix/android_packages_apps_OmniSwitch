@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omnirom.omniswitch.Configuration;
 import org.omnirom.omniswitch.MemInfoReader;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
@@ -41,10 +42,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -76,6 +75,7 @@ import android.widget.TextView;
 
 public class SwitchLayout implements OnShowcaseEventListener {
     private static final String TAG = "SwitchLayout";
+    private static final boolean DEBUG = false;
     private final static String KEY_SHOWCASE_FAVORITE = "showcase_favorite_done";
 
     private WindowManager mWindowManager;
@@ -96,41 +96,29 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private FrameLayout mPopupView;
     private boolean mShowing;
     private PopupMenu mPopup;
-    private float mBackgroundOpacity = 0.8f;
-    private boolean mHorizontal = true;
     private View mView;
-    private int mLocation = 0; // 0 = right 1 = left
-    private boolean mAnimate = true;
-    private int mIconSize = 60; // in dip
-    private float mDensity;
-    private int mHorizontalMaxWidth = mIconSize;
-    private int mHorizontalScrollerHeight = mIconSize * 2;
     private LinearColorBar mRamUsageBar;
-    private boolean mShowRambar;
     private TextView mBackgroundProcessText;
     private TextView mForegroundProcessText;
     private Handler mHandler = new Handler();
     private ActivityManager.MemoryInfo mMemInfo = new ActivityManager.MemoryInfo();
     private MemInfoReader mMemInfoReader = new MemInfoReader();
     private long mSecServerMem;
-    private int mStartY;
-    private int mEndY;
     private List<String> mFavoriteList;
     private List<Drawable> mFavoriteIcons;
     private List<String> mFavoriteNames;
-    private boolean mShowLabels = true;
     private boolean mShowFavorites;
-    private int mScreenHeight;
     private ShowcaseView mShowcaseView;
     private SharedPreferences mPrefs;
     private boolean mShowcaseDone;
     private float mOpenFavoriteY;
-    
+    private Configuration mConfiguration;
+
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
         public RecentListAdapter(Context context, int resource,
                 List<TaskDescription> values) {
-            super(context, mHorizontal ? R.layout.recent_item_horizontal
+            super(context, mConfiguration.mHorizontal ? R.layout.recent_item_horizontal
                     : R.layout.recent_item, resource, values);
         }
 
@@ -139,15 +127,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
             View rowView = null;
             TaskDescription ad = mLoadedTasks.get(position);
 
-            if (mHorizontal) {
+            if (mConfiguration.mHorizontal) {
                 rowView = mInflater.inflate(R.layout.recent_item_horizontal,
                         parent, false);
                 final TextView item = (TextView) rowView
                         .findViewById(R.id.recent_item);
-                if (mShowLabels) {
+                if (mConfiguration.mShowLabels) {
                     item.setText(ad.getLabel());
                 }
-                item.setMaxWidth(mHorizontalMaxWidth);
+                item.setMaxWidth(mConfiguration.mHorizontalMaxWidth);
                 item.setCompoundDrawablesWithIntrinsicBounds(null,
                         ad.getIcon(), null, null);
             } else {
@@ -155,7 +143,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                         .inflate(R.layout.recent_item, parent, false);
                 final TextView item = (TextView) rowView
                         .findViewById(R.id.recent_item);
-                if (mShowLabels) {
+                if (mConfiguration.mShowLabels) {
                     item.setText(ad.getLabel());
                 }
                 item.setCompoundDrawablesWithIntrinsicBounds(ad.getIcon(),
@@ -178,10 +166,10 @@ public class SwitchLayout implements OnShowcaseEventListener {
             rowView = mInflater.inflate(R.layout.favorite_item, parent, false);
             final TextView item = (TextView) rowView
                     .findViewById(R.id.favorite_item);
-            if (mShowLabels) {
+            if (mConfiguration.mShowLabels) {
                 item.setText(mFavoriteNames.get(position));
             }
-            item.setMaxWidth(mHorizontalMaxWidth);
+            item.setMaxWidth(mConfiguration.mHorizontalMaxWidth);
             item.setCompoundDrawablesWithIntrinsicBounds(null,
                     mFavoriteIcons.get(position), null, null);
             return rowView;
@@ -197,6 +185,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mWindowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mConfiguration = Configuration.getInstance(mContext);
 
         mInflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -207,12 +196,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mFavoriteListAdapter = new FavoriteListAdapter(mContext,
                 android.R.layout.simple_list_item_multiple_choice,
                 mFavoriteList);
-
-        mDensity = mContext.getResources().getDisplayMetrics().density;
-        
-        Point size = new Point();
-        mWindowManager.getDefaultDisplay().getSize(size);
-        mScreenHeight = size.y;
 
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
@@ -239,14 +222,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private void createView() {
         mView = null;
-        if (mHorizontal) {
+        if (mConfiguration.mHorizontal) {
             mView = mInflater.inflate(R.layout.recents_list_horizontal, null,
                     false);
             mRecentListHorizontal = (HorizontalListView) mView
                     .findViewById(R.id.recent_list_horizontal);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
-                    mHorizontalScrollerHeight);
+                    mConfiguration.mHorizontalScrollerHeight);
 
             mRecentListHorizontal.setLayoutParams(params);
             mRecentListHorizontal
@@ -254,7 +237,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
                         @Override
                         public void onItemClick(AdapterView<?> parent,
                                 View view, int position, long id) {
-                            Log.d(TAG, "onItemClick");
+                            if(DEBUG){
+                                Log.d(TAG, "onItemClick");
+                            }
                             TaskDescription task = mLoadedTasks.get(position);
                             mRecentsManager.switchTask(task);
                             hide();
@@ -266,7 +251,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
                         @Override
                         public boolean onItemLongClick(AdapterView<?> parent,
                                 View view, int position, long id) {
-                            Log.d(TAG, "onItemLongClick");
+                            if(DEBUG){
+                                Log.d(TAG, "onItemLongClick");
+                            }
                             TaskDescription task = mLoadedTasks.get(position);
                             handleLongPress(task, view);
                             return true;
@@ -288,7 +275,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
                         @Override
                         public boolean canDismiss(int position) {
-                            Log.d(TAG, "canDismiss " + position);
                             return true;
                         }
                     });
@@ -316,7 +302,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                     mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
                             mShowFavorites ? R.drawable.arrow_up
                                     : R.drawable.arrow_down));
-                    if (mAnimate) {
+                    if (mConfiguration.mAnimate) {
                         mFavoriteListHorizontal
                                 .startAnimation(mShowFavorites ? getShowFavoriteAnimation()
                                         : getHideFavoriteAnimation());
@@ -337,7 +323,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
                         @Override
                         public void onItemClick(AdapterView<?> parent,
                                 View view, int position, long id) {
-                            Log.d(TAG, "onItemClick");
+                            if(DEBUG){
+                                Log.d(TAG, "onItemClick");
+                            }
                             String intent = mFavoriteList.get(position);
                             mRecentsManager.startIntentFromtString(intent);
                             hide();
@@ -353,7 +341,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
                         int position, long id) {
-                    Log.d(TAG, "onItemClick");
+                    if(DEBUG){
+                        Log.d(TAG, "onItemClick");
+                    }
                     TaskDescription task = mLoadedTasks.get(position);
                     mRecentsManager.switchTask(task);
                     hide();
@@ -365,7 +355,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
                         @Override
                         public boolean onItemLongClick(AdapterView<?> parent,
                                 View view, int position, long id) {
-                            Log.d(TAG, "onItemLongClick");
+                            if(DEBUG){
+                                Log.d(TAG, "onItemLongClick");
+                            }
                             TaskDescription task = mLoadedTasks.get(position);
                             handleLongPress(task, view);
                             return true;
@@ -387,7 +379,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
                         @Override
                         public boolean canDismiss(int position) {
-                            Log.d(TAG, "canDismiss " + position);
                             return true;
                         }
                     });
@@ -446,7 +437,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mBackgroundProcessText = (TextView) mView
                 .findViewById(R.id.backgroundText);
 
-        if (!mShowRambar) {
+        if (!mConfiguration.mShowRambar) {
             mRamUsageBar.setVisibility(View.GONE);
         }
         mPopupView = new FrameLayout(mContext);
@@ -457,7 +448,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (mShowing) {
-                    Log.d(TAG, "onTouch");
+                    if(DEBUG){
+                        Log.d(TAG, "onTouch");
+                    }
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
@@ -471,7 +464,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (mShowing) {
-                    Log.d(TAG, "onKey");
+                    if(DEBUG){
+                        Log.d(TAG, "onKey");
+                    }
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
@@ -490,7 +485,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         createView();
 
-        mWindowManager.addView(mPopupView, getParams(mBackgroundOpacity));
+        mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
         
         // if it was open remember that
         if (mShowFavorites){
@@ -499,7 +494,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
         mPopupView.addView(mView);
 
-        if (mAnimate) {
+        if (mConfiguration.mAnimate) {
             mView.startAnimation(getShowAnimation());
         } else {
             mPopupView.setFocusableInTouchMode(true);
@@ -520,7 +515,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private Animation getShowAnimation() {
         int animId = R.anim.slide_right_in;
 
-        if (mLocation == 1) {
+        if (mConfiguration.mLocation == 1) {
             animId = R.anim.slide_left_in;
         }
         Animation animation = AnimationUtils.loadAnimation(mContext, animId);
@@ -548,7 +543,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private Animation getHideAnimation() {
         int animId = R.anim.slide_right_out;
 
-        if (mLocation == 1) {
+        if (mConfiguration.mLocation == 1) {
             animId = R.anim.slide_left_out;
         }
 
@@ -629,7 +624,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mPopup.dismiss();
         }
 
-        if (mAnimate) {
+        if (mConfiguration.mAnimate) {
             mView.startAnimation(getHideAnimation());
         } else {
             mWindowManager.removeView(mPopupView);
@@ -639,7 +634,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private WindowManager.LayoutParams getParams(float opacity) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                mHorizontal ? WindowManager.LayoutParams.MATCH_PARENT
+                mConfiguration.mHorizontal ? WindowManager.LayoutParams.MATCH_PARENT
                         : WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
@@ -647,13 +642,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 PixelFormat.TRANSLUCENT);
         params.dimAmount = opacity;
         params.gravity = Gravity.TOP;
-        params.y = mStartY + (mEndY - mStartY) / 2- mHorizontalScrollerHeight / 2;
+        params.y = mConfiguration.mStartY + (mConfiguration.mEndY - mConfiguration.mStartY) / 2- mConfiguration.mHorizontalScrollerHeight / 2;
 
         return params;
     }
 
     public void update(List<TaskDescription> taskList) {
-        Log.d(TAG, "update");
+        if(DEBUG){
+            Log.d(TAG, "update");
+        }
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
         mRecentListAdapter.notifyDataSetChanged();
@@ -703,32 +700,11 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {
-        Log.d(TAG, "updatePrefs");
-        // mHorizontal = prefs.getString(SettingsActivity.PREF_ORIENTATION,
-        // "vertical").equals("horizontal");
-        String location = prefs.getString(
-                SettingsActivity.PREF_DRAG_HANDLE_LOCATION, "0");
-        mLocation = Integer.valueOf(location);
-        int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 80);
-        mBackgroundOpacity = (float) opacity / 100.0f;
-        Log.d(TAG, "mBackgroundOpacity " + mBackgroundOpacity);
-        mAnimate = prefs.getBoolean(SettingsActivity.PREF_ANIMATE, true);
-        String iconSize = prefs
-                .getString(SettingsActivity.PREF_ICON_SIZE, "60");
-        mIconSize = Integer.valueOf(iconSize);
-        mShowRambar = prefs
-                .getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
-        mShowLabels = prefs.getBoolean(SettingsActivity.PREF_SHOW_LABELS, true);
-        int defaultHeight = (int) (100 * mDensity + 0.5);
-        mStartY = prefs.getInt("handle_pos_start", mScreenHeight / 2 - defaultHeight / 2);
-        mEndY = prefs.getInt("handle_pos_end", mScreenHeight / 2 + defaultHeight / 2);
-
-        mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
-        mHorizontalScrollerHeight = (int) ((mIconSize + (mShowLabels ? 40 : 10))
-                * mDensity + 0.5f);
-
+        if(DEBUG){
+            Log.d(TAG, "updatePrefs");
+        }
         mFavoriteList.clear();
-        String favoriteListString = prefs.getString("favorite_apps", "");
+        String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
         Utils.parseFavorites(favoriteListString, mFavoriteList);
 
         updateFavorites();
@@ -738,7 +714,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private final Runnable updateRamBarTask = new Runnable() {
         @Override
         public void run() {
-            if (!mShowRambar || mRamUsageBar == null) {
+            if (!mConfiguration.mShowRambar || mRamUsageBar == null) {
                 return;
             }
             mMemInfoReader.readMemInfo();
@@ -772,8 +748,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
             Intent intent = null;
             try {
                 intent = Intent.parseUri(favorite, 0);
-                mFavoriteIcons.add(resize(Resources.getSystem(),
-                        pm.getActivityIcon(intent)));
+                mFavoriteIcons.add(Utils.resize(Resources.getSystem(),
+                        pm.getActivityIcon(intent), mConfiguration.mIconSize, 
+                        mConfiguration.mDensity));
             } catch (NameNotFoundException e) {
                 Log.e(TAG, "NameNotFoundException: [" + favorite + "]");
                 continue;
@@ -790,24 +767,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
         mFavoriteList.clear();
         mFavoriteList.addAll(validFavorites);
-    }
-
-    private Drawable resize(Resources resources, Drawable image) {
-        // TODO
-        int size = (int) (mIconSize * mDensity + 0.5f);
-        Bitmap b = ((BitmapDrawable) image).getBitmap();
-        int originalHeight = b.getHeight();
-        int originalWidth = b.getWidth();
-
-        int l = originalHeight > originalWidth ? originalHeight : originalWidth;
-        float factor = (float) size / (float) l;
-
-        int resizedHeight = (int) (originalHeight * factor);
-        int resizedWidth = (int) (originalWidth * factor);
-
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
-                resizedHeight, false);
-        return new BitmapDrawable(resources, bitmapResized);
     }
     
     public boolean isShowing() {

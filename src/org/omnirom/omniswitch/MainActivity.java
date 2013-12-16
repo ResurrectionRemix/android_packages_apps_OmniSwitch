@@ -26,7 +26,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class MainActivity extends Activity {
-    private static final String TAG = "RecentsMainActivity";
+    private static final String TAG = "MainActivity";
+    private static final boolean DEBUG = false;
 
     private ActivityReceiver mReceiver;
 
@@ -36,7 +37,9 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
-            Log.d(TAG, "onReceive " + action);
+            if(DEBUG){
+                Log.d(TAG, "onReceive " + action);
+            }
             if (ACTION_FINISH.equals(action)) {
                 finish();
             }
@@ -45,19 +48,25 @@ public class MainActivity extends Activity {
 
     @Override
     public void onStart() {
-        Log.d(TAG, "onStart");
+        if(DEBUG){
+            Log.d(TAG, "onStart");
+        }
         super.onStart();
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG, "onStop");
+        if(DEBUG){
+            Log.d(TAG, "onStop");
+        }
         super.onStop();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate");
+        if(DEBUG){
+            Log.d(TAG, "onCreate");
+        }
 
         mReceiver = new ActivityReceiver();
         IntentFilter filter = new IntentFilter();
@@ -70,7 +79,9 @@ public class MainActivity extends Activity {
 
     @Override
     public void onPause() {
-        Log.d(TAG, "onPause");
+        if(DEBUG){
+            Log.d(TAG, "onPause");
+        }
         Intent hideRecent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
         sendBroadcast(hideRecent);
@@ -79,7 +90,9 @@ public class MainActivity extends Activity {
 
     @Override
     public void onResume() {
-        Log.d(TAG, "onResume");
+        if(DEBUG){
+            Log.d(TAG, "onResume");
+        }
         Intent hideRecent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_SHOW_OVERLAY2);
         sendBroadcast(hideRecent);
@@ -88,7 +101,9 @@ public class MainActivity extends Activity {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        if(DEBUG){
+            Log.d(TAG, "onDestroy");
+        }
         unregisterReceiver(mReceiver);
         super.onDestroy();
     }

@@ -26,38 +26,38 @@
 		android:layout_gravity="top"
 		android:orientation="vertical" >
 	</LinearLayout>
-	<LinearLayout
-		android:id="@+id/button_view"
-		android:layout_width="0dp"
-		android:layout_height="fill_parent"
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
 		android:layout_weight="0.8"
+		android:background="@color/settings_gesture_view_bg"
 		android:orientation="vertical" >
-		<LinearLayout
-			android:id="@+id/button_view_spacer"
-			android:layout_width="wrap_content"
-			android:layout_height="0dp"
-			android:layout_weight="0.9"
-			android:orientation="vertical" >
-		</LinearLayout>
-		<LinearLayout
+		<RelativeLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal|bottom"
+			android:layout_alignParentBottom="true"
+			android:layout_centerHorizontal="true"
 			android:orientation="horizontal" >
 			<Button
 				android:id="@+id/cancel_button"
-				style="@style/ShowcaseButton"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:text="@android:string/cancel" />
 			<Button
-				android:id="@+id/ok_button"
-				style="@style/ShowcaseButton"
+				android:id="@+id/location_button"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
+				android:layout_gravity="bottom"
+				android:layout_toRightOf="@id/cancel_button"
+				android:text="@string/location_left" />
+			<Button
+				android:id="@+id/ok_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_toRightOf="@id/location_button"
 				android:text="@android:string/ok" />
-		</LinearLayout>
-	</LinearLayout>
+		</RelativeLayout>
+	</RelativeLayout>
 	<LinearLayout
 		android:id="@+id/drag_handle_view_right"
 		android:layout_width="60dp"

@@ -734,6 +734,10 @@ public class SwitchLayout implements OnShowcaseEventListener {
     };
     private ImageButton mOpenFavorite;
 
+    private Drawable getFullResDefaultActivityIcon() {
+        return Resources.getSystem().getDrawableForDensity(R.drawable.ic_launcher, mConfiguration.mIconDpi);
+    }
+
     private void updateFavorites() {
         final PackageManager pm = mContext.getPackageManager();
         List<String> validFavorites = new ArrayList<String>();
@@ -743,11 +747,10 @@ public class SwitchLayout implements OnShowcaseEventListener {
         while (nextFavorite.hasNext()) {
             String favorite = nextFavorite.next();
             Intent intent = null;
+            Drawable appIcon = null;
             try {
                 intent = Intent.parseUri(favorite, 0);
-                mFavoriteIcons.add(Utils.resize(Resources.getSystem(),
-                        pm.getActivityIcon(intent), mConfiguration.mIconSize, 
-                        mConfiguration.mDensity));
+                appIcon = pm.getActivityIcon(intent);
             } catch (NameNotFoundException e) {
                 Log.e(TAG, "NameNotFoundException: [" + favorite + "]");
                 continue;
@@ -760,6 +763,12 @@ public class SwitchLayout implements OnShowcaseEventListener {
             if (label == null) {
                 label = favorite;
             }
+            if (appIcon == null) {
+                appIcon = getFullResDefaultActivityIcon();
+            }
+            mFavoriteIcons.add(Utils.resize(Resources.getSystem(),
+                    appIcon, mConfiguration.mIconSize, 
+                    mConfiguration.mDensity));
             mFavoriteNames.add(label);
         }
         mFavoriteList.clear();

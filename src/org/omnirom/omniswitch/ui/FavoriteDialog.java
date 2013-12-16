@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.omnirom.omniswitch.Configuration;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.Utils;
@@ -40,6 +41,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -70,6 +72,7 @@ public class FavoriteDialog extends AlertDialog implements
 	private FavoriteListAdapter mFavoriteAdapter;
 	private DragSortListView mFavoriteConfigList;
 	private AlertDialog mAddFavoriteDialog;
+    private Configuration mConfiguration;
 
 	ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
 			ViewGroup.LayoutParams.MATCH_PARENT,
@@ -134,7 +137,7 @@ public class FavoriteDialog extends AlertDialog implements
 		mFavoriteList = favoriteList;
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        mConfiguration = Configuration.getInstance(mContext);
 	}
 
 	@Override
@@ -294,6 +297,10 @@ public class FavoriteDialog extends AlertDialog implements
 						.compareTo(another.packageName);
 			}
 		}
+		
+	    private Drawable getFullResDefaultActivityIcon() {
+	        return Resources.getSystem().getDrawableForDensity(R.drawable.ic_launcher, mConfiguration.mIconDpi);
+	    }
 
 		private class PackageAdapter extends BaseAdapter {
 
@@ -325,11 +332,14 @@ public class FavoriteDialog extends AlertDialog implements
 					try {
 						item.icon = pm.getActivityIcon(intent);
 					} catch (NameNotFoundException e) {
-						item.icon = appInfo.loadIcon(pm);
+						continue;
 					}
 					item.title = Utils.getActivityLabel(pm, intent);
 					if (item.title == null) {
 						item.title = appInfo.loadLabel(pm);
+					}
+					if (item.icon == null) {
+					    item.icon = getFullResDefaultActivityIcon();
 					}
 					mInstalledPackages.add(item);
 				}

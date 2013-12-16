@@ -262,19 +262,15 @@ public class RecentTasksLoader {
         }
     }
 
-    Drawable getFullResDefaultActivityIcon() {
+    private Drawable getFullResDefaultActivityIcon() {
         return getFullResIcon(Resources.getSystem(), R.drawable.ic_launcher);
     }
 
-    Drawable getFullResIcon(Resources resources, int iconId) {
-        try {
-            return Utils.resize(resources,
-                    resources.getDrawableForDensity(iconId, mConfiguration.mIconDpi),
-                    mConfiguration.mIconSize,
-                    mConfiguration.mDensity);
-        } catch (Resources.NotFoundException e) {
-            return getFullResDefaultActivityIcon();
-        }
+    private Drawable getFullResIcon(Resources resources, int iconId) {
+        return Utils.resize(resources,
+                resources.getDrawableForDensity(iconId, mConfiguration.mIconDpi),
+                mConfiguration.mIconSize,
+                mConfiguration.mDensity);
     }
 
     private Drawable getFullResIcon(ResolveInfo info,

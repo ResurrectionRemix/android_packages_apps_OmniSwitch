@@ -242,7 +242,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
                             }
                             TaskDescription task = mLoadedTasks.get(position);
                             mRecentsManager.switchTask(task);
-                            hide();
                         }
                     });
 
@@ -328,7 +327,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
                             }
                             String intent = mFavoriteList.get(position);
                             mRecentsManager.startIntentFromtString(intent);
-                            hide();
                         }
                     });
             mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
@@ -346,7 +344,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
                     }
                     TaskDescription task = mLoadedTasks.get(position);
                     mRecentsManager.switchTask(task);
-                    hide();
                 }
             });
 

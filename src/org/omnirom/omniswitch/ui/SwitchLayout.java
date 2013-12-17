@@ -797,6 +797,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mShowcaseDone = true;
             return true;
         }
+        mShowcaseDone = true;
         return false;
     }
     @Override

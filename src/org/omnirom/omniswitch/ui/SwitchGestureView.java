@@ -292,6 +292,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             mShowcaseDone = true;
             return true;
         }
+        mShowcaseDone = true;
         return false;
     }
 

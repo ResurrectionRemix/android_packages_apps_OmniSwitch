@@ -32,9 +32,9 @@
 	<string name="animate_title">Animate</string>
 	<string name="adjust_handle_title">Drag handle position</string>
 	<string name="sc_drag_handle_title">Drag handle</string>
-	<string name="sc_drag_handle_body">Swipe horizontally or long-press to open</string>
+	<string name="sc_drag_handle_body">\nSwipe horizontally or long-press to open</string>
 	<string name="sc_favorite_title">Favorite apps</string>
-	<string name="sc_favorite_body">Open favorite apps view.\nFavorite apps can be added in settings</string>
+	<string name="sc_favorite_body">\nOpen favorite apps view.\nFavorite apps can be added in settings</string>
 	<string name="icon_size_normal">Normal</string>
 	<string name="icon_size_small">Small</string>
 	<string name="icon_size_large">Large</string>

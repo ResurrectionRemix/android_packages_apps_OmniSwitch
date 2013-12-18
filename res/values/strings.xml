@@ -57,4 +57,5 @@
 	<string name="show_drag_handle">Always show drag handle</string>
 	<string name="location_left">&lt;&lt;</string>
 	<string name="location_right">&gt;&gt;</string>
+	<string name="reset">Default</string>
 </resources>

@@ -47,6 +47,7 @@ public class SettingsGestureView {
     private Button mOkButton;
     private Button mCancelButton;
     private Button mLocationButton;
+    private Button mResetButton;
     private LinearLayout mView;
     private LinearLayout mDragHandleViewLeft;
     private LinearLayout mDragHandleViewRight;
@@ -101,7 +102,8 @@ public class SettingsGestureView {
         mOkButton = (Button) mView.findViewById(R.id.ok_button);
         mCancelButton = (Button) mView.findViewById(R.id.cancel_button);
         mLocationButton = (Button) mView.findViewById(R.id.location_button);
-        
+        mResetButton = (Button) mView.findViewById(R.id.reset_button);
+
         mDragButton = new ImageView(mContext);
         mDragButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -265,6 +267,19 @@ public class SettingsGestureView {
                 return true;
             }
         });
+        
+        mResetButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+
+                switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    resetPosition();
+                }
+                return true;
+            }
+        });
     }
 
     public WindowManager.LayoutParams getGesturePanelLayoutParams() {
@@ -289,16 +304,7 @@ public class SettingsGestureView {
         getDragHandleContainer().addView(mDragButtonStart);
         getDragHandleContainer().addView(mDragButton);
         getDragHandleContainer().addView(mDragButtonEnd);
-
-        if(mLocation == 1){
-            mDragHandleViewRight.setBackgroundColor(mContext.getResources().getColor(R.color.settings_gesture_view_bg));
-            mDragHandleViewLeft.setBackgroundColor(mContext.getResources().getColor(android.R.color.transparent));
-        } else {
-            mDragHandleViewLeft.setBackgroundColor(mContext.getResources().getColor(R.color.settings_gesture_view_bg));
-            mDragHandleViewRight.setBackgroundColor(mContext.getResources().getColor(android.R.color.transparent));
-        }
     }
-
     
     private LinearLayout getDragHandleContainer() {
         if(mLocation == 1){
@@ -385,5 +391,12 @@ public class SettingsGestureView {
 
         mWindowManager.removeView(mView);
         mShowing = false;
+    }
+    
+    private void resetPosition() {
+        int defaultHeight = (int) (100 * mDensity + 0.5);
+        mStartY = mScreenHeight / 2 - defaultHeight / 2;
+        mEndY = mScreenHeight / 2 + defaultHeight / 2;
+        updateLayout();
     }
 }

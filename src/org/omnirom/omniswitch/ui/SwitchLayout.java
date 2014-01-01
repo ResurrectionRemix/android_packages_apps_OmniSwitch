@@ -475,7 +475,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         });
     }
 
-    public void show() {
+    public synchronized void show() {
         if (mShowing) {
             return;
         }
@@ -494,11 +494,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         if (mConfiguration.mAnimate) {
             mView.startAnimation(getShowAnimation());
         } else {
-            mPopupView.setFocusableInTouchMode(true);
-            mShowing = true;
-            Intent showRibbon = new Intent(
-                    SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
-            mContext.sendBroadcast(showRibbon);
+            showDone();
         }
         if(!mShowcaseDone){
             mView.postDelayed(new Runnable(){
@@ -507,6 +503,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
                     startShowcaseFavorite();
                 }}, 200);
         }
+    }
+
+    private void showDone(){
+        mPopupView.setFocusableInTouchMode(true);
+        mShowing = true;
+        Intent intent = new Intent(
+                SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
+        mContext.sendBroadcast(intent);
     }
 
     private Animation getShowAnimation() {
@@ -519,11 +523,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
-                mPopupView.setFocusableInTouchMode(true);
-                mShowing = true;
-                Intent showRibbon = new Intent(
-                        SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
-                mContext.sendBroadcast(showRibbon);
+                showDone();
             }
 
             @Override
@@ -554,8 +554,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mWindowManager.removeView(mPopupView);
-                        mPopupView = null;
+                        hideDone();
                     }
                 });
             }
@@ -611,7 +610,12 @@ public class SwitchLayout implements OnShowcaseEventListener {
         return animation;
     }
 
-    public void hide() {
+    private void hideDone() {
+        mWindowManager.removeView(mPopupView);
+        mPopupView = null;
+    }
+
+    public synchronized void hide() {
         if (!mShowing) {
             return;
         }
@@ -624,8 +628,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         if (mConfiguration.mAnimate) {
             mView.startAnimation(getHideAnimation());
         } else {
-            mWindowManager.removeView(mPopupView);
-            mPopupView = null;
+            hideDone();
         }
     }
 

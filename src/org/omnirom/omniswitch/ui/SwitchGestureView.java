@@ -241,7 +241,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         updateLayout();
     }
 
-    public void show() {
+    public synchronized void show() {
         if (mShowing) {
             return;
         }
@@ -257,7 +257,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         mShowing = true;
     }
 
-    public void hide() {
+    public synchronized void hide() {
         if (!mShowing) {
             return;
         }

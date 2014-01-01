@@ -99,16 +99,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mToggleService.setChecked(SwitchService.isRunning());
         mToggleService.setOnPreferenceChangeListener(this);
 
-        /*
-         * mOrientation = (ListPreference) findPreference(PREF_ORIENTATION);
-         * mOrientation.setOnPreferenceChangeListener(this); List<CharSequence>
-         * values = Arrays .asList(mOrientation.getEntryValues()); int idx =
-         * values.indexOf(mPrefs.getString("orientation",
-         * mOrientation.getEntryValues()[0].toString()));
-         * mOrientation.setValueIndex(idx);
-         * mOrientation.setSummary(mOrientation.getEntries()[idx]);
-         */
-
         mIconSize = (ListPreference) findPreference(PREF_ICON_SIZE);
         mIconSize.setOnPreferenceChangeListener(this);
         List<CharSequence> values = Arrays.asList(mIconSize.getEntryValues());
@@ -147,10 +137,8 @@ public class SettingsActivity extends PreferenceActivity implements
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
         if (preference == mAdjustHandle) {
-            //if (!startShowcaseAdjust()) {
-                mGestureView = new SettingsGestureView(this);
-                mGestureView.show();
-            //}
+            mGestureView = new SettingsGestureView(this);
+            mGestureView.show();
             return true;
         } else if (preference == mFavoriteAppsConfig) {
             showManageAppDialog();
@@ -178,13 +166,6 @@ public class SettingsActivity extends PreferenceActivity implements
             }
             updateEnablement(true, (Boolean) newValue);
             return true;
-            /*
-             * } else if (preference == mOrientation) { String value = (String)
-             * newValue; List<CharSequence> values = Arrays.asList(mOrientation
-             * .getEntryValues()); int idx = values.indexOf(value);
-             * mOrientation.setSummary(mOrientation.getEntries()[idx]);
-             * mOrientation.setValueIndex(idx); return true;
-             */
         } else if (preference == mIconSize) {
             String value = (String) newValue;
             List<CharSequence> values = Arrays.asList(mIconSize

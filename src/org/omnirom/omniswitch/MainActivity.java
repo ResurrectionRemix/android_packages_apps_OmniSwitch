@@ -47,22 +47,6 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public void onStart() {
-        if(DEBUG){
-            Log.d(TAG, "onStart");
-        }
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        if(DEBUG){
-            Log.d(TAG, "onStop");
-        }
-        super.onStop();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(DEBUG){
             Log.d(TAG, "onCreate");

@@ -24,7 +24,6 @@ import android.view.WindowManager;
 
 public class Configuration {
     public float mBackgroundOpacity = 0.8f;
-    public boolean mHorizontal = true;
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip

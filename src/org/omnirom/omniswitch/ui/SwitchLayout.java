@@ -69,7 +69,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -80,7 +79,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private WindowManager mWindowManager;
     private LayoutInflater mInflater;
-    private ListView mRecentList;
     private HorizontalListView mRecentListHorizontal;
     private HorizontalListView mFavoriteListHorizontal;
     private ImageButton mLastAppButton;
@@ -113,13 +111,13 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private boolean mShowcaseDone;
     private float mOpenFavoriteY;
     private Configuration mConfiguration;
+    private ImageButton mOpenFavorite;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
         public RecentListAdapter(Context context, int resource,
                 List<TaskDescription> values) {
-            super(context, mConfiguration.mHorizontal ? R.layout.recent_item_horizontal
-                    : R.layout.recent_item, resource, values);
+            super(context, R.layout.recent_item_horizontal, resource, values);
         }
 
         @Override
@@ -127,28 +125,17 @@ public class SwitchLayout implements OnShowcaseEventListener {
             View rowView = null;
             TaskDescription ad = mLoadedTasks.get(position);
 
-            if (mConfiguration.mHorizontal) {
-                rowView = mInflater.inflate(R.layout.recent_item_horizontal,
-                        parent, false);
-                final TextView item = (TextView) rowView
-                        .findViewById(R.id.recent_item);
-                if (mConfiguration.mShowLabels) {
-                    item.setText(ad.getLabel());
-                }
-                item.setMaxWidth(mConfiguration.mHorizontalMaxWidth);
-                item.setCompoundDrawablesWithIntrinsicBounds(null,
-                        ad.getIcon(), null, null);
-            } else {
-                rowView = mInflater
-                        .inflate(R.layout.recent_item, parent, false);
-                final TextView item = (TextView) rowView
-                        .findViewById(R.id.recent_item);
-                if (mConfiguration.mShowLabels) {
-                    item.setText(ad.getLabel());
-                }
-                item.setCompoundDrawablesWithIntrinsicBounds(ad.getIcon(),
-                        null, null, null);
+            rowView = mInflater.inflate(R.layout.recent_item_horizontal,
+                    parent, false);
+            final TextView item = (TextView) rowView
+                    .findViewById(R.id.recent_item);
+            if (mConfiguration.mShowLabels) {
+                item.setText(ad.getLabel());
             }
+            item.setMaxWidth(mConfiguration.mHorizontalMaxWidth);
+            item.setCompoundDrawablesWithIntrinsicBounds(null,
+                    ad.getIcon(), null, null);
+
             return rowView;
         }
     }
@@ -221,169 +208,108 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private void createView() {
-        mView = null;
-        if (mConfiguration.mHorizontal) {
-            mView = mInflater.inflate(R.layout.recents_list_horizontal, null,
-                    false);
-            mRecentListHorizontal = (HorizontalListView) mView
-                    .findViewById(R.id.recent_list_horizontal);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    mConfiguration.mHorizontalScrollerHeight);
+        mView = mInflater.inflate(R.layout.recents_list_horizontal, null,
+                false);
+        mRecentListHorizontal = (HorizontalListView) mView
+                .findViewById(R.id.recent_list_horizontal);
 
-            mRecentListHorizontal.setLayoutParams(params);
-            mRecentListHorizontal
-                    .setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent,
-                                View view, int position, long id) {
-                            if(DEBUG){
-                                Log.d(TAG, "onItemClick");
-                            }
-                            TaskDescription task = mLoadedTasks.get(position);
-                            mRecentsManager.switchTask(task);
+        mRecentListHorizontal
+        .setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent,
+                    View view, int position, long id) {
+                if(DEBUG){
+                    Log.d(TAG, "onItemClick");
+                }
+                TaskDescription task = mLoadedTasks.get(position);
+                mRecentsManager.switchTask(task);
+            }
+        });
+
+        mRecentListHorizontal
+        .setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent,
+                    View view, int position, long id) {
+                if(DEBUG){
+                    Log.d(TAG, "onItemLongClick");
+                }
+                TaskDescription task = mLoadedTasks.get(position);
+                handleLongPress(task, view);
+                return true;
+            }
+        });
+
+        SwipeDismissHorizontalListViewTouchListener touchListener = new SwipeDismissHorizontalListViewTouchListener(
+                mRecentListHorizontal,
+                new SwipeDismissHorizontalListViewTouchListener.DismissCallbacks() {
+                    public void onDismiss(HorizontalListView listView,
+                            int[] reverseSortedPositions) {
+                        for (int position : reverseSortedPositions) {
+                            TaskDescription ad = mRecentListAdapter
+                                    .getItem(position);
+                            mRecentsManager.killTask(ad);
+                            break;
                         }
-                    });
+                    }
 
-            mRecentListHorizontal
-                    .setOnItemLongClickListener(new OnItemLongClickListener() {
-                        @Override
-                        public boolean onItemLongClick(AdapterView<?> parent,
-                                View view, int position, long id) {
-                            if(DEBUG){
-                                Log.d(TAG, "onItemLongClick");
-                            }
-                            TaskDescription task = mLoadedTasks.get(position);
-                            handleLongPress(task, view);
-                            return true;
-                        }
-                    });
-
-            SwipeDismissHorizontalListViewTouchListener touchListener = new SwipeDismissHorizontalListViewTouchListener(
-                    mRecentListHorizontal,
-                    new SwipeDismissHorizontalListViewTouchListener.DismissCallbacks() {
-                        public void onDismiss(HorizontalListView listView,
-                                int[] reverseSortedPositions) {
-                            for (int position : reverseSortedPositions) {
-                                TaskDescription ad = mRecentListAdapter
-                                        .getItem(position);
-                                mRecentsManager.killTask(ad);
-                                break;
-                            }
-                        }
-
-                        @Override
-                        public boolean canDismiss(int position) {
-                            return true;
-                        }
-                    });
-
-            mRecentListHorizontal.setSwipeListener(touchListener);
-
-            mRecentListHorizontal.setAdapter(mRecentListAdapter);
-
-            mOpenFavorite = (ImageButton) mView
-                    .findViewById(R.id.openFavorites);
-            if(!mShowcaseDone){
-                mOpenFavorite.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
-                    public void onGlobalLayout() {
-                        mOpenFavorite.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        int[] location = new int[2];
-                        mOpenFavorite.getLocationOnScreen(location);
-                        mOpenFavoriteY = location[1];
+                    public boolean canDismiss(int position) {
+                        return true;
                     }
                 });
-            }
-            mOpenFavorite.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    mShowFavorites = !mShowFavorites;
-                    mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
-                            mShowFavorites ? R.drawable.arrow_up
-                                    : R.drawable.arrow_down));
-                    if (mConfiguration.mAnimate) {
-                        mFavoriteListHorizontal
-                                .startAnimation(mShowFavorites ? getShowFavoriteAnimation()
-                                        : getHideFavoriteAnimation());
-                    } else {
-                        mFavoriteListHorizontal
-                                .setVisibility(mShowFavorites ? View.VISIBLE
-                                        : View.GONE);
-                    }
-                }
-            });
 
-            mFavoriteListHorizontal = (HorizontalListView) mView
-                    .findViewById(R.id.favorite_list_horizontal);
+        mRecentListHorizontal.setSwipeListener(touchListener);
+        mRecentListHorizontal.setAdapter(mRecentListAdapter);
 
-            mFavoriteListHorizontal.setLayoutParams(params);
-            mFavoriteListHorizontal
-                    .setOnItemClickListener(new OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent,
-                                View view, int position, long id) {
-                            if(DEBUG){
-                                Log.d(TAG, "onItemClick");
-                            }
-                            String intent = mFavoriteList.get(position);
-                            mRecentsManager.startIntentFromtString(intent);
-                        }
-                    });
-            mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
+        mOpenFavorite = (ImageButton) mView
+                .findViewById(R.id.openFavorites);
 
-        } else {
-            mView = mInflater.inflate(R.layout.recents_list, null, false);
-            mRecentList = (ListView) mView.findViewById(R.id.recent_list);
-
-            mRecentList.setOnItemClickListener(new OnItemClickListener() {
+        if(!mShowcaseDone){
+            mOpenFavorite.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View view,
-                        int position, long id) {
-                    if(DEBUG){
-                        Log.d(TAG, "onItemClick");
-                    }
-                    TaskDescription task = mLoadedTasks.get(position);
-                    mRecentsManager.switchTask(task);
+                public void onGlobalLayout() {
+                    mOpenFavorite.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    int[] location = new int[2];
+                    mOpenFavorite.getLocationOnScreen(location);
+                    mOpenFavoriteY = location[1];
                 }
             });
-
-            mRecentList
-                    .setOnItemLongClickListener(new OnItemLongClickListener() {
-                        @Override
-                        public boolean onItemLongClick(AdapterView<?> parent,
-                                View view, int position, long id) {
-                            if(DEBUG){
-                                Log.d(TAG, "onItemLongClick");
-                            }
-                            TaskDescription task = mLoadedTasks.get(position);
-                            handleLongPress(task, view);
-                            return true;
-                        }
-                    });
-
-            SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(
-                    mRecentList,
-                    new SwipeDismissListViewTouchListener.DismissCallbacks() {
-                        public void onDismiss(ListView listView,
-                                int[] reverseSortedPositions) {
-                            for (int position : reverseSortedPositions) {
-                                TaskDescription ad = mRecentListAdapter
-                                        .getItem(position);
-                                mRecentsManager.killTask(ad);
-                                break;
-                            }
-                        }
-
-                        @Override
-                        public boolean canDismiss(int position) {
-                            return true;
-                        }
-                    });
-            mRecentList.setOnTouchListener(touchListener);
-            mRecentList.setOnScrollListener(touchListener.makeScrollListener());
-
-            mRecentList.setAdapter(mRecentListAdapter);
         }
+        mOpenFavorite.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mShowFavorites = !mShowFavorites;
+                mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
+                        mShowFavorites ? R.drawable.arrow_up
+                                : R.drawable.arrow_down));
+                if (mConfiguration.mAnimate) {
+                    mFavoriteListHorizontal
+                    .startAnimation(mShowFavorites ? getShowFavoriteAnimation()
+                            : getHideFavoriteAnimation());
+                } else {
+                    mFavoriteListHorizontal
+                    .setVisibility(mShowFavorites ? View.VISIBLE
+                            : View.GONE);
+                }
+            }
+        });
+
+        mFavoriteListHorizontal = (HorizontalListView) mView
+                .findViewById(R.id.favorite_list_horizontal);
+
+        mFavoriteListHorizontal
+        .setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent,
+                    View view, int position, long id) {
+                if(DEBUG){
+                    Log.d(TAG, "onItemClick");
+                }
+                String intent = mFavoriteList.get(position);
+                mRecentsManager.startIntentFromtString(intent);
+            }
+        });
+        mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
 
         mHomeButton = (ImageButton) mView.findViewById(R.id.home);
         mHomeButton.setOnClickListener(new View.OnClickListener() {
@@ -434,12 +360,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mBackgroundProcessText = (TextView) mView
                 .findViewById(R.id.backgroundText);
 
-        if (!mConfiguration.mShowRambar) {
-            mRamUsageBar.setVisibility(View.GONE);
-        }
         mPopupView = new FrameLayout(mContext);
-
-        mPopupView.removeAllViews();
 
         mPopupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -475,20 +396,24 @@ public class SwitchLayout implements OnShowcaseEventListener {
         });
     }
 
+    private void initView(){
+        mRamUsageBar.setVisibility(mConfiguration.mShowRambar ? View.VISIBLE : View.GONE);
+        mFavoriteListHorizontal.setLayoutParams(getListviewParams());
+        mRecentListHorizontal.setLayoutParams(getListviewParams());
+    }
+
     public synchronized void show() {
         if (mShowing) {
             return;
         }
 
-        createView();
+        if (mPopupView == null){
+            createView();
+        }
+        
+        initView();
 
         mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
-        
-        // if it was open remember that
-        if (mShowFavorites){
-        	mFavoriteListHorizontal.setVisibility(View.VISIBLE);
-            mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(R.drawable.arrow_up));
-        }
         mPopupView.addView(mView);
 
         if (mConfiguration.mAnimate) {
@@ -497,7 +422,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             showDone();
         }
         if(!mShowcaseDone){
-            mView.postDelayed(new Runnable(){
+            mPopupView.postDelayed(new Runnable(){
                 @Override
                 public void run() {
                     startShowcaseFavorite();
@@ -550,8 +475,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             public void onAnimationEnd(Animation animation) {
                 // to avoid the "Attempting to destroy the window while drawing"
                 // error
-                Handler handler = new Handler();
-                handler.post(new Runnable() {
+                mPopupView.post(new Runnable() {
                     @Override
                     public void run() {
                         hideDone();
@@ -612,15 +536,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private void hideDone() {
         mWindowManager.removeView(mPopupView);
-        mPopupView = null;
+        mPopupView.removeAllViews();
+        mShowing = false;
     }
 
     public synchronized void hide() {
         if (!mShowing) {
             return;
         }
-        mShowing = false;
-
+        
         if (mPopup != null) {
             mPopup.dismiss();
         }
@@ -632,10 +556,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
     }
 
+    private LinearLayout.LayoutParams getListviewParams(){
+        return new LinearLayout.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            mConfiguration.mHorizontalScrollerHeight);
+    }
+
     private WindowManager.LayoutParams getParams(float opacity) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                mConfiguration.mHorizontal ? WindowManager.LayoutParams.MATCH_PARENT
-                        : WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND,
@@ -735,7 +664,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mRamUsageBar.setRatios((fTotalMem - fAvailMem) / fTotalMem, 0, 0);
         }
     };
-    private ImageButton mOpenFavorite;
 
     private Drawable getFullResDefaultActivityIcon() {
         return Resources.getSystem().getDrawableForDensity(R.drawable.ic_launcher, mConfiguration.mIconDpi);

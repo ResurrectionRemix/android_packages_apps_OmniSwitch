@@ -413,7 +413,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
         
         initView();
 
-        mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
+        try {
+            mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
+        } catch(java.lang.IllegalStateException e){
+            // something went wrong - try to recover here
+            mWindowManager.removeView(mPopupView);
+            mPopupView.removeAllViews();
+            mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
+        }
+        
         mPopupView.addView(mView);
 
         if (mConfiguration.mAnimate) {

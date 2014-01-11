@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.omnirom.omniswitch.Configuration;
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.MemInfoReader;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
@@ -110,7 +110,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private SharedPreferences mPrefs;
     private boolean mShowcaseDone;
     private float mOpenFavoriteY;
-    private Configuration mConfiguration;
+    private SwitchConfiguration mConfiguration;
     private ImageButton mOpenFavorite;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
@@ -172,7 +172,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mWindowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        mConfiguration = Configuration.getInstance(mContext);
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
 
         mInflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -579,7 +579,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 PixelFormat.TRANSLUCENT);
         params.dimAmount = opacity;
         params.gravity = Gravity.TOP;
-        params.y = mConfiguration.mStartY + (mConfiguration.mEndY - mConfiguration.mStartY) / 2- mConfiguration.mHorizontalScrollerHeight / 2;
+        params.y = mConfiguration.getCurrentOffsetStart() + mConfiguration.mHandleHeight / 2 - mConfiguration.mHorizontalScrollerHeight / 2;
 
         return params;
     }
@@ -745,5 +745,11 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
+    }
+    
+    public void updateLayout() {
+        if (mShowing){
+            mWindowManager.updateViewLayout(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
+        }
     }
 }

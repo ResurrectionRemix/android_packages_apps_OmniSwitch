@@ -19,6 +19,7 @@ package org.omnirom.omniswitch.ui;
 
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.Utils;
 
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -62,7 +64,6 @@ public class SettingsGestureView {
     private Drawable mDragHandle;
     private Drawable mDragHandleStart;
     private Drawable mDragHandleEnd;
-    private int mScreenHeight;
     private SharedPreferences mPrefs;
     private float mDownY;
     private float mDeltaY;
@@ -77,7 +78,6 @@ public class SettingsGestureView {
         mDensity = mContext.getResources().getDisplayMetrics().density;
         Point size = new Point();
         mWindowManager.getDefaultDisplay().getSize(size);
-        mScreenHeight = size.y;
         ViewConfiguration vc = ViewConfiguration.get(mContext);
         mSlop = vc.getScaledTouchSlop();
 
@@ -132,7 +132,7 @@ public class SettingsGestureView {
                 case MotionEvent.ACTION_MOVE:
                     float deltaY = event.getRawY() - mDownY;
                     if(Math.abs(deltaY) > mSlop){
-                        if(((mEndY + deltaY) < mScreenHeight)
+                        if(((mEndY + deltaY) < getCurrentDisplayHeight())
                                 && (mStartY + deltaY > 0)){
                             mDeltaY = deltaY;
                             mDragButton.setTranslationY(mDeltaY);
@@ -208,7 +208,7 @@ public class SettingsGestureView {
                     float deltaY = event.getRawY() - mDownY;
                     if(Math.abs(deltaY) > mSlop){
                         if(((mEndY + deltaY) > (mStartY + mDragHandleMinHeight))
-                                && (mEndY + deltaY + mDragHandleLimiterHeight < mScreenHeight)){
+                                && (mEndY + deltaY + mDragHandleLimiterHeight < getCurrentDisplayHeight())){
                             mDeltaY = deltaY;
                             mDragButtonEnd.setTranslationY(mDeltaY);
                         }
@@ -226,9 +226,12 @@ public class SettingsGestureView {
 
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    mPrefs.edit().putInt(SettingsActivity.PREF_HANDLE_POS_START, mStartY).commit();
-                    mPrefs.edit().putInt(SettingsActivity.PREF_HANDLE_POS_END, mEndY).commit();
                     mPrefs.edit().putInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, mLocation).commit();
+                    
+                    int relHeight = (int)(mStartY / (getCurrentDisplayHeight() /100));
+                    mPrefs.edit().putInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeight).commit();
+                    mPrefs.edit().putInt(SettingsActivity.PREF_HANDLE_HEIGHT, mEndY - mStartY).commit();
+
                     hide();
                 }
                 return true;
@@ -355,12 +358,11 @@ public class SettingsGestureView {
         mDragButtonEnd.setImageDrawable(d2);
     }
 
-    // cannot use Configuration since service must not
+    // cannot use SwitchConfiguration since service must not
     // be running at this point
     private void updateFromPrefs() {
-        int defaultHeight = (int) (100 * mDensity + 0.5);
-        mStartY = mPrefs.getInt(SettingsActivity.PREF_HANDLE_POS_START, mScreenHeight / 2 - defaultHeight / 2);
-        mEndY = mPrefs.getInt(SettingsActivity.PREF_HANDLE_POS_END, mScreenHeight / 2 + defaultHeight / 2);
+        mStartY = SwitchConfiguration.getInstance(mContext).getCurrentOffsetStart();
+        mEndY = SwitchConfiguration.getInstance(mContext).getCurrentOffsetEnd();
 
         mLocation = mPrefs.getInt(
                 SettingsActivity.PREF_DRAG_HANDLE_LOCATION, 0);
@@ -394,9 +396,16 @@ public class SettingsGestureView {
     }
     
     private void resetPosition() {
-        int defaultHeight = (int) (100 * mDensity + 0.5);
-        mStartY = mScreenHeight / 2 - defaultHeight / 2;
-        mEndY = mScreenHeight / 2 + defaultHeight / 2;
+        mStartY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetStart();
+        mEndY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetEnd();
         updateLayout();
+    }
+    
+    // includes rotation                
+    public int getCurrentDisplayHeight(){
+        DisplayMetrics dm = new DisplayMetrics();
+        mWindowManager.getDefaultDisplay().getMetrics(dm);
+        int height = dm.heightPixels;
+        return height;
     }
 }

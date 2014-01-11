@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -38,7 +39,7 @@ public class SwitchService extends Service {
     private SwitchManager mManager;
     private SharedPreferences mPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
-    private Configuration mConfiguration;
+    private SwitchConfiguration mConfiguration;
 
     private static boolean mIsRunning;
 
@@ -54,7 +55,7 @@ public class SwitchService extends Service {
         Log.d(TAG, "started SwitchService");
 
         mManager = new SwitchManager(this);
-        mConfiguration = Configuration.getInstance(this);
+        mConfiguration = SwitchConfiguration.getInstance(this);
 
         mReceiver = new RecentsReceiver();
         IntentFilter filter = new IntentFilter();
@@ -153,5 +154,18 @@ public class SwitchService extends Service {
         mConfiguration.updatePrefs(prefs, key);
         mManager.updatePrefs(prefs, key);
         mGesturePanel.updatePrefs(prefs, key);
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // recalc drag handle location
+        if (mIsRunning && mGesturePanel.isShowing()){
+            mGesturePanel.updateLayout();
+        }
+        // recalc overlay location
+        if (mIsRunning && mManager.isShowing()) {
+            mManager.updateLayout();
+        }
     }
 }

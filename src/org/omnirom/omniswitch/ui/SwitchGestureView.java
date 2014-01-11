@@ -17,9 +17,8 @@
  */
 package org.omnirom.omniswitch.ui;
 
-import org.omnirom.omniswitch.Configuration;
 import org.omnirom.omniswitch.R;
-import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchService;
 import org.omnirom.omniswitch.Utils;
 import org.omnirom.omniswitch.showcase.ShowcaseView;
@@ -28,13 +27,9 @@ import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -69,15 +64,15 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private ShowcaseView mShowcaseView;
     private SharedPreferences mPrefs;
     private boolean mShowcaseDone;
-    private Configuration mConfiguration;
+    private SwitchConfiguration mConfiguration;
 
     public SwitchGestureView(Context context) {
         mContext = context;
         mWindowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        mConfiguration = Configuration.getInstance(mContext);
-
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
+        
         mDragHandle = mContext.getResources().getDrawable(
                 R.drawable.drag_handle);
         mDragHandleOverlay = mContext.getResources().getDrawable(
@@ -173,7 +168,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 }
                 return true;
             }});
-        updateLayout();
+        updateButton();
     }
 
     private int getAbsoluteGravity() {
@@ -198,15 +193,14 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 PixelFormat.TRANSLUCENT);
 
         lp.gravity = getAbsoluteGravity();
-        lp.y = mConfiguration.mStartY;
-        lp.height = (int)(mConfiguration.mEndY - mConfiguration.mStartY);
+        lp.y = mConfiguration.getCurrentOffsetStart();
+        lp.height = mConfiguration.mHandleHeight;
         lp.width = (int) (20 * mConfiguration.mDensity + 0.5f);
         
         return lp;
     }
 
-    private void updateLayout() {
-        hide();
+    private void updateButton() {
         mView.removeView(mDragButton);
         updateDragHandleImage(false);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -214,7 +208,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 LinearLayout.LayoutParams.MATCH_PARENT);
         mView.addView(mDragButton, params);
         mView.invalidate();
-        show();
     }
     
     private void updateDragHandleImage(boolean shown){
@@ -238,7 +231,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if(DEBUG){
             Log.d(TAG, "updatePrefs");
         }
-        updateLayout();
+        updateButton();
     }
 
     public synchronized void show() {
@@ -255,6 +248,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 }}, 200);
         }
         mShowing = true;
+//        mOrientationListener.enable();
     }
 
     public synchronized void hide() {
@@ -264,6 +258,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
         mWindowManager.removeView(mView);
         mShowing = false;
+//        mOrientationListener.disable();
     }
     
     public void overlayShown() {
@@ -283,7 +278,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             mWindowManager.getDefaultDisplay().getSize(size);
 
             mShowcaseView = ShowcaseView.insertShowcaseView(mConfiguration.mLocation == 1 ? 0 : size.x, 
-                    mConfiguration.mStartY + (mConfiguration.mEndY - mConfiguration.mStartY)/2, mWindowManager, mContext,
+                    mConfiguration.getCurrentOffsetStart() + (mConfiguration.getCurrentOffsetEnd() - mConfiguration.getCurrentOffsetStart())/2, mWindowManager, mContext,
                     R.string.sc_drag_handle_title, R.string.sc_drag_handle_body, co);
 
             mShowcaseView.animateGesture(size.x / 2, size.y * 2.0f / 3.0f,
@@ -302,5 +297,15 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
+    }
+    
+    public boolean isShowing() {
+        return mShowing;
+    }
+    
+    public void updateLayout() {
+        if (mShowing){
+            mWindowManager.updateViewLayout(mView, getGesturePanelLayoutParams());
+        }
     }
 }

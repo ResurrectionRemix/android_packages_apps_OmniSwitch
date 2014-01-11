@@ -23,9 +23,11 @@
 		android:label="@string/app_name" >
 		<service
 			android:name="org.omnirom.omniswitch.SwitchService"
+			android:configChanges="orientation|screenSize"
 			android:excludeFromRecents="true" />
 		<activity
 			android:name="org.omnirom.omniswitch.MainActivity"
+			android:configChanges="orientation|screenSize"
 			android:excludeFromRecents="true"
 			android:label="@string/app_name"
 			android:launchMode="singleInstance"

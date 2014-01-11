@@ -241,4 +241,8 @@ public class SwitchManager {
             Log.e(TAG, "ActivityNotFound: [" + intent + "]");
         }
     }
+    
+    public void updateLayout() {
+        mLayout.updateLayout();
+    }
 }

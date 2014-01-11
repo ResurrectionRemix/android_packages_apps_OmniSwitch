@@ -56,7 +56,7 @@ public class RecentTasksLoader {
 
     private State mState = State.CANCELLED;
 
-    private Configuration mConfiguration;
+    private SwitchConfiguration mConfiguration;
 
     private static RecentTasksLoader sInstance;
 
@@ -76,7 +76,7 @@ public class RecentTasksLoader {
         mContext = context;
         mRecentsManager = manager;
         mHandler = new Handler();
-        mConfiguration = Configuration.getInstance(mContext);
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
     }
 
     public ArrayList<TaskDescription> getLoadedTasks() {

@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -90,5 +91,11 @@ public class MainActivity extends Activity {
         }
         unregisterReceiver(mReceiver);
         super.onDestroy();
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // dont restart activity on orientation changes
     }
 }

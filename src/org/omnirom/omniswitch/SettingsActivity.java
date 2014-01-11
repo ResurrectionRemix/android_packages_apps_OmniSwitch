@@ -58,9 +58,9 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_SHOW_LABELS = "show_labels";
     public static final String PREF_FAVORITE_APPS_CONFIG = "favorite_apps_config";
     public static final String PREF_SHOW_DRAG_HANDLE = "show_drag_handle";
-    public static final String PREF_HANDLE_POS_END = "handle_pos_end";
-    public static final String PREF_HANDLE_POS_START = "handle_pos_start";
     public static final String PREF_FAVORITE_APPS = "favorite_apps";
+    public static final String PREF_HANDLE_POS_START_RELATIVE = "handle_pos_start_relative";
+    public static final String PREF_HANDLE_HEIGHT = "handle_height";
 
     private SwitchPreference mToggleService;
     private ListPreference mIconSize;

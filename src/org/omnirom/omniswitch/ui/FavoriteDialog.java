@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.omnirom.omniswitch.Configuration;
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.Utils;
@@ -72,7 +72,7 @@ public class FavoriteDialog extends AlertDialog implements
 	private FavoriteListAdapter mFavoriteAdapter;
 	private DragSortListView mFavoriteConfigList;
 	private AlertDialog mAddFavoriteDialog;
-    private Configuration mConfiguration;
+    private SwitchConfiguration mConfiguration;
 
 	ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
 			ViewGroup.LayoutParams.MATCH_PARENT,
@@ -137,7 +137,7 @@ public class FavoriteDialog extends AlertDialog implements
 		mFavoriteList = favoriteList;
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mConfiguration = Configuration.getInstance(mContext);
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
 	}
 
 	@Override

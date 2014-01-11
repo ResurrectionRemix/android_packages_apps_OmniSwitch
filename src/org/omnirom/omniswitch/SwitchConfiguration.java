@@ -20,9 +20,11 @@ package org.omnirom.omniswitch;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-public class Configuration {
+public class SwitchConfiguration {
     public float mBackgroundOpacity = 0.8f;
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
@@ -31,35 +33,37 @@ public class Configuration {
     public int mHorizontalMaxWidth = mIconSize;
     public int mHorizontalScrollerHeight = mIconSize * 2;
     public boolean mShowRambar;
-    public int mStartY;
-    public int mEndY;
+    public int mStartYRelative;
+    public int mHandleHeight;
     public boolean mShowLabels = true;
-    public int mScreenHeight;
     public int mColor;
     public int mDefaultColor;
     public boolean mShowDragHandle = true;
     public int mIconDpi;
 
-    public static Configuration mInstance;
+    public static SwitchConfiguration mInstance;
+    private WindowManager mWindowManager;
+    private int mDefaultHeight;
 
-    public static Configuration getInstance(Context context) {
+    public static SwitchConfiguration getInstance(Context context) {
         if(mInstance==null){
-            mInstance = new Configuration(context);
+            mInstance = new SwitchConfiguration(context);
         }
         return mInstance;
     }
     
-    private Configuration(Context context){
+    private SwitchConfiguration(Context context){
         mDensity = context.getResources().getDisplayMetrics().density;
         mIconDpi = context.getResources().getDisplayMetrics().densityDpi;
 
-        WindowManager windowManager = (WindowManager) context
+        mWindowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
 
         Point size = new Point();
-        windowManager.getDefaultDisplay().getSize(size);
-        mScreenHeight = size.y;
+        mWindowManager.getDefaultDisplay().getSize(size);
         mDefaultColor = context.getResources().getColor(R.color.holo_blue_light);
+        mDefaultHeight = (int) (100 * mDensity + 0.5);
+        updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {
@@ -74,9 +78,11 @@ public class Configuration {
         mShowRambar = prefs
                 .getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
         mShowLabels = prefs.getBoolean(SettingsActivity.PREF_SHOW_LABELS, true);
-        int defaultHeight = (int) (100 * mDensity + 0.5);
-        mStartY = prefs.getInt(SettingsActivity.PREF_HANDLE_POS_START, mScreenHeight / 2 - defaultHeight / 2);
-        mEndY = prefs.getInt(SettingsActivity.PREF_HANDLE_POS_END, mScreenHeight / 2 + defaultHeight / 2);
+
+        int relHeightStart = (int)(getDefaultOffsetStart() / (getCurrentDisplayHeight() /100));
+
+        mStartYRelative = prefs.getInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeightStart);
+        mHandleHeight = prefs.getInt(SettingsActivity.PREF_HANDLE_HEIGHT, mDefaultHeight);
 
         mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
         mHorizontalScrollerHeight = (int) ((mIconSize + (mShowLabels ? 40 : 10))
@@ -84,5 +90,33 @@ public class Configuration {
         mColor = prefs
                 .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
         mShowDragHandle = prefs.getBoolean(SettingsActivity.PREF_SHOW_DRAG_HANDLE, true);
+    }
+    
+    // includes rotation                
+    public int getCurrentDisplayHeight(){
+        DisplayMetrics dm = new DisplayMetrics();
+        mWindowManager.getDefaultDisplay().getMetrics(dm);
+        int height = dm.heightPixels;
+        return height;
+    }
+    
+    public int getCurrentOffsetStart(){
+        return (getCurrentDisplayHeight() / 100) * mStartYRelative;
+    }
+
+    public int getDefaultOffsetStart(){
+        return ((getCurrentDisplayHeight() / 2) - mDefaultHeight /2);
+    }
+
+    public int getDefaultHeightRelative(){
+        return mDefaultHeight / (getCurrentDisplayHeight() / 100);
+    }
+
+    public int getCurrentOffsetEnd(){
+        return getCurrentOffsetStart() + mHandleHeight;
+    }
+    
+    public int getDefaultOffsetEnd(){
+        return getDefaultOffsetStart() + mDefaultHeight;
     }
 }

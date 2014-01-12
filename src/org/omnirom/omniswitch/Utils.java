@@ -33,7 +33,12 @@ public class Utils {
 
     public static void parseFavorites(String favoriteListString,
             List<String> favoriteList) {
+        if (favoriteListString.length() == 0){
+            return;
+        }
+
         if (favoriteListString.indexOf("##") == -1){
+            favoriteList.add(favoriteListString);
             return;
         }
         String[] split = favoriteListString.split("##");

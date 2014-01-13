@@ -59,6 +59,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private boolean mSwipeStarted;
     private boolean mShowStarted;
     private boolean mShowing;
+    private boolean mEnabled = true;
     private Drawable mDragHandle;
     private Drawable mDragHandleOverlay;
     private ShowcaseView mShowcaseView;
@@ -88,12 +89,15 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                boolean defaultResult = v.onTouchEvent(event);
-
                 int action = event.getAction();
                 if(DEBUG){
                     Log.d(TAG, "button onTouch");
                 }
+                if (!mEnabled){
+                    return true;
+                }
+                boolean defaultResult = v.onTouchEvent(event);
+
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     if (!mSwipeStarted) {
@@ -103,6 +107,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                         mDownPoint[0] = event.getX();
                         mDownPoint[1] = event.getY();
                         mSwipeStarted = true;
+                        mShowStarted = false;
                         if(DEBUG){
                             Log.d(TAG, "button down " + mDownPoint[0] + " "
                                 + mDownPoint[1]);
@@ -126,7 +131,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                             float distanceY = Math.abs(mDownPoint[1] - y);
                             float distanceX = Math.abs(mDownPoint[0] - x);
                             if(DEBUG){
-                                Log.d(TAG, ""+distanceX + " " + distanceY);
+                                Log.d(TAG, ""+distanceX + " " + distanceY + " " + mShowStarted);
                             }
                             if (distanceX > mTriggerThreshholdX
                                     //&& distanceY < mTriggerThreshholdY
@@ -248,7 +253,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 }}, 200);
         }
         mShowing = true;
-//        mOrientationListener.enable();
+        mEnabled = true;
     }
 
     public synchronized void hide() {
@@ -258,16 +263,27 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
         mWindowManager.removeView(mView);
         mShowing = false;
-//        mOrientationListener.disable();
+        mEnabled = false;
     }
     
     public void overlayShown() {
+        if(DEBUG){
+            Log.d(TAG, "overlayShown");
+        }
         mShowStarted = false;
         mSwipeStarted = false;
         updateDragHandleImage(false);
         mView.invalidate();
+        mEnabled = false;
     }
 
+    public void overlayHidden() {
+        if(DEBUG){
+            Log.d(TAG, "overlayHidden");
+        }
+        mEnabled = true;
+    }
+    
     private boolean startShowcaseDragHandle() {
         if (!mPrefs.getBoolean(KEY_SHOWCASE_HANDLE, false)) {
             mPrefs.edit().putBoolean(KEY_SHOWCASE_HANDLE, true).commit();

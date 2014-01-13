@@ -136,6 +136,7 @@ public class SwitchService extends Service {
                             MainActivity.ActivityReceiver.ACTION_FINISH);
                     sendBroadcast(finishActivity);
                     mManager.hide();
+                    mGesturePanel.overlayHidden();
                 }
             } else if (ACTION_KILL_ACTIVITY.equals(action)) {
                 Intent finishActivity = new Intent(

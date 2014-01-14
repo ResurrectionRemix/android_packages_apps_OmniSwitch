@@ -27,11 +27,12 @@
 		android:layout_gravity="center_horizontal" />
 	<ImageButton
 		android:id="@+id/openFavorites"
-		android:layout_width="match_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:background="@android:color/transparent"
 		android:minHeight="40dip"
 		android:scaleType="centerInside"
+		android:layout_gravity="center_horizontal"
 		android:src="@drawable/arrow_down" />
 	<org.omnirom.omniswitch.ui.HorizontalListView
 		android:id="@+id/favorite_list_horizontal"

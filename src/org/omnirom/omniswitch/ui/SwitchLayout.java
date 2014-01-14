@@ -579,7 +579,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 PixelFormat.TRANSLUCENT);
         params.dimAmount = opacity;
         params.gravity = Gravity.TOP;
-        params.y = mConfiguration.getCurrentOffsetStart() + mConfiguration.mHandleHeight / 2 - mConfiguration.mHorizontalScrollerHeight / 2;
+        params.y = mConfiguration.getCurrentOffsetStart() + mConfiguration.mHandleHeight / 2 - mConfiguration.mHorizontalScrollerHeight / 2 - mConfiguration.mIconSize;
 
         return params;
     }

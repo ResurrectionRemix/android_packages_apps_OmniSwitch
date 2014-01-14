@@ -97,6 +97,19 @@ public class DragHandleColorPreference extends DialogPreference {
                                         mColorValue).commit();
                     }
                 });
+        d.setButton(AlertDialog.BUTTON_NEUTRAL,
+                mResources.getString(R.string.reset),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mColorValue = getContext().getResources().getColor(R.color.holo_blue_light);
+                        updatePreferenceViews();
+                        mPrefs.edit()
+                                .putInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,
+                                        mColorValue).commit();
+                        d.dismiss();
+                    }
+                });
         d.setButton(AlertDialog.BUTTON_NEGATIVE,
                 mResources.getString(R.string.cancel),
                 (DialogInterface.OnClickListener) null);

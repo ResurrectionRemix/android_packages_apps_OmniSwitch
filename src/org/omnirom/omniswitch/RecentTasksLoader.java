@@ -263,7 +263,7 @@ public class RecentTasksLoader {
     }
 
     private Drawable getFullResDefaultActivityIcon() {
-        return getFullResIcon(Resources.getSystem(), R.drawable.ic_launcher);
+        return getFullResIcon(mContext.getResources(), R.drawable.ic_default);
     }
 
     private Drawable getFullResIcon(Resources resources, int iconId) {

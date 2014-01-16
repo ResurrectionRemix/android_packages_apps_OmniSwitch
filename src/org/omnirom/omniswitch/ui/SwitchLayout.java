@@ -42,6 +42,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -372,8 +373,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
-                    // TODO workaround for flicker on launcher screen
-                    mWindowManager.updateViewLayout(mPopupView, getParams(0));
                 }
                 return true;
             }
@@ -388,8 +387,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
-                    // TODO workaround for flicker on launcher screen
-                    mWindowManager.updateViewLayout(mPopupView, getParams(0));
                 }
                 return true;
             }
@@ -400,6 +397,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mRamUsageBar.setVisibility(mConfiguration.mShowRambar ? View.VISIBLE : View.GONE);
         mFavoriteListHorizontal.setLayoutParams(getListviewParams());
         mRecentListHorizontal.setLayoutParams(getListviewParams());
+
+        mOpenFavorite.setVisibility(mFavoriteList.size()==0 ? View.GONE : View.VISIBLE);
+        if (mFavoriteList.size()==0){
+            mShowFavorites = false;
+        }
+        mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
+                mShowFavorites ? R.drawable.arrow_up : R.drawable.arrow_down));
+        mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
     }
 
     public synchronized void show() {
@@ -413,13 +418,16 @@ public class SwitchLayout implements OnShowcaseEventListener {
         
         initView();
 
+        mPopupView.setBackgroundColor(Color.BLACK);
+        mPopupView.getBackground().setAlpha(0);
+
         try {
-            mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
+            mWindowManager.addView(mPopupView, getParams());
         } catch(java.lang.IllegalStateException e){
             // something went wrong - try to recover here
             mWindowManager.removeView(mPopupView);
             mPopupView.removeAllViews();
-            mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
+            mWindowManager.addView(mPopupView, getParams());
         }
         
         mPopupView.addView(mView);
@@ -439,6 +447,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private void showDone(){
+        mPopupView.getBackground().setAlpha((int) (255 * mConfiguration.mBackgroundOpacity));
         mPopupView.setFocusableInTouchMode(true);
         mShowing = true;
         Intent intent = new Intent(
@@ -557,6 +566,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mPopup.dismiss();
         }
 
+        mPopupView.getBackground().setAlpha(0);
         if (mConfiguration.mAnimate) {
             mView.startAnimation(getHideAnimation());
         } else {
@@ -570,14 +580,13 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mConfiguration.mHorizontalScrollerHeight);
     }
 
-    private WindowManager.LayoutParams getParams(float opacity) {
+    private WindowManager.LayoutParams getParams() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_DIM_BEHIND,
+                0,
                 PixelFormat.TRANSLUCENT);
-        params.dimAmount = opacity;
         params.gravity = Gravity.TOP;
         params.y = mConfiguration.getCurrentOffsetStart() + mConfiguration.mHandleHeight / 2 - mConfiguration.mHorizontalScrollerHeight / 2 - mConfiguration.mIconSize;
 
@@ -749,7 +758,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     
     public void updateLayout() {
         if (mShowing){
-            mWindowManager.updateViewLayout(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
+            mWindowManager.updateViewLayout(mPopupView, getParams());
         }
     }
 }

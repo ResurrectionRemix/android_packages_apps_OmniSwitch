@@ -20,12 +20,11 @@
 package org.omnirom.omniswitch.dslv;
 
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.graphics.Color;
-import android.widget.ListView;
-import android.widget.ImageView;
+import android.graphics.Point;
 import android.view.View;
-import android.util.Log;
+import android.widget.ImageView;
+import android.widget.ListView;
 
 /**
  * Simple implementation of the FloatViewManager class. Uses list

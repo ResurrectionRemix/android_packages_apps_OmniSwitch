@@ -186,6 +186,7 @@ public class RecentTasksLoader {
                 }
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             protected Void doInBackground(Void... params) {
                 // We load in two stages: first, we update progress with just

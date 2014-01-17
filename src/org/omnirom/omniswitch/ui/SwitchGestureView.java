@@ -53,8 +53,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private ImageView mDragButton;
     private LinearLayout mView;
     private int mTriggerThreshholdX = 20;
-    private int mTriggerThreshholdY = 20;
-
     private float[] mDownPoint = new float[2];
     private boolean mSwipeStarted;
     private boolean mShowStarted;

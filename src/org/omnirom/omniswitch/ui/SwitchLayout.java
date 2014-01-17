@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.MemInfoReader;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchManager;
 import org.omnirom.omniswitch.SwitchService;
 import org.omnirom.omniswitch.TaskDescription;
@@ -41,7 +41,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -171,6 +170,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mRecentsManager = manager;
     }
 
+    @SuppressWarnings("rawtypes")
     public SwitchLayout(Context context) {
         mContext = context;
         mWindowManager = (WindowManager) mContext

@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 
 public class PackageReceiver extends BroadcastReceiver {
-    private static final String TAG = "PackageReceiver";
 
     @Override
     public void onReceive(final Context context, Intent intent) {

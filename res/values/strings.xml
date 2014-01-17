@@ -27,7 +27,7 @@
 	<string name="animate_title">Animate</string>
 	<string name="adjust_handle_title">Drag handle position</string>
 	<string name="sc_drag_handle_title">Drag handle</string>
-	<string name="sc_drag_handle_body">\nSwipe horizontally or long-press to open</string>
+	<string name="sc_drag_handle_body">\nSwipe horizontally or long-press to open\nPress button or outside to close</string>
 	<string name="sc_favorite_title">Favorite apps</string>
 	<string name="sc_favorite_body">\nOpen favorite apps view.</string>
 	<string name="icon_size_normal">Normal</string>

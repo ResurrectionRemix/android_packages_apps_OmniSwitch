@@ -289,7 +289,6 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
 
         if (mRemoveEnabled) {
             int x = touch.x;
-            int y = touch.y;
 
             if (mRemoveMode == SLIDE_RIGHT_REMOVE) {
                 int width = mDslv.getWidth();
@@ -372,7 +371,6 @@ public class DragSortController extends SimpleFloatViewManager implements View.O
         
             //View dragBox = (View) item.getTag();
             View dragBox = (View) item.findViewById(id);
-            boolean dragHit = false;
             if (dragBox != null) {
                 dragBox.getLocationOnScreen(mTempLoc);
                 

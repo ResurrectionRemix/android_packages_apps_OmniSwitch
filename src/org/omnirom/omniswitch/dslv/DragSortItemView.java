@@ -22,10 +22,8 @@ package org.omnirom.omniswitch.dslv;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.util.Log;
 
 /**
  * Lightweight ViewGroup that wraps list items obtained from user's
@@ -51,7 +49,7 @@ public class DragSortItemView extends ViewGroup {
 
         // always init with standard ListView layout params
         setLayoutParams(new AbsListView.LayoutParams(
-                LayoutParams.FILL_PARENT,
+                LayoutParams.MATCH_PARENT,
                 LayoutParams.WRAP_CONTENT));
 
         setClipChildren(true);

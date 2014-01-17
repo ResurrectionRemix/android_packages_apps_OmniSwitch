@@ -101,6 +101,7 @@ public class SettingsActivity extends PreferenceActivity implements
         super.onDestroy();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

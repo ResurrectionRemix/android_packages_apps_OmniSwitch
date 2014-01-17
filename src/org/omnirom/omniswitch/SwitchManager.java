@@ -166,6 +166,9 @@ public class SwitchManager {
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
         if (mLoadedTasks.size() == 0) {
+            Intent hideRecent = new Intent(
+                    SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+            mContext.sendBroadcast(hideRecent);
             return;
         }
 
@@ -187,6 +190,9 @@ public class SwitchManager {
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
         if (mLoadedTasks.size() == 0) {
+            Intent hideRecent = new Intent(
+                    SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+            mContext.sendBroadcast(hideRecent);
             return;
         }
         Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
@@ -224,6 +230,9 @@ public class SwitchManager {
 
     public void toggleLastApp() {
         if (mLoadedTasks.size() < 2) {
+            Intent hideRecent = new Intent(
+                    SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+            mContext.sendBroadcast(hideRecent);
             return;
         }
 

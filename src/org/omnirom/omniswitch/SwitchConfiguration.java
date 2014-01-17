@@ -54,7 +54,6 @@ public class SwitchConfiguration {
     
     private SwitchConfiguration(Context context){
         mDensity = context.getResources().getDisplayMetrics().density;
-        mIconDpi = context.getResources().getDisplayMetrics().densityDpi;
 
         mWindowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);

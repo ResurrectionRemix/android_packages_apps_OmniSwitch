@@ -49,6 +49,9 @@
 			android:defaultValue="true"
 			android:key="show_labels"
 			android:title="@string/show_app_labels" />
+		<Preference
+			android:key="button_config"
+			android:title="@string/buttons_title" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_drag_handle"

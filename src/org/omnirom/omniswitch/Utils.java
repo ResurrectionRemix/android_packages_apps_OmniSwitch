@@ -100,4 +100,33 @@ public class Utils {
                 resizedHeight, false);
         return new BitmapDrawable(resources, bitmapResized);
     }
+    
+    public static boolean[] buttonStringToArry(String buttonString){
+        String[] splitParts = buttonString.split(",");
+        boolean[] buttons = new boolean[splitParts.length];
+        for(int i = 0; i < splitParts.length; i++){
+            if (splitParts[i].equals("0")){
+                buttons[i]=false;
+            } else if (splitParts[i].equals("1")){
+                buttons[i]=true;
+            }
+        }
+        return buttons;
+    }
+    
+    public static String buttonArrayToString(boolean[] buttons){
+        String buttonString = "";
+        for(int i = 0; i < buttons.length; i++){
+            boolean value = buttons[i];
+            if (value){
+                buttonString = buttonString + "1,";
+            } else {
+                buttonString = buttonString + "0,";
+            }
+        }
+        if(buttonString.length() > 0){
+            buttonString = buttonString.substring(0, buttonString.length() - 1);
+        }
+        return buttonString;
+    }
 }

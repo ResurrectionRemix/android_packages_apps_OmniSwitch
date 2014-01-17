@@ -41,7 +41,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -298,8 +297,8 @@ public class FavoriteDialog extends AlertDialog implements
 			}
 		}
 		
-	    private Drawable getFullResDefaultActivityIcon() {
-	        return Resources.getSystem().getDrawableForDensity(R.drawable.ic_launcher, mConfiguration.mIconDpi);
+	    private Drawable getDefaultActivityIcon() {
+	        return mContext.getResources().getDrawable(R.drawable.ic_default);
 	    }
 
 		private class PackageAdapter extends BaseAdapter {
@@ -339,7 +338,7 @@ public class FavoriteDialog extends AlertDialog implements
 						item.title = appInfo.loadLabel(pm);
 					}
 					if (item.icon == null) {
-					    item.icon = getFullResDefaultActivityIcon();
+					    item.icon = getDefaultActivityIcon();
 					}
 					mInstalledPackages.add(item);
 				}

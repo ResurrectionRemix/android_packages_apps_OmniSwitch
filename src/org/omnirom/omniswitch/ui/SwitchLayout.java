@@ -72,6 +72,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SwitchLayout implements OnShowcaseEventListener {
     private static final String TAG = "SwitchLayout";
@@ -113,6 +114,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private float mOpenFavoriteY;
     private SwitchConfiguration mConfiguration;
     private ImageButton mOpenFavorite;
+    private boolean mHasFavorites;
+    private boolean[] mButtons;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -266,17 +269,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mOpenFavorite = (ImageButton) mView
                 .findViewById(R.id.openFavorites);
 
-        if(!mShowcaseDone){
-            mOpenFavorite.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    mOpenFavorite.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    int[] location = new int[2];
-                    mOpenFavorite.getLocationOnScreen(location);
-                    mOpenFavoriteY = location[1];
-                }
-            });
-        }
         mOpenFavorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mShowFavorites = !mShowFavorites;
@@ -318,6 +310,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 mRecentsManager.dismissAndGoHome();
             }
         });
+        mHomeButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(mContext, 
+                        mContext.getResources().getString(R.string.home_help), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         mLastAppButton = (ImageButton) mView.findViewById(R.id.lastApp);
         mLastAppButton.setOnClickListener(new View.OnClickListener() {
@@ -325,11 +325,26 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 mRecentsManager.toggleLastApp();
             }
         });
-
+        mLastAppButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(mContext, 
+                        mContext.getResources().getString(R.string.toogle_last_app_help), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
         mKillAllButton = (ImageButton) mView.findViewById(R.id.killAll);
         mKillAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mRecentsManager.killAll();
+            }
+        });
+        mKillAllButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(mContext, 
+                        mContext.getResources().getString(R.string.kill_all_apps_help), Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
 
@@ -337,6 +352,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mKillOtherButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mRecentsManager.killOther();
+            }
+        });
+        mKillOtherButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(mContext, 
+                        mContext.getResources().getString(R.string.kill_other_apps_help), Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
 
@@ -354,6 +377,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 mContext.startActivity(mainActivity);
             }
         });
+        mSettingsButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(mContext, 
+                        mContext.getResources().getString(R.string.settings_help), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
 
         mRamUsageBar = (LinearColorBar) mView.findViewById(R.id.ram_usage_bar);
         mForegroundProcessText = (TextView) mView
@@ -362,6 +393,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 .findViewById(R.id.backgroundText);
 
         mPopupView = new FrameLayout(mContext);
+        mPopupView.setBackgroundColor(Color.BLACK);
 
         mPopupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -398,13 +430,31 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mFavoriteListHorizontal.setLayoutParams(getListviewParams());
         mRecentListHorizontal.setLayoutParams(getListviewParams());
 
-        mOpenFavorite.setVisibility(mFavoriteList.size()==0 ? View.GONE : View.VISIBLE);
-        if (mFavoriteList.size()==0){
+        mOpenFavorite.setVisibility(mHasFavorites ? View.VISIBLE : View.GONE);
+        if (!mHasFavorites){
             mShowFavorites = false;
         }
         mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
                 mShowFavorites ? R.drawable.arrow_up : R.drawable.arrow_down));
         mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
+
+        if(mHasFavorites && !mShowcaseDone){
+            mOpenFavorite.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mOpenFavorite.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    int[] location = new int[2];
+                    mOpenFavorite.getLocationOnScreen(location);
+                    mOpenFavoriteY = location[1];
+                }
+            });
+        }
+        
+        mKillAllButton.setVisibility(mButtons[SettingsActivity.BUTTON_KILL_ALL] ? View.VISIBLE : View.GONE);
+        mKillOtherButton.setVisibility(mButtons[SettingsActivity.BUTTON_KILL_OTHER] ? View.VISIBLE : View.GONE);
+        mLastAppButton.setVisibility(mButtons[SettingsActivity.BUTTON_TOGGLE_APP] ? View.VISIBLE : View.GONE);
+        mHomeButton.setVisibility(mButtons[SettingsActivity.BUTTON_HOME] ? View.VISIBLE : View.GONE);
+        mSettingsButton.setVisibility(mButtons[SettingsActivity.BUTTON_SETTINGS] ? View.VISIBLE : View.GONE);
     }
 
     public synchronized void show() {
@@ -418,7 +468,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         
         initView();
 
-        mPopupView.setBackgroundColor(Color.BLACK);
         mPopupView.getBackground().setAlpha(0);
 
         try {
@@ -437,7 +486,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         } else {
             showDone();
         }
-        if(!mShowcaseDone){
+        if(mHasFavorites && !mShowcaseDone){
             mPopupView.postDelayed(new Runnable(){
                 @Override
                 public void run() {
@@ -653,8 +702,11 @@ public class SwitchLayout implements OnShowcaseEventListener {
         String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
         Utils.parseFavorites(favoriteListString, mFavoriteList);
 
+        mHasFavorites = mFavoriteList.size() != 0;
         updateFavorites();
         mFavoriteListAdapter.notifyDataSetChanged();
+
+        mButtons = Utils.buttonStringToArry(prefs.getString(SettingsActivity.PREF_BUTTONS, SettingsActivity.PREF_BUTTON_DEFAULT));
     }
 
     private final Runnable updateRamBarTask = new Runnable() {
@@ -682,8 +734,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
     };
 
-    private Drawable getFullResDefaultActivityIcon() {
-        return Resources.getSystem().getDrawableForDensity(R.drawable.ic_launcher, mConfiguration.mIconDpi);
+    private Drawable getDefaultActivityIcon() {
+        return mContext.getResources().getDrawable(R.drawable.ic_default);
     }
 
     private void updateFavorites() {
@@ -712,9 +764,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 label = favorite;
             }
             if (appIcon == null) {
-                appIcon = getFullResDefaultActivityIcon();
+                appIcon = getDefaultActivityIcon();
             }
-            mFavoriteIcons.add(Utils.resize(Resources.getSystem(),
+            mFavoriteIcons.add(Utils.resize(mContext.getResources(),
                     appIcon, mConfiguration.mIconSize, 
                     mConfiguration.mDensity));
             mFavoriteNames.add(label);

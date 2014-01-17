@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omnirom.omniswitch.ui.CheckboxListDialog;
 import org.omnirom.omniswitch.ui.FavoriteDialog;
 import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
@@ -61,6 +62,15 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_FAVORITE_APPS = "favorite_apps";
     public static final String PREF_HANDLE_POS_START_RELATIVE = "handle_pos_start_relative";
     public static final String PREF_HANDLE_HEIGHT = "handle_height";
+    public static final String PREF_BUTTON_CONFIG = "button_config";
+    public static final String PREF_BUTTONS = "buttons";
+    public static final String PREF_BUTTON_DEFAULT = "1,1,1,1,1";
+
+    public static int BUTTON_KILL_ALL = 0;
+    public static int BUTTON_KILL_OTHER = 1;
+    public static int BUTTON_TOGGLE_APP = 2;
+    public static int BUTTON_HOME = 3;
+    public static int BUTTON_SETTINGS = 4;
 
     private SwitchPreference mToggleService;
     private ListPreference mIconSize;
@@ -71,6 +81,9 @@ public class SettingsActivity extends PreferenceActivity implements
     private static SharedPreferences sPrefs;
     private SettingsGestureView mGestureView;
     private FavoriteDialog mManageAppDialog;
+    private Preference mButtonConfig;
+    private String[] mButtonEntries;
+    private String mButtons;
 
     @Override
     public void onPause() {
@@ -102,19 +115,21 @@ public class SettingsActivity extends PreferenceActivity implements
         mIconSize = (ListPreference) findPreference(PREF_ICON_SIZE);
         mIconSize.setOnPreferenceChangeListener(this);
         List<CharSequence> values = Arrays.asList(mIconSize.getEntryValues());
-        int idx = values.indexOf(sPrefs.getString("icon_size",
+        int idx = values.indexOf(sPrefs.getString(PREF_ICON_SIZE,
                 mIconSize.getEntryValues()[1].toString()));
         mIconSize.setValueIndex(idx);
         mIconSize.setSummary(mIconSize.getEntries()[idx]);
 
         mOpacity = (SeekBarPreference) findPreference(PREF_OPACITY);
-        mOpacity.setInitValue(sPrefs.getInt("opacity", 60));
+        mOpacity.setInitValue(sPrefs.getInt(PREF_OPACITY, 60));
         mOpacity.setOnPreferenceChangeListener(this);
 
         mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
-
+        mButtonConfig = (Preference) findPreference(PREF_BUTTON_CONFIG);
+        mButtonEntries = getResources().getStringArray(R.array.button_entries);
+        mButtons = sPrefs.getString(PREF_BUTTONS, PREF_BUTTON_DEFAULT);
+        
         mFavoriteAppsConfig = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG);
-
         String favoriteListString = sPrefs.getString(PREF_FAVORITE_APPS, "");
         sFavoriteList.clear();
         Utils.parseFavorites(favoriteListString, sFavoriteList);
@@ -133,6 +148,13 @@ public class SettingsActivity extends PreferenceActivity implements
         mAdjustHandle.setEnabled(!running);
     }
 
+    private class ButtonsApplyRunnable implements CheckboxListDialog.ApplyRunnable {
+        public void apply(boolean[] buttons) {
+            mButtons = Utils.buttonArrayToString(buttons);
+            sPrefs.edit().putString(PREF_BUTTONS, mButtons).commit();
+        }
+    }
+
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
@@ -142,6 +164,13 @@ public class SettingsActivity extends PreferenceActivity implements
             return true;
         } else if (preference == mFavoriteAppsConfig) {
             showManageAppDialog();
+            return true;
+        } else if (preference == mButtonConfig){
+            boolean[] buttons = Utils.buttonStringToArry(mButtons);
+            CheckboxListDialog dialog = new CheckboxListDialog(this,
+                    mButtonEntries, buttons, new ButtonsApplyRunnable(),
+                    getResources().getString(R.string.buttons_title));
+            dialog.show();
             return true;
         }
         return false;

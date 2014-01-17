@@ -17,11 +17,6 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 	<string name="app_name">OmniSwitch</string>
-	<string name="refresh">Refresh</string>
-	<string name="kill_all">Kill All</string>
-	<string name="kill_other">Kill Other</string>
-	<string name="last_app">Last app</string>
-	<string name="home">Home</string>
 	<string name="status_bar_recent_remove_item_title">Stop</string>
 	<string name="status_bar_recent_inspect_item_title">App info</string>
 	<string name="recents_settings_title">OmniSwitch</string>
@@ -34,7 +29,7 @@
 	<string name="sc_drag_handle_title">Drag handle</string>
 	<string name="sc_drag_handle_body">\nSwipe horizontally or long-press to open</string>
 	<string name="sc_favorite_title">Favorite apps</string>
-	<string name="sc_favorite_body">\nOpen favorite apps view.\nFavorite apps can be added in settings</string>
+	<string name="sc_favorite_body">\nOpen favorite apps view.</string>
 	<string name="icon_size_normal">Normal</string>
 	<string name="icon_size_small">Small</string>
 	<string name="icon_size_large">Large</string>
@@ -58,4 +53,15 @@
 	<string name="location_left">&lt;&lt;</string>
 	<string name="location_right">&gt;&gt;</string>
 	<string name="reset">Default</string>
+	<string name="toogle_last_app_help">Switch to last app</string>
+	<string name="kill_all_apps_help">Kill all apps</string>
+	<string name="kill_other_apps_help">Kill other apps</string>
+	<string name="settings_help">Omniswitch settings</string>
+	<string name="home_help">Home</string>
+	<string name="toogle_last_app">Switch to last app</string>
+	<string name="kill_all_apps">Kill all</string>
+	<string name="kill_other_apps">Kill other</string>
+	<string name="settings">Settings</string>
+	<string name="home">Home</string>
+	<string name="buttons_title">Buttons</string>
 </resources>

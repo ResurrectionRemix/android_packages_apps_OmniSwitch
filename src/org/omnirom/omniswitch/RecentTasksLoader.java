@@ -268,7 +268,7 @@ public class RecentTasksLoader {
 
     private Drawable getFullResIcon(Resources resources, int iconId) {
         return Utils.resize(resources,
-                resources.getDrawableForDensity(iconId, mConfiguration.mIconDpi),
+                resources.getDrawable(iconId),
                 mConfiguration.mIconSize,
                 mConfiguration.mDensity);
     }

@@ -101,7 +101,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     if (!mSwipeStarted) {
-                        updateDragHandleImage(true);
+                        updateDragHandleImage(true, false);
                         mView.invalidate();
 
                         mDownPoint[0] = event.getX();
@@ -117,7 +117,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 case MotionEvent.ACTION_CANCEL:
                     mSwipeStarted = false;
                     mShowStarted = false;
-                    updateDragHandleImage(false);
+                    updateDragHandleImage(false, false);
                     mView.invalidate();
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -149,7 +149,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 case MotionEvent.ACTION_UP:
                     if (!mShowStarted){
                         mSwipeStarted = false;
-                        updateDragHandleImage(false);
+                        updateDragHandleImage(false, false);
                         mView.invalidate();
                     }
                     break;
@@ -176,7 +176,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         updateButton();
     }
 
-    private int getAbsoluteGravity() {
+    private int getGravity() {
         if (mConfiguration.mLocation == 0) {
             return Gravity.RIGHT | Gravity.TOP;
         }
@@ -187,7 +187,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         return Gravity.RIGHT | Gravity.TOP;
     }
 
-    public WindowManager.LayoutParams getGesturePanelLayoutParams() {
+    public WindowManager.LayoutParams getParams() {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -197,7 +197,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                         | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT);
 
-        lp.gravity = getAbsoluteGravity();
+        lp.gravity = getGravity();
         lp.y = mConfiguration.getCurrentOffsetStart();
         lp.height = mConfiguration.mHandleHeight;
         lp.width = (int) (20 * mConfiguration.mDensity + 0.5f);
@@ -207,7 +207,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
     private void updateButton() {
         mView.removeView(mDragButton);
-        updateDragHandleImage(false);
+        updateDragHandleImage(false, false);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -215,10 +215,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         mView.invalidate();
     }
     
-    private void updateDragHandleImage(boolean shown){
+    private void updateDragHandleImage(boolean shown, boolean force){
         Drawable d = shown ? mDragHandle : mDragHandleOverlay;
 
-        if (mConfiguration.mShowDragHandle){
+        if (!force && mConfiguration.mShowDragHandle){
             d = mDragHandle;
         }
         if (mConfiguration.mLocation == 1) {
@@ -244,7 +244,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             return;
         }
 
-        mWindowManager.addView(mView, getGesturePanelLayoutParams());
+        mWindowManager.addView(mView, getParams());
         if(!mShowcaseDone){
             mView.postDelayed(new Runnable(){
                 @Override
@@ -272,7 +272,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         mShowStarted = false;
         mSwipeStarted = false;
-        updateDragHandleImage(false);
+        updateDragHandleImage(false, true);
         mView.invalidate();
         mEnabled = false;
     }
@@ -282,6 +282,9 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             Log.d(TAG, "overlayHidden");
         }
         mEnabled = true;
+        if (mConfiguration.mShowDragHandle){
+            updateDragHandleImage(true, true);
+        }
     }
     
     private boolean startShowcaseDragHandle() {
@@ -321,7 +324,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     
     public void updateLayout() {
         if (mShowing){
-            mWindowManager.updateViewLayout(mView, getGesturePanelLayoutParams());
+            mWindowManager.updateViewLayout(mView, getParams());
         }
     }
 }

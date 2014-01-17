@@ -64,6 +64,7 @@ public class SwitchService extends Service {
         filter.addAction(RecentsReceiver.ACTION_HIDE_OVERLAY);
         filter.addAction(RecentsReceiver.ACTION_KILL_ACTIVITY);
         filter.addAction(RecentsReceiver.ACTION_OVERLAY_SHOWN);
+        filter.addAction(RecentsReceiver.ACTION_OVERLAY_HIDDEN);
 
         registerReceiver(mReceiver, filter);
 
@@ -110,6 +111,7 @@ public class SwitchService extends Service {
         public static final String ACTION_HIDE_OVERLAY = "org.omnirom.omniswitch.ACTION_HIDE_OVERLAY";
         public static final String ACTION_KILL_ACTIVITY = "org.omnirom.omniswitch.ACTION_KILL_ACTIVITY";
         public static final String ACTION_OVERLAY_SHOWN = "org.omnirom.omniswitch.ACTION_OVERLAY_SHOWN";
+        public static final String ACTION_OVERLAY_HIDDEN = "org.omnirom.omniswitch.ACTION_OVERLAY_HIDDEN";
 
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -136,7 +138,6 @@ public class SwitchService extends Service {
                             MainActivity.ActivityReceiver.ACTION_FINISH);
                     sendBroadcast(finishActivity);
                     mManager.hide();
-                    mGesturePanel.overlayHidden();
                 }
             } else if (ACTION_KILL_ACTIVITY.equals(action)) {
                 Intent finishActivity = new Intent(
@@ -146,6 +147,8 @@ public class SwitchService extends Service {
                 context.stopService(svc);
             } else if (ACTION_OVERLAY_SHOWN.equals(action)){
                 mGesturePanel.overlayShown();
+            } else if (ACTION_OVERLAY_HIDDEN.equals(action)){
+                mGesturePanel.overlayHidden();
             }
         }
     }

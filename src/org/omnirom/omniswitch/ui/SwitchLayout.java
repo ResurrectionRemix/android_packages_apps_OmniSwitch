@@ -604,6 +604,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mWindowManager.removeView(mPopupView);
         mPopupView.removeAllViews();
         mShowing = false;
+        Intent intent = new Intent(
+                SwitchService.RecentsReceiver.ACTION_OVERLAY_HIDDEN);
+        mContext.sendBroadcast(intent);
     }
 
     public synchronized void hide() {

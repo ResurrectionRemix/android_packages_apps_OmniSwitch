@@ -38,8 +38,8 @@ public class SwitchConfiguration {
     public boolean mShowLabels = true;
     public int mColor;
     public int mDefaultColor;
-    public boolean mShowDragHandle = true;
     public int mIconDpi;
+    public boolean mAutoHide;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
@@ -88,7 +88,7 @@ public class SwitchConfiguration {
                 * mDensity + 0.5f);
         mColor = prefs
                 .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
-        mShowDragHandle = prefs.getBoolean(SettingsActivity.PREF_SHOW_DRAG_HANDLE, true);
+        mAutoHide= prefs.getBoolean(SettingsActivity.PREF_AUDIO_HIDE_HANDLE, false);
     }
     
     // includes rotation                

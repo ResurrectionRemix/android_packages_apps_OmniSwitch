@@ -63,9 +63,9 @@
 			android:key="drag_handle_color"
 			android:title="@string/drag_handle_color_title" />
 		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="show_drag_handle"
-			android:title="@string/show_drag_handle" />
+			android:defaultValue="false"
+			android:key="auto_hide_handle"
+			android:title="@string/auto_hide_handle" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_favorite"

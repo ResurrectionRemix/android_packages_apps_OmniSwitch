@@ -115,6 +115,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private ImageButton mOpenFavorite;
     private boolean mHasFavorites;
     private boolean[] mButtons;
+    private boolean mHideSent;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -385,6 +386,17 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 return true;
             }
         });
+        
+        // touches inside the overlay should not hide it
+        mView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(DEBUG){
+                    Log.d(TAG, "mView:onTouch");
+                }
+                return true;
+            }
+        });
 
         mRamUsageBar = (LinearColorBar) mView.findViewById(R.id.ram_usage_bar);
         mForegroundProcessText = (TextView) mView
@@ -393,34 +405,38 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 .findViewById(R.id.backgroundText);
 
         mPopupView = new FrameLayout(mContext);
-        mPopupView.setBackgroundColor(Color.BLACK);
+        mPopupView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg));
 
         mPopupView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (mShowing) {
+                if (mShowing && !mHideSent) {
                     if(DEBUG){
-                        Log.d(TAG, "onTouch");
+                        Log.d(TAG, "mPopupView:onTouch");
                     }
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
+                    mHideSent = true;
+                    return true;
                 }
-                return true;
+                return false;
             }
         });
         mPopupView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (mShowing) {
+                if (mShowing && !mHideSent) {
                     if(DEBUG){
                         Log.d(TAG, "onKey");
                     }
                     Intent hideRecent = new Intent(
                             SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
                     mContext.sendBroadcast(hideRecent);
+                    mHideSent = true;
+                    return true;
                 }
-                return true;
+                return false;
             }
         });
     }
@@ -499,6 +515,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mPopupView.getBackground().setAlpha((int) (255 * mConfiguration.mBackgroundOpacity));
         mPopupView.setFocusableInTouchMode(true);
         mShowing = true;
+        mHideSent = false;
         Intent intent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
         mContext.sendBroadcast(intent);

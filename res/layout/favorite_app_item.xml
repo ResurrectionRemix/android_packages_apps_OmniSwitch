@@ -24,8 +24,8 @@
 	android:paddingStart="?android:attr/listPreferredItemPaddingStart" >
 	<org.omnirom.omniswitch.dslv.DragGripView
 		android:id="@+id/drag_handle"
-		android:layout_width="52dp"
-		android:layout_height="@dimen/list_toggle_height"
+		android:layout_width="@android:dimen/app_icon_size"
+		android:layout_height="@android:dimen/app_icon_size"
 		android:layout_gravity="center_vertical"
 		android:paddingBottom="12dp"
 		android:paddingTop="12dp"

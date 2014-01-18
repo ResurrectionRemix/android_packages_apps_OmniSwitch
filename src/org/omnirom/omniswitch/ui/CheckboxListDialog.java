@@ -25,6 +25,7 @@ import org.omnirom.omniswitch.R;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,6 +42,7 @@ public class CheckboxListDialog extends AlertDialog implements
         DialogInterface.OnClickListener {
 
     private String[] mListItems;
+    private Drawable[] mListImages;
     private boolean[] mCheckedItems;
     private ListView mListView;
     private LayoutInflater mInflater;
@@ -65,15 +68,20 @@ public class CheckboxListDialog extends AlertDialog implements
 
             final CheckBox check = (CheckBox)rowView.findViewById(R.id.item_check);
             check.setChecked(mCheckedItems[position]);
+
+            final ImageView image = (ImageView)rowView.findViewById(R.id.item_image);
+            image.setImageDrawable(mListImages[position]);
+
             return rowView;
         }   
     }
 
-    public CheckboxListDialog(Context context, String[] items, boolean[] checked, ApplyRunnable applyRunnable, String title) {
+    public CheckboxListDialog(Context context, String[] items, Drawable[] images, boolean[] checked, ApplyRunnable applyRunnable, String title) {
         super(context);
         mTitle = title;
         mApplyRunnable = applyRunnable;
         mListItems = items;
+        mListImages = images;
         mCheckedItems = new boolean[checked.length];
         System.arraycopy(checked, 0, mCheckedItems, 0, checked.length);
         

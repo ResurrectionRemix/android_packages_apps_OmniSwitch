@@ -33,6 +33,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -83,6 +84,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private FavoriteDialog mManageAppDialog;
     private Preference mButtonConfig;
     private String[] mButtonEntries;
+    private Drawable[] mButtonImages;
     private String mButtons;
 
     @Override
@@ -127,7 +129,7 @@ public class SettingsActivity extends PreferenceActivity implements
 
         mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
         mButtonConfig = (Preference) findPreference(PREF_BUTTON_CONFIG);
-        mButtonEntries = getResources().getStringArray(R.array.button_entries);
+        initButtons();
         mButtons = sPrefs.getString(PREF_BUTTONS, PREF_BUTTON_DEFAULT);
         
         mFavoriteAppsConfig = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG);
@@ -169,7 +171,7 @@ public class SettingsActivity extends PreferenceActivity implements
         } else if (preference == mButtonConfig){
             boolean[] buttons = Utils.buttonStringToArry(mButtons);
             CheckboxListDialog dialog = new CheckboxListDialog(this,
-                    mButtonEntries, buttons, new ButtonsApplyRunnable(),
+                    mButtonEntries, mButtonImages, buttons, new ButtonsApplyRunnable(),
                     getResources().getString(R.string.buttons_title));
             dialog.show();
             return true;
@@ -263,5 +265,15 @@ public class SettingsActivity extends PreferenceActivity implements
                 .putString(PREF_FAVORITE_APPS,
                         Utils.flattenFavorites(sFavoriteList))
                 .commit();
+    }
+    
+    private void initButtons(){
+        mButtonEntries = getResources().getStringArray(R.array.button_entries);
+        mButtonImages = new Drawable[mButtonEntries.length];
+        mButtonImages[0]=getResources().getDrawable(R.drawable.kill_all);
+        mButtonImages[1]=getResources().getDrawable(R.drawable.kill_other);
+        mButtonImages[2]=getResources().getDrawable(R.drawable.lastapp);
+        mButtonImages[3]=getResources().getDrawable(R.drawable.home);
+        mButtonImages[4]=getResources().getDrawable(R.drawable.settings);
     }
 }

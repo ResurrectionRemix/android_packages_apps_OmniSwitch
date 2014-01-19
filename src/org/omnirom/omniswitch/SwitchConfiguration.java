@@ -40,6 +40,7 @@ public class SwitchConfiguration {
     public int mDefaultColor;
     public int mIconDpi;
     public boolean mAutoHide;
+    public int mHorizontalMargin;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
@@ -62,6 +63,7 @@ public class SwitchConfiguration {
         mWindowManager.getDefaultDisplay().getSize(size);
         mDefaultColor = context.getResources().getColor(R.color.holo_blue_light);
         mDefaultHeight = (int) (100 * mDensity + 0.5);
+        mHorizontalMargin = (int) (5 * mDensity + 0.5);
         updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
     }
 
@@ -97,6 +99,13 @@ public class SwitchConfiguration {
         mWindowManager.getDefaultDisplay().getMetrics(dm);
         int height = dm.heightPixels;
         return height;
+    }
+    
+    public int getCurrentDisplayWidth(){
+        DisplayMetrics dm = new DisplayMetrics();
+        mWindowManager.getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        return width;
     }
     
     public int getCurrentOffsetStart(){

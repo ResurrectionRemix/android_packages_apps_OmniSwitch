@@ -115,7 +115,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private ImageButton mOpenFavorite;
     private boolean mHasFavorites;
     private boolean[] mButtons;
-    private boolean mHideSent;
 
     public class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -408,36 +407,38 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mPopupView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg));
 
         mPopupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mShowing && !mHideSent) {
-                    if(DEBUG){
-                        Log.d(TAG, "mPopupView:onTouch");
-                    }
-                    Intent hideRecent = new Intent(
-                            SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-                    mContext.sendBroadcast(hideRecent);
-                    mHideSent = true;
-                    return true;
-                }
-                return false;
-            }
+        	@Override
+        	public boolean onTouch(View v, MotionEvent event) {
+        		if(event.getAction()==MotionEvent.ACTION_DOWN){
+        			if (mShowing) {
+        				if(DEBUG){
+        					Log.d(TAG, "mPopupView:onTouch");
+        				}
+        				Intent hideRecent = new Intent(
+        						SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+        				mContext.sendBroadcast(hideRecent);
+        				return true;
+        			}
+        		}
+        		return false;
+        	}
         });
         mPopupView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (mShowing && !mHideSent) {
-                    if(DEBUG){
-                        Log.d(TAG, "onKey");
-                    }
-                    Intent hideRecent = new Intent(
-                            SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-                    mContext.sendBroadcast(hideRecent);
-                    mHideSent = true;
-                    return true;
-                }
-                return false;
-            }
+        	@Override
+        	public boolean onKey(View v, int keyCode, KeyEvent event) {
+        		if(event.getAction()==KeyEvent.ACTION_DOWN){
+        			if (mShowing) {
+        				if(DEBUG){
+        					Log.d(TAG, "onKey");
+        				}
+        				Intent hideRecent = new Intent(
+        						SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+        				mContext.sendBroadcast(hideRecent);
+        				return true;
+        			}
+        		}
+        		return false;
+        	}
         });
     }
 
@@ -515,7 +516,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mPopupView.getBackground().setAlpha((int) (255 * mConfiguration.mBackgroundOpacity));
         mPopupView.setFocusableInTouchMode(true);
         mShowing = true;
-        mHideSent = false;
         Intent intent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
         mContext.sendBroadcast(intent);

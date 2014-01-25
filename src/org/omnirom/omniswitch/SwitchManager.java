@@ -67,7 +67,7 @@ public class SwitchManager {
             // clear so that we dont get a reorder
             // during show
             mLoadedTasks.clear();
-            mLayout.update(mLoadedTasks);
+            mLayout.update(mLoadedTasks, false);
 
             // show immediately
             mLayout.show();
@@ -91,7 +91,6 @@ public class SwitchManager {
         mLayout = new SwitchLayout(mContext);
         mLayout.setRecentsManager(this);
         mRecentTasksLoader = RecentTasksLoader.getInstance(mContext, this);
-        mRecentTasksLoader.loadTasksInBackground();
     }
 
     public void killManager() {
@@ -104,7 +103,7 @@ public class SwitchManager {
         }
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
-        mLayout.update(mLoadedTasks);
+        mLayout.update(mLoadedTasks, true);
     }
 
     public void reload() {
@@ -158,7 +157,7 @@ public class SwitchManager {
         }
         ad.setKilled();
         mLoadedTasks.remove(ad);
-        mLayout.update(mLoadedTasks);
+        mLayout.update(mLoadedTasks, true);
     }
 
     public void killAll() {

@@ -29,6 +29,7 @@ public class SwitchConfiguration {
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
+    public int mIconBorder = 10; // in dip
     public float mDensity;
     public int mHorizontalMaxWidth = mIconSize;
     public int mHorizontalScrollerHeight = mIconSize * 2;
@@ -85,8 +86,8 @@ public class SwitchConfiguration {
         mStartYRelative = prefs.getInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeightStart);
         mHandleHeight = prefs.getInt(SettingsActivity.PREF_HANDLE_HEIGHT, mDefaultHeight);
 
-        mHorizontalMaxWidth = (int) ((mIconSize + 10) * mDensity + 0.5f);
-        mHorizontalScrollerHeight = (int) ((mIconSize + (mShowLabels ? 40 : 10))
+        mHorizontalMaxWidth = (int) ((mIconSize + mIconBorder) * mDensity + 0.5f);
+        mHorizontalScrollerHeight = (int) ((mIconSize + mIconBorder + (mShowLabels ? 40 : 0))
                 * mDensity + 0.5f);
         mColor = prefs
                 .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);

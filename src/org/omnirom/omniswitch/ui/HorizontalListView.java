@@ -242,6 +242,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     private SwipeDismissHorizontalListViewTouchListener mSwipeListener;
 
+    private SelectionListener mSelectionListener;
+    
     private float mDownX;
     private int mSlop;
 
@@ -1154,6 +1156,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
                 if (mViewBeingTouched != null) {
                     // Set the view as pressed
                     mViewBeingTouched.setPressed(true);
+
+                    if(mSelectionListener!=null){
+                        mSelectionListener.onItemSelected(mViewBeingTouched, true);
+                    }
                     refreshDrawableState();
                 }
             }
@@ -1168,6 +1174,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             // Set the view as not pressed
             mViewBeingTouched.setPressed(false);
             refreshDrawableState();
+
+            if(mSelectionListener!=null){
+                mSelectionListener.onItemSelected(mViewBeingTouched, false);
+            }
 
             // Null out the view so we don't leak it
             mViewBeingTouched = null;
@@ -1580,5 +1590,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         public static float getCurrVelocity(Scroller scroller) {
             return scroller.getCurrVelocity();
         }
+    }
+    
+    public void setSelectionListener(SelectionListener listener){
+        mSelectionListener = listener;
+    }
+
+    public interface SelectionListener {
+        void onItemSelected(View view, boolean selected);
     }
 }

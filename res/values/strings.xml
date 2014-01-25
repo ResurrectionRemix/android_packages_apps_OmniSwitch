@@ -63,4 +63,5 @@
 	<string name="home">Home</string>
 	<string name="buttons_title">Buttons</string>
 	<string name="auto_hide_handle">Auto-hide</string>
+	<string name="no_recent_apps_title">No recent apps</string>
 </resources>

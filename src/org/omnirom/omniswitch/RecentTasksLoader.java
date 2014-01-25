@@ -159,10 +159,6 @@ public class RecentTasksLoader {
     }
 
     public void loadTasksInBackground() {
-        loadTasksInBackground(false);
-    }
-
-    public void loadTasksInBackground(final boolean zeroeth) {
         if (mState != State.CANCELLED) {
             return;
         }
@@ -271,6 +267,7 @@ public class RecentTasksLoader {
         return Utils.resize(resources,
                 resources.getDrawable(iconId),
                 mConfiguration.mIconSize,
+                mConfiguration.mIconBorder,
                 mConfiguration.mDensity);
     }
 

@@ -20,12 +20,15 @@ package org.omnirom.omniswitch;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omnirom.omniswitch.ui.BitmapFilter;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -84,8 +87,10 @@ public class Utils {
         return new BitmapDrawable(resources, bmResult);
     }
 
-    public static Drawable resize(Resources resources, Drawable image, int iconSize, float density) {
+    public static Drawable resize(Resources resources, Drawable image, int iconSize, int borderSize, float density) {
         int size = (int) (iconSize * density + 0.5f);
+        int border = (int) (borderSize * density + 0.5f);
+
         Bitmap b = ((BitmapDrawable) image).getBitmap();
         int originalHeight = b.getHeight();
         int originalWidth = b.getWidth();
@@ -96,9 +101,16 @@ public class Utils {
         int resizedHeight = (int) (originalHeight * factor);
         int resizedWidth = (int) (originalWidth * factor);
 
+        // create a border around the icon
+        Bitmap bmResult = Bitmap.createBitmap(resizedHeight + border, resizedWidth + border,
+                Bitmap.Config.ARGB_8888);
+        Canvas tempCanvas = new Canvas(bmResult);
+
         Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
                 resizedHeight, false);
-        return new BitmapDrawable(resources, bitmapResized);
+        tempCanvas.drawBitmap(bitmapResized, border/2, border/2, null);
+
+        return new BitmapDrawable(resources, bmResult);
     }
     
     public static boolean[] buttonStringToArry(String buttonString){
@@ -129,4 +141,14 @@ public class Utils {
         }
         return buttonString;
     }
+    
+    public static Bitmap getGlow(Resources resources, String name, int color, Drawable image) {
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+        return BitmapFilter.getSingleton().getGlow(name, color, b);
+    }
+    
+    public static Drawable getGlowDrawable(Resources resources, String name, int color, Drawable image) {
+        return new BitmapDrawable(resources, getGlow(resources, name, color, image));
+    }
+
 }

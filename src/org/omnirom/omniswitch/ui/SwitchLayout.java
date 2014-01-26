@@ -179,7 +179,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 textView.setCompoundDrawablesWithIntrinsicBounds(null,
                         Utils.getGlowDrawable(mContext.getResources(), 
                                 null,
-                                mConfiguration.mColor,
+                                mConfiguration.mGlowColor,
                                 textView.getCompoundDrawables()[1])
                                 , null, null);
             } else {
@@ -345,7 +345,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mHomeButton.setOriginalImage(mContext.getResources().getDrawable(R.drawable.home));
         mHomeButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
                 "home",
-                mConfiguration.mColor,
+                mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.home)));
         mHomeButton.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -376,7 +376,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mLastAppButton.setOriginalImage(mContext.getResources().getDrawable(R.drawable.lastapp));
         mLastAppButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
                 "lastapp",
-                mConfiguration.mColor,
+                mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.lastapp)));
         mLastAppButton.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -407,7 +407,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mKillAllButton.setOriginalImage(mContext.getResources().getDrawable(R.drawable.kill_all));
         mKillAllButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
                 "kill_other",
-                mConfiguration.mColor,
+                mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.kill_all)));
         mKillAllButton.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -439,7 +439,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mKillOtherButton.setOriginalImage(mContext.getResources().getDrawable(R.drawable.kill_other));
         mKillOtherButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
                 "kill_other",
-                mConfiguration.mColor,
+                mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.kill_other)));
         mKillOtherButton.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -471,7 +471,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mSettingsButton.setOriginalImage(mContext.getResources().getDrawable(R.drawable.settings));
         mSettingsButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
                 "settings",
-                mConfiguration.mColor,
+                mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.settings)));
 
         mSettingsButton.setOnTouchListener(new View.OnTouchListener(){
@@ -1019,7 +1019,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         if(enable){
         button.setImageBitmap(Utils.getGlow(mContext.getResources(), 
                 name,
-                mConfiguration.mColor,
+                mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(resourceId)));
         } else {
             button.setImageDrawable(mContext.getResources().getDrawable(resourceId));

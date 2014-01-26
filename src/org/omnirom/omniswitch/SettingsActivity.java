@@ -33,6 +33,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -270,10 +272,10 @@ public class SettingsActivity extends PreferenceActivity implements
     private void initButtons(){
         mButtonEntries = getResources().getStringArray(R.array.button_entries);
         mButtonImages = new Drawable[mButtonEntries.length];
-        mButtonImages[0]=getResources().getDrawable(R.drawable.kill_all);
-        mButtonImages[1]=getResources().getDrawable(R.drawable.kill_other);
-        mButtonImages[2]=getResources().getDrawable(R.drawable.lastapp);
-        mButtonImages[3]=getResources().getDrawable(R.drawable.home);
-        mButtonImages[4]=getResources().getDrawable(R.drawable.settings);
+        mButtonImages[0]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.kill_all));
+        mButtonImages[1]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.kill_other));
+        mButtonImages[2]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lastapp));
+        mButtonImages[3]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.home));
+        mButtonImages[4]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.settings));
     }
 }

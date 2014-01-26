@@ -20,7 +20,8 @@
 	<application
 		android:allowBackup="false"
 		android:icon="@drawable/ic_launcher"
-		android:label="@string/app_name" >
+		android:label="@string/app_name"
+		android:theme="@android:style/Theme.Holo.Light" >
 		<service
 			android:name="org.omnirom.omniswitch.SwitchService"
 			android:configChanges="orientation|screenSize"

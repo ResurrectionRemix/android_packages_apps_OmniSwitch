@@ -37,7 +37,8 @@ public class SwitchConfiguration {
     public int mStartYRelative;
     public int mHandleHeight;
     public boolean mShowLabels = true;
-    public int mColor;
+    public int mDragHandleColor;
+    public int mGlowColor;
     public int mDefaultColor;
     public int mIconDpi;
     public boolean mAutoHide;
@@ -63,6 +64,7 @@ public class SwitchConfiguration {
         Point size = new Point();
         mWindowManager.getDefaultDisplay().getSize(size);
         mDefaultColor = context.getResources().getColor(R.color.holo_blue_light);
+        mGlowColor = mDefaultColor;
         mDefaultHeight = (int) (100 * mDensity + 0.5);
         mHorizontalMargin = (int) (5 * mDensity + 0.5);
         updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
@@ -89,7 +91,7 @@ public class SwitchConfiguration {
         mHorizontalMaxWidth = (int) ((mIconSize + mIconBorder) * mDensity + 0.5f);
         mHorizontalScrollerHeight = (int) ((mIconSize + mIconBorder + (mShowLabels ? 40 : 0))
                 * mDensity + 0.5f);
-        mColor = prefs
+        mDragHandleColor = prefs
                 .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
         mAutoHide= prefs.getBoolean(SettingsActivity.PREF_AUDIO_HIDE_HANDLE, false);
     }

@@ -29,6 +29,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -150,5 +151,11 @@ public class Utils {
     public static Drawable getGlowDrawable(Resources resources, String name, int color, Drawable image) {
         return new BitmapDrawable(resources, getGlow(resources, name, color, image));
     }
-
+    
+    public static Drawable colorize(Resources resources, int color, Drawable image) {
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+        BitmapDrawable b1 = new BitmapDrawable(resources, b);
+        b1.setColorFilter(color, Mode.SRC_ATOP);
+        return b1;
+    }
 }

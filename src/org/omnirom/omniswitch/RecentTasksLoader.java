@@ -185,9 +185,6 @@ public class RecentTasksLoader {
             @SuppressWarnings("unchecked")
             @Override
             protected Void doInBackground(Void... params) {
-                // We load in two stages: first, we update progress with just
-                // the first screenful
-                // of items. Then, we update with the rest of the items
                 final int origPri = Process.getThreadPriority(Process.myTid());
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
                 final PackageManager pm = mContext.getPackageManager();

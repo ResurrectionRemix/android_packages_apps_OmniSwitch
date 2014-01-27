@@ -24,8 +24,7 @@
 		android:theme="@android:style/Theme.Holo.Light" >
 		<service
 			android:name="org.omnirom.omniswitch.SwitchService"
-			android:configChanges="orientation|screenSize"
-			android:excludeFromRecents="true" />
+			android:configChanges="orientation|screenSize" />
 		<activity
 			android:name="org.omnirom.omniswitch.MainActivity"
 			android:configChanges="orientation|screenSize"

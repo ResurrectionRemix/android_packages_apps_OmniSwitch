@@ -142,7 +142,7 @@ public class FavoriteDialog extends AlertDialog implements
 		final View view = getLayoutInflater().inflate(R.layout.favorite_dialog,
 				null);
 		setView(view);
-		setTitle(R.string.favorite_apps_config_dialog_title);
+		setTitle(R.string.favorite_apps_config_title);
 		setCancelable(true);
 
 		setButton(DialogInterface.BUTTON_POSITIVE,

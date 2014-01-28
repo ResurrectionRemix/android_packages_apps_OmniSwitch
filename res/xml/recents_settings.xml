@@ -22,6 +22,7 @@
 		android:title="@string/toggle_service_title" />
 	<CheckBoxPreference
 		android:key="start_on_boot"
+		android:summary="@string/start_on_boot_summary"
 		android:title="@string/start_on_boot_title" />
 	<PreferenceCategory
 		android:key="category_overlay"
@@ -29,6 +30,7 @@
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="animate"
+			android:summary="@string/animate_title_summary"
 			android:title="@string/animate_title" />
 		<ListPreference
 			android:entries="@array/icon_size_entries"
@@ -40,17 +42,21 @@
 			android:defaultValue="60"
 			android:key="opacity"
 			android:max="100"
+			android:summary="@string/opacity_summary"
 			android:title="@string/opacity_title" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="show_rambar"
+			android:summary="@string/show_rambar_summary"
 			android:title="@string/show_rambar_title" />
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="show_labels"
+			android:summary="@string/show_app_labels_summary"
 			android:title="@string/show_app_labels" />
 		<Preference
 			android:key="button_config"
+			android:summary="@string/buttons_summary"
 			android:title="@string/buttons_title" />
 	</PreferenceCategory>
 	<PreferenceCategory
@@ -65,6 +71,7 @@
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="auto_hide_handle"
+			android:summary="@string/auto_hide_handle_summary"
 			android:title="@string/auto_hide_handle" />
 	</PreferenceCategory>
 	<PreferenceCategory
@@ -72,6 +79,7 @@
 		android:title="@string/category_favorite_title" >
 		<Preference
 			android:key="favorite_apps_config"
+			android:summary="@string/favorite_apps_config_summary"
 			android:title="@string/favorite_apps_config_title" />
 	</PreferenceCategory>
 </PreferenceScreen>

@@ -151,6 +151,7 @@ public class SettingsActivity extends PreferenceActivity implements
             running = value.booleanValue();
         }
         mAdjustHandle.setEnabled(!running);
+        mAdjustHandle.setSummary(running ? R.string.adjust_handle_disable_summary : R.string.adjust_handle_enable_summary);
     }
 
     private class ButtonsApplyRunnable implements CheckboxListDialog.ApplyRunnable {

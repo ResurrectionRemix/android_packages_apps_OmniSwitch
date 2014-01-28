@@ -43,6 +43,7 @@ public class SwitchConfiguration {
     public int mIconDpi;
     public boolean mAutoHide;
     public int mHorizontalMargin;
+    public static final int AUTO_HIDE_DEFAULT = 3000; // 3s
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;

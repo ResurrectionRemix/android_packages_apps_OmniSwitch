@@ -39,9 +39,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -70,7 +70,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private SwitchConfiguration mConfiguration;
     private boolean mHidden;
     private boolean mLongpressEnable;
-    private int AUTO_HIDE_DEFAULT = 3000; // 3s
     private Handler mHandler;
     private Runnable mAutoHideRunnable = new Runnable(){
         @Override
@@ -118,7 +117,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     if(mHidden && mConfiguration.mAutoHide){
                         updateDragHandleImage(true);
                         mView.invalidate();
-                        mHandler.postDelayed(mAutoHideRunnable, AUTO_HIDE_DEFAULT);
+                        mHandler.postDelayed(mAutoHideRunnable, SwitchConfiguration.AUTO_HIDE_DEFAULT);
                         mLongpressEnable = false;
                         return true;
                     }

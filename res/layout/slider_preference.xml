@@ -20,7 +20,7 @@
 	android:layout_height="wrap_content"
 	android:gravity="center_vertical"
 	android:minHeight="?android:attr/listPreferredItemHeight"
-	android:paddingLeft="10dp"
+	android:paddingLeft="8dp"
 	android:paddingRight="20dp" >
 	<TextView
 		android:id="@+android:id/title"
@@ -30,10 +30,17 @@
 		android:fadingEdge="horizontal"
 		android:singleLine="true"
 		android:textAppearance="?android:attr/textAppearanceMedium" />
+	<TextView
+		android:id="@+android:id/summary"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@android:id/title"
+		android:fadingEdge="horizontal"
+		android:textAppearance="?android:attr/textAppearanceSmall" />
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_below="@android:id/title" >
+		android:layout_below="@android:id/summary" >
 		<TextView
 			android:id="@+id/monitor_box"
 			android:layout_width="wrap_content"

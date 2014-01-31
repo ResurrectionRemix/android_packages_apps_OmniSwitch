@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,6 +60,8 @@ public class SettingsGestureView {
     private boolean mShowing;
     private float mDensity;
     private int mStartY;
+    private int mStartYRelative;
+    private int mHandleHeight;
     private int mEndY;
     private int mColor;
     private Drawable mDragHandle;
@@ -283,13 +286,25 @@ public class SettingsGestureView {
                 return true;
             }
         });
+        
+        mView.setFocusableInTouchMode(true);
+        mView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction()==KeyEvent.ACTION_DOWN){
+                    hide();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public WindowManager.LayoutParams getGesturePanelLayoutParams() {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                 PixelFormat.TRANSLUCENT);
         lp.gravity = Gravity.CENTER;
@@ -334,6 +349,9 @@ public class SettingsGestureView {
                 mDragHandleLimiterHeight);
         params.gravity = mLocation == 1 ? Gravity.LEFT : Gravity.RIGHT;
         mDragButtonEnd.setLayoutParams(params);
+        
+        mStartYRelative = (int)(mStartY / (getCurrentDisplayHeight() /100));
+        mHandleHeight = mEndY - mStartY;
     }
     
     private void updateDragHandleImage() {
@@ -395,17 +413,27 @@ public class SettingsGestureView {
         mShowing = false;
     }
     
-    private void resetPosition() {
+    public void resetPosition() {
         mStartY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetStart();
         mEndY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetEnd();
         updateLayout();
     }
     
     // includes rotation                
-    public int getCurrentDisplayHeight(){
+    private int getCurrentDisplayHeight(){
         DisplayMetrics dm = new DisplayMetrics();
         mWindowManager.getDefaultDisplay().getMetrics(dm);
         int height = dm.heightPixels;
         return height;
+    }
+    
+    public boolean isShowing() {
+        return mShowing;
+    }
+    
+    public void handleRotation(){
+        mStartY = SwitchConfiguration.getInstance(mContext).getCustomOffsetStart(mStartYRelative);
+        mEndY = SwitchConfiguration.getInstance(mContext).getCustomOffsetEnd(mStartYRelative, mHandleHeight);
+        updateLayout();
     }
 }

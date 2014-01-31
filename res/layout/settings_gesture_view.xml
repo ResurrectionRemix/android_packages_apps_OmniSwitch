@@ -46,6 +46,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_margin="10dp"
+				android:textColor="@color/settings_gesture_button_fg"
 				android:background="@color/settings_gesture_button_bg"
 				android:text="@string/location_left" />
 			<Button
@@ -54,6 +55,7 @@
 				android:layout_height="wrap_content"
 				android:layout_below="@id/location_button"
 				android:layout_margin="10dp"
+				android:textColor="@color/settings_gesture_button_fg"
 				android:background="@color/settings_gesture_button_bg"
 				android:text="@string/reset" />
 		</RelativeLayout>
@@ -69,6 +71,7 @@
 				android:layout_height="wrap_content"
 				android:layout_margin="10dp"
 				android:layout_weight="1"
+				android:textColor="@color/settings_gesture_button_fg"
 				android:background="@color/settings_gesture_button_bg"
 				android:text="@android:string/cancel" />
 			<Button
@@ -77,6 +80,7 @@
 				android:layout_height="wrap_content"
 				android:layout_margin="10dp"
 				android:layout_weight="1"
+				android:textColor="@color/settings_gesture_button_fg"
 				android:background="@color/settings_gesture_button_bg"
 				android:text="@android:string/ok" />
 		</LinearLayout>

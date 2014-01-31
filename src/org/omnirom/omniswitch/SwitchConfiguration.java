@@ -116,6 +116,10 @@ public class SwitchConfiguration {
         return (getCurrentDisplayHeight() / 100) * mStartYRelative;
     }
 
+    public int getCustomOffsetStart(int startYRelative){
+        return (getCurrentDisplayHeight() / 100) * startYRelative;
+    }
+    
     public int getDefaultOffsetStart(){
         return ((getCurrentDisplayHeight() / 2) - mDefaultHeight /2);
     }
@@ -126,6 +130,10 @@ public class SwitchConfiguration {
 
     public int getCurrentOffsetEnd(){
         return getCurrentOffsetStart() + mHandleHeight;
+    }
+
+    public int getCustomOffsetEnd(int startYRelative, int handleHeight){
+        return getCustomOffsetStart(startYRelative) + handleHeight;
     }
     
     public int getDefaultOffsetEnd(){

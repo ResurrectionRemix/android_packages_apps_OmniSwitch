@@ -34,9 +34,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.content.res.Configuration;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -278,5 +278,14 @@ public class SettingsActivity extends PreferenceActivity implements
         mButtonImages[2]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lastapp));
         mButtonImages[3]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.home));
         mButtonImages[4]=Utils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.settings));
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // dont restart activity on orientation changes
+        if (mGestureView != null && mGestureView.isShowing()){
+            mGestureView.handleRotation();
+        }
     }
 }

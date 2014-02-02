@@ -72,7 +72,9 @@
     <string name="auto_hide_handle">Auto-hide</string>
     <string name="auto_hide_handle_summary">Two swipes to show overlay view</string>
     <string name="no_recent_apps_title">No recent apps</string>
-    <string name="adjust_handle_disable_summary">Disable to change position</string>
-    <string name="adjust_handle_enable_summary">Set location of drag handle</string>
+    <string name="adjust_handle_summary"></string>
     <string name="drag_handle_opacity_title">Opacity</string>
-    <string name="drag_handle_opacity_summary"></string></resources>
+    <string name="drag_handle_opacity_summary"></string>
+    <string name="drag_handle_enable_title">Enable</string>
+    <string name="drag_handle_enable_summary">Disable only if you use another activation method</string>
+</resources>

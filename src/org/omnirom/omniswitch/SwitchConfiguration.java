@@ -45,6 +45,7 @@ public class SwitchConfiguration {
     public boolean mAutoHide;
     public int mHorizontalMargin;
     public static final int AUTO_HIDE_DEFAULT = 3000; // 3s
+    public boolean mDragHandleShow = true;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
@@ -97,7 +98,8 @@ public class SwitchConfiguration {
                 .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
         opacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 100);
         mDragHandleOpacity = (float) opacity / 100.0f;
-        mAutoHide= prefs.getBoolean(SettingsActivity.PREF_AUDIO_HIDE_HANDLE, false);
+        mAutoHide= prefs.getBoolean(SettingsActivity.PREF_AUTO_HIDE_HANDLE, false);
+        mDragHandleShow = prefs.getBoolean(SettingsActivity.PREF_DRAG_HANDLE_ENABLE, true);
     }
     
     // includes rotation                

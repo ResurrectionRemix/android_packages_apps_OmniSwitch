@@ -62,8 +62,14 @@
 	<PreferenceCategory
 		android:key="category_drag_handle"
 		android:title="@string/category_drag_handle_title" >
+		<SwitchPreference
+			android:defaultValue="true"
+			android:key="drag_handle_enable"
+			android:summary="@string/drag_handle_enable_summary"
+			android:title="@string/drag_handle_enable_title" />
 		<Preference
 			android:key="adjust_handle"
+			android:summary="@string/adjust_handle_summary"
 			android:title="@string/adjust_handle_title" />
 		<org.omnirom.omniswitch.ui.DragHandleColorPreference
 			android:key="drag_handle_color"

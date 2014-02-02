@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.omnirom.omniswitch.ui.CheckboxListDialog;
+import org.omnirom.omniswitch.ui.DragHandleColorPreference;
 import org.omnirom.omniswitch.ui.FavoriteDialog;
 import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
@@ -33,10 +34,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.content.res.Configuration;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -68,7 +70,8 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_BUTTON_CONFIG = "button_config";
     public static final String PREF_BUTTONS = "buttons";
     public static final String PREF_BUTTON_DEFAULT = "1,1,1,1,1";
-    public static final String PREF_AUDIO_HIDE_HANDLE = "auto_hide_handle";
+    public static final String PREF_AUTO_HIDE_HANDLE = "auto_hide_handle";
+    public static final String PREF_DRAG_HANDLE_ENABLE = "drag_handle_enable";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -90,6 +93,9 @@ public class SettingsActivity extends PreferenceActivity implements
     private Drawable[] mButtonImages;
     private String mButtons;
     private SeekBarPreference mDragHandleOpacity;
+    private SwitchPreference mDragHandleEnable;
+    private CheckBoxPreference mDragHandleAutoHide;
+    private DragHandleColorPreference mDragHandleColor;
 
     @Override
     public void onPause() {
@@ -148,19 +154,21 @@ public class SettingsActivity extends PreferenceActivity implements
         sFavoriteList.clear();
         Utils.parseFavorites(favoriteListString, sFavoriteList);
         removeUninstalledFavorites(this);
-        updateEnablement(false, null);
+        
+        mDragHandleAutoHide = (CheckBoxPreference) findPreference(PREF_AUTO_HIDE_HANDLE);
+        mDragHandleEnable = (SwitchPreference) findPreference(PREF_DRAG_HANDLE_ENABLE);
+        mDragHandleEnable.setOnPreferenceChangeListener(this);
+        mDragHandleColor = (DragHandleColorPreference) findPreference(PREF_DRAG_HANDLE_COLOR);
+        
+        updateDragHandleEnablement(mDragHandleEnable.isChecked());
     }
-
-    private void updateEnablement(boolean force, Boolean value) {
-        boolean running = false;
-
-        if (!force) {
-            running = SwitchService.isRunning();
-        } else if (value != null) {
-            running = value.booleanValue();
-        }
-        mAdjustHandle.setEnabled(!running);
-        mAdjustHandle.setSummary(running ? R.string.adjust_handle_disable_summary : R.string.adjust_handle_enable_summary);
+    
+    private void updateDragHandleEnablement(Boolean value) {
+        boolean dragHandleEnable = value.booleanValue();
+        mAdjustHandle.setEnabled(dragHandleEnable);
+        mDragHandleOpacity.setEnabled(dragHandleEnable);
+        mDragHandleAutoHide.setEnabled(dragHandleEnable);
+        mDragHandleColor.setEnabled(dragHandleEnable);
     }
 
     private class ButtonsApplyRunnable implements CheckboxListDialog.ApplyRunnable {
@@ -208,7 +216,6 @@ public class SettingsActivity extends PreferenceActivity implements
                         SwitchService.RecentsReceiver.ACTION_KILL_ACTIVITY);
                 sendBroadcast(killRecent);
             }
-            updateEnablement(true, (Boolean) newValue);
             return true;
         } else if (preference == mIconSize) {
             String value = (String) newValue;
@@ -225,6 +232,9 @@ public class SettingsActivity extends PreferenceActivity implements
         } else if (preference == mDragHandleOpacity) {
             float val = Float.parseFloat((String) newValue);
             sPrefs.edit().putInt(PREF_DRAG_HANDLE_OPACITY, (int) val).commit();
+            return true;
+        } else if (preference == mDragHandleEnable) {
+            updateDragHandleEnablement((Boolean) newValue);
             return true;
         }
 

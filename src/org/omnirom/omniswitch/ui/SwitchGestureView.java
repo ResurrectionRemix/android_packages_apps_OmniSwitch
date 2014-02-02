@@ -18,6 +18,7 @@
 package org.omnirom.omniswitch.ui;
 
 import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchService;
 import org.omnirom.omniswitch.Utils;
@@ -46,7 +47,7 @@ import android.widget.LinearLayout;
 
 public class SwitchGestureView implements OnShowcaseEventListener {
     private final static String TAG = "SwitchGestureView";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private final static String KEY_SHOWCASE_HANDLE = "showcase_handle_done";
 
@@ -272,13 +273,23 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             Log.d(TAG, "updatePrefs");
         }
         updateButton();
+        
+        if(key == null || key.equals(SettingsActivity.PREF_DRAG_HANDLE_ENABLE)){
+            if(mConfiguration.mDragHandleShow){
+                show();
+            } else {
+                hide();
+            }
+        }
     }
 
     public synchronized void show() {
         if (mShowing) {
             return;
         }
-
+        if(DEBUG){
+            Log.d(TAG, "show");
+        }
         mWindowManager.addView(mView, getParams());
         if(!mShowcaseDone){
             mView.postDelayed(new Runnable(){
@@ -296,11 +307,14 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             return;
         }
 
+        if(DEBUG){
+            Log.d(TAG, "hide");
+        }
         mWindowManager.removeView(mView);
         mShowing = false;
         mEnabled = false;
     }
-    
+
     public void overlayShown() {
         if(DEBUG){
             Log.d(TAG, "overlayShown");

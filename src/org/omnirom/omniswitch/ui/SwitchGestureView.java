@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
-import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -108,7 +107,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     Log.d(TAG, "button onTouch");
                 }
                 if (!mEnabled){
-                    return true;
+                    return false;
                 }
                 boolean defaultResult = v.onTouchEvent(event);
 
@@ -257,8 +256,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (mConfiguration.mLocation == 1) {
             mCurrentDragHandleImage = Utils.rotate(mContext.getResources(), mCurrentDragHandleImage, 180);
         }
-        mCurrentDragHandleImage.setColorFilter(mConfiguration.mDragHandleColor, Mode.SRC_ATOP);
-
+        mCurrentDragHandleImage=Utils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor, mCurrentDragHandleImage);
+        mCurrentDragHandleImage.setAlpha((int) (255 * mConfiguration.mDragHandleOpacity));
         mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
 
         if(shown){

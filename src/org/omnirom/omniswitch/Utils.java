@@ -28,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -155,6 +154,9 @@ public class Utils {
     public static Drawable colorize(Resources resources, int color, Drawable image) {
         Bitmap b = ((BitmapDrawable) image).getBitmap();
         BitmapDrawable b1 = new BitmapDrawable(resources, b);
+        // remove any alpha
+        color = color &~ 0xff000000;
+        color = color | 0xff000000;
         b1.setColorFilter(color, Mode.SRC_ATOP);
         return b1;
     }

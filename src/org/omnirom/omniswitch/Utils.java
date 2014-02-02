@@ -108,7 +108,7 @@ public class Utils {
         Canvas tempCanvas = new Canvas(bmResult);
 
         Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
-                resizedHeight, false);
+                resizedHeight, true);
         tempCanvas.drawBitmap(bitmapResized, border/2, border/2, null);
 
         return new BitmapDrawable(resources, bmResult);

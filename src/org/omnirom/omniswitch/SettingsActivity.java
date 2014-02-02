@@ -122,6 +122,9 @@ public class SettingsActivity extends PreferenceActivity implements
         List<CharSequence> values = Arrays.asList(mIconSize.getEntryValues());
         int idx = values.indexOf(sPrefs.getString(PREF_ICON_SIZE,
                 mIconSize.getEntryValues()[1].toString()));
+        if(idx == -1){
+            idx = 1;
+        }
         mIconSize.setValueIndex(idx);
         mIconSize.setSummary(mIconSize.getEntries()[idx]);
 

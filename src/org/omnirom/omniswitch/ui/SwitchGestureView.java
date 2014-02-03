@@ -47,7 +47,7 @@ import android.widget.LinearLayout;
 
 public class SwitchGestureView implements OnShowcaseEventListener {
     private final static String TAG = "SwitchGestureView";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private final static String KEY_SHOWCASE_HANDLE = "showcase_handle_done";
 

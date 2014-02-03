@@ -1330,6 +1330,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
             // Allow the user to interact with parent views
             requestParentListViewToNotInterceptTouchEvents(false);
 
+            if(mSelectionListener!=null && mViewBeingTouched!=null){
+                mSelectionListener.onItemSelected(mViewBeingTouched, false);
+            }
+
             releaseEdgeGlow();
         } else if (event.getAction() == MotionEvent.ACTION_CANCEL) {
             if(DEBUG){
@@ -1344,6 +1348,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
             // Allow the user to interact with parent views
             requestParentListViewToNotInterceptTouchEvents(false);
+
+            if(mSelectionListener!=null && mViewBeingTouched!=null){
+                mSelectionListener.onItemSelected(mViewBeingTouched, false);
+            }
         }
 
         return super.onTouchEvent(event);

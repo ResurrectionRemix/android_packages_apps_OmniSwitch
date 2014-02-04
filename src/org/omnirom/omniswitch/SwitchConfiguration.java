@@ -38,6 +38,7 @@ public class SwitchConfiguration {
     public int mHandleHeight;
     public boolean mShowLabels = true;
     public int mDragHandleColor;
+    public float mDragHandleOpacity;
     public int mGlowColor;
     public int mDefaultColor;
     public int mIconDpi;
@@ -94,6 +95,8 @@ public class SwitchConfiguration {
                 * mDensity + 0.5f);
         mDragHandleColor = prefs
                 .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
+        opacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 100);
+        mDragHandleOpacity = (float) opacity / 100.0f;
         mAutoHide= prefs.getBoolean(SettingsActivity.PREF_AUDIO_HIDE_HANDLE, false);
     }
     

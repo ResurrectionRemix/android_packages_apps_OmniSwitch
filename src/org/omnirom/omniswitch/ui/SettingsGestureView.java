@@ -366,7 +366,7 @@ public class SettingsGestureView {
         }
 
         mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
-        mDragButton.setImageDrawable(d);
+        mDragButton.setImageDrawable(Utils.colorize(mContext.getResources(), mColor, d));
         mDragButton.getDrawable().setColorFilter(mColor, Mode.SRC_ATOP);
         
         mDragButtonStart.setScaleType(ImageView.ScaleType.FIT_XY);

@@ -67,7 +67,14 @@
 			android:title="@string/adjust_handle_title" />
 		<org.omnirom.omniswitch.ui.DragHandleColorPreference
 			android:key="drag_handle_color"
+			android:summary="@string/drag_handle_color_summary"
 			android:title="@string/drag_handle_color_title" />
+		<org.omnirom.omniswitch.ui.SeekBarPreference
+			android:defaultValue="100"
+			android:key="drag_handle_opacity"
+			android:max="100"
+			android:summary="@string/drag_handle_opacity_summary"
+			android:title="@string/drag_handle_opacity_title" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="auto_hide_handle"

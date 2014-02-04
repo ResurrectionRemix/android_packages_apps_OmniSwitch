@@ -58,6 +58,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location_new";
     private static final String PREF_ADJUST_HANDLE = "adjust_handle";
     public static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
+    public static final String PREF_DRAG_HANDLE_OPACITY = "drag_handle_opacity";
     public static final String PREF_SHOW_RAMBAR = "show_rambar";
     public static final String PREF_SHOW_LABELS = "show_labels";
     public static final String PREF_FAVORITE_APPS_CONFIG = "favorite_apps_config";
@@ -88,6 +89,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private String[] mButtonEntries;
     private Drawable[] mButtonImages;
     private String mButtons;
+    private SeekBarPreference mDragHandleOpacity;
 
     @Override
     public void onPause() {
@@ -131,6 +133,10 @@ public class SettingsActivity extends PreferenceActivity implements
         mOpacity = (SeekBarPreference) findPreference(PREF_OPACITY);
         mOpacity.setInitValue(sPrefs.getInt(PREF_OPACITY, 60));
         mOpacity.setOnPreferenceChangeListener(this);
+
+        mDragHandleOpacity = (SeekBarPreference) findPreference(PREF_DRAG_HANDLE_OPACITY);
+        mDragHandleOpacity.setInitValue(sPrefs.getInt(PREF_DRAG_HANDLE_OPACITY, 100));
+        mDragHandleOpacity.setOnPreferenceChangeListener(this);
 
         mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
         mButtonConfig = (Preference) findPreference(PREF_BUTTON_CONFIG);
@@ -215,6 +221,10 @@ public class SettingsActivity extends PreferenceActivity implements
         } else if (preference == mOpacity) {
             float val = Float.parseFloat((String) newValue);
             sPrefs.edit().putInt(PREF_OPACITY, (int) val).commit();
+            return true;
+        } else if (preference == mDragHandleOpacity) {
+            float val = Float.parseFloat((String) newValue);
+            sPrefs.edit().putInt(PREF_DRAG_HANDLE_OPACITY, (int) val).commit();
             return true;
         }
 

@@ -21,6 +21,7 @@
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:persistent="true"
         android:theme="@android:style/Theme.Holo.Light" >
         <service
             android:name="org.omnirom.omniswitch.SwitchService"
@@ -36,6 +37,7 @@
         <activity
             android:name="org.omnirom.omniswitch.SettingsActivity"
             android:configChanges="orientation|screenSize"
+            android:launchMode="singleTop"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

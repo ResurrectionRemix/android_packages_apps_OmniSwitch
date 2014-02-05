@@ -20,7 +20,9 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dip"
     android:layout_marginTop="5dip"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp" >
     <view
         android:id="@+id/ram_usage_bar"
         android:layout_width="match_parent"
@@ -34,6 +36,7 @@
             android:layout_weight="1"
             android:focusable="true"
             android:gravity="left|bottom"
+            android:paddingLeft="10dp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmallInverse"
             android:textColor="#000" />
@@ -45,6 +48,7 @@
             android:layout_weight="1"
             android:focusable="true"
             android:gravity="right|bottom"
+            android:paddingRight="10dp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmallInverse"
             android:textColor="#000" />

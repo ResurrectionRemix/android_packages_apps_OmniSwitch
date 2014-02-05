@@ -32,9 +32,14 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center_horizontal|center_vertical"
+        android:shadowColor="@color/text_shadow"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
         android:text="@string/no_recent_apps_title"
         android:textColor="@android:color/white"
-        android:textSize="20dp"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:visibility="gone" />
     <ImageButton
         android:id="@+id/openFavorites"

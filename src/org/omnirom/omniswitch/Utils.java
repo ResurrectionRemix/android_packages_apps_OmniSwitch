@@ -27,7 +27,10 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -159,5 +162,24 @@ public class Utils {
         color = color | 0xff000000;
         b1.setColorFilter(color, Mode.SRC_ATOP);
         return b1;
+    }
+
+    public static Drawable shadow(Resources resources, Drawable image) {
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+
+        BlurMaskFilter blurFilter = new BlurMaskFilter(5, BlurMaskFilter.Blur.OUTER);
+        Paint shadowPaint = new Paint();
+        shadowPaint.setMaskFilter(blurFilter);
+
+        int[] offsetXY = new int[2];
+        Bitmap b2 = b.extractAlpha(shadowPaint, offsetXY);
+
+        Bitmap bmResult = Bitmap.createBitmap(b.getWidth(), b.getHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas c = new Canvas(bmResult);
+        c.drawBitmap(b2, 0, 0, null);
+        c.drawBitmap(b, -offsetXY[0], -offsetXY[1], null);
+
+        return new BitmapDrawable(resources, bmResult);
     }
 }

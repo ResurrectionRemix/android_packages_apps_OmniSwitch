@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Copyright (C) 2013 The OmniROM Project
+  Copyright (C) 2014 The OmniROM Project
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -15,10 +15,14 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources>
-    <color name="holo_blue_light">#ff33b5e5</color>
-    <color name="settings_gesture_view_bg">#A0505050</color>
-    <color name="settings_gesture_button_bg">#ff202020</color>
-    <color name="settings_gesture_button_fg">#ffffffff</color>
-    <color name="text_shadow">#ff000000</color>
-</resources>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+    <Switch
+        android:id="@+id/switch_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingRight="20dp" />
+</LinearLayout>

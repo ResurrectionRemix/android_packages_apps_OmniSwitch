@@ -16,83 +16,80 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-	android:title="@string/recents_settings_title" >
-	<SwitchPreference
-		android:key="toggle_service"
-		android:title="@string/toggle_service_title" />
-	<CheckBoxPreference
-		android:key="start_on_boot"
-		android:summary="@string/start_on_boot_summary"
-		android:title="@string/start_on_boot_title" />
-	<PreferenceCategory
-		android:key="category_overlay"
-		android:title="@string/category_overlay_title" >
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="animate"
-			android:summary="@string/animate_title_summary"
-			android:title="@string/animate_title" />
-		<ListPreference
-			android:entries="@array/icon_size_entries"
-			android:entryValues="@array/icon_size_values"
-			android:key="icon_size"
-			android:summary="@string/icon_size_normal"
-			android:title="@string/icon_size_title" />
-		<org.omnirom.omniswitch.ui.SeekBarPreference
-			android:defaultValue="60"
-			android:key="opacity"
-			android:max="100"
-			android:summary="@string/opacity_summary"
-			android:title="@string/opacity_title" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="show_rambar"
-			android:summary="@string/show_rambar_summary"
-			android:title="@string/show_rambar_title" />
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="show_labels"
-			android:summary="@string/show_app_labels_summary"
-			android:title="@string/show_app_labels" />
-		<Preference
-			android:key="button_config"
-			android:summary="@string/buttons_summary"
-			android:title="@string/buttons_title" />
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="category_drag_handle"
-		android:title="@string/category_drag_handle_title" >
-		<SwitchPreference
-			android:defaultValue="true"
-			android:key="drag_handle_enable"
-			android:summary="@string/drag_handle_enable_summary"
-			android:title="@string/drag_handle_enable_title" />
-		<Preference
-			android:key="adjust_handle"
-			android:summary="@string/adjust_handle_summary"
-			android:title="@string/adjust_handle_title" />
-		<org.omnirom.omniswitch.ui.DragHandleColorPreference
-			android:key="drag_handle_color"
-			android:summary="@string/drag_handle_color_summary"
-			android:title="@string/drag_handle_color_title" />
-		<org.omnirom.omniswitch.ui.SeekBarPreference
-			android:defaultValue="100"
-			android:key="drag_handle_opacity"
-			android:max="100"
-			android:summary="@string/drag_handle_opacity_summary"
-			android:title="@string/drag_handle_opacity_title" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="auto_hide_handle"
-			android:summary="@string/auto_hide_handle_summary"
-			android:title="@string/auto_hide_handle" />
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:key="category_favorite"
-		android:title="@string/category_favorite_title" >
-		<Preference
-			android:key="favorite_apps_config"
-			android:summary="@string/favorite_apps_config_summary"
-			android:title="@string/favorite_apps_config_title" />
-	</PreferenceCategory>
+    android:title="@string/recents_settings_title" >
+    <CheckBoxPreference
+        android:key="start_on_boot"
+        android:summary="@string/start_on_boot_summary"
+        android:title="@string/start_on_boot_title" />
+    <PreferenceCategory
+        android:key="category_overlay"
+        android:title="@string/category_overlay_title" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="animate"
+            android:summary="@string/animate_title_summary"
+            android:title="@string/animate_title" />
+        <ListPreference
+            android:entries="@array/icon_size_entries"
+            android:entryValues="@array/icon_size_values"
+            android:key="icon_size"
+            android:summary="@string/icon_size_normal"
+            android:title="@string/icon_size_title" />
+        <org.omnirom.omniswitch.ui.SeekBarPreference
+            android:defaultValue="60"
+            android:key="opacity"
+            android:max="100"
+            android:summary="@string/opacity_summary"
+            android:title="@string/opacity_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="show_rambar"
+            android:summary="@string/show_rambar_summary"
+            android:title="@string/show_rambar_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="show_labels"
+            android:summary="@string/show_app_labels_summary"
+            android:title="@string/show_app_labels" />
+        <Preference
+            android:key="button_config"
+            android:summary="@string/buttons_summary"
+            android:title="@string/buttons_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="category_drag_handle"
+        android:title="@string/category_drag_handle_title" >
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="drag_handle_enable"
+            android:summary="@string/drag_handle_enable_summary"
+            android:title="@string/drag_handle_enable_title" />
+        <Preference
+            android:key="adjust_handle"
+            android:summary="@string/adjust_handle_summary"
+            android:title="@string/adjust_handle_title" />
+        <org.omnirom.omniswitch.ui.DragHandleColorPreference
+            android:key="drag_handle_color"
+            android:summary="@string/drag_handle_color_summary"
+            android:title="@string/drag_handle_color_title" />
+        <org.omnirom.omniswitch.ui.SeekBarPreference
+            android:defaultValue="100"
+            android:key="drag_handle_opacity"
+            android:max="100"
+            android:summary="@string/drag_handle_opacity_summary"
+            android:title="@string/drag_handle_opacity_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="auto_hide_handle"
+            android:summary="@string/auto_hide_handle_summary"
+            android:title="@string/auto_hide_handle" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="category_favorite"
+        android:title="@string/category_favorite_title" >
+        <Preference
+            android:key="favorite_apps_config"
+            android:summary="@string/favorite_apps_config_summary"
+            android:title="@string/favorite_apps_config_title" />
+    </PreferenceCategory>
 </PreferenceScreen>

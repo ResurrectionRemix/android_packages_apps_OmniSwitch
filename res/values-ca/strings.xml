@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2013 The OmniROM Project
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">OmniSwitch</string>
+    <string name="status_bar_recent_remove_item_title">Atura</string>
+    <string name="status_bar_recent_inspect_item_title">Quant a</string>
+    <string name="recents_settings_title">OmniSwitch</string>
+    <string name="start_on_boot_title">Executa en arrencar</string>
+    <string name="start_on_boot_summary">Executa i habilita en arrencar el dispositiu</string>
+    <string name="opacity_title">Opacitat</string>
+    <string name="opacity_summary">Opacitat del fons a la vista de superposició</string>
+    <string name="animate_title">Animació</string>
+    <string name="animate_title_summary">Animació en mostrar i ocultar la vista de superposició</string>
+    <string name="adjust_handle_title">Posició</string>
+    <string name="sc_drag_handle_title">Nansa d\'arrossegament</string>
+    <string name="sc_drag_handle_body">\nLlisqueu horitzontalment o feu pressió llarga per obrir\nPremeu un botó o a fora per tancar</string>
+    <string name="sc_favorite_title">Aplicacions preferides</string>
+    <string name="sc_favorite_body">\nObre la vista d\'aplicacions preferides.</string>
+    <string name="icon_size_normal">Normal</string>
+    <string name="icon_size_small">Petita</string>
+    <string name="icon_size_large">Gran</string>
+    <string name="icon_size_title">Mida d\'icona</string>
+    <string name="ok">D\'acord</string>
+    <string name="cancel">Cancel·la</string>
+    <string name="drag_handle_color_title">Color</string>
+    <string name="drag_handle_color_summary"></string>
+    <string name="drag_handle_color_dialog_title">Color</string>
+    <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> lliure</string>
+    <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> utilitzada</string>
+    <string name="show_rambar_title">Mostra l\'ús de memòria</string>
+    <string name="show_rambar_summary">Mostra la quantitat de memòria lliure i utilitzada</string>
+    <string name="show_app_labels">Mostra el nom de l\'aplicació</string>
+    <string name="show_app_labels_summary">Es mostrarà el nom de l\'aplicació amb la icona</string>
+    <string name="category_overlay_title">Superposició</string>
+    <string name="category_drag_handle_title">Nansa d\'arrossegament</string>
+    <string name="category_favorite_title">Preferits</string>
+    <string name="favorite_apps_config_title">Gestió dels preferits</string>
+    <string name="favorite_apps_config_summary">Definiu les aplicacions que es mostren a la vista de preferits</string>
+    <string name="favorite_apps_add_dialog_title">Afegeix aplicacions</string>
+    <string name="favorite_add">Afegeix\u2026</string>
+    <string name="reset">Per defecte</string>
+    <string name="toogle_last_app_help">Canvia a la darrera aplicació</string>
+    <string name="kill_all_apps_help">Mata totes les aplicacions</string>
+    <string name="kill_other_apps_help">Mata les altres aplicacions</string>
+    <string name="settings_help">Configuració</string>
+    <string name="home_help">Inici</string>
+    <string name="toogle_last_app">Canvia a la darrera aplicació</string>
+    <string name="kill_all_apps">Mata totes les aplicacions</string>
+    <string name="kill_other_apps">Mata les altres aplicacions</string>
+    <string name="settings">Configuració</string>
+    <string name="home">Inici</string>
+    <string name="buttons_title">Botons</string>
+    <string name="buttons_summary">Botons d\'acció que es mostren a la vista de superposició</string>
+    <string name="auto_hide_handle">Oculta automàticament</string>
+    <string name="auto_hide_handle_summary">Llicar dos cops per mostrar la vista de superposició</string>
+    <string name="no_recent_apps_title">Cap aplicació recent</string>
+    <string name="adjust_handle_summary"></string>
+    <string name="drag_handle_opacity_title">Opacitat</string>
+    <string name="drag_handle_opacity_summary"></string>
+    <string name="drag_handle_enable_title">Habilita</string>
+    <string name="drag_handle_enable_summary">Inhabiliteu-ho només si utilitzeu un altre mètode d\'activació</string>
+</resources>

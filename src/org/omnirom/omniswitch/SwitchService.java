@@ -32,7 +32,7 @@ import android.util.Log;
 
 public class SwitchService extends Service {
     private final static String TAG = "SwitchService";
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
 
     /**
      * Intent broadcast action for omniswitch service started
@@ -72,7 +72,6 @@ public class SwitchService extends Service {
         filter.addAction(RecentsReceiver.ACTION_SHOW_OVERLAY);
         filter.addAction(RecentsReceiver.ACTION_SHOW_OVERLAY2);
         filter.addAction(RecentsReceiver.ACTION_HIDE_OVERLAY);
-        filter.addAction(RecentsReceiver.ACTION_KILL_ACTIVITY);
         filter.addAction(RecentsReceiver.ACTION_OVERLAY_SHOWN);
         filter.addAction(RecentsReceiver.ACTION_OVERLAY_HIDDEN);
         filter.addAction(RecentsReceiver.ACTION_HANDLE_HIDE);
@@ -113,6 +112,9 @@ public class SwitchService extends Service {
 
         mIsRunning = false;
 
+        Intent finishActivity = new Intent(MainActivity.ActivityReceiver.ACTION_FINISH);
+        sendBroadcast(finishActivity);
+
         Intent stopActivity = new Intent(ACTION_SERVICE_STOP);
         sendBroadcast(stopActivity);
     }
@@ -132,7 +134,6 @@ public class SwitchService extends Service {
         public static final String ACTION_SHOW_OVERLAY = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY";
         public static final String ACTION_SHOW_OVERLAY2 = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY2";
         public static final String ACTION_HIDE_OVERLAY = "org.omnirom.omniswitch.ACTION_HIDE_OVERLAY";
-        public static final String ACTION_KILL_ACTIVITY = "org.omnirom.omniswitch.ACTION_KILL_ACTIVITY";
         public static final String ACTION_OVERLAY_SHOWN = "org.omnirom.omniswitch.ACTION_OVERLAY_SHOWN";
         public static final String ACTION_OVERLAY_HIDDEN = "org.omnirom.omniswitch.ACTION_OVERLAY_HIDDEN";
         public static final String ACTION_HANDLE_HIDE = "org.omnirom.omniswitch.ACTION_HANDLE_HIDE";
@@ -164,12 +165,6 @@ public class SwitchService extends Service {
                     sendBroadcast(finishActivity);
                     mManager.hide();
                 }
-            } else if (ACTION_KILL_ACTIVITY.equals(action)) {
-                Intent finishActivity = new Intent(
-                        MainActivity.ActivityReceiver.ACTION_FINISH);
-                sendBroadcast(finishActivity);
-                Intent svc = new Intent(context, SwitchService.class);
-                context.stopService(svc);
             } else if (ACTION_OVERLAY_SHOWN.equals(action)){
                 mGesturePanel.overlayShown();
             } else if (ACTION_OVERLAY_HIDDEN.equals(action)){

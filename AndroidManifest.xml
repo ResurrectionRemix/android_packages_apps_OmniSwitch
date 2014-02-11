@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.omnirom.omniswitch"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0"
+    coreApp="true">
     <!-- ActivityManager -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.GET_DETAILED_TASKS" />
@@ -22,6 +23,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:persistent="true"
+        android:allowClearUserData="false"
         android:theme="@android:style/Theme.Holo.Light" >
         <service
             android:name="org.omnirom.omniswitch.SwitchService"

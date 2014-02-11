@@ -76,7 +76,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_AUTO_HIDE_HANDLE = "auto_hide_handle";
     public static final String PREF_DRAG_HANDLE_ENABLE = "drag_handle_enable";
     public static final String PREF_ENABLE = "enable";
-    
+
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
     public static int BUTTON_TOGGLE_APP = 2;
@@ -299,24 +299,26 @@ public class SettingsActivity extends PreferenceActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.settings_menu, menu);
+        boolean startOnBoot = sPrefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, false);
         mToggleServiceSwitch = (Switch) menu.findItem(R.id.toggle_service).getActionView().findViewById(R.id.switch_item);
-        mToggleServiceSwitch.setChecked(SwitchService.isRunning());
+        mToggleServiceSwitch.setChecked(SwitchService.isRunning() && sPrefs.getBoolean(SettingsActivity.PREF_ENABLE, startOnBoot));
         mToggleServiceSwitch.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {
                 boolean value = ((Switch)v).isChecked();
                 Intent svc = new Intent(SettingsActivity.this, SwitchService.class);
+                Log.d(TAG, "toggle service " + value);
                 if (value) {
-                    Intent killRecent = new Intent(
-                            SwitchService.RecentsReceiver.ACTION_KILL_ACTIVITY);
-                    sendBroadcast(killRecent);
-
+                    if (SwitchService.isRunning()){
+                        stopService(svc);
+                    }
                     startService(svc);
                 } else {
-                    Intent killRecent = new Intent(
-                            SwitchService.RecentsReceiver.ACTION_KILL_ACTIVITY);
-                    sendBroadcast(killRecent);
+                    if (SwitchService.isRunning()){
+                        stopService(svc);
+                    }
                 }
                 sPrefs.edit().putBoolean(PREF_ENABLE, value).commit();
             }});

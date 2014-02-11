@@ -31,6 +31,7 @@ public class MainActivity extends Activity {
     private static final boolean DEBUG = false;
 
     private ActivityReceiver mReceiver;
+    private boolean mFinishedCalled;
 
     public class ActivityReceiver extends BroadcastReceiver {
         public static final String ACTION_FINISH = "org.omnirom.omniswitch.ACTION_FINISH_ACTIVITY";
@@ -38,10 +39,12 @@ public class MainActivity extends Activity {
         @Override
         public void onReceive(final Context context, Intent intent) {
             String action = intent.getAction();
-            if(DEBUG){
-                Log.d(TAG, "onReceive " + action);
-            }
-            if (ACTION_FINISH.equals(action)) {
+            if (ACTION_FINISH.equals(action) && !mFinishedCalled) {
+                if(DEBUG){
+                    Log.d(TAG, "onReceive " + action);
+                }
+
+                mFinishedCalled = true;
                 finish();
             }
         }
@@ -53,6 +56,7 @@ public class MainActivity extends Activity {
             Log.d(TAG, "onCreate");
         }
 
+        mFinishedCalled = false;
         mReceiver = new ActivityReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(ActivityReceiver.ACTION_FINISH);
@@ -90,6 +94,7 @@ public class MainActivity extends Activity {
             Log.d(TAG, "onDestroy");
         }
         unregisterReceiver(mReceiver);
+        mFinishedCalled = false;
         super.onDestroy();
     }
     

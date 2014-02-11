@@ -19,6 +19,5 @@
     <item
         android:id="@+id/toggle_service"
         android:actionLayout="@layout/action_bar_switch"
-        android:showAsAction="always"
-        android:title=""/>
+        android:showAsAction="always"/>
 </menu>

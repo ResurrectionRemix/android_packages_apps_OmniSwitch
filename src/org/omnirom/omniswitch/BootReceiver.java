@@ -30,10 +30,9 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         try {
-            SharedPreferences prefs = PreferenceManager
-                    .getDefaultSharedPreferences(context);
-            if (prefs.getBoolean(SettingsActivity.PREF_ENABLE, false) &&
-                    prefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, false)) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean startOnBoot = prefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, false);
+            if (startOnBoot && prefs.getBoolean(SettingsActivity.PREF_ENABLE, startOnBoot)) {
                 Intent startIntent = new Intent(context, SwitchService.class);
                 context.startService(startIntent);
             }

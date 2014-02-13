@@ -27,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.IBinder;
+import android.os.UserHandle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -50,6 +51,7 @@ public class SwitchService extends Service {
     private SharedPreferences mPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
     private SwitchConfiguration mConfiguration;
+    private int mUserId = -1;
 
     private static boolean mIsRunning;
 
@@ -61,8 +63,9 @@ public class SwitchService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        mUserId = UserHandle.myUserId();
         mGesturePanel = new SwitchGestureView(this);
-        Log.d(TAG, "started SwitchService");
+        Log.d(TAG, "started SwitchService " + mUserId);
 
         mManager = new SwitchManager(this);
         mConfiguration = SwitchConfiguration.getInstance(this);
@@ -77,6 +80,7 @@ public class SwitchService extends Service {
         filter.addAction(RecentsReceiver.ACTION_HANDLE_HIDE);
         filter.addAction(RecentsReceiver.ACTION_HANDLE_SHOW);
         filter.addAction(RecentsReceiver.ACTION_TOGGLE_OVERLAY);
+        filter.addAction(Intent.ACTION_USER_SWITCHED);
 
         registerReceiver(mReceiver, filter);
 
@@ -95,13 +99,14 @@ public class SwitchService extends Service {
         mIsRunning = true;
 
         Intent startActivity = new Intent(ACTION_SERVICE_START);
-        sendBroadcast(startActivity);
+        startActivity.putExtra(Intent.EXTRA_USER_HANDLE, mUserId);
+        sendBroadcastAsUser(startActivity, UserHandle.ALL);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "stopped SwitchService");
+        Log.d(TAG, "stopped SwitchService " + mUserId);
 
         mGesturePanel.hide();
         mGesturePanel = null;
@@ -116,7 +121,8 @@ public class SwitchService extends Service {
         sendBroadcast(finishActivity);
 
         Intent stopActivity = new Intent(ACTION_SERVICE_STOP);
-        sendBroadcast(stopActivity);
+        stopActivity.putExtra(Intent.EXTRA_USER_HANDLE, mUserId);
+        sendBroadcastAsUser(stopActivity, UserHandle.ALL);
     }
 
     @Override
@@ -187,6 +193,16 @@ public class SwitchService extends Service {
                     mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                             | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                     startActivity(mainActivity);
+                }
+            } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
+                int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
+                Log.d(TAG, "user switch " + mUserId + "->" + userId);
+                if (userId != mUserId){
+                    mGesturePanel.hide();
+                } else {
+                    if (mConfiguration.mDragHandleShow){
+                        mGesturePanel.show();
+                    }
                 }
             }
         }

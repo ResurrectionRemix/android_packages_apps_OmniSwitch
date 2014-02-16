@@ -64,4 +64,7 @@
     <string name="auto_hide_handle_summary">Zum Anzeigen zweimal wischen</string>
     <string name="no_recent_apps_title">Keine kürzlich geöffneten Apps</string>
     <string name="adjust_handle_disable_summary">Deaktivieren um Position zu ändern</string>
+    <string name="drag_handle_opacity_title">Transparenz</string>
+    <string name="drag_handle_enable_title">Aktivieren</string>
+    <string name="drag_handle_enable_summary">Nur deaktivieren, wenn Sie eine andere Aktivierungsmethode verwenden</string>
 </resources>

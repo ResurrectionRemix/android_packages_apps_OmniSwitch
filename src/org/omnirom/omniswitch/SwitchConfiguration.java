@@ -116,6 +116,14 @@ public class SwitchConfiguration {
         int width = dm.widthPixels;
         return width;
     }
+
+    public int getCurrentOverlayWidth() {
+        if (getCurrentDisplayWidth() > getCurrentDisplayHeight()){
+            // landscape
+            return Math.max((int)(getCurrentDisplayWidth() * 0.66f), getCurrentDisplayHeight());
+        }
+        return getCurrentDisplayWidth();
+    }
     
     public int getCurrentOffsetStart(){
         return (getCurrentDisplayHeight() / 100) * mStartYRelative;

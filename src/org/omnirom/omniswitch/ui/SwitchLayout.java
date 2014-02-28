@@ -818,7 +818,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private WindowManager.LayoutParams getParams() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                mConfiguration.getCurrentDisplayWidth() - mConfiguration.mHorizontalMargin,
+                mConfiguration.getCurrentOverlayWidth() - mConfiguration.mHorizontalMargin,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
                 0,

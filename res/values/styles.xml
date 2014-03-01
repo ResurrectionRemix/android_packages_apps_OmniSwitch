@@ -59,7 +59,7 @@
     <style name="ShowcaseView">
         <item name="sv_titleTextColor">#33B5E5</item>
         <item name="sv_detailTextColor">#FFFFFF</item>
-        <item name="sv_backgroundColor">#BB333333</item>
+        <item name="sv_backgroundColor">#F0333333</item>
         <item name="sv_buttonText">@android:string/ok</item>
     </style>
 </resources>

@@ -25,6 +25,7 @@ public class PackageReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        SettingsActivity.removeUninstalledFavorites(context);
+        boolean removed = intent.getAction().equals("android.intent.action.PACKAGE_REMOVED");
+        PackageManager.getInstance(context).updatePackageList(removed);
     }
 }

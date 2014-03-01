@@ -21,7 +21,6 @@ import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchService;
-import org.omnirom.omniswitch.Utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -363,13 +362,13 @@ public class SettingsGestureView {
         Drawable d2 = mDragHandleEnd;
 
         if (mLocation == 1) {
-            d = Utils.rotate(mContext.getResources(), d, 180);
-            d1 = Utils.rotate(mContext.getResources(), mDragHandleEnd, 180);
-            d2 = Utils.rotate(mContext.getResources(), mDragHandleStart, 180);
+            d = BitmapUtils.rotate(mContext.getResources(), d, 180);
+            d1 = BitmapUtils.rotate(mContext.getResources(), mDragHandleEnd, 180);
+            d2 = BitmapUtils.rotate(mContext.getResources(), mDragHandleStart, 180);
         }
 
         mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
-        mDragButton.setImageDrawable(Utils.colorize(mContext.getResources(), mColor, d));
+        mDragButton.setImageDrawable(BitmapUtils.colorize(mContext.getResources(), mColor, d));
         mDragButton.getDrawable().setColorFilter(mColor, Mode.SRC_ATOP);
         
         mDragButtonStart.setScaleType(ImageView.ScaleType.FIT_XY);

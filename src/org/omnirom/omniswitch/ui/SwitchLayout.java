@@ -17,11 +17,11 @@
  */
 package org.omnirom.omniswitch.ui;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omnirom.omniswitch.PackageManager;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
@@ -32,21 +32,23 @@ import org.omnirom.omniswitch.Utils;
 import org.omnirom.omniswitch.showcase.ShowcaseView;
 import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Gravity;
@@ -55,16 +57,23 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -74,7 +83,9 @@ import android.widget.Toast;
 public class SwitchLayout implements OnShowcaseEventListener {
     private static final String TAG = "SwitchLayout";
     private static final boolean DEBUG = false;
-    private final static String KEY_SHOWCASE_FAVORITE = "showcase_favorite_done";
+    private static final String KEY_SHOWCASE_FAVORITE = "showcase_favorite_done";
+    private static final int FLIP_DURATION_OUT = 125;
+    private static final int FLIP_DURATION_IN = 225;
 
     private WindowManager mWindowManager;
     private LayoutInflater mInflater;
@@ -85,6 +96,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private GlowImageButton mKillOtherButton;
     private GlowImageButton mHomeButton;
     private GlowImageButton mSettingsButton;
+    private GlowImageButton mAllappsButton;
     private RecentListAdapter mRecentListAdapter;
     private FavoriteListAdapter mFavoriteListAdapter;
     private List<TaskDescription> mLoadedTasks;
@@ -100,7 +112,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private Handler mHandler = new Handler();
     private List<String> mFavoriteList;
     private List<Drawable> mFavoriteIcons;
-    private List<String> mFavoriteNames;
+    private List<CharSequence> mFavoriteNames;
     private boolean mShowFavorites;
     private ShowcaseView mShowcaseView;
     private SharedPreferences mPrefs;
@@ -116,6 +128,18 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private boolean mButtonsVisible = true;
     private Drawable[] mFavoriteDrawableDefault = new Drawable[2]; // 0 is down 1 is up
     private Drawable[] mFavoriteDrawableGlow = new Drawable[2]; // 0 is down 1 is up
+    private boolean mAutoClose = true;
+    private boolean mShowAppDrawer;
+    private GridView mAppDrawer;
+    private AppDrawerListAdapter mAppDrawerListAdapter;
+    private View mCurrentSelection;
+    private LinearLayout mRamUsageBarContainer;
+    private GlowSelector mPendingGlowSelector;
+    private LinearLayout mRecents;
+    private Animator mAppDrawerAnim;
+    private Animator mRecentsAnim;
+    private TimeInterpolator mAccelerateInterpolator = new AccelerateInterpolator();
+    private TimeInterpolator mDecelerateInterpolator = new DecelerateInterpolator();
 
     private class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -126,13 +150,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView = null;
             TaskDescription ad = mLoadedTasks.get(position);
+            final PackageTextView item = getPackageItemTemplate();
 
-            rowView = mInflater.inflate(R.layout.recent_item_horizontal,
-                    parent, false);
-            final GlowTextView item = (GlowTextView) rowView
-                    .findViewById(R.id.recent_item);
             if (mConfiguration.mShowLabels) {
                 item.setText(ad.getLabel());
             }
@@ -141,7 +161,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             item.setCompoundDrawablesWithIntrinsicBounds(null,
                     ad.getIcon(), null, null);
 
-            return rowView;
+            return item;
         }
     }
 
@@ -154,10 +174,9 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView = null;
-            rowView = mInflater.inflate(R.layout.favorite_item, parent, false);
-            final GlowTextView item = (GlowTextView) rowView
-                    .findViewById(R.id.favorite_item);
+            final PackageTextView item = getPackageItemTemplate();
+
+            item.setIntent(mFavoriteList.get(position));
             if (mConfiguration.mShowLabels) {
                 item.setText(mFavoriteNames.get(position));
             }
@@ -165,25 +184,77 @@ public class SwitchLayout implements OnShowcaseEventListener {
             item.setOriginalImage(mFavoriteIcons.get(position));
             item.setCompoundDrawablesWithIntrinsicBounds(null,
                     mFavoriteIcons.get(position), null, null);
-            return rowView;
+            return item;
+        }
+    }
+
+    private class AppDrawerListAdapter extends ArrayAdapter<PackageManager.PackageItem> implements OnTouchListener {
+
+        public AppDrawerListAdapter(Context context, int resource,
+                List<PackageManager.PackageItem> values) {
+            super(context, R.layout.favorite_item, resource, values);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final PackageTextView item = getPackageItemTemplate();
+
+            PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageList().get(position);
+            item.setIntent(packageItem.getIntent());
+            if (mConfiguration.mShowLabels) {
+                item.setText(packageItem.getTitle());
+            }
+            item.setMaxWidth(mConfiguration.mHorizontalMaxWidth);
+            Drawable d = BitmapCache.getInstance().getResized(mContext.getResources(), packageItem, mConfiguration);
+            item.setOriginalImage(d);
+            item.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            item.setOnTouchListener(this);
+            return item;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                mSelectionGlowListener.onItemSelected(v, true);
+            } else {
+                mSelectionGlowListener.onItemSelected(v, false);
+            }
+            return false;
         }
     }
 
     private HorizontalListView.SelectionListener mSelectionGlowListener = new HorizontalListView.SelectionListener() {
         @Override
         public void onItemSelected(View view, boolean selected) {
-            GlowTextView textView = (GlowTextView)((ViewGroup)view).getChildAt(0);
+            PackageTextView textView = (PackageTextView)view;
+            mCurrentSelection = textView;
+
             if(selected){
-                textView.setCompoundDrawablesWithIntrinsicBounds(null,
-                        Utils.getGlowDrawable(mContext.getResources(), 
-                                null,
-                                mConfiguration.mGlowColor,
-                                textView.getCompoundDrawables()[1])
-                                , null, null);
+                if (mPendingGlowSelector == null) {
+                    mPendingGlowSelector = new GlowSelector();
+                }
+                // TODO
+                //int tapTimeout = ViewConfiguration.getTapTimeout() / 2;
+                mView.postDelayed(mPendingGlowSelector, 50);
             } else {
+                mView.removeCallbacks(mPendingGlowSelector);
                 textView.setCompoundDrawablesWithIntrinsicBounds(null,
                         textView.getOriginalImage(), null, null);
             }
+        }
+    };
+
+    final class GlowSelector implements Runnable {
+
+        @Override
+        public void run() {
+            PackageTextView textView = (PackageTextView)mCurrentSelection;
+
+            textView.setCompoundDrawablesWithIntrinsicBounds(null,
+                    BitmapUtils.glow(mContext.getResources(),
+                            mConfiguration.mGlowColor,
+                            textView.getCompoundDrawables()[1])
+                            , null, null);
         }
     };
 
@@ -202,16 +273,23 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLoadedTasks = new ArrayList<TaskDescription>();
         mRecentListAdapter = new RecentListAdapter(mContext,
-                android.R.layout.simple_list_item_multiple_choice, mLoadedTasks);
+                android.R.layout.simple_list_item_single_choice,
+                mLoadedTasks);
         mFavoriteList = new ArrayList<String>();
         mFavoriteListAdapter = new FavoriteListAdapter(mContext,
-                android.R.layout.simple_list_item_multiple_choice,
+                android.R.layout.simple_list_item_single_choice,
                 mFavoriteList);
+        mAppDrawerListAdapter = new AppDrawerListAdapter(mContext,
+                android.R.layout.simple_list_item_single_choice,
+                PackageManager.getInstance(mContext).getPackageList());
     }
 
     private synchronized void createView() {
-        mView = mInflater.inflate(R.layout.recents_list_horizontal, null,
-                false);
+        mView = mInflater.inflate(R.layout.recents_list_horizontal, null, false);
+        mView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg));
+
+        mRecents = (LinearLayout) mView.findViewById(R.id.recents);
+
         mRecentListHorizontal = (HorizontalListView) mView
                 .findViewById(R.id.recent_list_horizontal);
         
@@ -225,11 +303,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
             @Override
             public void onItemClick(AdapterView<?> parent,
                     View view, int position, long id) {
-                if(DEBUG){
-                    Log.d(TAG, "onItemClick");
-                }
                 TaskDescription task = mLoadedTasks.get(position);
-                mRecentsManager.switchTask(task);
+                mRecentsManager.switchTask(task, mAutoClose);
             }
         });
 
@@ -238,9 +313,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent,
                     View view, int position, long id) {
-                if(DEBUG){
-                    Log.d(TAG, "onItemLongClick");
-                }
                 TaskDescription task = mLoadedTasks.get(position);
                 handleLongPress(task, view);
                 return true;
@@ -272,14 +344,12 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mOpenFavorite = (ImageButton) mView
                 .findViewById(R.id.openFavorites);
 
-        mFavoriteDrawableDefault[0] = Utils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.arrow_up));
-        mFavoriteDrawableDefault[1] = Utils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.arrow_down));
-        mFavoriteDrawableGlow[0] = Utils.getGlowDrawable(mContext.getResources(), 
-                "arrow_up",
+        mFavoriteDrawableDefault[0] = BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.arrow_up));
+        mFavoriteDrawableDefault[1] = BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.arrow_down));
+        mFavoriteDrawableGlow[0] = BitmapUtils.glow(mContext.getResources(),
                 mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.arrow_up));
-        mFavoriteDrawableGlow[1] = Utils.getGlowDrawable(mContext.getResources(), 
-                "arrow_down",
+        mFavoriteDrawableGlow[1] = BitmapUtils.glow(mContext.getResources(),
                 mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.arrow_down));
 
@@ -291,17 +361,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                             mShowFavorites ? 0 : 1,
                                     true);
 
-                    mShowFavorites = !mShowFavorites;
-
-                    if (mConfiguration.mAnimate) {
-                        mFavoriteListHorizontal
-                        .startAnimation(mShowFavorites ? getShowFavoriteAnimation()
-                                : getHideFavoriteAnimation());
-                    } else {
-                        mFavoriteListHorizontal
-                        .setVisibility(mShowFavorites ? View.VISIBLE
-                                : View.GONE);
-                    }
+                    toggleFavorites();
                 } else if(event.getAction()==MotionEvent.ACTION_UP){
                     if (!mConfiguration.mAnimate) {
                         setButtonGlow(mOpenFavorite,
@@ -322,9 +382,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
             @Override
             public void onItemClick(AdapterView<?> parent,
                     View view, int position, long id) {
-                if(DEBUG){
-                    Log.d(TAG, "onItemClick");
-                }
                 String intent = mFavoriteList.get(position);
                 mRecentsManager.startIntentFromtString(intent);
             }
@@ -332,9 +389,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
 
         mHomeButton = (GlowImageButton) mView.findViewById(R.id.home);
-        mHomeButton.setOriginalImage(Utils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.home)));
-        mHomeButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
-                "home",
+        mHomeButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.home)));
+        mHomeButton.setGlowImage(BitmapUtils.glow(mContext.getResources(),
                 mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.home)));
         mHomeButton.setOnTouchListener(new View.OnTouchListener(){
@@ -350,7 +406,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             }});
         mHomeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mRecentsManager.dismissAndGoHome();
+                mRecentsManager.goHome(mAutoClose);
             }
         });
         mHomeButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -363,9 +419,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
         });
 
         mLastAppButton = (GlowImageButton) mView.findViewById(R.id.lastApp);
-        mLastAppButton.setOriginalImage(Utils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.lastapp)));
-        mLastAppButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
-                "lastapp",
+        mLastAppButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.lastapp)));
+        mLastAppButton.setGlowImage(BitmapUtils.glow(mContext.getResources(),
                 mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.lastapp)));
         mLastAppButton.setOnTouchListener(new View.OnTouchListener(){
@@ -382,7 +437,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         mLastAppButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mRecentsManager.toggleLastApp();
+                mRecentsManager.toggleLastApp(mAutoClose);
             }
         });
         mLastAppButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -394,9 +449,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
             }
         });
         mKillAllButton = (GlowImageButton) mView.findViewById(R.id.killAll);
-        mKillAllButton.setOriginalImage(Utils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.kill_all)));
-        mKillAllButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
-                "kill_other",
+        mKillAllButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.kill_all)));
+        mKillAllButton.setGlowImage(BitmapUtils.glow(mContext.getResources(),
                 mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.kill_all)));
         mKillAllButton.setOnTouchListener(new View.OnTouchListener(){
@@ -412,7 +466,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             }});
         mKillAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mRecentsManager.killAll();
+                mRecentsManager.killAll(mAutoClose);
             }
         });
 
@@ -425,9 +479,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
         });
 
         mKillOtherButton = (GlowImageButton) mView.findViewById(R.id.killOther);
-        mKillOtherButton.setOriginalImage(Utils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.kill_other)));
-        mKillOtherButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
-                "kill_other",
+        mKillOtherButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.kill_other)));
+        mKillOtherButton.setGlowImage(BitmapUtils.glow(mContext.getResources(),
                 mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.kill_other)));
         mKillOtherButton.setOnTouchListener(new View.OnTouchListener(){
@@ -444,7 +497,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         mKillOtherButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mRecentsManager.killOther();
+                mRecentsManager.killOther(mAutoClose);
             }
         });
         mKillOtherButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -457,9 +510,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
         });
 
         mSettingsButton = (GlowImageButton) mView.findViewById(R.id.settings);
-        mSettingsButton.setOriginalImage(Utils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.settings)));
-        mSettingsButton.setGlowImage(Utils.getGlowDrawable(mContext.getResources(), 
-                "settings",
+        mSettingsButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.settings)));
+        mSettingsButton.setGlowImage(BitmapUtils.glow(mContext.getResources(),
                 mConfiguration.mGlowColor,
                 mContext.getResources().getDrawable(R.drawable.settings)));
 
@@ -477,23 +529,45 @@ public class SwitchLayout implements OnShowcaseEventListener {
         
         mSettingsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent hideRecent = new Intent(
-                        SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-                mContext.sendBroadcast(hideRecent);
-
-                Intent mainActivity = new Intent(mContext,
-                        SettingsActivity.class);
-                mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                mContext.startActivity(mainActivity);
+                mRecentsManager.startSettingssActivity();
             }
         });
-        //mSettingsButton.setImageDrawable(Utils.getGlow(mContext.getResources(), "settings", mContext.getResources().getDrawable(R.drawable.settings)));
         mSettingsButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                mRecentsManager.startOmniSwitchSettingsActivity();
+                return true;
+            }
+        });
+
+        mAllappsButton = (GlowImageButton) mView.findViewById(R.id.allapps);
+        mAllappsButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.ic_allapps)));
+        mAllappsButton.setGlowImage(BitmapUtils.glow(mContext.getResources(),
+                mConfiguration.mGlowColor,
+                mContext.getResources().getDrawable(R.drawable.ic_allapps)));
+
+        mAllappsButton.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction()==MotionEvent.ACTION_DOWN){
+                    mAllappsButton.setImageDrawable(mAllappsButton.getGlowImage());
+                } else if(event.getAction()==MotionEvent.ACTION_UP){
+                    mAllappsButton.setImageDrawable(mAllappsButton.getOriginalImage());
+                }
+                v.onTouchEvent(event);
+                return true;
+            }});
+
+        mAllappsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                toggleAppdrawer();
+            }
+        });
+        mAllappsButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
                 Toast.makeText(mContext, 
-                        mContext.getResources().getString(R.string.settings_help), Toast.LENGTH_SHORT).show();
+                        mContext.getResources().getString(R.string.allapps_help), Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -502,68 +576,108 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(DEBUG){
-                    Log.d(TAG, "mView:onTouch");
-                }
                 return true;
             }
         });
 
+        mRamUsageBarContainer = (LinearLayout) mView.findViewById(R.id.ram_usage_bar_container);
         mRamUsageBar = (LinearColorBar) mView.findViewById(R.id.ram_usage_bar);
         mForegroundProcessText = (TextView) mView
                 .findViewById(R.id.foregroundText);
         mBackgroundProcessText = (TextView) mView
                 .findViewById(R.id.backgroundText);
 
+        mAppDrawer = (GridView) mView.findViewById(R.id.app_drawer);
+        mAppDrawer.setOnItemClickListener(new OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                    int position, long id) {
+                PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageList().get(position);
+                mRecentsManager.startIntentFromtString(packageItem.getIntent());
+            }});
+        mAppDrawer.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP){
+                    if (mCurrentSelection != null){
+                        mSelectionGlowListener.onItemSelected(mCurrentSelection, false);
+                        mCurrentSelection = null;
+                    }
+                }
+                return false;
+            }});
+        mAppDrawer.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (mCurrentSelection != null){
+                    mSelectionGlowListener.onItemSelected(mCurrentSelection, false);
+                    mCurrentSelection = null;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                    int visibleItemCount, int totalItemCount) {
+            }});
+
+        mAppDrawer.setAdapter(mAppDrawerListAdapter);
+
         mPopupView = new FrameLayout(mContext);
-        mPopupView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg));
+        mPopupView.addView(mView);
 
         mPopupView.setOnTouchListener(new View.OnTouchListener() {
-        	@Override
-        	public boolean onTouch(View v, MotionEvent event) {
-        		if(event.getAction()==MotionEvent.ACTION_DOWN){
-        			if (mShowing) {
-        				if(DEBUG){
-        					Log.d(TAG, "mPopupView:onTouch");
-        				}
-        				Intent hideRecent = new Intent(
-        						SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-        				mContext.sendBroadcast(hideRecent);
-        				return true;
-        			}
-        		}
-        		return false;
-        	}
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (mShowing) {
+                        if (DEBUG) {
+                            Log.d(TAG, "onTouch");
+                        }
+                        Intent hideRecent = new Intent(
+                                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+                        mContext.sendBroadcast(hideRecent);
+                        return true;
+                    }
+                }
+                return false;
+            }
         });
         mPopupView.setOnKeyListener(new View.OnKeyListener() {
-        	@Override
-        	public boolean onKey(View v, int keyCode, KeyEvent event) {
-        		if(event.getAction()==KeyEvent.ACTION_DOWN){
-        			if (mShowing) {
-        				if(DEBUG){
-        					Log.d(TAG, "onKey");
-        				}
-        				Intent hideRecent = new Intent(
-        						SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-        				mContext.sendBroadcast(hideRecent);
-        				return true;
-        			}
-        		}
-        		return false;
-        	}
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getRepeatCount() == 0) {
+                    if (mShowing) {
+                        if (DEBUG) {
+                            Log.d(TAG, "onKey");
+                        }
+                        Intent hideRecent = new Intent(
+                                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+                        mContext.sendBroadcast(hideRecent);
+                        return true;
+                    }
+                }
+                return false;
+            }
         });
     }
 
-    private synchronized void updateNoRecentsApps(){
-        if(mUpdateNoRecentsTasksDone){
+    private synchronized void updateRecentsAppsList(boolean force){
+        if(!force && mUpdateNoRecentsTasksDone){
             return;
         }
         if(mNoRecentApps == null || mRecentListHorizontal == null){
             return;
         }
+
         if(!mTaskLoadDone){
             return;
         }
+        if(DEBUG){
+            Log.d(TAG, "updateRecentsAppsList " + System.currentTimeMillis());
+        }
+        mRecentListAdapter.notifyDataSetChanged();
+
         if(mLoadedTasks.size()!=0){
             mNoRecentApps.setVisibility(View.GONE);
             mRecentListHorizontal.setVisibility(View.VISIBLE);
@@ -575,17 +689,31 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private synchronized void initView(){
-        mRamUsageBar.setVisibility(mConfiguration.mShowRambar ? View.VISIBLE : View.GONE);
+        if (!mConfiguration.mDimBehind){
+            mView.getBackground().setAlpha((int) (255 * mConfiguration.mBackgroundOpacity));
+        } else {
+            mView.getBackground().setAlpha(0);
+        }
+        mRamUsageBarContainer.setVisibility(mConfiguration.mShowRambar ? View.VISIBLE : View.GONE);
         mFavoriteListHorizontal.setLayoutParams(getListviewParams());
+        mFavoriteListHorizontal.scrollTo(0);
         mRecentListHorizontal.setLayoutParams(getListviewParams());
+        mRecentListHorizontal.scrollTo(0);
         mNoRecentApps.setLayoutParams(getListviewParams());
+        mAppDrawer.setNumColumns(Math.round(mConfiguration.getCurrentOverlayWidth()/mConfiguration.mHorizontalMaxWidth));
+
+        mAppDrawer.setScaleX(0f);
+        mRecents.setScaleX(1f);
+        mRecents.setVisibility(View.VISIBLE);
+        mShowAppDrawer = false;
+        mAppDrawer.setVisibility(View.GONE);
+        mAppDrawer.setSelection(0);
 
         mOpenFavorite.setVisibility(mHasFavorites ? View.VISIBLE : View.GONE);
         if (!mHasFavorites){
             mShowFavorites = false;
         }
-        mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
-                mShowFavorites ? R.drawable.arrow_up : R.drawable.arrow_down));
+        mOpenFavorite.setImageDrawable(mShowFavorites ? mFavoriteDrawableDefault[0] : mFavoriteDrawableDefault[1]);
         mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
 
         if(mHasFavorites && !mShowcaseDone){
@@ -606,6 +734,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mLastAppButton.setVisibility(mButtons[SettingsActivity.BUTTON_TOGGLE_APP] ? View.VISIBLE : View.GONE);
         mHomeButton.setVisibility(mButtons[SettingsActivity.BUTTON_HOME] ? View.VISIBLE : View.GONE);
         mSettingsButton.setVisibility(mButtons[SettingsActivity.BUTTON_SETTINGS] ? View.VISIBLE : View.GONE);
+        mAllappsButton.setVisibility(mButtons[SettingsActivity.BUTTON_ALLAPPS] ? View.VISIBLE : View.GONE);
 
         // reset any glow images
         mSettingsButton.setImageDrawable(mSettingsButton.getOriginalImage());
@@ -613,6 +742,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mKillOtherButton.setImageDrawable(mKillOtherButton.getOriginalImage());
         mLastAppButton.setImageDrawable(mLastAppButton.getOriginalImage());
         mHomeButton.setImageDrawable(mHomeButton.getOriginalImage());
+        mAllappsButton.setImageDrawable(mAllappsButton.getOriginalImage());
 
         mButtonsVisible = isButtonVisible();
     }
@@ -637,18 +767,18 @@ public class SwitchLayout implements OnShowcaseEventListener {
         
         initView();
 
-        mPopupView.getBackground().setAlpha(0);
+        if(DEBUG){
+            Log.d(TAG, "show " + System.currentTimeMillis());
+        }
 
         try {
             mWindowManager.addView(mPopupView, getParams());
         } catch(java.lang.IllegalStateException e){
             // something went wrong - try to recover here
             mWindowManager.removeView(mPopupView);
-            mPopupView.removeAllViews();
             mWindowManager.addView(mPopupView, getParams());
         }
         
-        mPopupView.addView(mView);
 
         if (mConfiguration.mAnimate) {
             mView.startAnimation(getShowAnimation());
@@ -665,13 +795,17 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private synchronized void showDone(){
-        mPopupView.getBackground().setAlpha((int) (255 * mConfiguration.mBackgroundOpacity));
+        if(DEBUG){
+            Log.d(TAG, "showDone " + System.currentTimeMillis());
+        }
         mPopupView.setFocusableInTouchMode(true);
+        mHandler.post(updateRamBarTask);
+        updateRecentsAppsList(false);
+
         mShowing = true;
         Intent intent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_OVERLAY_SHOWN);
         mContext.sendBroadcast(intent);
-        updateNoRecentsApps();
     }
 
     private Animation getShowAnimation() {
@@ -777,16 +911,20 @@ public class SwitchLayout implements OnShowcaseEventListener {
         return animation;
     }
 
-    private void hideDone() {
+    private synchronized void hideDone() {
+        if(DEBUG){
+            Log.d(TAG, "hideDone " + System.currentTimeMillis());
+        }
+
         mWindowManager.removeView(mPopupView);
-        mPopupView.removeAllViews();
-        mShowing = false;
         
         // reset
         mNoRecentApps.setVisibility(View.GONE);
         mRecentListHorizontal.setVisibility(View.VISIBLE);
         mTaskLoadDone = false;
         mUpdateNoRecentsTasksDone = false;
+        mLoadedTasks.clear();
+        mRecentListAdapter.notifyDataSetChanged();
 
         Intent intent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_OVERLAY_HIDDEN);
@@ -797,12 +935,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
         if (!mShowing) {
             return;
         }
-        
+
+        // to prevent any reentering
+        mShowing = false;
+
         if (mPopup != null) {
             mPopup.dismiss();
         }
 
-        mPopupView.getBackground().setAlpha(0);
         if (mConfiguration.mAnimate) {
             mView.startAnimation(getHideAnimation());
         } else {
@@ -818,12 +958,16 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private WindowManager.LayoutParams getParams() {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                mConfiguration.getCurrentOverlayWidth() - mConfiguration.mHorizontalMargin,
+                mConfiguration.getCurrentOverlayWidth(),
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_PHONE,
-                0,
+                mConfiguration.mDimBehind ? WindowManager.LayoutParams.FLAG_DIM_BEHIND : 0,
                 PixelFormat.TRANSLUCENT);
-        params.gravity = Gravity.TOP | Gravity.CENTER;
+
+        if (mConfiguration.mDimBehind){
+            params.dimAmount = mConfiguration.mBackgroundOpacity;
+        }
+        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         params.y = mConfiguration.getCurrentOffsetStart() 
                 + mConfiguration.mHandleHeight / 2 
                 - mConfiguration.mHorizontalScrollerHeight / 2 
@@ -832,21 +976,26 @@ public class SwitchLayout implements OnShowcaseEventListener {
         return params;
     }
 
-    public void update(List<TaskDescription> taskList, boolean show) {
+    public synchronized void update(List<TaskDescription> taskList) {
         if(DEBUG){
-            Log.d(TAG, "update");
+            Log.d(TAG, "update " + System.currentTimeMillis());
         }
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
-        mRecentListAdapter.notifyDataSetChanged();
 
-        if(show){
-            if (mRamUsageBar != null && mConfiguration.mShowRambar) {
-                mHandler.post(updateRamBarTask);
-            }
-            mTaskLoadDone = true;
-            updateNoRecentsApps();
+        mTaskLoadDone = true;
+        updateRecentsAppsList(false);
+    }
+
+    public void refresh(List<TaskDescription> taskList) {
+        if(DEBUG){
+            Log.d(TAG, "refresh");
         }
+        mLoadedTasks.clear();
+        mLoadedTasks.addAll(taskList);
+
+        mTaskLoadDone = true;
+        updateRecentsAppsList(true);
     }
 
     private void handleLongPress(final TaskDescription ad, View view) {
@@ -859,7 +1008,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 if (item.getItemId() == R.id.recent_remove_item) {
                     mRecentsManager.killTask(ad);
                 } else if (item.getItemId() == R.id.recent_inspect_item) {
-                    startApplicationDetailsActivity(ad.getPackageName());
+                    mRecentsManager.startApplicationDetailsActivity(ad.getPackageName());
                 } else {
                     return false;
                 }
@@ -874,23 +1023,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         popup.show();
     }
 
-    private void startApplicationDetailsActivity(String packageName) {
-        Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-        mContext.sendBroadcast(hideRecent);
-
-        Intent intent = new Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts(
-                        "package", packageName, null));
-        intent.setComponent(intent.resolveActivity(mContext.getPackageManager()));
-        TaskStackBuilder.create(mContext)
-                .addNextIntentWithParentStack(intent).startActivities();
-    }
-
-    public void handleSwipe(TaskDescription ad) {
-        mRecentsManager.killTask(ad);
-    }
-
     public void updatePrefs(SharedPreferences prefs, String key) {
         if(DEBUG){
             Log.d(TAG, "updatePrefs");
@@ -903,7 +1035,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
         updateFavorites();
         mFavoriteListAdapter.notifyDataSetChanged();
 
-        mButtons = Utils.buttonStringToArry(prefs.getString(SettingsActivity.PREF_BUTTONS, SettingsActivity.PREF_BUTTON_DEFAULT));
+        mButtons = Utils.getDefaultButtons();
+        Utils.buttonStringToArry(prefs.getString(SettingsActivity.PREF_BUTTONS, SettingsActivity.PREF_BUTTON_DEFAULT), mButtons);
     }
 
     private final Runnable updateRamBarTask = new Runnable() {
@@ -939,37 +1072,28 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private void updateFavorites() {
-        final PackageManager pm = mContext.getPackageManager();
         List<String> validFavorites = new ArrayList<String>();
         mFavoriteIcons = new ArrayList<Drawable>();
-        mFavoriteNames = new ArrayList<String>();
+        mFavoriteNames = new ArrayList<CharSequence>();
         Iterator<String> nextFavorite = mFavoriteList.iterator();
         while (nextFavorite.hasNext()) {
             String favorite = nextFavorite.next();
-            Intent intent = null;
-            Drawable appIcon = null;
-            try {
-                intent = Intent.parseUri(favorite, 0);
-                appIcon = pm.getActivityIcon(intent);
-            } catch (NameNotFoundException e) {
-                Log.e(TAG, "NameNotFoundException: [" + favorite + "]");
-                continue;
-            } catch (URISyntaxException e) {
-                Log.e(TAG, "URISyntaxException: [" + favorite + "]");
+            if (!PackageManager.getInstance(mContext).contains(favorite)){
+                Log.e(TAG, "no app info found for:" + favorite);
                 continue;
             }
+
             validFavorites.add(favorite);
-            String label = Utils.getActivityLabel(pm, intent);
+            CharSequence label = PackageManager.getInstance(mContext).getTitle(favorite);
             if (label == null) {
                 label = favorite;
             }
+            Drawable appIcon = PackageManager.getInstance(mContext).getIcon(favorite);
             if (appIcon == null) {
                 appIcon = getDefaultActivityIcon();
             }
-            mFavoriteIcons.add(Utils.resize(mContext.getResources(),
-                    appIcon, mConfiguration.mIconSize, 
-                    mConfiguration.mIconBorder,
-                    mConfiguration.mDensity));
+            Drawable d = BitmapCache.getInstance().getResized(mContext.getResources(), appIcon, favorite, mConfiguration);
+            mFavoriteIcons.add(d);
             mFavoriteNames.add(label);
         }
         mFavoriteList.clear();
@@ -1012,6 +1136,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     public void updateLayout() {
         if (mShowing){
             mWindowManager.updateViewLayout(mPopupView, getParams());
+            mAppDrawer.setNumColumns(Math.round(mConfiguration.getCurrentOverlayWidth()/mConfiguration.mHorizontalMaxWidth));
         }
     }
     
@@ -1029,5 +1154,130 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 button.setImageDrawable(mFavoriteDrawableDefault[1]);
             }
         }
+    }
+
+    private void toggleFavorites() {
+        mShowFavorites = !mShowFavorites;
+
+        mFavoriteListHorizontal
+        .startAnimation(mShowFavorites ? getShowFavoriteAnimation()
+                : getHideFavoriteAnimation());
+    }
+
+    private void toggleAppdrawer() {
+        mShowAppDrawer = !mShowAppDrawer;
+        if (mShowAppDrawer){
+            flipToAppDrawer();
+        } else {
+            flipToRecents();
+        }
+    }
+
+    private PackageTextView getPackageItemTemplate() {
+        PackageTextView item = new PackageTextView(mContext);
+        item.setTextColor(Color.WHITE);
+        item.setShadowLayer(5, 0, 0, Color.BLACK);
+        item.setTypeface(item.getTypeface(), Typeface.BOLD);
+        item.setEllipsize(TextUtils.TruncateAt.END);
+        item.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        if (mConfiguration.mShowLabels){
+            item.setLines(2);
+        } else {
+            item.setMaxHeight(mConfiguration.mHorizontalScrollerHeight);
+        }
+        return item;
+    }
+
+    private void flipToAppDrawer() {
+        if (mRecentsAnim != null){
+            mRecentsAnim.cancel();
+        }
+        if (mAppDrawerAnim != null){
+            mAppDrawerAnim.cancel();
+        }
+        mAppDrawer.setVisibility(View.VISIBLE);
+        mAppDrawer.setScaleX(0f);
+        mRecents.setScaleX(1f);
+
+        mAppDrawerAnim = start(startDelay(
+                FLIP_DURATION_OUT,
+                interpolator(mDecelerateInterpolator,
+                        ObjectAnimator.ofFloat(mAppDrawer, View.SCALE_X, 1f)
+                                .setDuration(FLIP_DURATION_IN))));
+        mRecentsAnim = start(setVisibilityWhenDone(
+                interpolator(mAccelerateInterpolator,
+                        ObjectAnimator.ofFloat(mRecents, View.SCALE_X, 0f))
+                        .setDuration(FLIP_DURATION_OUT), mRecents, View.GONE));
+    }
+
+    private void flipToRecents() {
+        if (mRecentsAnim != null){
+            mRecentsAnim.cancel();
+        }
+        if (mAppDrawerAnim != null){
+            mAppDrawerAnim.cancel();
+        }
+        mRecents.setVisibility(View.VISIBLE);
+        mRecents.setScaleX(0f);
+        mAppDrawer.setScaleX(1f);
+
+        mRecentsAnim = start(startDelay(
+                FLIP_DURATION_OUT,
+                interpolator(mDecelerateInterpolator,
+                        ObjectAnimator.ofFloat(mRecents, View.SCALE_X, 1f)
+                                .setDuration(FLIP_DURATION_IN))));
+        mAppDrawerAnim = start(setVisibilityWhenDone(
+                interpolator(mAccelerateInterpolator,
+                        ObjectAnimator.ofFloat(mAppDrawer, View.SCALE_X, 0f))
+                        .setDuration(FLIP_DURATION_OUT), mAppDrawer, View.GONE));
+    }
+
+    private void partialFlip(float progress) {
+        if (mRecentsAnim != null){
+            mRecentsAnim.cancel();
+        }
+        if (mAppDrawerAnim != null){
+            mAppDrawerAnim.cancel();
+        }
+
+        progress = Math.min(Math.max(progress, -1f), 1f);
+        if (progress < 0f) { // recents side
+            mAppDrawer.setVisibility(View.GONE);
+            mAppDrawer.setScaleX(0f);
+            mRecents.setScaleX(-progress);
+            mRecents.setVisibility(View.VISIBLE);
+        } else { // app drawer side
+            mRecents.setVisibility(View.GONE);
+            mRecents.setScaleX(0f);
+            mAppDrawer.setScaleX(progress);
+            mAppDrawer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private Animator setVisibilityWhenDone(
+            final Animator a, final View v, final int vis) {
+        a.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                v.setVisibility(vis);
+            }
+        });
+        return a;
+    }
+
+    private Animator interpolator(TimeInterpolator ti, Animator a) {
+        a.setInterpolator(ti);
+        return a;
+    }
+
+    private Animator startDelay(int d, Animator a) {
+        a.setStartDelay(d);
+        return a;
+    }
+
+    private Animator start(Animator a) {
+        a.start();
+        return a;
     }
 }

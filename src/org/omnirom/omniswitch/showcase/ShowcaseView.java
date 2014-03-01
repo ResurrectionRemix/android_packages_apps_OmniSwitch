@@ -118,7 +118,7 @@ public class ShowcaseView extends RelativeLayout implements
                 attrs, R.styleable.ShowcaseView, R.attr.showcaseViewStyle,
                 R.style.ShowcaseView);
         backColor = styled.getInt(R.styleable.ShowcaseView_sv_backgroundColor,
-                Color.argb(128, 80, 80, 80));
+                Color.parseColor("#F0333333"));
         detailTextColor = styled.getColor(
                 R.styleable.ShowcaseView_sv_detailTextColor, Color.WHITE);
         titleTextColor = styled.getColor(
@@ -204,7 +204,7 @@ public class ShowcaseView extends RelativeLayout implements
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
+                WindowManager.LayoutParams.TYPE_PHONE,
                 0,
                 PixelFormat.TRANSLUCENT);
 

@@ -18,7 +18,10 @@
 package org.omnirom.omniswitch;
 
 import org.omnirom.omniswitch.ui.SwitchGestureView;
+import org.omnirom.omniswitch.ui.BitmapCache;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,7 +36,7 @@ import android.util.Log;
 
 public class SwitchService extends Service {
     private final static String TAG = "SwitchService";
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
 
     /**
      * Intent broadcast action for omniswitch service started
@@ -45,6 +48,8 @@ public class SwitchService extends Service {
      */
     private static final String ACTION_SERVICE_STOP = "org.omnirom.omniswitch.ACTION_SERVICE_STOP";
 
+    private static final int START_SERVICE_ERROR_ID = 0;
+
     private SwitchGestureView mGesturePanel;
     private RecentsReceiver mReceiver;
     private SwitchManager mManager;
@@ -54,6 +59,7 @@ public class SwitchService extends Service {
     private int mUserId = -1;
 
     private static boolean mIsRunning;
+    private static boolean mNoPermissions;
 
     public static boolean isRunning() {
         return mIsRunning;
@@ -63,6 +69,14 @@ public class SwitchService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        if (mNoPermissions){
+            return;
+        }
+        if (!hasSystemPermission()){
+            createErrorNotification();
+            mNoPermissions = true;
+            return;
+        }
         mUserId = UserHandle.myUserId();
         mGesturePanel = new SwitchGestureView(this);
         Log.d(TAG, "started SwitchService " + mUserId);
@@ -83,6 +97,7 @@ public class SwitchService extends Service {
         filter.addAction(Intent.ACTION_USER_SWITCHED);
 
         registerReceiver(mReceiver, filter);
+        PackageManager.getInstance(this).updatePackageList(false);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         updatePrefs(mPrefs, null);
@@ -123,6 +138,9 @@ public class SwitchService extends Service {
         Intent stopActivity = new Intent(ACTION_SERVICE_STOP);
         stopActivity.putExtra(Intent.EXTRA_USER_HANDLE, mUserId);
         sendBroadcastAsUser(stopActivity, UserHandle.ALL);
+
+        // TODO
+        BitmapCache.getInstance().clear();
     }
 
     @Override
@@ -226,5 +244,21 @@ public class SwitchService extends Service {
         if (mIsRunning && mManager.isShowing()) {
             mManager.updateLayout();
         }
+    }
+
+    private boolean hasSystemPermission()
+    {
+        int result = checkCallingOrSelfPermission(android.Manifest.permission.INTERACT_ACROSS_USERS_FULL);
+        return result == android.content.pm.PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void createErrorNotification() {
+        final NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        final Notification notifyDetails = new Notification.Builder(this)
+                .setContentTitle("OmniSwitch start failed")
+                .setContentText("Failed to gain system permissions")
+                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .build();
+        notificationManager.notify(START_SERVICE_ERROR_ID, notifyDetails);
     }
 }

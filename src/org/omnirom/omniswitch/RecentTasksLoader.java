@@ -20,6 +20,8 @@ package org.omnirom.omniswitch;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omnirom.omniswitch.ui.BitmapCache;
+
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -42,28 +44,26 @@ public class RecentTasksLoader {
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for
                                                             // non-apps
 
-    private SwitchManager mRecentsManager;
     private Context mContext;
-
     private AsyncTask<Void, ArrayList<TaskDescription>, Void> mTaskLoader;
     private Handler mHandler;
-
     private ArrayList<TaskDescription> mLoadedTasks;
+    private boolean mPreloaded;
+    private SwitchManager mSwitchManager;
 
     private enum State {
-        LOADING, LOADED, CANCELLED
+        LOADING, IDLE
     };
 
-    private State mState = State.CANCELLED;
+    private State mState = State.IDLE;
 
     private SwitchConfiguration mConfiguration;
 
     private static RecentTasksLoader sInstance;
 
-    public static RecentTasksLoader getInstance(Context context,
-            SwitchManager manager) {
+    public static RecentTasksLoader getInstance(Context context) {
         if (sInstance == null) {
-            sInstance = new RecentTasksLoader(context, manager);
+            sInstance = new RecentTasksLoader(context);
         }
         return sInstance;
     }
@@ -72,10 +72,10 @@ public class RecentTasksLoader {
         sInstance = null;
     }
 
-    private RecentTasksLoader(Context context, SwitchManager manager) {
+    private RecentTasksLoader(Context context) {
         mContext = context;
-        mRecentsManager = manager;
         mHandler = new Handler();
+        mLoadedTasks = new ArrayList<TaskDescription>();
         mConfiguration = SwitchConfiguration.getInstance(mContext);
     }
 
@@ -136,7 +136,7 @@ public class RecentTasksLoader {
 
     Runnable mPreloadTasksRunnable = new Runnable() {
         public void run() {
-            loadTasksInBackground();
+            loadTasksInBackground(null);
         }
     };
 
@@ -154,15 +154,34 @@ public class RecentTasksLoader {
             mTaskLoader.cancel(false);
             mTaskLoader = null;
         }
-        mLoadedTasks = null;
-        mState = State.CANCELLED;
+        mLoadedTasks.clear();
+        mPreloaded = false;
+        mState = State.IDLE;
     }
 
-    public void loadTasksInBackground() {
-        if (mState != State.CANCELLED) {
+    public void loadTasksInBackground(final SwitchManager manager) {
+        if (DEBUG){
+            Log.d(TAG, "loadTasksInBackground " + manager + " start " + System.currentTimeMillis());
+        }
+        mSwitchManager = manager;
+
+        if(mPreloaded && mSwitchManager != null){
+            if (DEBUG){
+                Log.d(TAG, "recents preloaded");
+            }
+            mSwitchManager.update(mLoadedTasks);
+            mPreloaded = false;
             return;
         }
+
+        if (mState != State.IDLE) {
+            return;
+        }
+        if (DEBUG){
+            Log.d(TAG, "recents load");
+        }
         mState = State.LOADING;
+        mLoadedTasks.clear();
 
         mTaskLoader = new AsyncTask<Void, ArrayList<TaskDescription>, Void>() {
             @Override
@@ -170,15 +189,15 @@ public class RecentTasksLoader {
                     ArrayList<TaskDescription>... values) {
                 if (!isCancelled()) {
                     ArrayList<TaskDescription> newTasks = values[0];
-                    // do a callback to RecentsPanelView to let it know we have
-                    // more values
-                    // how do we let it know we're all done? just always call
-                    // back twice
-                    if (mLoadedTasks == null) {
-                        mLoadedTasks = new ArrayList<TaskDescription>();
-                    }
                     mLoadedTasks.addAll(newTasks);
-                    mRecentsManager.update(mLoadedTasks);
+                    if (mSwitchManager != null){
+                        if (DEBUG){
+                            Log.d(TAG, "recents loaded");
+                        }
+                        mSwitchManager.update(mLoadedTasks);
+                    } else {
+                        mPreloaded = true;
+                    }
                 }
             }
 
@@ -236,7 +255,10 @@ public class RecentTasksLoader {
                 if (!isCancelled()) {
                     publishProgress(tasks);
                 }
-
+                if (DEBUG){
+                    Log.d(TAG, "loadTasksInBackground end " + System.currentTimeMillis());
+                }
+                mState = State.IDLE;
                 Process.setThreadPriority(origPri);
                 return null;
             }
@@ -256,16 +278,12 @@ public class RecentTasksLoader {
         }
     }
 
-    private Drawable getFullResDefaultActivityIcon() {
-        return getFullResIcon(mContext.getResources(), R.drawable.ic_default);
+    private Drawable getFullResDefaultActivityIcon(String packageName) {
+        return getFullResIcon(mContext.getResources(), R.drawable.ic_default, packageName);
     }
 
-    private Drawable getFullResIcon(Resources resources, int iconId) {
-        return Utils.resize(resources,
-                resources.getDrawable(iconId),
-                mConfiguration.mIconSize,
-                mConfiguration.mIconBorder,
-                mConfiguration.mDensity);
+    private Drawable getFullResIcon(Resources resources, int iconId, String packageName) {
+       return BitmapCache.getInstance().getResized(resources, packageName, iconId, mConfiguration);
     }
 
     private Drawable getFullResIcon(ResolveInfo info,
@@ -280,9 +298,9 @@ public class RecentTasksLoader {
         if (resources != null) {
             int iconId = info.activityInfo.getIconResource();
             if (iconId != 0) {
-                return getFullResIcon(resources, iconId);
+                return getFullResIcon(resources, iconId, info.activityInfo.applicationInfo.packageName);
             }
         }
-        return getFullResDefaultActivityIcon();
+        return getFullResDefaultActivityIcon(info.activityInfo.applicationInfo.packageName);
     }
 }

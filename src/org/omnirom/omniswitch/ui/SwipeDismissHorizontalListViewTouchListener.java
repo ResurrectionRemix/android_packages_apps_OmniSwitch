@@ -259,7 +259,7 @@ public class SwipeDismissHorizontalListViewTouchListener implements
             float absVelocityY = Math.abs(velocityY);
             boolean dismiss = false;
             boolean dismissUp = false;
-            if (Math.abs(deltaY) > mViewHeight / 2) {
+            if (Math.abs(deltaY) > mViewHeight * 0.66) {
                 dismiss = true;
                 dismissUp = deltaY < 0;
             } else if (mMinFlingVelocity <= absVelocityX

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2014 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +22,34 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-public class GlowTextView extends TextView {
+public class PackageTextView extends TextView {
 
+    private String mIntent;
     private Drawable mOriginalImage;
-    
-    public GlowTextView(Context context) {
+
+    public PackageTextView(Context context) {
         super(context);
     }
-    
-    public GlowTextView(Context context, AttributeSet attrs) {
+    public PackageTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public GlowTextView(Context context, AttributeSet attrs, int defStyle) {
+    public PackageTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
-    
+
+    public void setIntent(String intent) {
+        mIntent = intent;
+    }
+
+    public String getIntent(){
+        return mIntent;
+    }
+
     public void setOriginalImage(Drawable image){
         mOriginalImage = image;
     }
-    
+
     public Drawable getOriginalImage(){
         return mOriginalImage;
     }

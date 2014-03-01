@@ -15,26 +15,21 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.omnirom.omniswitch.ui.PackageTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/favorite_item"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-    <org.omnirom.omniswitch.ui.GlowTextView
-        android:id="@+id/favorite_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:drawableTop="@drawable/ic_launcher"
-        android:ellipsize="end"
-        android:focusable="false"
-        android:gravity="center_horizontal"
-        android:lines="2"
-        android:scaleType="centerInside"
-        android:shadowColor="@color/text_shadow"
-        android:shadowDx="0"
-        android:shadowDy="0"
-        android:shadowRadius="5"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/white"
-        android:textStyle="bold" />
-</LinearLayout>
+    android:background="@android:color/transparent"
+    android:drawableTop="@drawable/ic_launcher"
+    android:ellipsize="end"
+    android:focusable="false"
+    android:gravity="center_horizontal"
+    android:lines="2"
+    android:scaleType="centerInside"
+    android:shadowColor="@color/text_shadow"
+    android:shadowDx="0"
+    android:shadowDy="0"
+    android:shadowRadius="5"
+    android:textAppearance="?android:attr/textAppearanceSmall"
+    android:textColor="@android:color/white"
+    android:textStyle="bold" />

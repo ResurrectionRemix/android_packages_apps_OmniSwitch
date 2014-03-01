@@ -73,4 +73,8 @@
     <string name="drag_handle_opacity_title">Opacity</string>
     <string name="drag_handle_enable_title">Enable</string>
     <string name="drag_handle_enable_summary">Disable only if you use another activation method</string>
+    <string name="allapps_help">App drawer</string>
+    <string name="allapps">App drawer</string>
+    <string name="dim_behind_title">Dim background</string>
+    <string name="dim_behind_summary">Apply opacity to complete screen</string>
 </resources>

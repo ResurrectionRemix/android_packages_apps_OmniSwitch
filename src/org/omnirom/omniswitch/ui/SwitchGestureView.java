@@ -18,10 +18,10 @@
 package org.omnirom.omniswitch.ui;
 
 import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.RecentTasksLoader;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchService;
-import org.omnirom.omniswitch.Utils;
 import org.omnirom.omniswitch.showcase.ShowcaseView;
 import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 
@@ -126,6 +126,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                         mDownPoint[1] = event.getY();
                         mSwipeStarted = true;
                         mShowStarted = false;
+
+                        RecentTasksLoader.getInstance(mContext).cancelPreloadingTasks();
+                        RecentTasksLoader.getInstance(mContext).preloadTasks();
+
                         if(DEBUG){
                             Log.d(TAG, "button down " + mDownPoint[0] + " "
                                     + mDownPoint[1]);
@@ -255,9 +259,9 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         
         if (mConfiguration.mLocation == 1) {
-            mCurrentDragHandleImage = Utils.rotate(mContext.getResources(), mCurrentDragHandleImage, 180);
+            mCurrentDragHandleImage = BitmapUtils.rotate(mContext.getResources(), mCurrentDragHandleImage, 180);
         }
-        mCurrentDragHandleImage=Utils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor, mCurrentDragHandleImage);
+        mCurrentDragHandleImage=BitmapUtils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor, mCurrentDragHandleImage);
         mCurrentDragHandleImage.setAlpha((int) (255 * mConfiguration.mDragHandleOpacity));
         mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
 

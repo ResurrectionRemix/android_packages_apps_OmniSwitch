@@ -25,6 +25,7 @@ import java.util.List;
 import org.omnirom.omniswitch.ui.SwitchLayout;
 
 import android.app.ActivityManager;
+import android.app.TaskStackBuilder;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -32,15 +33,16 @@ import android.content.ComponentName;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.UserHandle;
 import android.util.Log;
 import android.os.RemoteException;
+import android.provider.Settings;
 
 public class SwitchManager {
     private static final String TAG = "SwitchManager";
     private static final boolean DEBUG = false;
     private List<TaskDescription> mLoadedTasks;
-    private RecentTasksLoader mRecentTasksLoader;
     private SwitchLayout mLayout;
     private Context mContext;
 
@@ -63,17 +65,11 @@ public class SwitchManager {
             if(DEBUG){
                 Log.d(TAG, "show");
             }
-
-            // clear so that we dont get a reorder
-            // during show
-            mLoadedTasks.clear();
-            mLayout.update(mLoadedTasks, false);
+            // update task list
+            reload();
 
             // show immediately
             mLayout.show();
-
-            // update task list
-            reload();
         }
     }
 
@@ -90,7 +86,6 @@ public class SwitchManager {
 
         mLayout = new SwitchLayout(mContext);
         mLayout.setRecentsManager(this);
-        mRecentTasksLoader = RecentTasksLoader.getInstance(mContext, this);
     }
 
     public void killManager() {
@@ -103,15 +98,14 @@ public class SwitchManager {
         }
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
-        mLayout.update(mLoadedTasks, true);
+        mLayout.update(mLoadedTasks);
     }
 
     public void reload() {
-        mRecentTasksLoader.cancelLoadingTasks();
-        mRecentTasksLoader.loadTasksInBackground();
+        RecentTasksLoader.getInstance(mContext).loadTasksInBackground(this);
     }
 
-    public void switchTask(TaskDescription ad) {
+    public void switchTask(TaskDescription ad, boolean close) {
         if (ad.isKilled()) {
             return;
         }
@@ -122,9 +116,9 @@ public class SwitchManager {
             Log.d(TAG, "switch to " + ad.getPackageName());
         }
 
-        Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-        mContext.sendBroadcast(hideRecent);
+        if(close){
+            close();
+        }
 
         if (ad.getTaskId() >= 0) {
             // This is an active task; it should just go to the foreground.
@@ -157,17 +151,17 @@ public class SwitchManager {
         }
         ad.setKilled();
         mLoadedTasks.remove(ad);
-        mLayout.update(mLoadedTasks, true);
+        mLayout.refresh(mLoadedTasks);
     }
 
-    public void killAll() {
+    public void killAll(boolean close) {
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
         if (mLoadedTasks.size() == 0) {
-            Intent hideRecent = new Intent(
-                    SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-            mContext.sendBroadcast(hideRecent);
+            if(close){
+                close();
+            }
             return;
         }
 
@@ -181,17 +175,17 @@ public class SwitchManager {
             }
             ad.setKilled();
         }
-        dismissAndGoHome();
+        goHome(close);
     }
 
-    public void killOther() {
+    public void killOther(boolean close) {
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
         if (mLoadedTasks.size() == 0) {
-            Intent hideRecent = new Intent(
-                    SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-            mContext.sendBroadcast(hideRecent);
+            if(close){
+                close();
+            }
             return;
         }
         Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
@@ -206,15 +200,15 @@ public class SwitchManager {
             }
             ad.setKilled();
         }
-        Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-        mContext.sendBroadcast(hideRecent);
+        if(close){
+            close();
+        }
     }
 
-    public void dismissAndGoHome() {
-        Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-        mContext.sendBroadcast(hideRecent);
+    public void goHome(boolean close) {
+        if(close){
+            close();
+        }
 
         Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
         homeIntent.addCategory(Intent.CATEGORY_HOME);
@@ -227,16 +221,16 @@ public class SwitchManager {
         mLayout.updatePrefs(prefs, key);
     }
 
-    public void toggleLastApp() {
+    public void toggleLastApp(boolean close) {
         if (mLoadedTasks.size() < 2) {
-            Intent hideRecent = new Intent(
-                    SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-            mContext.sendBroadcast(hideRecent);
+            if(close){
+                close();
+            }
             return;
         }
 
         TaskDescription ad = mLoadedTasks.get(1);
-        switchTask(ad);
+        switchTask(ad, close);
     }
     
     public void startIntentFromtString(String intent) {
@@ -252,5 +246,41 @@ public class SwitchManager {
     
     public void updateLayout() {
         mLayout.updateLayout();
+    }
+
+    private void close(){
+        Intent hideRecent = new Intent(
+                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
+        mContext.sendBroadcast(hideRecent);
+    }
+
+    public void startApplicationDetailsActivity(String packageName) {
+        close();
+
+        Intent intent = new Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts(
+                        "package", packageName, null));
+        intent.setComponent(intent.resolveActivity(mContext.getPackageManager()));
+        TaskStackBuilder.create(mContext)
+                .addNextIntentWithParentStack(intent).startActivities();
+    }
+
+    public void startSettingssActivity() {
+        close();
+
+        Intent intent = new Intent(Settings.ACTION_SETTINGS, null);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        mContext.startActivity(intent);
+    }
+
+    public void startOmniSwitchSettingsActivity() {
+        close();
+
+        Intent mainActivity = new Intent(mContext,
+                SettingsActivity.class);
+        mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        mContext.startActivity(mainActivity);
     }
 }

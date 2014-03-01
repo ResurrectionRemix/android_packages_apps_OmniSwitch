@@ -60,6 +60,16 @@
         android:scaleType="centerInside"
         android:src="@drawable/home" />
     <org.omnirom.omniswitch.ui.GlowImageButton
+        android:id="@+id/allapps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@android:color/transparent"
+        android:minHeight="60dp"
+        android:minWidth="60dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_allapps" />
+    <org.omnirom.omniswitch.ui.GlowImageButton
         android:id="@+id/settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

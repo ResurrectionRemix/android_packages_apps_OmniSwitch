@@ -24,6 +24,7 @@
     <string name="opacity_summary">Sichtbarkeit des Hintergrundes</string>
     <string name="animate_title">Animieren</string>
     <string name="animate_title_summary">Animation beim Anzeigen / Verstecken</string>
+    <string name="adjust_handle_title">Position und Größe</string>
     <string name="sc_drag_handle_title">Verhalten Aufziehbereich</string>
     <string name="sc_drag_handle_body">\nZum Öffnen horizontal wischen oder lange gedrückt halten\nZum Schließen Taste drücken oder außerhalb berühren</string>
     <string name="sc_favorite_title">Favorisierte Apps</string>
@@ -67,4 +68,8 @@
     <string name="drag_handle_opacity_title">Transparenz</string>
     <string name="drag_handle_enable_title">Aktivieren</string>
     <string name="drag_handle_enable_summary">Nur deaktivieren, wenn Sie eine andere Aktivierungsmethode verwenden</string>
+    <string name="allapps_help">Apps</string>
+    <string name="allapps">Apps</string>
+    <string name="dim_behind_title">Hintergrund abdunkeln</string>
+    <string name="dim_behind_summary">Deckkraft auf den ganzen Bildschirm anwenden</string>
 </resources>

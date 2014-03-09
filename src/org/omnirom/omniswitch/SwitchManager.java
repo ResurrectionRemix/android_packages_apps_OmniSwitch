@@ -248,7 +248,7 @@ public class SwitchManager {
         mLayout.updateLayout();
     }
 
-    private void close(){
+    public void close(){
         Intent hideRecent = new Intent(
                 SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
         mContext.sendBroadcast(hideRecent);

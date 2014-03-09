@@ -633,9 +633,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                         if (DEBUG) {
                             Log.d(TAG, "onTouch");
                         }
-                        Intent hideRecent = new Intent(
-                                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-                        mContext.sendBroadcast(hideRecent);
+                        mRecentsManager.close();
                         return true;
                     }
                 }
@@ -645,15 +643,14 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mPopupView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN
-                        && event.getRepeatCount() == 0) {
+                if (keyCode == KeyEvent.KEYCODE_BACK &&
+                        event.getAction() == KeyEvent.ACTION_DOWN &&
+                        event.getRepeatCount() == 0) {
                     if (mShowing) {
                         if (DEBUG) {
                             Log.d(TAG, "onKey");
                         }
-                        Intent hideRecent = new Intent(
-                                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-                        mContext.sendBroadcast(hideRecent);
+                        mRecentsManager.close();
                         return true;
                     }
                 }
@@ -772,11 +769,11 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
 
         try {
-            mWindowManager.addView(mPopupView, getParams());
+            mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
         } catch(java.lang.IllegalStateException e){
             // something went wrong - try to recover here
             mWindowManager.removeView(mPopupView);
-            mWindowManager.addView(mPopupView, getParams());
+            mWindowManager.addView(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
         }
         
 
@@ -943,6 +940,11 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mPopup.dismiss();
         }
 
+        if (mConfiguration.mDimBehind){
+            // TODO workaround for flicker on launcher screen
+            mWindowManager.updateViewLayout(mPopupView, getParams(0));
+        }
+
         if (mConfiguration.mAnimate) {
             mView.startAnimation(getHideAnimation());
         } else {
@@ -956,7 +958,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mConfiguration.mHorizontalScrollerHeight);
     }
 
-    private WindowManager.LayoutParams getParams() {
+    private WindowManager.LayoutParams getParams(float dimAmount) {
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 mConfiguration.getCurrentOverlayWidth(),
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -965,7 +967,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 PixelFormat.TRANSLUCENT);
 
         if (mConfiguration.mDimBehind){
-            params.dimAmount = mConfiguration.mBackgroundOpacity;
+            params.dimAmount = dimAmount;
         }
         params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         params.y = mConfiguration.getCurrentOffsetStart() 
@@ -1135,7 +1137,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     
     public void updateLayout() {
         if (mShowing){
-            mWindowManager.updateViewLayout(mPopupView, getParams());
+            mWindowManager.updateViewLayout(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
             mAppDrawer.setNumColumns(Math.round(mConfiguration.getCurrentOverlayWidth()/mConfiguration.mHorizontalMaxWidth));
         }
     }

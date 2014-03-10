@@ -687,6 +687,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private synchronized void initView(){
         if (!mConfiguration.mDimBehind){
+            if (mConfiguration.mGravity == 0){
+                mView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg));
+            } else {
+                if (mConfiguration.mLocation == 0){
+                    mView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg_right));
+                } else {
+                    mView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg_left));
+                }
+            }
             mView.getBackground().setAlpha((int) (255 * mConfiguration.mBackgroundOpacity));
         } else {
             mView.getBackground().setAlpha(0);
@@ -969,13 +978,26 @@ public class SwitchLayout implements OnShowcaseEventListener {
         if (mConfiguration.mDimBehind){
             params.dimAmount = dimAmount;
         }
-        params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
+
+        params.gravity = Gravity.TOP | getHorizontalGravity();
         params.y = mConfiguration.getCurrentOffsetStart() 
                 + mConfiguration.mHandleHeight / 2 
                 - mConfiguration.mHorizontalScrollerHeight / 2 
                 - (mButtonsVisible ? mConfiguration.mHorizontalMaxWidth : 0);
 
         return params;
+    }
+
+    private int getHorizontalGravity(){
+        if (mConfiguration.mGravity == 0){
+            return Gravity.CENTER_HORIZONTAL;
+        } else {
+            if (mConfiguration.mLocation == 0){
+                return Gravity.RIGHT;
+            } else {
+                return Gravity.LEFT;
+            }
+        }
     }
 
     public synchronized void update(List<TaskDescription> taskList) {

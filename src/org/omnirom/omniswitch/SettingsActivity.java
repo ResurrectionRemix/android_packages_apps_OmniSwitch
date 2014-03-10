@@ -73,6 +73,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_DRAG_HANDLE_ENABLE = "drag_handle_enable";
     public static final String PREF_ENABLE = "enable";
     public static final String PREF_DIM_BEHIND = "dim_behind";
+    public static final String PREF_GRAVITY = "gravity";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -98,6 +99,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private SwitchPreference mDragHandleEnable;
     private CheckBoxPreference mDragHandleAutoHide;
     private DragHandleColorPreference mDragHandleColor;
+    private ListPreference mGravity;
 
     private Switch mToggleServiceSwitch;
 
@@ -127,12 +129,8 @@ public class SettingsActivity extends PreferenceActivity implements
 
         mIconSize = (ListPreference) findPreference(PREF_ICON_SIZE);
         mIconSize.setOnPreferenceChangeListener(this);
-        List<CharSequence> values = Arrays.asList(mIconSize.getEntryValues());
-        int idx = values.indexOf(mPrefs.getString(PREF_ICON_SIZE,
+        int idx = mIconSize.findIndexOfValue(mPrefs.getString(PREF_ICON_SIZE,
                 mIconSize.getEntryValues()[1].toString()));
-        if(idx == -1){
-            idx = 1;
-        }
         mIconSize.setValueIndex(idx);
         mIconSize.setSummary(mIconSize.getEntries()[idx]);
 
@@ -156,6 +154,13 @@ public class SettingsActivity extends PreferenceActivity implements
         mDragHandleEnable.setOnPreferenceChangeListener(this);
         mDragHandleColor = (DragHandleColorPreference) findPreference(PREF_DRAG_HANDLE_COLOR);
         
+        mGravity = (ListPreference) findPreference(PREF_GRAVITY);
+        mGravity.setOnPreferenceChangeListener(this);
+        idx = mGravity.findIndexOfValue(mPrefs.getString(PREF_GRAVITY,
+                mGravity.getEntryValues()[0].toString()));
+        mGravity.setValueIndex(idx);
+        mGravity.setSummary(mGravity.getEntries()[idx]);
+
         updateDragHandleEnablement(mDragHandleEnable.isChecked());
     }
     
@@ -200,9 +205,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference == mIconSize) {
             String value = (String) newValue;
-            List<CharSequence> values = Arrays.asList(mIconSize
-                    .getEntryValues());
-            int idx = values.indexOf(value);
+            int idx = mIconSize.findIndexOfValue(value);
             mIconSize.setSummary(mIconSize.getEntries()[idx]);
             mIconSize.setValueIndex(idx);
             return true;
@@ -216,6 +219,12 @@ public class SettingsActivity extends PreferenceActivity implements
             return true;
         } else if (preference == mDragHandleEnable) {
             updateDragHandleEnablement((Boolean) newValue);
+            return true;
+        } else if (preference == mGravity) {
+            String value = (String) newValue;
+            int idx = mGravity.findIndexOfValue(value);
+            mGravity.setSummary(mGravity.getEntries()[idx]);
+            mGravity.setValueIndex(idx);
             return true;
         }
 

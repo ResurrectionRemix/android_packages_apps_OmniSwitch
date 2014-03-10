@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.UserHandle;
 import android.preference.PreferenceManager;
@@ -87,7 +88,6 @@ public class SwitchService extends Service {
         mReceiver = new RecentsReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(RecentsReceiver.ACTION_SHOW_OVERLAY);
-        filter.addAction(RecentsReceiver.ACTION_SHOW_OVERLAY2);
         filter.addAction(RecentsReceiver.ACTION_HIDE_OVERLAY);
         filter.addAction(RecentsReceiver.ACTION_OVERLAY_SHOWN);
         filter.addAction(RecentsReceiver.ACTION_OVERLAY_HIDDEN);
@@ -156,13 +156,39 @@ public class SwitchService extends Service {
 
     public class RecentsReceiver extends BroadcastReceiver {
         public static final String ACTION_SHOW_OVERLAY = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY";
-        public static final String ACTION_SHOW_OVERLAY2 = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY2";
         public static final String ACTION_HIDE_OVERLAY = "org.omnirom.omniswitch.ACTION_HIDE_OVERLAY";
         public static final String ACTION_OVERLAY_SHOWN = "org.omnirom.omniswitch.ACTION_OVERLAY_SHOWN";
         public static final String ACTION_OVERLAY_HIDDEN = "org.omnirom.omniswitch.ACTION_OVERLAY_HIDDEN";
         public static final String ACTION_HANDLE_HIDE = "org.omnirom.omniswitch.ACTION_HANDLE_HIDE";
         public static final String ACTION_HANDLE_SHOW = "org.omnirom.omniswitch.ACTION_HANDLE_SHOW";
         public static final String ACTION_TOGGLE_OVERLAY = "org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY";
+
+        private void show(Context context) {
+            startActivityInBackground(context);
+            mManager.show();
+        }
+
+        private void hide() {
+            Intent finishActivity = new Intent(
+                    MainActivity.ActivityReceiver.ACTION_FINISH);
+            sendBroadcast(finishActivity);
+            mManager.hide();
+        }
+
+        private void startActivityInBackground(final Context context) {
+            AsyncTask<Void, Void, Void> startActivity = new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    Intent mainActivity = new Intent(context,
+                            MainActivity.class);
+                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                    startActivity(mainActivity);
+                    return null;
+                }
+            };
+            startActivity.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
 
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -172,22 +198,14 @@ public class SwitchService extends Service {
             }
             if (ACTION_SHOW_OVERLAY.equals(action)) {
                 if (!mManager.isShowing()) {
-                    Intent mainActivity = new Intent(context,
-                            MainActivity.class);
-                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                    startActivity(mainActivity);
-                }
-            } else if (ACTION_SHOW_OVERLAY2.equals(action)) {
-                if (!mManager.isShowing()) {
-                    mManager.show();
+                    if (DEBUG){
+                        Log.d(TAG, "ACTION_SHOW_OVERLAY " + System.currentTimeMillis());
+                    }
+                    show(context);
                 }
             } else if (ACTION_HIDE_OVERLAY.equals(action)) {
                 if (mManager.isShowing()) {
-                    Intent finishActivity = new Intent(
-                            MainActivity.ActivityReceiver.ACTION_FINISH);
-                    sendBroadcast(finishActivity);
-                    mManager.hide();
+                    hide();
                 }
             } else if (ACTION_OVERLAY_SHOWN.equals(action)){
                 mGesturePanel.overlayShown();
@@ -201,16 +219,9 @@ public class SwitchService extends Service {
                 mGesturePanel.hide();
             } else if (ACTION_TOGGLE_OVERLAY.equals(action)) {
                 if (mManager.isShowing()) {
-                    Intent finishActivity = new Intent(
-                            MainActivity.ActivityReceiver.ACTION_FINISH);
-                    sendBroadcast(finishActivity);
-                    mManager.hide();
+                    hide();
                 } else {
-                    Intent mainActivity = new Intent(context,
-                            MainActivity.class);
-                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                    startActivity(mainActivity);
+                    show(context);
                 }
             } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
                 int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);

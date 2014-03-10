@@ -77,4 +77,7 @@
     <string name="allapps">App drawer</string>
     <string name="dim_behind_title">Dim background</string>
     <string name="dim_behind_summary">Apply opacity to complete screen</string>
+    <string name="gravity_title">Horizontal gravity</string>
+    <string name="gravity_center">Center</string>
+    <string name="gravity_drag">Drag handle side</string>
 </resources>

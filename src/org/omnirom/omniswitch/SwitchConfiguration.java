@@ -46,6 +46,7 @@ public class SwitchConfiguration {
     public boolean mAutoHide;
     public static final int AUTO_HIDE_DEFAULT = 3000; // 3s
     public boolean mDragHandleShow = true;
+    public int mGravity;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
@@ -102,6 +103,8 @@ public class SwitchConfiguration {
         mAutoHide= prefs.getBoolean(SettingsActivity.PREF_AUTO_HIDE_HANDLE, false);
         mDragHandleShow = prefs.getBoolean(SettingsActivity.PREF_DRAG_HANDLE_ENABLE, true);
         mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, false);
+        String gravity = prefs.getString(SettingsActivity.PREF_GRAVITY, "0");
+        mGravity = Integer.valueOf(gravity);
     }
     
     // includes rotation                

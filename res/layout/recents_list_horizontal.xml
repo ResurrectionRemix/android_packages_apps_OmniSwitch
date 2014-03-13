@@ -19,8 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp" >
+    android:paddingBottom="10dp" >
     <include layout="@layout/buttons" />
     <include layout="@layout/recents_rambar" />
     <RelativeLayout
@@ -35,7 +34,9 @@
                 android:id="@+id/recent_list_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp" />
             <TextView
                 android:id="@+id/no_recent_apps"
                 android:layout_width="match_parent"
@@ -65,13 +66,18 @@
                 android:id="@+id/favorite_list_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp" />
         </LinearLayout>
         <GridView
             android:id="@+id/app_drawer"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:listSelector="@android:color/transparent"
+            android:numColumns="auto_fit"
+            android:smoothScrollbar="true"
+            android:stretchMode="spacingWidthUniform"
             android:visibility="gone" />
     </RelativeLayout>
 </LinearLayout>

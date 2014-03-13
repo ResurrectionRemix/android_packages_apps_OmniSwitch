@@ -17,8 +17,9 @@
  */
 package org.omnirom.omniswitch;
 
-import org.omnirom.omniswitch.ui.SwitchGestureView;
 import org.omnirom.omniswitch.ui.BitmapCache;
+import org.omnirom.omniswitch.ui.IconPackHelper;
+import org.omnirom.omniswitch.ui.SwitchGestureView;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -97,7 +98,7 @@ public class SwitchService extends Service {
         filter.addAction(Intent.ACTION_USER_SWITCHED);
 
         registerReceiver(mReceiver, filter);
-        PackageManager.getInstance(this).updatePackageList(false);
+        PackageManager.getInstance(this).updatePackageList(false, null);
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         updatePrefs(mPrefs, null);
@@ -140,7 +141,7 @@ public class SwitchService extends Service {
         sendBroadcastAsUser(stopActivity, UserHandle.ALL);
 
         // TODO
-        BitmapCache.getInstance().clear();
+        BitmapCache.getInstance(this).clear();
     }
 
     @Override
@@ -239,6 +240,8 @@ public class SwitchService extends Service {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         // MUST be before the rest
+        IconPackHelper.getInstance(this).updatePrefs(prefs, key);
+//        PackageManager.getInstance(this).updatePrefs(prefs, key);
         mConfiguration.updatePrefs(prefs, key);
         mManager.updatePrefs(prefs, key);
         mGesturePanel.updatePrefs(prefs, key);
@@ -257,8 +260,7 @@ public class SwitchService extends Service {
         }
     }
 
-    private boolean hasSystemPermission()
-    {
+    private boolean hasSystemPermission() {
         int result = checkCallingOrSelfPermission(android.Manifest.permission.INTERACT_ACROSS_USERS_FULL);
         return result == android.content.pm.PackageManager.PERMISSION_GRANTED;
     }

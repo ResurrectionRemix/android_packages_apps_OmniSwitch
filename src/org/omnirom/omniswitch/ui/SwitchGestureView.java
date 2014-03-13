@@ -224,7 +224,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         lp.gravity = getGravity();
         lp.y = mConfiguration.getCurrentOffsetStart();
         lp.height = mConfiguration.mHandleHeight;
-        lp.width = (int) (20 * mConfiguration.mDensity + 0.5f);
+        lp.width = Math.round(20 * mConfiguration.mDensity);
         
         return lp;
     }

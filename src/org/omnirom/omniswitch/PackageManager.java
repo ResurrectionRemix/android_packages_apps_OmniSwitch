@@ -24,6 +24,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.omnirom.omniswitch.ui.BitmapCache;
+import org.omnirom.omniswitch.ui.BitmapUtils;
+import org.omnirom.omniswitch.ui.IconPackHelper;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -35,8 +39,6 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 
-import org.omnirom.omniswitch.ui.BitmapCache;
-
 public class PackageManager {
 
     private Map<String, PackageItem> mInstalledPackages;
@@ -44,15 +46,17 @@ public class PackageManager {
     private Context mContext;
     private boolean mInitDone;
     private static PackageManager sInstance;
+//    private String mCurrentIconPack = "";
 
     public static class PackageItem implements Comparable<PackageItem> {
         private CharSequence title;
         private String packageName;
         private Drawable icon;
-        private String intent;
+        private Intent intent;
+        private ActivityInfo activity;
 
         public String getIntent() {
-            return intent;
+            return intent.toUri(0);
         }
 
         public CharSequence getTitle() {
@@ -61,6 +65,10 @@ public class PackageManager {
 
         public Drawable getIcon() {
             return icon;
+        }
+
+        public ActivityInfo getActivityInfo() {
+            return activity;
         }
 
         @Override
@@ -89,18 +97,30 @@ public class PackageManager {
         mContext = context;
     }
 
-    public List<PackageItem> getPackageList() {
+    public synchronized List<PackageItem> getPackageList() {
         if(!mInitDone){
-            updatePackageList(false);
+            updatePackageList(false, null);
         }
         return mInstalledPackagesList;
     }
 
-    public void updatePackageList(boolean removed) {
-        final android.content.pm.PackageManager pm = mContext.getPackageManager();
+    public synchronized Map<String, PackageItem> getPackageMap() {
+        if(!mInitDone){
+            updatePackageList(false, null);
+        }
+        return mInstalledPackages;
+    }
 
+    public synchronized void clearPackageList() {
+        mInstalledPackages.clear();
+        mInstalledPackagesList.clear();
+        mInitDone = false;
+    }
+
+    public synchronized void updatePackageList(boolean removed, String pkg) {
+        final android.content.pm.PackageManager pm = mContext.getPackageManager();
         // TODO
-        BitmapCache.getInstance().clear();
+        BitmapCache.getInstance(mContext).clear();
 
         mInstalledPackages.clear();
         mInstalledPackagesList.clear();
@@ -117,6 +137,7 @@ public class PackageManager {
             item.packageName = appInfo.packageName;
 
             ActivityInfo activity = info.activityInfo;
+            item.activity = activity;
             ComponentName name = new ComponentName(
                     activity.applicationInfo.packageName, activity.name);
             Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -124,20 +145,29 @@ public class PackageManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
             intent.setComponent(name);
-            item.intent = intent.toUri(0);
-            try {
-                item.icon = pm.getActivityIcon(intent);
-            } catch (NameNotFoundException e) {
-                continue;
+            item.intent = intent;
+
+            if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+                int iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(activity);
+                if (iconId != 0) {
+                    item.icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
+                }
+            }
+            if (item.icon == null || !IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+                try {
+                    item.icon = pm.getActivityIcon(intent);
+                } catch (NameNotFoundException e) {
+                    continue;
+                }
+            }
+            if (item.icon == null) {
+                item.icon = BitmapUtils.getDefaultActivityIcon(mContext);
             }
             item.title = Utils.getActivityLabel(pm, intent);
             if (item.title == null) {
                 item.title = appInfo.loadLabel(pm);
             }
-            if (item.icon == null) {
-                item.icon = getDefaultActivityIcon();
-            }
-            mInstalledPackages.put(item.intent, item);
+            mInstalledPackages.put(item.getIntent(), item);
             mInstalledPackagesList.add(item);
         }
         if (removed){
@@ -147,23 +177,51 @@ public class PackageManager {
         mInitDone = true;
     }
 
-    private Drawable getDefaultActivityIcon() {
-        return mContext.getResources().getDrawable(R.drawable.ic_default);
+    public synchronized void updatePackageIcons() {
+        final android.content.pm.PackageManager pm = mContext.getPackageManager();
+        // TODO
+        BitmapCache.getInstance(mContext).clear();
+
+        Iterator<PackageItem> nextPackage = mInstalledPackagesList.iterator();
+        while(nextPackage.hasNext()){
+            PackageItem item = nextPackage.next();
+            item.icon = null;
+            if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+                int iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(item.activity);
+                if (iconId != 0) {
+                    item.icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
+                }
+            }
+            if (item.icon == null || !IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+                try {
+                    item.icon = pm.getActivityIcon(item.intent);
+                } catch (NameNotFoundException e) {
+                    continue;
+                }
+            }
+            if (item.icon == null) {
+                item.icon = BitmapUtils.getDefaultActivityIcon(mContext);
+            }
+        }
     }
 
-    public Drawable getIcon(String intent) {
-        return mInstalledPackages.get(intent).getIcon();
+    public synchronized Drawable getIcon(String intent) {
+        return getPackageMap().get(intent).getIcon();
     }
 
-    public CharSequence getTitle(String intent) {
-        return mInstalledPackages.get(intent).getTitle();
+    public synchronized CharSequence getTitle(String intent) {
+        return getPackageMap().get(intent).getTitle();
     }
 
-    public boolean contains(String intent) {
-        return mInstalledPackages.containsKey(intent);
+    public synchronized PackageManager.PackageItem getPackageItem(String intent) {
+        return getPackageMap().get(intent);
     }
 
-    private void updateFavorites() {
+    public synchronized boolean contains(String intent) {
+        return getPackageMap().containsKey(intent);
+    }
+
+    private synchronized void updateFavorites() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
         List<String> favoriteList = new ArrayList<String>();
@@ -186,4 +244,11 @@ public class PackageManager {
                     .commit();
         }
     }
+
+//    public void updatePrefs(SharedPreferences prefs, String key) {
+//        if (key == null || key.equals(SettingsActivity.PREF_ICONPACK)){
+//            String iconPack = prefs.getString(SettingsActivity.PREF_ICONPACK, "");
+//            mCurrentIconPack = iconPack;
+//        }
+//    }
 }

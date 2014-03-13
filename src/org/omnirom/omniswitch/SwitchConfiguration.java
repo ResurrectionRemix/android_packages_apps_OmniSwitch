@@ -30,10 +30,10 @@ public class SwitchConfiguration {
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
-    public int mIconBorder = 10; // in dip
+    public int mIconBorder = 8; // in dip
     public float mDensity;
-    public int mHorizontalMaxWidth = mIconSize;
-    public int mHorizontalScrollerHeight = mIconSize * 2;
+    public int mHorizontalMaxWidth ;
+    public int mHorizontalMaxHeight;
     public boolean mShowRambar;
     public int mStartYRelative;
     public int mHandleHeight;
@@ -70,8 +70,8 @@ public class SwitchConfiguration {
         mWindowManager.getDefaultDisplay().getSize(size);
         mDefaultColor = context.getResources().getColor(R.color.holo_blue_light);
         mGlowColor = context.getResources().getColor(R.color.glow_color);
-        mDefaultHeight = (int) (100 * mDensity + 0.5);
-        mHorizontalMargin = (int) (5 * mDensity + 0.5);
+        mDefaultHeight = Math.round(100 * mDensity);
+        mHorizontalMargin = Math.round(5 * mDensity);
         updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
     }
 
@@ -93,9 +93,9 @@ public class SwitchConfiguration {
         mStartYRelative = prefs.getInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeightStart);
         mHandleHeight = prefs.getInt(SettingsActivity.PREF_HANDLE_HEIGHT, mDefaultHeight);
 
-        mHorizontalMaxWidth = (int) ((mIconSize + mIconBorder) * mDensity + 0.5f);
-        mHorizontalScrollerHeight = (int) ((mIconSize + mIconBorder + (mShowLabels ? 40 : 0))
-                * mDensity + 0.5f);
+        mHorizontalMaxWidth = Math.round((mIconSize + mIconBorder) * mDensity);
+        mHorizontalMaxHeight = Math.round((mIconSize + 3 * mIconBorder) * mDensity);
+
         mDragHandleColor = prefs
                 .getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
         opacity = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_OPACITY, 100);

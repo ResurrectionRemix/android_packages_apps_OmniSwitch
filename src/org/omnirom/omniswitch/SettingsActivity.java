@@ -18,13 +18,13 @@
 package org.omnirom.omniswitch;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.CheckboxListDialog;
 import org.omnirom.omniswitch.ui.DragHandleColorPreference;
 import org.omnirom.omniswitch.ui.FavoriteDialog;
+import org.omnirom.omniswitch.ui.IconPackHelper;
 import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
 
@@ -74,6 +74,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_ENABLE = "enable";
     public static final String PREF_DIM_BEHIND = "dim_behind";
     public static final String PREF_GRAVITY = "gravity";
+    public static final String PREF_ICONPACK = "iconpack";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -100,8 +101,9 @@ public class SettingsActivity extends PreferenceActivity implements
     private CheckBoxPreference mDragHandleAutoHide;
     private DragHandleColorPreference mDragHandleColor;
     private ListPreference mGravity;
-
+    private Preference mIconpack;
     private Switch mToggleServiceSwitch;
+    private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
 
     @Override
     public void onPause() {
@@ -111,7 +113,14 @@ public class SettingsActivity extends PreferenceActivity implements
         if (mManageAppDialog != null) {
             mManageAppDialog.dismiss();
         }
+        mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
         super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
+        super.onResume();
     }
 
     @Override
@@ -161,9 +170,18 @@ public class SettingsActivity extends PreferenceActivity implements
         mGravity.setValueIndex(idx);
         mGravity.setSummary(mGravity.getEntries()[idx]);
 
+        mIconpack = (Preference) findPreference(PREF_ICONPACK);
         updateDragHandleEnablement(mDragHandleEnable.isChecked());
+
+        mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs,
+                    String key) {
+                updatePrefs(prefs, key);
+            }
+        };
+        updatePrefs(mPrefs, null);
     }
-    
+
     private void updateDragHandleEnablement(Boolean value) {
         boolean dragHandleEnable = value.booleanValue();
         mAdjustHandle.setEnabled(dragHandleEnable);
@@ -196,6 +214,9 @@ public class SettingsActivity extends PreferenceActivity implements
                     mButtonEntries, mButtonImages, buttons, new ButtonsApplyRunnable(),
                     getResources().getString(R.string.buttons_title));
             dialog.show();
+            return true;
+        } else if (preference == mIconpack){
+            IconPackHelper.pickIconPack(this);
             return true;
         }
         return false;
@@ -297,5 +318,12 @@ public class SettingsActivity extends PreferenceActivity implements
                 mPrefs.edit().putBoolean(PREF_ENABLE, value).commit();
             }});
         return true;
+    }
+
+    public void updatePrefs(SharedPreferences prefs, String key) {
+        if (!SwitchService.isRunning()){
+            IconPackHelper.getInstance(SettingsActivity.this).updatePrefs(mPrefs, null);
+//            PackageManager.getInstance(SettingsActivity.this).updatePrefs(mPrefs, null);
+        }
     }
 }

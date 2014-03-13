@@ -17,7 +17,6 @@
  */
 package org.omnirom.omniswitch.ui;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,19 +27,15 @@ import org.omnirom.omniswitch.PackageManager;
 import org.omnirom.omniswitch.PackageManager.PackageItem;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
-import org.omnirom.omniswitch.Utils;
 import org.omnirom.omniswitch.dslv.DragSortController;
 import org.omnirom.omniswitch.dslv.DragSortListView;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -60,8 +55,6 @@ public class FavoriteDialog extends AlertDialog implements
     private static final String TAG = "FavoriteDialog";
 
     private LayoutInflater mInflater;
-    private List<Drawable> mFavoriteIcons;
-    private List<String> mFavoriteNames;
     private List<String> mFavoriteList;
     private SettingsActivity mContext;
     private FavoriteListAdapter mFavoriteAdapter;
@@ -84,12 +77,15 @@ public class FavoriteDialog extends AlertDialog implements
             View rowView = null;
             rowView = mInflater.inflate(R.layout.favorite_app_item, parent,
                     false);
+            String intent = mFavoriteList.get(position);
+            PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
+
             final TextView item = (TextView) rowView
                     .findViewById(R.id.app_item);
-            item.setText(mFavoriteNames.get(position));
+            item.setText(packageItem.getTitle());
             final ImageView image = (ImageView) rowView
                     .findViewById(R.id.app_icon);
-            image.setImageDrawable(mFavoriteIcons.get(position));
+            image.setImageDrawable(BitmapCache.getInstance(mContext).getPackageIcon(mContext.getResources(), packageItem));
             return rowView;
         }
     }
@@ -165,7 +161,6 @@ public class FavoriteDialog extends AlertDialog implements
                     public void drop(int from, int to) {
                         String intent = mFavoriteList.remove(from);
                         mFavoriteList.add(to, intent);
-                        updateFavorites(mFavoriteList);
                         mFavoriteAdapter.notifyDataSetChanged();
                     }
                 });
@@ -174,7 +169,6 @@ public class FavoriteDialog extends AlertDialog implements
                     @Override
                     public void remove(int which) {
                         mFavoriteList.remove(which);
-                        updateFavorites(mFavoriteList);
                         mFavoriteAdapter.notifyDataSetChanged();
                     }
                 });
@@ -185,7 +179,6 @@ public class FavoriteDialog extends AlertDialog implements
             }
         });
         mFavoriteConfigList.setItemsCanFocus(false);
-        updateFavorites(mFavoriteList);
     }
 
     @Override
@@ -235,36 +228,13 @@ public class FavoriteDialog extends AlertDialog implements
         mAddFavoriteDialog.show();
     }
 
-    private void updateFavorites(List<String> favoriteList) {
-        final android.content.pm.PackageManager pm = mContext.getPackageManager();
-        mFavoriteIcons = new ArrayList<Drawable>();
-        mFavoriteNames = new ArrayList<String>();
-        Iterator<String> nextFavorite = favoriteList.iterator();
-        while (nextFavorite.hasNext()) {
-            String favorite = nextFavorite.next();
-            Intent intent = null;
-            try {
-                intent = Intent.parseUri(favorite, 0);
-                mFavoriteIcons.add(pm.getActivityIcon(intent));
-            } catch (NameNotFoundException e) {
-                Log.e(TAG, "NameNotFoundException: [" + favorite + "]");
-                continue;
-            } catch (URISyntaxException e) {
-                Log.e(TAG, "URISyntaxException: [" + favorite + "]");
-                continue;
-            }
-            String label = Utils.getActivityLabel(pm, intent);
-            if (label == null) {
-                label = favorite;
-            }
-            mFavoriteNames.add(label);
-        }
+    private Drawable getDefaultActivityIcon() {
+        return mContext.getResources().getDrawable(R.drawable.ic_default);
     }
 
     public void applyChanges(List<String> favoriteList) {
         mFavoriteList.clear();
         mFavoriteList.addAll(favoriteList);
-        updateFavorites(mFavoriteList);
         mFavoriteAdapter.notifyDataSetChanged();
     }
 
@@ -324,7 +294,7 @@ public class FavoriteDialog extends AlertDialog implements
                 }
                 PackageItem applicationInfo = getItem(position);
                 holder.item.setText(applicationInfo.getTitle());
-                holder.image.setImageDrawable(applicationInfo.getIcon());
+                holder.image.setImageDrawable(BitmapCache.getInstance(mContext).getPackageIcon(mContext.getResources(), applicationInfo));
                 holder.check.setChecked(mChangedFavoriteList
                         .contains(applicationInfo.getIntent()));
 

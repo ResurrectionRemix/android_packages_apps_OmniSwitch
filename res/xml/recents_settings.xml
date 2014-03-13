@@ -35,6 +35,10 @@
             android:key="icon_size"
             android:summary="@string/icon_size_normal"
             android:title="@string/icon_size_title" />
+        <Preference
+            android:key="iconpack"
+            android:summary="@string/icon_pack_summary"
+            android:title="@string/icon_pack_title" />
         <org.omnirom.omniswitch.ui.SeekBarPreference
             android:defaultValue="60"
             android:key="opacity"

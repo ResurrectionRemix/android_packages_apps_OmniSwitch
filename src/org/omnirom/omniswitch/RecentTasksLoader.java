@@ -18,9 +18,12 @@
 package org.omnirom.omniswitch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.omnirom.omniswitch.ui.BitmapCache;
+import org.omnirom.omniswitch.ui.IconPackHelper;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -45,9 +48,9 @@ public class RecentTasksLoader {
                                                             // non-apps
 
     private Context mContext;
-    private AsyncTask<Void, ArrayList<TaskDescription>, Void> mTaskLoader;
+    private AsyncTask<Void, List<TaskDescription>, Void> mTaskLoader;
     private Handler mHandler;
-    private ArrayList<TaskDescription> mLoadedTasks;
+    private List<TaskDescription> mLoadedTasks;
     private boolean mPreloaded;
     private SwitchManager mSwitchManager;
 
@@ -79,7 +82,7 @@ public class RecentTasksLoader {
         mConfiguration = SwitchConfiguration.getInstance(mContext);
     }
 
-    public ArrayList<TaskDescription> getLoadedTasks() {
+    public List<TaskDescription> getLoadedTasks() {
         return mLoadedTasks;
     }
 
@@ -183,12 +186,12 @@ public class RecentTasksLoader {
         mState = State.LOADING;
         mLoadedTasks.clear();
 
-        mTaskLoader = new AsyncTask<Void, ArrayList<TaskDescription>, Void>() {
+        mTaskLoader = new AsyncTask<Void, List<TaskDescription>, Void>() {
             @Override
             protected void onProgressUpdate(
-                    ArrayList<TaskDescription>... values) {
+                    List<TaskDescription>... values) {
                 if (!isCancelled()) {
-                    ArrayList<TaskDescription> newTasks = values[0];
+                    List<TaskDescription> newTasks = values[0];
                     mLoadedTasks.addAll(newTasks);
                     if (mSwitchManager != null){
                         if (DEBUG){
@@ -201,7 +204,6 @@ public class RecentTasksLoader {
                 }
             }
 
-            @SuppressWarnings("unchecked")
             @Override
             protected Void doInBackground(Void... params) {
                 final int origPri = Process.getThreadPriority(Process.myTid());
@@ -218,7 +220,7 @@ public class RecentTasksLoader {
                         .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(
                                 pm, 0);
 
-                ArrayList<TaskDescription> tasks = new ArrayList<TaskDescription>();
+                List<TaskDescription> tasks = new ArrayList<TaskDescription>();
 
                 for (int i = 0; i < numTasks; ++i) {
                     if (isCancelled()) {
@@ -248,6 +250,7 @@ public class RecentTasksLoader {
                             recentInfo.origActivity, recentInfo.description);
 
                     if (item != null) {
+                        // TODO we would not need to do that if already loaded
                         tasks.add(item);
                         loadTaskIcon(item);
                     }
@@ -278,12 +281,12 @@ public class RecentTasksLoader {
         }
     }
 
-    private Drawable getFullResDefaultActivityIcon(String packageName) {
-        return getFullResIcon(mContext.getResources(), R.drawable.ic_default, packageName);
+    private Drawable getFullResDefaultActivityIcon(ActivityInfo activityInfo) {
+        return getFullResIcon(mContext.getResources(), R.drawable.ic_default, activityInfo);
     }
 
-    private Drawable getFullResIcon(Resources resources, int iconId, String packageName) {
-       return BitmapCache.getInstance().getResized(resources, packageName, iconId, mConfiguration);
+    private Drawable getFullResIcon(Resources resources, int iconId, ActivityInfo activityInfo) {
+       return BitmapCache.getInstance(mContext).getResized(resources, activityInfo, iconId, mConfiguration);
     }
 
     private Drawable getFullResIcon(ResolveInfo info,
@@ -296,11 +299,21 @@ public class RecentTasksLoader {
             resources = null;
         }
         if (resources != null) {
-            int iconId = info.activityInfo.getIconResource();
-            if (iconId != 0) {
-                return getFullResIcon(resources, iconId, info.activityInfo.applicationInfo.packageName);
+            if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+                int iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
+                if (iconId != 0) {
+                    return getFullResIcon(IconPackHelper.getInstance(mContext).getIconPackResources(), iconId, info.activityInfo);
+                }
             }
+            return getFullResIcon(resources, info.activityInfo.getIconResource(), info.activityInfo);
         }
-        return getFullResDefaultActivityIcon(info.activityInfo.applicationInfo.packageName);
+        return getFullResDefaultActivityIcon(info.activityInfo);
     }
+
+//    public Bitmap loadThumbnail(TaskDescription td) {
+//        final ActivityManager am = (ActivityManager)
+//                mContext.getSystemService(Context.ACTIVITY_SERVICE);
+//        final PackageManager pm = mContext.getPackageManager();
+//        return am.getTaskTopThumbnail(td.persistentTaskId);
+//    }
 }

@@ -17,15 +17,21 @@
  */
 package org.omnirom.omniswitch.ui;
 
+import org.omnirom.omniswitch.R;
+
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
+import android.graphics.BlurMaskFilter.Blur;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Paint;
-import android.graphics.BlurMaskFilter.Blur;
+import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -41,28 +47,19 @@ public class BitmapUtils {
     }
 
     public static Drawable resize(Resources resources, Drawable image, int iconSize, int borderSize, float density) {
-        int size = (int) (iconSize * density + 0.5f);
-        int border = (int) (borderSize * density + 0.5f);
+        int size = Math.round(iconSize * density);
+        int border = Math.round(borderSize * density);
 
         Bitmap b = ((BitmapDrawable) image).getBitmap();
-        int originalHeight = b.getHeight();
-        int originalWidth = b.getWidth();
-
-        int l = originalHeight > originalWidth ? originalHeight : originalWidth;
-        float factor = (float) size / (float) l;
-
-        int resizedHeight = (int) (originalHeight * factor);
-        int resizedWidth = (int) (originalWidth * factor);
 
         // create a border around the icon
-        Bitmap bmResult = Bitmap.createBitmap(resizedHeight + border, resizedWidth + border,
+        Bitmap bmResult = Bitmap.createBitmap(size + border, size + 3 * border,
                 Bitmap.Config.ARGB_8888);
         Canvas tempCanvas = new Canvas(bmResult);
 
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, resizedWidth,
-                resizedHeight, true);
-        tempCanvas.drawBitmap(bitmapResized, border/2, border/2, null);
-
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, size,
+                size, true);
+        tempCanvas.drawBitmap(bitmapResized, border/2, border, null);
         return new BitmapDrawable(resources, bmResult);
     }
 
@@ -127,5 +124,55 @@ public class BitmapUtils {
         canvas.drawBitmap(alpha, halfMargin, halfMargin, paint);
 
         return new BitmapDrawable(resources, bmp);
+    }
+
+    public static Drawable getDefaultActivityIcon(Context context) {
+        return context.getResources().getDrawable(R.drawable.ic_default);
+    }
+
+    public static Drawable compose(Resources resources, Drawable icon, Context context, Drawable iconBack,
+            Drawable iconMask, Drawable iconUpon, float scale) {
+        Bitmap b = ((BitmapDrawable) icon).getBitmap();
+        int width = b.getWidth();
+        int height = b.getHeight();
+
+        // TODO
+        if (iconBack == null && iconMask == null && iconUpon == null){
+            scale = 1.0f;
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas();
+        canvas.setBitmap(bitmap);
+
+        Rect oldBounds = new Rect();
+        oldBounds.set(icon.getBounds());
+        icon.setBounds(0, 0, width, height);
+        canvas.save();
+        canvas.scale(scale, scale, width / 2, height/2);
+        icon.draw(canvas);
+        canvas.restore();
+        if (iconMask != null) {
+            iconMask.setBounds(icon.getBounds());
+            ((BitmapDrawable) iconMask).getPaint().setXfermode(
+                    new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+            iconMask.draw(canvas);
+        }
+        if (iconBack != null) {
+            canvas.setBitmap(null);
+            Bitmap finalBitmap = Bitmap.createBitmap(width, height,
+                    Bitmap.Config.ARGB_8888);
+            canvas.setBitmap(finalBitmap);
+            iconBack.setBounds(icon.getBounds());
+            iconBack.draw(canvas);
+            canvas.drawBitmap(bitmap, null, icon.getBounds(), null);
+            bitmap = finalBitmap;
+        }
+        if (iconUpon != null) {
+            iconUpon.draw(canvas);
+        }
+        icon.setBounds(oldBounds);
+        return new BitmapDrawable(resources, bitmap);
     }
 }

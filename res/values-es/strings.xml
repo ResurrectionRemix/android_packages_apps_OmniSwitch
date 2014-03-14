@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2013 The OmniROM Project
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">OmniSwitch</string>
+    <string name="status_bar_recent_remove_item_title">Detener</string>
+    <string name="status_bar_recent_inspect_item_title">App info</string>
+    <string name="recents_settings_title">OmniSwitch</string>
+    <string name="start_on_boot_title">Ejecutar al arrancar</string>
+    <string name="start_on_boot_summary">Ejecutar y activar en el arranque del dispositivo</string>
+    <string name="opacity_title">Opacidad</string>
+    <string name="opacity_summary">Opacidad de fondo en la vista de superposición</string>
+    <string name="animate_title">Animar</string>
+    <string name="animate_title_summary">Animar mostrar y ocultar de la vista de superposición</string>
+    <string name="adjust_handle_title">Posición y tamaño</string>
+    <string name="sc_drag_handle_title">Arrastrar y tocar</string>
+    <string name="sc_drag_handle_body">\nSwipe horizontal o mantener pulsado para abrir\nPulse el botón o en el exterior para cerrar</string>
+    <string name="sc_favorite_title">Apps favoritas</string>
+    <string name="sc_favorite_body">\nAbrir la vista de apps favoritas.</string>
+    <string name="icon_size_normal">Normal</string>
+    <string name="icon_size_small">Pequeño</string>
+    <string name="icon_size_large">Grande</string>
+    <string name="icon_size_title">Icono</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="drag_handle_color_title">Color</string>
+    <string name="drag_handle_color_dialog_title">Color</string>
+    <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> libre</string>
+    <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> usado</string>
+    <string name="show_rambar_title">Mostrar el uso de la memoria</string>
+    <string name="show_rambar_summary">Mostrar cantidad de memoria libre y en uso</string>
+    <string name="show_app_labels">Mostrar nombre de la aplicación</string>
+    <string name="show_app_labels_summary">Nombre de la aplicación se mostrará con el icono</string>
+    <string name="category_overlay_title">Superposición</string>
+    <string name="category_drag_handle_title">Arrastrar y tocar</string>
+    <string name="category_favorite_title">Favoritos</string>
+    <string name="favorite_apps_config_title">Administrar favoritos</string>
+    <string name="favorite_apps_config_summary">Definir aplicaciones mostradas en la vista de favoritos</string>
+    <string name="favorite_apps_add_dialog_title">Añadir apps</string>
+    <string name="favorite_add">Añadir\u2026</string>
+    <string name="location_left" translatable="false">&lt;&lt;</string>
+    <string name="location_right" translatable="false">&gt;&gt;</string>
+    <string name="reset">Por defecto</string>
+    <string name="toogle_last_app_help">Cambiar a la última aplicación</string>
+    <string name="kill_all_apps_help">Matar todas las apps</string>
+    <string name="kill_other_apps_help">Matar otras aplicaciones</string>
+    <string name="settings_help">Ajustes</string>
+    <string name="home_help">Inicio</string>
+    <string name="toogle_last_app">Cambiar a la última aplicación</string>
+    <string name="kill_all_apps">Matar todas las apps</string>
+    <string name="kill_other_apps">Matar otras aplicaciones</string>
+    <string name="settings">Ajustes</string>
+    <string name="home">Inicio</string>
+    <string name="buttons_title">Botones</string>
+    <string name="buttons_summary">Los botones de acción se muestran en la vista de superposición</string>
+    <string name="auto_hide_handle">Auto-ocultar</string>
+    <string name="auto_hide_handle_summary">Dos golpes para mostrar la vista de superposición</string>
+    <string name="no_recent_apps_title">No hay aplicaciones recientes</string>
+    <string name="drag_handle_opacity_title">Opacidad</string>
+    <string name="drag_handle_enable_title">Habilitar</string>
+    <string name="drag_handle_enable_summary">Deshabilitar sólo si se utiliza otro método de activación</string>
+    <string name="allapps_help">Cajón app</string>
+    <string name="allapps">Cajón app</string>
+    <string name="dim_behind_title">Dim background</string>
+    <string name="dim_behind_summary">Aplicar la opacidad a pantalla completa</string>
+</resources>

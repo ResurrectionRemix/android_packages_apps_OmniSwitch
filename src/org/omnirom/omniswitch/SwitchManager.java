@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omnirom.omniswitch.ui.SwitchGestureView;
 import org.omnirom.omniswitch.ui.SwitchLayout;
 
 import android.app.ActivityManager;
@@ -44,6 +45,7 @@ public class SwitchManager {
     private static final boolean DEBUG = false;
     private List<TaskDescription> mLoadedTasks;
     private SwitchLayout mLayout;
+    private SwitchGestureView mGestureView;
     private Context mContext;
 
     public SwitchManager(Context context) {
@@ -86,10 +88,22 @@ public class SwitchManager {
 
         mLayout = new SwitchLayout(mContext);
         mLayout.setRecentsManager(this);
+
+        mGestureView = new SwitchGestureView(mContext);
+        mGestureView.setRecentsManager(this);
     }
 
     public void killManager() {
         RecentTasksLoader.killInstance();
+        mGestureView.hide();
+    }
+
+    public SwitchLayout getLayout() {
+        return mLayout;
+    }
+
+    public SwitchGestureView getSwitchGestureView() {
+        return mGestureView;
     }
 
     public void update(List<TaskDescription> taskList) {
@@ -219,6 +233,7 @@ public class SwitchManager {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         mLayout.updatePrefs(prefs, key);
+        mGestureView.updatePrefs(prefs, key);
     }
 
     public void toggleLastApp(boolean close) {
@@ -233,7 +248,11 @@ public class SwitchManager {
         switchTask(ad, close);
     }
     
-    public void startIntentFromtString(String intent) {
+    public void startIntentFromtString(String intent, boolean close) {
+        if(close){
+            close();
+        }
+
         try {
             Intent intentapp = Intent.parseUri(intent, 0);
             mContext.startActivity(intentapp);
@@ -245,7 +264,12 @@ public class SwitchManager {
     }
     
     public void updateLayout() {
-        mLayout.updateLayout();
+        if (mLayout.isShowing()){
+            mLayout.updateLayout();
+        }
+        if (mGestureView.isShowing()){
+            mGestureView.updateLayout();
+        }
     }
 
     public void close(){

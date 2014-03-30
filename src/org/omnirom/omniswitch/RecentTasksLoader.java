@@ -299,13 +299,21 @@ public class RecentTasksLoader {
             resources = null;
         }
         if (resources != null) {
+            int iconId = 0;
             if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
-                int iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
+                iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
                 if (iconId != 0) {
                     return getFullResIcon(IconPackHelper.getInstance(mContext).getIconPackResources(), iconId, info.activityInfo);
                 }
             }
-            return getFullResIcon(resources, info.activityInfo.getIconResource(), info.activityInfo);
+            iconId = info.activityInfo.getIconResource();
+            if (iconId != 0) {
+                try {
+                    return getFullResIcon(resources, iconId, info.activityInfo);
+                } catch(Resources.NotFoundException e){
+                    // ignore and use default below
+                }
+            }
         }
         return getFullResDefaultActivityIcon(info.activityInfo);
     }

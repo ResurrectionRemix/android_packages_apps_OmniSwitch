@@ -36,9 +36,13 @@
             android:focusable="true"
             android:gravity="left|bottom"
             android:paddingLeft="10dp"
+            android:shadowColor="@color/text_shadow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmallInverse"
-            android:textColor="#000" />
+            android:textColor="@android:color/white" />
         <TextView
             android:id="@+id/backgroundText"
             android:layout_width="0px"
@@ -48,8 +52,12 @@
             android:focusable="true"
             android:gravity="right|bottom"
             android:paddingRight="10dp"
+            android:shadowColor="@color/text_shadow"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmallInverse"
-            android:textColor="#000" />
+            android:textColor="@android:color/white" />
     </view>
 </LinearLayout>

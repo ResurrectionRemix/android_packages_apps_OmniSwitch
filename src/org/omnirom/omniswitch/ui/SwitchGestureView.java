@@ -21,10 +21,15 @@ import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.RecentTasksLoader;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
+import org.omnirom.omniswitch.SwitchManager;
 import org.omnirom.omniswitch.SwitchService;
 import org.omnirom.omniswitch.showcase.ShowcaseView;
 import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
+import android.animation.Animator.AnimatorListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +47,7 @@ import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -50,6 +56,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private static final boolean DEBUG = false;
 
     private final static String KEY_SHOWCASE_HANDLE = "showcase_handle_done";
+    private static final int FLIP_DURATION_DEFAULT = 200;
 
     private Context mContext;
     private WindowManager mWindowManager;
@@ -69,8 +76,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private boolean mShowcaseDone;
     private SwitchConfiguration mConfiguration;
     private boolean mHidden;
-    private boolean mLongpressEnable;
     private Handler mHandler;
+    private SwitchManager mRecentsManager;
     private Runnable mAutoHideRunnable = new Runnable(){
         @Override
         public void run() {
@@ -79,6 +86,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 mView.invalidate();
             }
         }};
+    private LinearInterpolator mLinearInterpolator = new LinearInterpolator();
+    private Animator mToggleDragHandleAnim;
 
     public SwitchGestureView(Context context) {
         mContext = context;
@@ -99,6 +108,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         mView = (LinearLayout) inflater.inflate(R.layout.gesture_view, null, false);
 
         mDragButton= new ImageView(mContext);
+        mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
         mDragButton.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -118,7 +128,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                         updateDragHandleImage(true);
                         mView.invalidate();
                         mHandler.postDelayed(mAutoHideRunnable, SwitchConfiguration.AUTO_HIDE_DEFAULT);
-                        mLongpressEnable = false;
                         return true;
                     }
                     if (!mHidden && !mSwipeStarted) {
@@ -139,7 +148,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 case MotionEvent.ACTION_CANCEL:
                     mSwipeStarted = false;
                     mShowStarted = false;
-                    mLongpressEnable = true;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (mSwipeStarted) {
@@ -171,7 +179,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     if (!mShowStarted){
                         mSwipeStarted = false;
                     }
-                    mLongpressEnable = true;
                     break;
                 default:
                     return defaultResult;
@@ -179,24 +186,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 return true;
             }
         });
-        
-        mDragButton.setOnLongClickListener(new OnLongClickListener(){
-            @Override
-            public boolean onLongClick(View arg0) {
-                if (!mShowStarted){
-                    if(mConfiguration.mAutoHide && !mLongpressEnable){
-                        return true;
-                    }
-
-                    if(DEBUG){
-                        Log.d(TAG, "button long down");
-                    }
-                    Intent showIntent = new Intent(
-                            SwitchService.RecentsReceiver.ACTION_SHOW_OVERLAY);
-                    mContext.sendBroadcast(showIntent);
-                }
-                return true;
-            }});
         updateButton();
     }
 
@@ -224,7 +213,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         lp.gravity = getGravity();
         lp.y = mConfiguration.getCurrentOffsetStart();
         lp.height = mConfiguration.mHandleHeight;
-        lp.width = Math.round(20 * mConfiguration.mDensity);
+        lp.width = mConfiguration.mHandleWidth;
         
         return lp;
     }
@@ -263,13 +252,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         mCurrentDragHandleImage=BitmapUtils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor, mCurrentDragHandleImage);
         mCurrentDragHandleImage.setAlpha((int) (255 * mConfiguration.mDragHandleOpacity));
-        mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
 
-        if(shown){
-            mDragButton.startAnimation(getShowAnimation());
-        } else {
-            mDragButton.startAnimation(getHideAnimation());
-        }
+        toggleDragHandle(shown);
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {
@@ -384,53 +368,62 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             mWindowManager.updateViewLayout(mView, getParams());
         }
     }
-    
-    private Animation getShowAnimation() {
-        int animId = R.anim.slide_right_in;
 
-        if (mConfiguration.mLocation == 1) {
-            animId = R.anim.slide_left_in;
-        }
-        Animation animation = AnimationUtils.loadAnimation(mContext, animId);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-                mDragButton.setImageDrawable(mCurrentDragHandleImage);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-        return animation;
+    private Animator start(Animator a) {
+        a.start();
+        return a;
     }
 
-    private Animation getHideAnimation() {
-        int animId = R.anim.slide_right_out;
+    private Animator interpolator(TimeInterpolator ti, Animator a) {
+        a.setInterpolator(ti);
+        return a;
+    }
 
-        if (mConfiguration.mLocation == 1) {
-            animId = R.anim.slide_left_out;
+    private void toggleDragHandle(final boolean show) {
+        if (mToggleDragHandleAnim != null){
+            mToggleDragHandleAnim.cancel();
         }
 
-        Animation animation = AnimationUtils.loadAnimation(mContext, animId);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mDragButton.setImageDrawable(mCurrentDragHandleImage);
-            }
+        if (mConfiguration.mLocation == 0) {
+            mDragButton.setPivotX(mConfiguration.mHandleWidth);
+        } else {
+            mDragButton.setPivotX(0f);
+        }
 
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
+        if (show){
+            mDragButton.setScaleX(0f);
+            mDragButton.setImageDrawable(mCurrentDragHandleImage);
+            mToggleDragHandleAnim = start(interpolator(mLinearInterpolator,
+                            ObjectAnimator.ofFloat(mDragButton, View.SCALE_X, 0f, 1f))
+                            .setDuration(FLIP_DURATION_DEFAULT));
+        } else {
+            mDragButton.setScaleX(1f);
+            mToggleDragHandleAnim = start(interpolator(mLinearInterpolator,
+                            ObjectAnimator.ofFloat(mDragButton, View.SCALE_X, 1f, 0f))
+                            .setDuration(FLIP_DURATION_DEFAULT));
+        }
 
+        mToggleDragHandleAnim.addListener(new AnimatorListener() {
             @Override
-            public void onAnimationRepeat(Animation animation) {
+            public void onAnimationEnd(Animator animation) {
+                if (!show){
+                    mDragButton.setImageDrawable(mCurrentDragHandleImage);
+                    mDragButton.setScaleX(1f);
+                }
+            }
+            @Override
+            public void onAnimationStart(Animator animation) {
+            }
+            @Override
+            public void onAnimationCancel(Animator animation) {
+            }
+            @Override
+            public void onAnimationRepeat(Animator animation) {
             }
         });
-        return animation;
+    }
+
+    public void setRecentsManager(SwitchManager manager) {
+        mRecentsManager = manager;
     }
 }

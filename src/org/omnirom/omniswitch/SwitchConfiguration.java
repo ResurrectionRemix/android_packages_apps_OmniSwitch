@@ -37,6 +37,7 @@ public class SwitchConfiguration {
     public boolean mShowRambar;
     public int mStartYRelative;
     public int mHandleHeight;
+    public int mHandleWidth;
     public boolean mShowLabels = true;
     public int mDragHandleColor;
     public float mDragHandleOpacity;
@@ -105,6 +106,7 @@ public class SwitchConfiguration {
         mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, false);
         String gravity = prefs.getString(SettingsActivity.PREF_GRAVITY, "0");
         mGravity = Integer.valueOf(gravity);
+        mHandleWidth = Math.round(20 * mDensity);
     }
     
     // includes rotation                
@@ -115,7 +117,7 @@ public class SwitchConfiguration {
         return height;
     }
     
-    private int getCurrentDisplayWidth(){
+    public int getCurrentDisplayWidth(){
         DisplayMetrics dm = new DisplayMetrics();
         mWindowManager.getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels;

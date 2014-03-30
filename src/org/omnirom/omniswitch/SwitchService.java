@@ -52,7 +52,6 @@ public class SwitchService extends Service {
 
     private static final int START_SERVICE_ERROR_ID = 0;
 
-    private SwitchGestureView mGesturePanel;
     private RecentsReceiver mReceiver;
     private SwitchManager mManager;
     private SharedPreferences mPrefs;
@@ -80,7 +79,6 @@ public class SwitchService extends Service {
             return;
         }
         mUserId = UserHandle.myUserId();
-        mGesturePanel = new SwitchGestureView(this);
         Log.d(TAG, "started SwitchService " + mUserId);
 
         mManager = new SwitchManager(this);
@@ -90,8 +88,6 @@ public class SwitchService extends Service {
         IntentFilter filter = new IntentFilter();
         filter.addAction(RecentsReceiver.ACTION_SHOW_OVERLAY);
         filter.addAction(RecentsReceiver.ACTION_HIDE_OVERLAY);
-        filter.addAction(RecentsReceiver.ACTION_OVERLAY_SHOWN);
-        filter.addAction(RecentsReceiver.ACTION_OVERLAY_HIDDEN);
         filter.addAction(RecentsReceiver.ACTION_HANDLE_HIDE);
         filter.addAction(RecentsReceiver.ACTION_HANDLE_SHOW);
         filter.addAction(RecentsReceiver.ACTION_TOGGLE_OVERLAY);
@@ -124,17 +120,14 @@ public class SwitchService extends Service {
         super.onDestroy();
         Log.d(TAG, "stopped SwitchService " + mUserId);
 
-        mGesturePanel.hide();
-        mGesturePanel = null;
-
         unregisterReceiver(mReceiver);
         mManager.killManager();
         mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
 
         mIsRunning = false;
 
-        Intent finishActivity = new Intent(MainActivity.ActivityReceiver.ACTION_FINISH);
-        sendBroadcast(finishActivity);
+//        Intent finishActivity = new Intent(MainActivity.ActivityReceiver.ACTION_FINISH);
+//        sendBroadcast(finishActivity);
 
         Intent stopActivity = new Intent(ACTION_SERVICE_STOP);
         stopActivity.putExtra(Intent.EXTRA_USER_HANDLE, mUserId);
@@ -158,38 +151,36 @@ public class SwitchService extends Service {
     public class RecentsReceiver extends BroadcastReceiver {
         public static final String ACTION_SHOW_OVERLAY = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY";
         public static final String ACTION_HIDE_OVERLAY = "org.omnirom.omniswitch.ACTION_HIDE_OVERLAY";
-        public static final String ACTION_OVERLAY_SHOWN = "org.omnirom.omniswitch.ACTION_OVERLAY_SHOWN";
-        public static final String ACTION_OVERLAY_HIDDEN = "org.omnirom.omniswitch.ACTION_OVERLAY_HIDDEN";
         public static final String ACTION_HANDLE_HIDE = "org.omnirom.omniswitch.ACTION_HANDLE_HIDE";
         public static final String ACTION_HANDLE_SHOW = "org.omnirom.omniswitch.ACTION_HANDLE_SHOW";
         public static final String ACTION_TOGGLE_OVERLAY = "org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY";
 
         private void show(Context context) {
-            startActivityInBackground(context);
+            //startActivityInBackground(context);
             mManager.show();
         }
 
         private void hide() {
-            Intent finishActivity = new Intent(
-                    MainActivity.ActivityReceiver.ACTION_FINISH);
-            sendBroadcast(finishActivity);
+//            Intent finishActivity = new Intent(
+//                    MainActivity.ActivityReceiver.ACTION_FINISH);
+//            sendBroadcast(finishActivity);
             mManager.hide();
         }
 
-        private void startActivityInBackground(final Context context) {
-            AsyncTask<Void, Void, Void> startActivity = new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    Intent mainActivity = new Intent(context,
-                            MainActivity.class);
-                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                    startActivity(mainActivity);
-                    return null;
-                }
-            };
-            startActivity.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
+//        private void startActivityInBackground(final Context context) {
+//            AsyncTask<Void, Void, Void> startActivity = new AsyncTask<Void, Void, Void>() {
+//                @Override
+//                protected Void doInBackground(Void... params) {
+//                    Intent mainActivity = new Intent(context,
+//                            MainActivity.class);
+//                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+//                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+//                    startActivity(mainActivity);
+//                    return null;
+//                }
+//            };
+//            startActivity.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        }
 
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -208,16 +199,12 @@ public class SwitchService extends Service {
                 if (mManager.isShowing()) {
                     hide();
                 }
-            } else if (ACTION_OVERLAY_SHOWN.equals(action)){
-                mGesturePanel.overlayShown();
-            } else if (ACTION_OVERLAY_HIDDEN.equals(action)){
-                mGesturePanel.overlayHidden();
             } else if (ACTION_HANDLE_SHOW.equals(action)){
                 if (mConfiguration.mDragHandleShow){
-                    mGesturePanel.show();
+                    mManager.getSwitchGestureView().show();
                 }
             } else if (ACTION_HANDLE_HIDE.equals(action)){
-                mGesturePanel.hide();
+                mManager.getSwitchGestureView().hide();
             } else if (ACTION_TOGGLE_OVERLAY.equals(action)) {
                 if (mManager.isShowing()) {
                     hide();
@@ -228,10 +215,10 @@ public class SwitchService extends Service {
                 int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
                 Log.d(TAG, "user switch " + mUserId + "->" + userId);
                 if (userId != mUserId){
-                    mGesturePanel.hide();
+                    mManager.getSwitchGestureView().hide();
                 } else {
                     if (mConfiguration.mDragHandleShow){
-                        mGesturePanel.show();
+                        mManager.getSwitchGestureView().show();
                     }
                 }
             }
@@ -241,21 +228,14 @@ public class SwitchService extends Service {
     public void updatePrefs(SharedPreferences prefs, String key) {
         // MUST be before the rest
         IconPackHelper.getInstance(this).updatePrefs(prefs, key);
-//        PackageManager.getInstance(this).updatePrefs(prefs, key);
         mConfiguration.updatePrefs(prefs, key);
         mManager.updatePrefs(prefs, key);
-        mGesturePanel.updatePrefs(prefs, key);
     }
     
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // recalc drag handle location
-        if (mIsRunning && mGesturePanel.isShowing()){
-            mGesturePanel.updateLayout();
-        }
-        // recalc overlay location
-        if (mIsRunning && mManager.isShowing()) {
+        if (mIsRunning) {
             mManager.updateLayout();
         }
     }

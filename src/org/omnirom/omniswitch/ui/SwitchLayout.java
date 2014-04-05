@@ -322,17 +322,19 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 new SwipeDismissHorizontalListViewTouchListener.DismissCallbacks() {
                     public void onDismiss(HorizontalListView listView,
                             int[] reverseSortedPositions) {
-                        for (int position : reverseSortedPositions) {
-                            TaskDescription ad = mRecentListAdapter
-                                    .getItem(position);
+                        Log.d(TAG, "onDismiss: " + mLoadedTasks.size() + ":" + reverseSortedPositions[0]);
+                        // TODO
+                        try {
+                            TaskDescription ad = mLoadedTasks.get(reverseSortedPositions[0]);
                             mRecentsManager.killTask(ad);
-                            break;
+                        } catch(IndexOutOfBoundsException e){
+                            // ignored
                         }
                     }
 
                     @Override
                     public boolean canDismiss(int position) {
-                        return true;
+                        return position < mLoadedTasks.size();
                     }
                 });
 

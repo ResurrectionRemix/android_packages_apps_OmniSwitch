@@ -31,7 +31,6 @@ import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -75,6 +74,7 @@ public class SettingsGestureView {
     private int mSlop;
     private int mDragHandleMinHeight;
     private int mDragHandleLimiterHeight;
+    private SwitchConfiguration mConfiguration;
 
     public SettingsGestureView(Context context) {
         mContext = context;
@@ -85,6 +85,7 @@ public class SettingsGestureView {
         mWindowManager.getDefaultDisplay().getSize(size);
         ViewConfiguration vc = ViewConfiguration.get(mContext);
         mSlop = vc.getScaledTouchSlop();
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
 
         mDragHandleLimiterHeight = (int) (40 * mDensity + 0.5);
         mDragHandleMinHeight = (int) (60 * mDensity + 0.5);
@@ -137,8 +138,8 @@ public class SettingsGestureView {
                 case MotionEvent.ACTION_MOVE:
                     float deltaY = event.getRawY() - mDownY;
                     if(Math.abs(deltaY) > mSlop){
-                        if(((mEndY + deltaY) < getCurrentDisplayHeight())
-                                && (mStartY + deltaY > 0)){
+                        if(((mEndY + deltaY) < getLowerHandleLimit())
+                                && (mStartY + deltaY > getUpperHandleLimit())){
                             mDeltaY = deltaY;
                             mDragButton.setTranslationY(mDeltaY);
                             mDragButtonStart.setTranslationY(mDeltaY);
@@ -213,7 +214,7 @@ public class SettingsGestureView {
                     float deltaY = event.getRawY() - mDownY;
                     if(Math.abs(deltaY) > mSlop){
                         if(((mEndY + deltaY) > (mStartY + mDragHandleMinHeight))
-                                && (mEndY + deltaY + mDragHandleLimiterHeight < getCurrentDisplayHeight())){
+                                && (mEndY + deltaY + mDragHandleLimiterHeight < getLowerHandleLimit())){
                             mDeltaY = deltaY;
                             mDragButtonEnd.setTranslationY(mDeltaY);
                         }
@@ -233,7 +234,7 @@ public class SettingsGestureView {
                 case MotionEvent.ACTION_DOWN:
                     Editor edit = mPrefs.edit();
                     edit.putInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, mLocation);
-                    int relHeight = (int)(mStartY / (getCurrentDisplayHeight() /100));
+                    int relHeight = (int)(mStartY / (mConfiguration.getCurrentDisplayHeight() /100));
                     edit.putInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeight);
                     edit.putInt(SettingsActivity.PREF_HANDLE_HEIGHT, mEndY - mStartY);
                     edit.commit();
@@ -352,10 +353,10 @@ public class SettingsGestureView {
         params.gravity = mLocation == 1 ? Gravity.LEFT : Gravity.RIGHT;
         mDragButtonEnd.setLayoutParams(params);
         
-        mStartYRelative = (int)(mStartY / (getCurrentDisplayHeight() /100));
+        mStartYRelative = (int)(mStartY / (mConfiguration.getCurrentDisplayHeight() /100));
         mHandleHeight = mEndY - mStartY;
     }
-    
+
     private void updateDragHandleImage() {
         Drawable d = mDragHandle;
         Drawable d1 = mDragHandleStart;
@@ -422,28 +423,28 @@ public class SettingsGestureView {
                 SwitchService.RecentsReceiver.ACTION_HANDLE_SHOW);
         mContext.sendBroadcast(intent);
     }
-    
+
     public void resetPosition() {
         mStartY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetStart();
         mEndY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetEnd();
         updateLayout();
     }
-    
-    // includes rotation                
-    private int getCurrentDisplayHeight(){
-        DisplayMetrics dm = new DisplayMetrics();
-        mWindowManager.getDefaultDisplay().getMetrics(dm);
-        int height = dm.heightPixels;
-        return height;
-    }
-    
+
     public boolean isShowing() {
         return mShowing;
     }
-    
+
     public void handleRotation(){
         mStartY = SwitchConfiguration.getInstance(mContext).getCustomOffsetStart(mStartYRelative);
         mEndY = SwitchConfiguration.getInstance(mContext).getCustomOffsetEnd(mStartYRelative, mHandleHeight);
         updateLayout();
+    }
+
+    private int getLowerHandleLimit() {
+        return mConfiguration.getCurrentDisplayHeight() - mConfiguration.mLevelHeight;
+    }
+
+    private int getUpperHandleLimit() {
+        return mConfiguration.mLevelHeight / 2;
     }
 }

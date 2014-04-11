@@ -18,6 +18,7 @@
 package org.omnirom.omniswitch;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
@@ -32,6 +33,7 @@ public final class TaskDescription {
     private CharSequence mLabel; // application package label
     private boolean mLoaded;
     private boolean mKilled;
+    private ActivityInfo mActivityInfo;
 
     public TaskDescription(int _taskId, int _persistentTaskId,
             ResolveInfo _resolveInfo, Intent _intent, String _packageName,
@@ -43,6 +45,7 @@ public final class TaskDescription {
 
         description = _description;
         packageName = _packageName;
+        mActivityInfo = resolveInfo.activityInfo;
     }
 
     public TaskDescription() {
@@ -106,5 +109,9 @@ public final class TaskDescription {
 
     public void setKilled() {
         this.mKilled = true;
+    }
+
+    public ActivityInfo getActivityInfo() {
+        return mActivityInfo;
     }
 }

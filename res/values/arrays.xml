@@ -33,6 +33,7 @@
         <item>@string/home</item>
         <item>@string/settings</item>
         <item>@string/allapps</item>
+        <item>@string/back</item>
     </string-array>
     <string-array name="gravity_entries" translatable="false">
         <item>@string/gravity_center</item>
@@ -41,5 +42,12 @@
     <string-array name="gravity_values" translatable="false">
         <item>0</item>
         <item>1</item>
+    </string-array>
+    <string-array name="speed_switch_button_entries" translatable="false">
+        <item>@string/home</item>
+        <item>@string/back</item>
+        <item>@string/kill_current</item>
+        <item>@string/kill_all_apps</item>
+        <item>@string/kill_other_apps</item>
     </string-array>
 </resources>

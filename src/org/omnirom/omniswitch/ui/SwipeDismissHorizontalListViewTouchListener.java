@@ -259,7 +259,7 @@ public class SwipeDismissHorizontalListViewTouchListener implements
             float absVelocityY = Math.abs(velocityY);
             boolean dismiss = false;
             boolean dismissUp = false;
-            if (Math.abs(deltaY) > mViewHeight * 0.66) {
+            if (Math.abs(deltaY) > mViewHeight * 0.5) {
                 dismiss = true;
                 dismissUp = deltaY < 0;
             } else if (mMinFlingVelocity <= absVelocityX
@@ -437,5 +437,19 @@ public class SwipeDismissHorizontalListViewTouchListener implements
 
     public boolean isSwiping() {
         return mSwiping;
+    }
+
+    public void cancelSwipe() {
+        if (mDownView != null) {
+            // cancel
+            mDownView.animate().translationY(0).alpha(1)
+                    .setDuration(mAnimationTime).setListener(null);
+        }
+        mVelocityTracker.recycle();
+        mVelocityTracker = null;
+        mDownY = 0;
+        mDownView = null;
+        mDownPosition = ListView.INVALID_POSITION;
+        mSwiping = false;
     }
 }

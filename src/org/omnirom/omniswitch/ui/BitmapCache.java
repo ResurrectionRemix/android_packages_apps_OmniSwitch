@@ -22,9 +22,9 @@ import java.util.Map;
 
 import org.omnirom.omniswitch.PackageManager;
 import org.omnirom.omniswitch.SwitchConfiguration;
+import org.omnirom.omniswitch.TaskDescription;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
@@ -54,24 +54,20 @@ public class BitmapCache {
         mBitmaps.clear();
     }
 
-    private String bitmapHash(String intent, SwitchConfiguration configuration) {
-        return intent + configuration.mIconSize;
+    private String bitmapHash(String intent, int iconSize) {
+        return intent + iconSize;
     }
 
     private String bitmapHash(String intent) {
         return intent;
     }
 
-    private String bitmapHash(String packageName, int iconId, SwitchConfiguration configuration) {
-        return packageName + "_" + iconId + "_" + configuration.mIconSize;
-    }
-
     private IconPackHelper getIconPackHelper() {
         return IconPackHelper.getInstance(mContext);
     }
 
-    public Drawable getResized(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration) {
-        String key = bitmapHash(packageItem.getIntent(), configuration);
+    public Drawable getResized(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int size) {
+        String key = bitmapHash(packageItem.getIntent(), size);
         Drawable d = mBitmaps.get(key);
         if (d == null){
             Drawable icon = packageItem.getIcon();
@@ -82,27 +78,8 @@ public class BitmapCache {
                         getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale());
             }
             d = BitmapUtils.resize(resources,
-                    icon, configuration.mIconSize,
-                    configuration.mIconBorder,
-                    configuration.mDensity);
-            mBitmaps.put(key, d);
-        }
-        return d;
-    }
-
-    public Drawable getResized(Resources resources, ActivityInfo activityInfo, int iconId, SwitchConfiguration configuration) {
-        String key = bitmapHash(activityInfo.applicationInfo.packageName, iconId, configuration);
-        Drawable d = mBitmaps.get(key);
-        if (d == null){
-            Drawable icon = resources.getDrawable(iconId);
-            if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
-                    .getResourceIdForActivityIcon(activityInfo) == 0)) {
-                icon = BitmapUtils.compose(resources,
-                        icon, mContext, getIconPackHelper().getIconBack(),
-                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale());
-            }
-            d = BitmapUtils.resize(resources,
-                    icon, configuration.mIconSize,
+                    icon,
+                    size,
                     configuration.mIconBorder,
                     configuration.mDensity);
             mBitmaps.put(key, d);
@@ -121,6 +98,26 @@ public class BitmapCache {
                         d, mContext, getIconPackHelper().getIconBack(),
                         getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale());
             }
+            mBitmaps.put(key, d);
+        }
+        return d;
+    }
+
+    public Drawable getResized(Resources resources, TaskDescription ad, Drawable icon, SwitchConfiguration configuration, int size) {
+        String key = bitmapHash(ad.getIntent().toString(), size);
+        Drawable d = mBitmaps.get(key);
+        if (d == null){
+            if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
+                    .getResourceIdForActivityIcon(ad.getActivityInfo()) == 0)) {
+                icon = BitmapUtils.compose(resources,
+                        icon, mContext, getIconPackHelper().getIconBack(),
+                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale());
+            }
+            d = BitmapUtils.resize(resources,
+                    icon,
+                    size,
+                    configuration.mIconBorder,
+                    configuration.mDensity);
             mBitmaps.put(key, d);
         }
         return d;

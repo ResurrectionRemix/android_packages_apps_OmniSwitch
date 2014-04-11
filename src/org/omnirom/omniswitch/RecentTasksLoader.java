@@ -18,11 +18,9 @@
 package org.omnirom.omniswitch;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.omnirom.omniswitch.ui.BitmapCache;
+import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.IconPackHelper;
 
 import android.app.ActivityManager;
@@ -33,6 +31,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -41,7 +40,7 @@ import android.util.Log;
 
 public class RecentTasksLoader {
     private static final String TAG = "RecentTasksLoader";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final int DISPLAY_TASKS = 20;
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for
@@ -60,8 +59,6 @@ public class RecentTasksLoader {
 
     private State mState = State.IDLE;
 
-    private SwitchConfiguration mConfiguration;
-
     private static RecentTasksLoader sInstance;
 
     public static RecentTasksLoader getInstance(Context context) {
@@ -79,7 +76,6 @@ public class RecentTasksLoader {
         mContext = context;
         mHandler = new Handler();
         mLoadedTasks = new ArrayList<TaskDescription>();
-        mConfiguration = SwitchConfiguration.getInstance(mContext);
     }
 
     public List<TaskDescription> getLoadedTasks() {
@@ -281,14 +277,6 @@ public class RecentTasksLoader {
         }
     }
 
-    private Drawable getFullResDefaultActivityIcon(ActivityInfo activityInfo) {
-        return getFullResIcon(mContext.getResources(), R.drawable.ic_default, activityInfo);
-    }
-
-    private Drawable getFullResIcon(Resources resources, int iconId, ActivityInfo activityInfo) {
-       return BitmapCache.getInstance(mContext).getResized(resources, activityInfo, iconId, mConfiguration);
-    }
-
     private Drawable getFullResIcon(ResolveInfo info,
             PackageManager packageManager) {
         Resources resources;
@@ -303,25 +291,25 @@ public class RecentTasksLoader {
             if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
                 iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
                 if (iconId != 0) {
-                    return getFullResIcon(IconPackHelper.getInstance(mContext).getIconPackResources(), iconId, info.activityInfo);
+                    return IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
                 }
             }
             iconId = info.activityInfo.getIconResource();
             if (iconId != 0) {
                 try {
-                    return getFullResIcon(resources, iconId, info.activityInfo);
+                    return resources.getDrawable(iconId);
                 } catch(Resources.NotFoundException e){
                     // ignore and use default below
                 }
             }
         }
-        return getFullResDefaultActivityIcon(info.activityInfo);
+        return BitmapUtils.getDefaultActivityIcon(mContext);
     }
 
-//    public Bitmap loadThumbnail(TaskDescription td) {
-//        final ActivityManager am = (ActivityManager)
-//                mContext.getSystemService(Context.ACTIVITY_SERVICE);
-//        final PackageManager pm = mContext.getPackageManager();
-//        return am.getTaskTopThumbnail(td.persistentTaskId);
-//    }
+    public Bitmap loadThumbnail(TaskDescription td) {
+        final ActivityManager am = (ActivityManager)
+                mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        final PackageManager pm = mContext.getPackageManager();
+        return am.getTaskTopThumbnail(td.persistentTaskId);
+    }
 }

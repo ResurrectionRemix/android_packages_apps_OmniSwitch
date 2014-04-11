@@ -19,12 +19,13 @@ package org.omnirom.omniswitch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.CheckboxListDialog;
-import org.omnirom.omniswitch.ui.DragHandleColorPreference;
 import org.omnirom.omniswitch.ui.FavoriteDialog;
 import org.omnirom.omniswitch.ui.IconPackHelper;
+import org.omnirom.omniswitch.ui.NumberPickerPreference;
 import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
 
@@ -34,14 +35,12 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -67,14 +66,22 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_HANDLE_POS_START_RELATIVE = "handle_pos_start_relative";
     public static final String PREF_HANDLE_HEIGHT = "handle_height";
     public static final String PREF_BUTTON_CONFIG = "button_config";
-    public static final String PREF_BUTTONS = "buttons";
-    public static final String PREF_BUTTON_DEFAULT = "1,1,1,1,1,1";
+    public static final String PREF_BUTTONS_NEW = "buttons_new";
+    public static final String PREF_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1,5:1,6:1";
     public static final String PREF_AUTO_HIDE_HANDLE = "auto_hide_handle";
     public static final String PREF_DRAG_HANDLE_ENABLE = "drag_handle_enable";
     public static final String PREF_ENABLE = "enable";
     public static final String PREF_DIM_BEHIND = "dim_behind";
     public static final String PREF_GRAVITY = "gravity";
     public static final String PREF_ICONPACK = "iconpack";
+    public static final String PREF_SPEED_SWITCHER = "speed_switcher";
+    public static final String PREF_SHOW_FAVORITE = "show_favorite";
+    public static final String PREF_SPEED_SWITCHER_COLOR = "speed_switch_color";
+    public static final String PREF_SPEED_SWITCHER_LIMIT = "speed_switch_limit";
+    public static final String PREF_SPEED_SWITCHER_BUTTON_CONFIG = "speed_switch_button_config";
+    public static final String PREF_SPEED_SWITCHER_BUTTON_NEW = "speed_switch_button_new";
+    public static final String PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1";
+    public static final String PREF_SPEED_SWITCHER_ITEMS = "speed_switch_items";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -82,8 +89,15 @@ public class SettingsActivity extends PreferenceActivity implements
     public static int BUTTON_HOME = 3;
     public static int BUTTON_SETTINGS = 4;
     public static int BUTTON_ALLAPPS = 5;
+    public static int BUTTON_BACK = 6;
+    public static int NUM_BUTTON = 7;
 
-    public static int NUM_BUTTON = 6;
+    public static int BUTTON_SPEED_SWITCH_HOME = 0;
+    public static int BUTTON_SPEED_SWITCH_BACK = 1;
+    public static int BUTTON_SPEED_SWITCH_KILL_CURRENT = 2;
+    public static int BUTTON_SPEED_SWITCH_KILL_ALL = 3;
+    public static int BUTTON_SPEED_SWITCH_KILL_OTHER = 4;
+    public static int NUM_SPEED_SWITCH_BUTTON = 5;
 
     private ListPreference mIconSize;
     private SeekBarPreference mOpacity;
@@ -97,13 +111,15 @@ public class SettingsActivity extends PreferenceActivity implements
     private Drawable[] mButtonImages;
     private String mButtons;
     private SeekBarPreference mDragHandleOpacity;
-    private SwitchPreference mDragHandleEnable;
-    private CheckBoxPreference mDragHandleAutoHide;
-    private DragHandleColorPreference mDragHandleColor;
     private ListPreference mGravity;
     private Preference mIconpack;
     private Switch mToggleServiceSwitch;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
+    private Preference mSpeedSwitchButtonConfig;
+    private String[] mSpeedSwitchButtonEntries;
+    private Drawable[] mSpeedSwitchButtonImages;
+    private String mSpeedSwitchButtons;
+    private NumberPickerPreference mSpeedSwitchItems;
 
     @Override
     public void onPause() {
@@ -142,36 +158,29 @@ public class SettingsActivity extends PreferenceActivity implements
                 mIconSize.getEntryValues()[1].toString()));
         mIconSize.setValueIndex(idx);
         mIconSize.setSummary(mIconSize.getEntries()[idx]);
-
         mOpacity = (SeekBarPreference) findPreference(PREF_OPACITY);
         mOpacity.setInitValue(mPrefs.getInt(PREF_OPACITY, 50));
         mOpacity.setOnPreferenceChangeListener(this);
-
         mDragHandleOpacity = (SeekBarPreference) findPreference(PREF_DRAG_HANDLE_OPACITY);
         mDragHandleOpacity.setInitValue(mPrefs.getInt(PREF_DRAG_HANDLE_OPACITY, 100));
         mDragHandleOpacity.setOnPreferenceChangeListener(this);
-
         mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
         mButtonConfig = (Preference) findPreference(PREF_BUTTON_CONFIG);
-        initButtons();
-        mButtons = mPrefs.getString(PREF_BUTTONS, PREF_BUTTON_DEFAULT);
-        
+        mButtons = mPrefs.getString(PREF_BUTTONS_NEW, PREF_BUTTON_DEFAULT_NEW);
         mFavoriteAppsConfig = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG);
-        
-        mDragHandleAutoHide = (CheckBoxPreference) findPreference(PREF_AUTO_HIDE_HANDLE);
-        mDragHandleEnable = (SwitchPreference) findPreference(PREF_DRAG_HANDLE_ENABLE);
-        mDragHandleEnable.setOnPreferenceChangeListener(this);
-        mDragHandleColor = (DragHandleColorPreference) findPreference(PREF_DRAG_HANDLE_COLOR);
-        
         mGravity = (ListPreference) findPreference(PREF_GRAVITY);
         mGravity.setOnPreferenceChangeListener(this);
         idx = mGravity.findIndexOfValue(mPrefs.getString(PREF_GRAVITY,
                 mGravity.getEntryValues()[0].toString()));
         mGravity.setValueIndex(idx);
         mGravity.setSummary(mGravity.getEntries()[idx]);
-
         mIconpack = (Preference) findPreference(PREF_ICONPACK);
-        updateDragHandleEnablement(mDragHandleEnable.isChecked());
+        mSpeedSwitchItems = (NumberPickerPreference) findPreference(PREF_SPEED_SWITCHER_ITEMS);
+        mSpeedSwitchItems.setMinValue(8);
+        mSpeedSwitchItems.setMaxValue(20);
+        mSpeedSwitchButtonConfig = (Preference) findPreference(PREF_SPEED_SWITCHER_BUTTON_CONFIG);
+        mSpeedSwitchButtons = mPrefs.getString(PREF_SPEED_SWITCHER_BUTTON_NEW, PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
+        initButtons();
 
         mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
@@ -179,21 +188,21 @@ public class SettingsActivity extends PreferenceActivity implements
                 updatePrefs(prefs, key);
             }
         };
+
         updatePrefs(mPrefs, null);
     }
 
-    private void updateDragHandleEnablement(Boolean value) {
-        boolean dragHandleEnable = value.booleanValue();
-        mAdjustHandle.setEnabled(dragHandleEnable);
-        mDragHandleOpacity.setEnabled(dragHandleEnable);
-        mDragHandleAutoHide.setEnabled(dragHandleEnable);
-        mDragHandleColor.setEnabled(dragHandleEnable);
+    private class ButtonsApplyRunnable implements CheckboxListDialog.ApplyRunnable {
+        public void apply(Map<Integer, Boolean> buttons) {
+            mButtons = Utils.buttonMapToString(buttons);
+            mPrefs.edit().putString(PREF_BUTTONS_NEW, mButtons).commit();
+        }
     }
 
-    private class ButtonsApplyRunnable implements CheckboxListDialog.ApplyRunnable {
-        public void apply(boolean[] buttons) {
-            mButtons = Utils.buttonArrayToString(buttons);
-            mPrefs.edit().putString(PREF_BUTTONS, mButtons).commit();
+    private class SpeedSwitchButtonsApplyRunnable implements CheckboxListDialog.ApplyRunnable {
+        public void apply(Map<Integer, Boolean> buttons) {
+            mSpeedSwitchButtons = Utils.buttonMapToString(buttons);
+            mPrefs.edit().putString(PREF_SPEED_SWITCHER_BUTTON_NEW, mSpeedSwitchButtons).commit();
         }
     }
 
@@ -208,10 +217,16 @@ public class SettingsActivity extends PreferenceActivity implements
             showManageAppDialog();
             return true;
         } else if (preference == mButtonConfig){
-            boolean[] buttons = Utils.getDefaultButtons();
-            Utils.buttonStringToArry(mButtons, buttons);
+            Map<Integer, Boolean> buttons = Utils.buttonStringToMap(mButtons, PREF_BUTTON_DEFAULT_NEW);
             CheckboxListDialog dialog = new CheckboxListDialog(this,
                     mButtonEntries, mButtonImages, buttons, new ButtonsApplyRunnable(),
+                    getResources().getString(R.string.buttons_title));
+            dialog.show();
+            return true;
+        } else if (preference == mSpeedSwitchButtonConfig){
+            Map<Integer, Boolean> buttons = Utils.buttonStringToMap(mSpeedSwitchButtons, PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
+            CheckboxListDialog dialog = new CheckboxListDialog(this,
+                    mSpeedSwitchButtonEntries, mSpeedSwitchButtonImages, buttons, new SpeedSwitchButtonsApplyRunnable(),
                     getResources().getString(R.string.buttons_title));
             dialog.show();
             return true;
@@ -237,9 +252,6 @@ public class SettingsActivity extends PreferenceActivity implements
         } else if (preference == mDragHandleOpacity) {
             float val = Float.parseFloat((String) newValue);
             mPrefs.edit().putInt(PREF_DRAG_HANDLE_OPACITY, (int) val).commit();
-            return true;
-        } else if (preference == mDragHandleEnable) {
-            updateDragHandleEnablement((Boolean) newValue);
             return true;
         } else if (preference == mGravity) {
             String value = (String) newValue;
@@ -271,7 +283,7 @@ public class SettingsActivity extends PreferenceActivity implements
                         Utils.flattenFavorites(favoriteList))
                 .commit();
     }
-    
+
     private void initButtons(){
         mButtonEntries = getResources().getStringArray(R.array.button_entries);
         mButtonImages = new Drawable[mButtonEntries.length];
@@ -281,8 +293,17 @@ public class SettingsActivity extends PreferenceActivity implements
         mButtonImages[3]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.home));
         mButtonImages[4]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.settings));
         mButtonImages[5]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_allapps));
+        mButtonImages[6]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.back));
+
+        mSpeedSwitchButtonEntries = getResources().getStringArray(R.array.speed_switch_button_entries);
+        mSpeedSwitchButtonImages = new Drawable[mSpeedSwitchButtonEntries.length];
+        mSpeedSwitchButtonImages[0]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.home));
+        mSpeedSwitchButtonImages[1]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.back));
+        mSpeedSwitchButtonImages[2]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.kill_current));
+        mSpeedSwitchButtonImages[3]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.kill_all));
+        mSpeedSwitchButtonImages[4]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.kill_other));
     }
-    
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -323,7 +344,6 @@ public class SettingsActivity extends PreferenceActivity implements
     public void updatePrefs(SharedPreferences prefs, String key) {
         if (!SwitchService.isRunning()){
             IconPackHelper.getInstance(SettingsActivity.this).updatePrefs(mPrefs, null);
-//            PackageManager.getInstance(SettingsActivity.this).updatePrefs(mPrefs, null);
         }
     }
 }

@@ -63,6 +63,21 @@ public class BitmapUtils {
         return new BitmapDrawable(resources, bmResult);
     }
 
+    public static Drawable resize(Resources resources, Drawable image, int iconSize, float density) {
+        int size = Math.round(iconSize * density);
+
+        Bitmap b = ((BitmapDrawable) image).getBitmap();
+
+        Bitmap bmResult = Bitmap.createBitmap(size, size,
+                Bitmap.Config.ARGB_8888);
+        Canvas tempCanvas = new Canvas(bmResult);
+
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(b, size,
+                size, true);
+        tempCanvas.drawBitmap(bitmapResized, 0, 0, null);
+        return new BitmapDrawable(resources, bmResult);
+    }
+
     public static Drawable colorize(Resources resources, int color, Drawable image) {
         Bitmap b = ((BitmapDrawable) image).getBitmap();
         BitmapDrawable b1 = new BitmapDrawable(resources, b);
@@ -174,5 +189,18 @@ public class BitmapUtils {
         }
         icon.setBounds(oldBounds);
         return new BitmapDrawable(resources, bitmap);
+    }
+
+    public static Drawable overlay(Resources resources, Bitmap b, Drawable icon) {
+        int width = b.getWidth();
+        int height = b.getHeight();
+
+        Bitmap bmp = Bitmap.createBitmap(width, height + 40,
+                Bitmap.Config.ARGB_8888);
+
+        Canvas c = new Canvas(bmp);
+        c.drawBitmap(b, 0, 40, null);
+        c.drawBitmap(((BitmapDrawable) icon).getBitmap(), 0, 0, null);
+        return new BitmapDrawable(resources, bmp);
     }
 }

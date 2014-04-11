@@ -19,7 +19,6 @@ package org.omnirom.omniswitch;
 
 import org.omnirom.omniswitch.ui.BitmapCache;
 import org.omnirom.omniswitch.ui.IconPackHelper;
-import org.omnirom.omniswitch.ui.SwitchGestureView;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -30,7 +29,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.UserHandle;
 import android.preference.PreferenceManager;
@@ -39,16 +37,6 @@ import android.util.Log;
 public class SwitchService extends Service {
     private final static String TAG = "SwitchService";
     private static boolean DEBUG = false;
-
-    /**
-     * Intent broadcast action for omniswitch service started
-     */
-    private static final String ACTION_SERVICE_START = "org.omnirom.omniswitch.ACTION_SERVICE_START";
-
-    /**
-     * Intent broadcast action for omniswitch service stopped
-     */
-    private static final String ACTION_SERVICE_STOP = "org.omnirom.omniswitch.ACTION_SERVICE_STOP";
 
     private static final int START_SERVICE_ERROR_ID = 0;
 
@@ -60,7 +48,6 @@ public class SwitchService extends Service {
     private int mUserId = -1;
 
     private static boolean mIsRunning;
-    private static boolean mNoPermissions;
 
     public static boolean isRunning() {
         return mIsRunning;
@@ -69,20 +56,15 @@ public class SwitchService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        mConfiguration = SwitchConfiguration.getInstance(this);
 
-        if (mNoPermissions){
-            return;
-        }
-        if (!hasSystemPermission()){
+        if(mConfiguration.mRestrictedMode){
             createErrorNotification();
-            mNoPermissions = true;
-            return;
         }
         mUserId = UserHandle.myUserId();
         Log.d(TAG, "started SwitchService " + mUserId);
 
         mManager = new SwitchManager(this);
-        mConfiguration = SwitchConfiguration.getInstance(this);
 
         mReceiver = new RecentsReceiver();
         IntentFilter filter = new IntentFilter();
@@ -92,6 +74,7 @@ public class SwitchService extends Service {
         filter.addAction(RecentsReceiver.ACTION_HANDLE_SHOW);
         filter.addAction(RecentsReceiver.ACTION_TOGGLE_OVERLAY);
         filter.addAction(Intent.ACTION_USER_SWITCHED);
+        filter.addAction(Intent.ACTION_SHUTDOWN);
 
         registerReceiver(mReceiver, filter);
         PackageManager.getInstance(this).updatePackageList(false, null);
@@ -109,10 +92,6 @@ public class SwitchService extends Service {
         mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
 
         mIsRunning = true;
-
-        Intent startActivity = new Intent(ACTION_SERVICE_START);
-        startActivity.putExtra(Intent.EXTRA_USER_HANDLE, mUserId);
-        sendBroadcastAsUser(startActivity, UserHandle.ALL);
     }
 
     @Override
@@ -123,15 +102,9 @@ public class SwitchService extends Service {
         unregisterReceiver(mReceiver);
         mManager.killManager();
         mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
+        mManager.shutdownService();
 
         mIsRunning = false;
-
-//        Intent finishActivity = new Intent(MainActivity.ActivityReceiver.ACTION_FINISH);
-//        sendBroadcast(finishActivity);
-
-        Intent stopActivity = new Intent(ACTION_SERVICE_STOP);
-        stopActivity.putExtra(Intent.EXTRA_USER_HANDLE, mUserId);
-        sendBroadcastAsUser(stopActivity, UserHandle.ALL);
 
         // TODO
         BitmapCache.getInstance(this).clear();
@@ -156,31 +129,12 @@ public class SwitchService extends Service {
         public static final String ACTION_TOGGLE_OVERLAY = "org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY";
 
         private void show(Context context) {
-            //startActivityInBackground(context);
             mManager.show();
         }
 
         private void hide() {
-//            Intent finishActivity = new Intent(
-//                    MainActivity.ActivityReceiver.ACTION_FINISH);
-//            sendBroadcast(finishActivity);
             mManager.hide();
         }
-
-//        private void startActivityInBackground(final Context context) {
-//            AsyncTask<Void, Void, Void> startActivity = new AsyncTask<Void, Void, Void>() {
-//                @Override
-//                protected Void doInBackground(Void... params) {
-//                    Intent mainActivity = new Intent(context,
-//                            MainActivity.class);
-//                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-//                            | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-//                    startActivity(mainActivity);
-//                    return null;
-//                }
-//            };
-//            startActivity.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//        }
 
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -221,6 +175,9 @@ public class SwitchService extends Service {
                         mManager.getSwitchGestureView().show();
                     }
                 }
+            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
+                Log.d(TAG, "ACTION_SHUTDOWN");
+                mManager.shutdownService();
             }
         }
     }
@@ -240,15 +197,10 @@ public class SwitchService extends Service {
         }
     }
 
-    private boolean hasSystemPermission() {
-        int result = checkCallingOrSelfPermission(android.Manifest.permission.INTERACT_ACROSS_USERS_FULL);
-        return result == android.content.pm.PackageManager.PERMISSION_GRANTED;
-    }
-
     private void createErrorNotification() {
         final NotificationManager notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         final Notification notifyDetails = new Notification.Builder(this)
-                .setContentTitle("OmniSwitch start failed")
+                .setContentTitle("OmniSwitch restricted mode")
                 .setContentText("Failed to gain system permissions")
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
                 .build();

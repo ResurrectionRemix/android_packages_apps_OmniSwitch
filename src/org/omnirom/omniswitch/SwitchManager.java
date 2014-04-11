@@ -30,26 +30,23 @@ import android.app.TaskStackBuilder;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ComponentName;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.pm.ActivityInfo;
 import android.net.Uri;
-import android.os.UserHandle;
-import android.util.Log;
-import android.os.RemoteException;
 import android.provider.Settings;
+import android.util.Log;
 
 public class SwitchManager {
     private static final String TAG = "SwitchManager";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private List<TaskDescription> mLoadedTasks;
     private SwitchLayout mLayout;
     private SwitchGestureView mGestureView;
     private Context mContext;
+    private SwitchConfiguration mConfiguration;
 
     public SwitchManager(Context context) {
         mContext = context;
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
         init();
     }
 
@@ -58,6 +55,7 @@ public class SwitchManager {
             if(DEBUG){
                 Log.d(TAG, "hide");
             }
+            mGestureView.setHandleRecentsUpdate(true);
             mLayout.hide();
         }
     }
@@ -67,6 +65,7 @@ public class SwitchManager {
             if(DEBUG){
                 Log.d(TAG, "show");
             }
+            mGestureView.setHandleRecentsUpdate(false);
             // update task list
             reload();
 
@@ -113,6 +112,9 @@ public class SwitchManager {
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
         mLayout.update(mLoadedTasks);
+        if(mGestureView.isHandleRecentsUpdate()){
+            mGestureView.update(mLoadedTasks);
+        }
     }
 
     public void reload() {
@@ -155,6 +157,9 @@ public class SwitchManager {
     }
 
     public void killTask(TaskDescription ad) {
+        if (mConfiguration.mRestrictedMode){
+            return;
+        }
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
@@ -169,6 +174,9 @@ public class SwitchManager {
     }
 
     public void killAll(boolean close) {
+        if (mConfiguration.mRestrictedMode){
+            return;
+        }
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
@@ -193,6 +201,9 @@ public class SwitchManager {
     }
 
     public void killOther(boolean close) {
+        if (mConfiguration.mRestrictedMode){
+            return;
+        }
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
@@ -207,6 +218,34 @@ public class SwitchManager {
         nextTask.next();
         while (nextTask.hasNext()) {
             TaskDescription ad = nextTask.next();
+            am.removeTask(ad.getPersistentTaskId(),
+                    ActivityManager.REMOVE_TASK_KILL_PROCESS);
+            if(DEBUG){
+                Log.d(TAG, "kill " + ad.getPackageName());
+            }
+            ad.setKilled();
+        }
+        if(close){
+            close();
+        }
+    }
+
+    public void killCurrent(boolean close) {
+        if (mConfiguration.mRestrictedMode){
+            return;
+        }
+        final ActivityManager am = (ActivityManager) mContext
+                .getSystemService(Context.ACTIVITY_SERVICE);
+
+        if (mLoadedTasks.size() == 0) {
+            if(close){
+                close();
+            }
+            return;
+        }
+
+        if (mLoadedTasks.size() >= 1){
+            TaskDescription ad = mLoadedTasks.get(0);
             am.removeTask(ad.getPersistentTaskId(),
                     ActivityManager.REMOVE_TASK_KILL_PROCESS);
             if(DEBUG){
@@ -306,5 +345,9 @@ public class SwitchManager {
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         mContext.startActivity(mainActivity);
+    }
+
+    public void shutdownService() {
+        mLayout.shutdownService();
     }
 }

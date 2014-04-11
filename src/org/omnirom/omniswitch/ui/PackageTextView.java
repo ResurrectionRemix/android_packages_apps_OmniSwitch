@@ -17,6 +17,8 @@
  */
 package org.omnirom.omniswitch.ui;
 
+import org.omnirom.omniswitch.TaskDescription;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -26,10 +28,18 @@ public class PackageTextView extends TextView {
 
     private String mIntent;
     private Drawable mOriginalImage;
+    private Drawable mSmallImage;
+    private Drawable mGlowImage;
+    private TaskDescription mTask;
+    private Drawable mThumbImage;
+    private CharSequence mLabel;
+    private boolean mThumbLoaded;
+    private Runnable mAction;
 
     public PackageTextView(Context context) {
         super(context);
     }
+
     public PackageTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -42,15 +52,80 @@ public class PackageTextView extends TextView {
         mIntent = intent;
     }
 
-    public String getIntent(){
+    public String getIntent() {
         return mIntent;
     }
 
-    public void setOriginalImage(Drawable image){
+    public void setOriginalImage(Drawable image) {
         mOriginalImage = image;
     }
 
-    public Drawable getOriginalImage(){
+    public Drawable getOriginalImage() {
         return mOriginalImage;
+    }
+
+    public TaskDescription getTask() {
+        return mTask;
+    }
+
+    public void setTask(TaskDescription task) {
+        mTask = task;
+    }
+
+    public Drawable getThumb() {
+        if (!mThumbLoaded) {
+            return mOriginalImage;
+        }
+        return mThumbImage;
+    }
+
+    public void setThumb(Drawable thumb) {
+        mThumbImage = thumb;
+        mThumbLoaded = true;
+    }
+
+    public CharSequence getLabel() {
+        return mLabel;
+    }
+
+    public void setLabel(CharSequence label) {
+        mLabel = label;
+    }
+
+    public Drawable getSmallImage() {
+        if (mSmallImage == null) {
+            return mOriginalImage;
+        }
+        return mSmallImage;
+    }
+
+    public void setSmallImage(Drawable smallImage) {
+        mSmallImage = smallImage;
+    }
+
+    public boolean isThumbLoaded() {
+        return mThumbLoaded;
+    }
+
+    public void runAction() {
+        if (mAction != null) {
+            mAction.run();
+        }
+    }
+
+    public void setAction(Runnable action) {
+        mAction = action;
+    }
+
+    public boolean isAction() {
+        return mAction != null;
+    }
+
+    public void setGlowImage(Drawable image) {
+        mGlowImage = image;
+    }
+
+    public Drawable getGlowImage() {
+        return mGlowImage;
     }
 }

@@ -15,68 +15,14 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<org.omnirom.omniswitch.ui.ButtonScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/button_list"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal" >
-    <org.omnirom.omniswitch.ui.GlowImageButton
-        android:id="@+id/killAll"
+    android:layout_height="wrap_content" >
+    <LinearLayout
+        android:id="@+id/button_list_items"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:minHeight="60dp"
-        android:minWidth="60dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/kill_all" />
-    <org.omnirom.omniswitch.ui.GlowImageButton
-        android:id="@+id/killOther"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:minHeight="60dp"
-        android:minWidth="60dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/kill_other" />
-    <org.omnirom.omniswitch.ui.GlowImageButton
-        android:id="@+id/lastApp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:minHeight="60dp"
-        android:minWidth="60dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/lastapp" />
-    <org.omnirom.omniswitch.ui.GlowImageButton
-        android:id="@+id/home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:minHeight="60dp"
-        android:minWidth="60dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/home" />
-    <org.omnirom.omniswitch.ui.GlowImageButton
-        android:id="@+id/allapps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:minHeight="60dp"
-        android:minWidth="60dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_allapps" />
-    <org.omnirom.omniswitch.ui.GlowImageButton
-        android:id="@+id/settings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:minHeight="60dp"
-        android:minWidth="60dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/settings" />
-</LinearLayout>
+        android:orientation="horizontal" >
+    </LinearLayout>
+</org.omnirom.omniswitch.ui.ButtonScrollView>

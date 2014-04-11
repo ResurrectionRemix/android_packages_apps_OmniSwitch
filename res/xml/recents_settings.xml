@@ -80,21 +80,58 @@
             android:summary="@string/drag_handle_enable_summary"
             android:title="@string/drag_handle_enable_title" />
         <Preference
+            android:dependency="drag_handle_enable"
             android:key="adjust_handle"
             android:title="@string/adjust_handle_title" />
         <org.omnirom.omniswitch.ui.DragHandleColorPreference
+            android:dependency="drag_handle_enable"
             android:key="drag_handle_color"
             android:title="@string/drag_handle_color_title" />
         <org.omnirom.omniswitch.ui.SeekBarPreference
             android:defaultValue="100"
+            android:dependency="drag_handle_enable"
             android:key="drag_handle_opacity"
             android:max="100"
             android:title="@string/drag_handle_opacity_title" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:dependency="drag_handle_enable"
             android:key="auto_hide_handle"
             android:summary="@string/auto_hide_handle_summary"
             android:title="@string/auto_hide_handle" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="category_speed_switcher"
+        android:title="@string/category_speed_switcher_title" >
+        <SwitchPreference
+            android:defaultValue="false"
+            android:dependency="drag_handle_enable"
+            android:key="speed_switcher"
+            android:summary="@string/speed_switcher_enable_summary"
+            android:title="@string/speed_switcher_enable_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="speed_switcher"
+            android:key="speed_switch_color"
+            android:summary="@string/speed_switch_color_summary"
+            android:title="@string/speed_switch_color" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="speed_switcher"
+            android:key="speed_switch_limit"
+            android:summary="@string/speed_switch_limit_summary"
+            android:title="@string/speed_switch_limit" />
+        <org.omnirom.omniswitch.ui.NumberPickerPreference
+            android:defaultValue="10"
+            android:dependency="speed_switcher"
+            android:key="speed_switch_items"
+            android:summary="@string/speed_switch_items_summary"
+            android:title="@string/speed_switch_item" />
+        <Preference
+            android:dependency="speed_switcher"
+            android:key="speed_switch_button_config"
+            android:summary="@string/speed_switch_button_summary"
+            android:title="@string/speed_switch_button_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="category_favorite"

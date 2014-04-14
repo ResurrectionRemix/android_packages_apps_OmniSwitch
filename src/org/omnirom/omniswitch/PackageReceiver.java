@@ -26,9 +26,11 @@ public class PackageReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        boolean removed = intent.getAction().equals("android.intent.action.PACKAGE_REMOVED");
-        Uri uri = intent.getData();
-        String pkg = uri != null ? uri.getSchemeSpecificPart() : null;
-        PackageManager.getInstance(context).updatePackageList(removed, pkg);
+        if (SwitchService.isRunning()){
+            boolean removed = intent.getAction().equals("android.intent.action.PACKAGE_REMOVED");
+            Uri uri = intent.getData();
+            String pkg = uri != null ? uri.getSchemeSpecificPart() : null;
+            PackageManager.getInstance(context).updatePackageList(removed, pkg);
+        }
     }
 }

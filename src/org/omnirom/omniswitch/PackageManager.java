@@ -170,9 +170,9 @@ public class PackageManager {
             mInstalledPackages.put(item.getIntent(), item);
             mInstalledPackagesList.add(item);
         }
-        if (removed){
-            updateFavorites();
-        }
+
+        updateFavorites();
+
         Collections.sort(mInstalledPackagesList);
         mInitDone = true;
     }

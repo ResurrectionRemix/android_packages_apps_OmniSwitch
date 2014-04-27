@@ -31,6 +31,8 @@ import android.os.SystemClock;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.provider.Settings;
+import android.content.Context;
 
 public class Utils {
 
@@ -118,25 +120,33 @@ public class Utils {
     }
 
     public static void triggerVirtualKeypress(final Handler handler, final int keyCode) {
-      final InputManager im = InputManager.getInstance();
-      long now = SystemClock.uptimeMillis();
+        final InputManager im = InputManager.getInstance();
+        long now = SystemClock.uptimeMillis();
 
-      final KeyEvent downEvent = new KeyEvent(now, now, KeyEvent.ACTION_DOWN,
+        final KeyEvent downEvent = new KeyEvent(now, now, KeyEvent.ACTION_DOWN,
               keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
               KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY, InputDevice.SOURCE_CLASS_BUTTON);
-      final KeyEvent upEvent = KeyEvent.changeAction(downEvent,
+        final KeyEvent upEvent = KeyEvent.changeAction(downEvent,
               KeyEvent.ACTION_UP);
 
-      handler.post(new Runnable(){
-          @Override
-          public void run() {
-              im.injectInputEvent(downEvent,InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-          }});
+        handler.post(new Runnable(){
+            @Override
+            public void run() {
+                im.injectInputEvent(downEvent,InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+            }});
 
-      handler.postDelayed(new Runnable(){
-        @Override
-        public void run() {
-            im.injectInputEvent(upEvent, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-        }}, 20);
-  }
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                im.injectInputEvent(upEvent, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+            }}, 20);
+    }
+
+    public static void toggleImmersiveMode(Context context) {
+        boolean immersive = Settings.System.getInt(context.getContentResolver(),
+                Settings.System.IMMERSIVE_MODE, 0) == 1;
+
+        Settings.System.putInt(context.getContentResolver(),
+                Settings.System.IMMERSIVE_MODE, !immersive ? 1 : 0);
+    }
 }

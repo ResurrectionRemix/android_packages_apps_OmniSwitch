@@ -1270,6 +1270,26 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 }});
             return item;
         }
+        if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_IMMERSIVE_MODE){
+            item = getPackageItemTemplate();
+            d = mContext.getResources().getDrawable(R.drawable.immersive_mode);
+            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
+
+            d = BitmapUtils.resize(mContext.getResources(),
+                    d,
+                    mConfiguration.mActionIconSize,
+                    mConfiguration.mIconBorder,
+                    mConfiguration.mDensity);
+            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+
+            item.setLabel(mContext.getResources().getString(R.string.immersive_mode_help));
+            item.setAction(new Runnable(){
+                @Override
+                public void run() {
+                    Utils.toggleImmersiveMode(mContext);
+                }});
+            return item;
+        }
         return null;
     }
 

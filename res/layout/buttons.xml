@@ -18,7 +18,8 @@
 <org.omnirom.omniswitch.ui.ButtonScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/button_list"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal" >
     <LinearLayout
         android:id="@+id/button_list_items"
         android:layout_width="wrap_content"

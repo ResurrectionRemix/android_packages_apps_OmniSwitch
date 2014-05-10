@@ -22,13 +22,13 @@ import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.colorpicker.ColorPickerDialog;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
@@ -80,7 +80,7 @@ public class DragHandleColorPreference extends DialogPreference {
     }
 
     @Override
-    protected void showDialog(Bundle state) {
+    protected Dialog createDialog() {
         final ColorPickerDialog d = new ColorPickerDialog(getContext(),
                 mColorValue);
 
@@ -112,7 +112,7 @@ public class DragHandleColorPreference extends DialogPreference {
         d.setButton(AlertDialog.BUTTON_NEGATIVE,
                 mResources.getString(R.string.cancel),
                 (DialogInterface.OnClickListener) null);
-        d.show();
+        return d;
     }
 
     public int getColor() {

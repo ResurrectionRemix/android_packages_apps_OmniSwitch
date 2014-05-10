@@ -107,7 +107,6 @@ public class SettingsActivity extends PreferenceActivity implements
     private Preference mAdjustHandle;
     private SharedPreferences mPrefs;
     private SettingsGestureView mGestureView;
-    private FavoriteDialog mManageAppDialog;
     private Preference mButtonConfig;
     private String[] mButtonEntries;
     private Drawable[] mButtonImages;
@@ -127,9 +126,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public void onPause() {
         if (mGestureView != null) {
             mGestureView.hide();
-        }
-        if (mManageAppDialog != null) {
-            mManageAppDialog.dismiss();
+            mGestureView = null;
         }
         mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
         super.onPause();
@@ -212,11 +209,12 @@ public class SettingsActivity extends PreferenceActivity implements
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
             Preference preference) {
         if (preference == mAdjustHandle) {
+            if (mGestureView != null) {
+                mGestureView.hide();
+                mGestureView = null;
+            }
             mGestureView = new SettingsGestureView(this);
             mGestureView.show();
-            return true;
-        } else if (preference == mFavoriteAppsConfig) {
-            showManageAppDialog();
             return true;
         } else if (preference == mButtonConfig){
             Map<Integer, Boolean> buttons = Utils.buttonStringToMap(mButtons, PREF_BUTTON_DEFAULT_NEW);
@@ -264,19 +262,6 @@ public class SettingsActivity extends PreferenceActivity implements
         }
 
         return false;
-    }
-
-    private void showManageAppDialog() {
-        if (mManageAppDialog != null && mManageAppDialog.isShowing()) {
-            return;
-        }
-
-        String favoriteListString = mPrefs.getString(PREF_FAVORITE_APPS, "");
-        List<String> favoriteList = new ArrayList<String>();
-        Utils.parseFavorites(favoriteListString, favoriteList);
-
-        mManageAppDialog = new FavoriteDialog(this, favoriteList);
-        mManageAppDialog.show();
     }
 
     public void applyChanges(List<String> favoriteList){

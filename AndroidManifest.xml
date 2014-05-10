@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    coreApp="true"
     package="org.omnirom.omniswitch"
     android:versionCode="2"
-    android:versionName="1.1"
-    coreApp="true">
+    android:versionName="1.1" >
     <!-- ActivityManager -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.GET_DETAILED_TASKS" />
@@ -25,27 +25,18 @@
         android:targetSdkVersion="18" />
     <application
         android:allowBackup="false"
+        android:allowClearUserData="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:persistent="true"
-        android:allowClearUserData="false"
         android:theme="@android:style/Theme.Holo.Light" >
         <service
             android:name="org.omnirom.omniswitch.SwitchService"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name="org.omnirom.omniswitch.MainActivity"
-            android:configChanges="orientation|screenSize"
-            android:excludeFromRecents="true"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.NoDisplay" >
-        </activity>
-        <activity
             android:name="org.omnirom.omniswitch.SettingsActivity"
-            android:configChanges="orientation|screenSize"
-            android:launchMode="singleTop"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

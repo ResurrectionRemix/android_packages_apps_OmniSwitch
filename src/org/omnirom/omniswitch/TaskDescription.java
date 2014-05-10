@@ -114,4 +114,9 @@ public final class TaskDescription {
     public ActivityInfo getActivityInfo() {
         return mActivityInfo;
     }
+
+    @Override
+    public String toString() {
+        return mLabel.toString();
+    }
 }

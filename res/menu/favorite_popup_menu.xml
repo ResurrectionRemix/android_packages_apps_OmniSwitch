@@ -17,9 +17,9 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/package_inspect_item"
+        android:id="@+id/recent_inspect_item"
         android:title="@string/package_inspect_item_title"/>
     <item
-        android:id="@+id/recent_add_favorite"
-        android:title="@string/package_add_favorite_title"/>
+        android:id="@+id/recent_remove_favorite"
+        android:title="@string/package_remove_favorite_title"/>
 </menu>

@@ -136,7 +136,7 @@
     <PreferenceCategory
         android:key="category_favorite"
         android:title="@string/category_favorite_title" >
-        <Preference
+        <org.omnirom.omniswitch.ui.FavoritePreference
             android:key="favorite_apps_config"
             android:summary="@string/favorite_apps_config_summary"
             android:title="@string/favorite_apps_config_title" />

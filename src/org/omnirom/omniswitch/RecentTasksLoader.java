@@ -40,7 +40,7 @@ import android.util.Log;
 
 public class RecentTasksLoader {
     private static final String TAG = "RecentTasksLoader";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private static final int DISPLAY_TASKS = 20;
     private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for
@@ -166,7 +166,7 @@ public class RecentTasksLoader {
 
         if(mPreloaded && mSwitchManager != null){
             if (DEBUG){
-                Log.d(TAG, "recents preloaded");
+                Log.d(TAG, "recents preloaded " + mLoadedTasks);
             }
             mSwitchManager.update(mLoadedTasks);
             mPreloaded = false;

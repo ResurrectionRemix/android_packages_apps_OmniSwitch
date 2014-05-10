@@ -22,4 +22,7 @@
     <item
         android:id="@+id/recent_inspect_item"
         android:title="@string/package_inspect_item_title"/>
+    <item
+        android:id="@+id/recent_add_favorite"
+        android:title="@string/package_add_favorite_title"/>
 </menu>

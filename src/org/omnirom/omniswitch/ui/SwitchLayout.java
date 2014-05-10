@@ -39,6 +39,7 @@ import android.animation.TimeInterpolator;
 import android.app.ActivityManager;
 import android.app.ActivityManager.MemoryInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
@@ -147,6 +148,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private ButtonScrollView mButtonList;
     private LinearLayout mButtonListItems;
     private List<PackageTextView> mActionList;
+    private boolean mHandleRecentsUpdate = true;
 
     private class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -325,7 +327,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             public boolean onItemLongClick(AdapterView<?> parent,
                     View view, int position, long id) {
                 TaskDescription task = mLoadedTasks.get(position);
-                handleLongPress(task, view);
+                handleLongPressRecent(task, view);
                 return true;
             }
         });
@@ -403,7 +405,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                     View view, int position, long id) {
                 String intent = mFavoriteList.get(position);
                 PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
-                handleLongPress(packageItem, view);
+                handleLongPressFavorite(packageItem, view);
                 return true;
             }
         });
@@ -464,7 +466,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             public boolean onItemLongClick(AdapterView<?> parent,
                     View view, int position, long id) {
                 PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageList().get(position);
-                handleLongPress(packageItem, view);
+                handleLongPressAppDrawer(packageItem, view);
                 return true;
             }
         });
@@ -507,18 +509,30 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private synchronized void updateRecentsAppsList(boolean force){
+        if(DEBUG){
+            Log.d(TAG, "updateRecentsAppsList " + System.currentTimeMillis());
+        }
         if(!force && mUpdateNoRecentsTasksDone){
+            if(DEBUG){
+                Log.d(TAG, "!force && mUpdateNoRecentsTasksDone");
+            }
             return;
         }
         if(mNoRecentApps == null || mRecentListHorizontal == null){
+            if(DEBUG){
+                Log.d(TAG, "mNoRecentApps == null || mRecentListHorizontal == null");
+            }
             return;
         }
 
         if(!mTaskLoadDone){
+            if(DEBUG){
+                Log.d(TAG, "!mTaskLoadDone");
+            }
             return;
         }
         if(DEBUG){
-            Log.d(TAG, "updateRecentsAppsList " + System.currentTimeMillis());
+            Log.d(TAG, "updateRecentsAppsList2");
         }
         mRecentListAdapter.notifyDataSetChanged();
 
@@ -763,14 +777,16 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     public synchronized void update(List<TaskDescription> taskList) {
-        if(DEBUG){
-            Log.d(TAG, "update " + System.currentTimeMillis());
-        }
-        mLoadedTasks.clear();
-        mLoadedTasks.addAll(taskList);
+        if(isHandleRecentsUpdate()){
+            if(DEBUG){
+                Log.d(TAG, "update " + System.currentTimeMillis() + " " + taskList);
+            }
+            mLoadedTasks.clear();
+            mLoadedTasks.addAll(taskList);
 
-        mTaskLoadDone = true;
-        updateRecentsAppsList(false);
+            mTaskLoadDone = true;
+            updateRecentsAppsList(false);
+        }
     }
 
     public void refresh(List<TaskDescription> taskList) {
@@ -784,17 +800,21 @@ public class SwitchLayout implements OnShowcaseEventListener {
         updateRecentsAppsList(true);
     }
 
-    private void handleLongPress(final TaskDescription ad, View view) {
+    private void handleLongPressRecent(final TaskDescription ad, View view) {
         final PopupMenu popup = new PopupMenu(mContext, view);
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.recent_popup_menu,
                 popup.getMenu());
+        popup.getMenu().findItem(R.id.recent_add_favorite).setEnabled(!mFavoriteList.contains(ad.getIntent().toUri(0)));
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.recent_remove_item) {
                     mRecentsManager.killTask(ad);
                 } else if (item.getItemId() == R.id.recent_inspect_item) {
                     mRecentsManager.startApplicationDetailsActivity(ad.getPackageName());
+                } else if (item.getItemId() == R.id.recent_add_favorite) {
+                    Intent intent = ad.getIntent();
+                    Utils.addToFavorites(mContext, intent.toUri(0), mFavoriteList);
                 } else {
                     return false;
                 }
@@ -809,15 +829,43 @@ public class SwitchLayout implements OnShowcaseEventListener {
         popup.show();
     }
 
-    private void handleLongPress(final PackageManager.PackageItem packageItem, View view) {
+    private void handleLongPressFavorite(final PackageManager.PackageItem packageItem, View view) {
         final PopupMenu popup = new PopupMenu(mContext, view);
         mPopup = popup;
-        popup.getMenuInflater().inflate(R.menu.package_popup_menu,
+        popup.getMenuInflater().inflate(R.menu.favorite_popup_menu,
                 popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.package_inspect_item) {
                     mRecentsManager.startApplicationDetailsActivity(packageItem.getActivityInfo().packageName);
+                } else if (item.getItemId() == R.id.recent_remove_favorite) {
+                    Utils.removeFromFavorites(mContext, packageItem.getIntent(), mFavoriteList);
+                } else {
+                    return false;
+                }
+                return true;
+            }
+        });
+        popup.setOnDismissListener(new PopupMenu.OnDismissListener() {
+            public void onDismiss(PopupMenu menu) {
+                mPopup = null;
+            }
+        });
+        popup.show();
+    }
+
+    private void handleLongPressAppDrawer(final PackageManager.PackageItem packageItem, View view) {
+        final PopupMenu popup = new PopupMenu(mContext, view);
+        mPopup = popup;
+        popup.getMenuInflater().inflate(R.menu.package_popup_menu,
+                popup.getMenu());
+        popup.getMenu().findItem(R.id.recent_add_favorite).setEnabled(!mFavoriteList.contains(packageItem.getIntent()));
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.package_inspect_item) {
+                    mRecentsManager.startApplicationDetailsActivity(packageItem.getActivityInfo().packageName);
+                } else if (item.getItemId() == R.id.recent_add_favorite) {
+                    Utils.addToFavorites(mContext, packageItem.getIntent(), mFavoriteList);
                 } else {
                     return false;
                 }
@@ -957,7 +1005,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private PackageTextView getPackageItemActionTemplate() {
         PackageTextView item = new PackageTextView(mContext);
         item.setGravity(Gravity.CENTER_VERTICAL);
-        item.setPadding(10, 0, 10, 0);
         return item;
     }
 
@@ -1428,9 +1475,11 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
             mImmersiveModeButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Utils.toggleImmersiveMode(mContext);
-                    if (mAutoClose){
-                        mRecentsManager.close();
+                    if (!mConfiguration.mRestrictedMode){
+                        Utils.toggleImmersiveMode(mContext);
+                        if (mAutoClose){
+                            mRecentsManager.close();
+                        }
                     }
                 }
             });
@@ -1480,5 +1529,13 @@ public class SwitchLayout implements OnShowcaseEventListener {
             PackageTextView item = (PackageTextView) mButtonListItems.getChildAt(i);
             item.setBackground(item.getOriginalImage());
         }
+    }
+
+    public void setHandleRecentsUpdate(boolean handleRecentsUpdate) {
+        mHandleRecentsUpdate = handleRecentsUpdate;
+    }
+
+    public boolean isHandleRecentsUpdate() {
+        return mHandleRecentsUpdate;
     }
 }

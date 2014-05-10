@@ -106,4 +106,6 @@
     <string name="sc_quick_switcher_empty_body">\nNo recent apps or favorites.\n\nMoving up and down to switch between levels.\n\nMoving left and right to switch between level items.</string>
     <string name="immersive_mode">Immersive mode</string>
     <string name="immersive_mode_help">Toggle immersive mode</string>
+    <string name="package_add_favorite_title">Add to favorites</string>
+    <string name="package_remove_favorite_title">Remove from favorites</string>
 </resources>

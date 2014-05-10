@@ -22,17 +22,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.input.InputManager;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import android.provider.Settings;
-import android.content.Context;
 
 public class Utils {
 
@@ -148,5 +150,23 @@ public class Utils {
 
         Settings.System.putInt(context.getContentResolver(),
                 Settings.System.IMMERSIVE_MODE, !immersive ? 1 : 0);
+    }
+
+    public static void removeFromFavorites(Context context, String item, List<String> favoriteList) {
+        if (favoriteList.contains(item)){
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            favoriteList.remove(item);
+            prefs.edit().putString(SettingsActivity.PREF_FAVORITE_APPS,
+                    Utils.flattenFavorites(favoriteList)).commit();
+        }
+    }
+
+    public static void addToFavorites(Context context, String item, List<String> favoriteList) {
+        if (!favoriteList.contains(item)){
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            favoriteList.add(item);
+            prefs.edit().putString(SettingsActivity.PREF_FAVORITE_APPS,
+                    Utils.flattenFavorites(favoriteList)).commit();
+        }
     }
 }

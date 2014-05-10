@@ -43,6 +43,7 @@ public class SwitchConfiguration {
     public int mIconBorder = 8; // in dp
     public float mDensity;
     public int mMaxWidth;
+    public int mItemWidth;
     public int mMaxHeight;
     public boolean mShowRambar;
     public int mStartYRelative;
@@ -137,6 +138,8 @@ public class SwitchConfiguration {
 
         mMaxWidth = Math.round((mIconSize + mIconBorder) * mDensity);
         mMaxHeight = Math.round((mIconSize + 3 * mIconBorder) * mDensity);
+        mItemWidth = mMaxWidth + 10;
+
 
         mDragHandleColor = prefs.getInt(
                 SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
@@ -161,16 +164,16 @@ public class SwitchConfiguration {
 
     // includes rotation
     public int getCurrentDisplayHeight() {
-        DisplayMetrics dm = new DisplayMetrics();
-        mWindowManager.getDefaultDisplay().getMetrics(dm);
-        int height = dm.heightPixels;
+        Point size = new Point();
+        mWindowManager.getDefaultDisplay().getRealSize(size);
+        int height = size.y;
         return height;
     }
 
     public int getCurrentDisplayWidth() {
-        DisplayMetrics dm = new DisplayMetrics();
-        mWindowManager.getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
+        Point size = new Point();
+        mWindowManager.getDefaultDisplay().getRealSize(size);
+        int width = size.x;
         return width;
     }
 
@@ -181,8 +184,8 @@ public class SwitchConfiguration {
     public int getCurrentOverlayWidth() {
         if (isLandscape()) {
             // landscape
-            return Math.max((int) (getCurrentDisplayWidth() * 0.66f),
-                    getCurrentDisplayHeight());
+            return Math.max(mItemWidth * 6,
+                (int) (getCurrentDisplayWidth() * 0.66f));
         }
         return getCurrentDisplayWidth() - mHorizontalMargin;
     }

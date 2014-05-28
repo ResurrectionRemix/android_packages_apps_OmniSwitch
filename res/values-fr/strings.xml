@@ -104,4 +104,6 @@
     <string name="sc_quick_switcher_empty_body">\nAucune application récente ou favorite.\n\nDéplacer en bas et en haut pour changer de niveaux.\n\nDéplacer de gauche à droite pour basculer entre les éléments de niveau.</string>
     <string name="immersive_mode">Mode immersif</string>
     <string name="immersive_mode_help">Basculer en mode immersif</string>
+    <string name="package_add_favorite_title">Ajouter aux favoris</string>
+    <string name="package_remove_favorite_title">Supprimer des favoris</string>
 </resources>

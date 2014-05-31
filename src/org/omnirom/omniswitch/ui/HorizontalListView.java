@@ -256,8 +256,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         ViewConfiguration vc = ViewConfiguration.get(context);
         mSlop = vc.getScaledTouchSlop();
         mScrollXThreshold = mSlop * 8;
-        float defaultFricion = ViewConfiguration.getScrollFriction();
-        mFlingTracker.setFriction(defaultFricion / 2);
     }
 
     /**
@@ -1114,7 +1112,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     protected boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
             float velocityY) {
-        mFlingTracker.fling(mNextX, 0, (int) -velocityX, 0, 0, mMaxX, 0, 0);
+        mFlingTracker.fling(mNextX, 0, (int) -velocityX, 0, -Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
         setCurrentScrollState(OnScrollStateChangedListener.ScrollState.SCROLL_STATE_FLING);
         requestLayout();
         return true;

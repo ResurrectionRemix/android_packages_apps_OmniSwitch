@@ -19,15 +19,10 @@ package org.omnirom.omniswitch;
 
 import java.util.Map;
 
-import org.omnirom.omniswitch.ui.ColorDrawableWithDimensions;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 public class SwitchConfiguration {
@@ -62,7 +57,6 @@ public class SwitchConfiguration {
     public boolean mRestrictedMode;
     public int mLevelHeight; // in px
     public int mItemChangeWidthX; // in px - maximum value - can be lower if more items
-    public Drawable mDefaultThumbnailBackground;
     public int mThumbnailWidth; // in px
     public int mThumbnailHeight; // in px
     public Map<Integer, Boolean> mButtons;
@@ -110,9 +104,6 @@ public class SwitchConfiguration {
                 R.dimen.thumbnail_width);
         mThumbnailHeight = (int) context.getResources()
                 .getDimensionPixelSize(R.dimen.thumbnail_height);
-        mDefaultThumbnailBackground = new ColorDrawableWithDimensions(
-                Color.BLACK, mThumbnailWidth, mThumbnailHeight);
-
         updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
     }
 

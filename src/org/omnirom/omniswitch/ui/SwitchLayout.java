@@ -160,13 +160,22 @@ public class SwitchLayout implements OnShowcaseEventListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             TaskDescription ad = mLoadedTasks.get(position);
-            final PackageTextView item = getPackageItemTemplate();
+            
+            PackageTextView item = null;
+            if (convertView == null){
+                item = getRecentItemTemplate();
+            } else {
+                item = (PackageTextView) convertView;
+            }
+            item.setTask(ad);
 
             if (mConfiguration.mShowLabels) {
                 item.setText(ad.getLabel());
+            } else {
+                item.setText("");
             }
-
-            Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), ad, ad.getIcon(), mConfiguration, mConfiguration.mIconSize);
+            Drawable d = null;
+            d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), ad, ad.getIcon(), mConfiguration, mConfiguration.mIconSize);
             item.setOriginalImage(d);
             item.setBackground(d);
 
@@ -183,13 +192,20 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final PackageTextView item = getPackageItemTemplate();
+            PackageTextView item = null;
+            if (convertView == null){
+                item = getFavoriteItemTemplate();
+            } else {
+                item = (PackageTextView) convertView;
+            }
             String intent = mFavoriteList.get(position);
 
             PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
             item.setIntent(packageItem.getIntent());
             if (mConfiguration.mShowLabels) {
                 item.setText(packageItem.getTitle());
+            } else {
+                item.setText("");
             }
             Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), packageItem, mConfiguration, mConfiguration.mIconSize);
             item.setOriginalImage(d);
@@ -207,12 +223,18 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final PackageTextView item = getPackageItemTemplate();
-
+            PackageTextView item = null;
+            if (convertView == null){
+                item = getAppDrawerItemTemplate();
+            } else {
+                item = (PackageTextView) convertView;
+            }
             PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageList().get(position);
             item.setIntent(packageItem.getIntent());
             if (mConfiguration.mShowLabels) {
                 item.setText(packageItem.getTitle());
+            } else {
+                item.setText("");
             }
             Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), packageItem, mConfiguration, mConfiguration.mIconSize);
             item.setOriginalImage(d);
@@ -299,8 +321,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         mRecents = (LinearLayout) mView.findViewById(R.id.recents);
 
-        mRecentListHorizontal = (HorizontalListView) mView
-                .findViewById(R.id.recent_list_horizontal);
+        mRecentListHorizontal = (HorizontalListView) mView.findViewById(R.id.recent_list_horizontal);
         mRecentListHorizontal.setDividerWidth(10);
         
         mNoRecentApps = (TextView) mView
@@ -562,11 +583,11 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mView.getBackground().setAlpha(0);
         }
         mRamUsageBarContainer.setVisibility(mConfiguration.mShowRambar ? View.VISIBLE : View.GONE);
-        mFavoriteListHorizontal.setLayoutParams(getListviewParams());
+        mFavoriteListHorizontal.setLayoutParams(getListParams());
         mFavoriteListHorizontal.scrollTo(0);
-        mRecentListHorizontal.setLayoutParams(getListviewParams());
+        mRecentListHorizontal.setLayoutParams(getRecentsListParams());
         mRecentListHorizontal.scrollTo(0);
-        mNoRecentApps.setLayoutParams(getListviewParams());
+        mNoRecentApps.setLayoutParams(getListParams());
         // TODO
         mAppDrawer.setColumnWidth(mConfiguration.mMaxWidth);
         mAppDrawer.setLayoutParams(getAppDrawerParams());
@@ -720,10 +741,28 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
     }
 
-    private LinearLayout.LayoutParams getListviewParams(){
+    private LinearLayout.LayoutParams getRecentsListParams(){
         return new LinearLayout.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             mConfiguration.mMaxHeight);
+    }
+
+    private LinearLayout.LayoutParams getListParams(){
+        return new LinearLayout.LayoutParams(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            mConfiguration.mMaxHeight);
+    }
+
+    private LinearLayout.LayoutParams getListItemParams(){
+        return new LinearLayout.LayoutParams(
+                mConfiguration.mMaxWidth,
+                mConfiguration.mMaxHeight);
+    }
+
+    private AbsListView.LayoutParams getAppDrawerItemParams(){
+        return new AbsListView.LayoutParams(
+                mConfiguration.mMaxWidth,
+                mConfiguration.mMaxHeight);
     }
 
     // TODO dont use real icon size values in code
@@ -785,7 +824,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mLoadedTasks.addAll(taskList);
 
             mTaskLoadDone = true;
-            updateRecentsAppsList(false);
+            updateRecentsAppsList(true);
         }
     }
 
@@ -814,7 +853,20 @@ public class SwitchLayout implements OnShowcaseEventListener {
                     mRecentsManager.startApplicationDetailsActivity(ad.getPackageName());
                 } else if (item.getItemId() == R.id.recent_add_favorite) {
                     Intent intent = ad.getIntent();
-                    Utils.addToFavorites(mContext, intent.toUri(0), mFavoriteList);
+                    String intentStr = intent.toUri(0);
+                    PackageManager.PackageItem packageItem =
+                            PackageManager.getInstance(mContext).getPackageItem(intentStr);
+                    if (packageItem == null){
+                        // find a matching available package by matching thing like
+                        // package name
+                        packageItem = PackageManager.getInstance(mContext).getPackageItemByComponent(intent);
+                        if (packageItem == null){
+                            Log.d(TAG, "failed to add " + intentStr);
+                            return false;
+                        }
+                        intentStr = packageItem.getIntent();
+                    }
+                    Utils.addToFavorites(mContext, intentStr, mFavoriteList);
                 } else {
                     return false;
                 }
@@ -865,6 +917,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 if (item.getItemId() == R.id.package_inspect_item) {
                     mRecentsManager.startApplicationDetailsActivity(packageItem.getActivityInfo().packageName);
                 } else if (item.getItemId() == R.id.recent_add_favorite) {
+                    Log.d(TAG, "add " + packageItem.getIntent());
                     Utils.addToFavorites(mContext, packageItem.getIntent(), mFavoriteList);
                 } else {
                     return false;
@@ -888,11 +941,35 @@ public class SwitchLayout implements OnShowcaseEventListener {
         String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
         Utils.parseFavorites(favoriteListString, mFavoriteList);
 
+        List<String> favoriteList = new ArrayList<String>();
+        favoriteList.addAll(mFavoriteList);
+        Iterator<String> nextFavorite = favoriteList.iterator();
+        while(nextFavorite.hasNext()){
+            String intent = nextFavorite.next();
+            PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
+            if (packageItem == null){
+                Log.d(TAG, "failed to add " + intent);
+                mFavoriteList.remove(intent);
+                continue;
+            }
+        }
+
         mHasFavorites = mFavoriteList.size() != 0;
         mFavoriteListAdapter.notifyDataSetChanged();
         mRecentListAdapter.notifyDataSetChanged();
         mAppDrawerListAdapter.notifyDataSetChanged();
         buildButtonList();
+
+        if (!mHasFavorites){
+            mShowFavorites = false;
+        }
+        if (mOpenFavorite != null){
+            mOpenFavorite.setVisibility(mHasFavorites ? View.VISIBLE : View.GONE);
+            mOpenFavorite.setImageDrawable(mShowFavorites ? mFavoriteDrawableDefault[0] : mFavoriteDrawableDefault[1]);
+        }
+        if (mFavoriteListHorizontal != null){
+            mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
+        }
     }
 
     private final Runnable updateRamBarTask = new Runnable() {
@@ -990,14 +1067,35 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
     }
 
-    private PackageTextView getPackageItemTemplate() {
+    private PackageTextView getRecentItemTemplate() {
         PackageTextView item = new PackageTextView(mContext);
         item.setTextColor(Color.WHITE);
         item.setShadowLayer(5, 0, 0, Color.BLACK);
         item.setEllipsize(TextUtils.TruncateAt.END);
         item.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM);
-        item.setMaxHeight(mConfiguration.mMaxHeight);
-        item.setMaxWidth(mConfiguration.mMaxWidth);
+        item.setLayoutParams(getListItemParams());
+        item.setMaxLines(1);
+        return item;
+    }
+
+    private PackageTextView getFavoriteItemTemplate() {
+        PackageTextView item = new PackageTextView(mContext);
+        item.setTextColor(Color.WHITE);
+        item.setShadowLayer(5, 0, 0, Color.BLACK);
+        item.setEllipsize(TextUtils.TruncateAt.END);
+        item.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM);
+        item.setLayoutParams(getListItemParams());
+        item.setMaxLines(1);
+        return item;
+    }
+
+    private PackageTextView getAppDrawerItemTemplate() {
+        PackageTextView item = new PackageTextView(mContext);
+        item.setTextColor(Color.WHITE);
+        item.setShadowLayer(5, 0, 0, Color.BLACK);
+        item.setEllipsize(TextUtils.TruncateAt.END);
+        item.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM);
+        item.setLayoutParams(getAppDrawerItemParams());
         item.setMaxLines(1);
         return item;
     }

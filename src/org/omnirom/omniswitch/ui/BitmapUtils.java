@@ -36,7 +36,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class BitmapUtils {
-    public static Drawable rotate(Resources resources, Drawable image, int deg) {
+    public static BitmapDrawable rotate(Resources resources, Drawable image, int deg) {
         Bitmap b = ((BitmapDrawable) image).getBitmap();
         Bitmap bmResult = Bitmap.createBitmap(b.getWidth(), b.getHeight(),
                 Bitmap.Config.ARGB_8888);
@@ -46,7 +46,7 @@ public class BitmapUtils {
         return new BitmapDrawable(resources, bmResult);
     }
 
-    public static Drawable resize(Resources resources, Drawable image, int iconSize, int borderSize, float density) {
+    public static BitmapDrawable resize(Resources resources, Drawable image, int iconSize, int borderSize, float density) {
         int size = Math.round(iconSize * density);
         int border = Math.round(borderSize * density);
 
@@ -63,7 +63,7 @@ public class BitmapUtils {
         return new BitmapDrawable(resources, bmResult);
     }
 
-    public static Drawable resize(Resources resources, Drawable image, int iconSize, float density) {
+    public static BitmapDrawable resize(Resources resources, Drawable image, int iconSize, float density) {
         int size = Math.round(iconSize * density);
 
         Bitmap b = ((BitmapDrawable) image).getBitmap();
@@ -78,7 +78,7 @@ public class BitmapUtils {
         return new BitmapDrawable(resources, bmResult);
     }
 
-    public static Drawable colorize(Resources resources, int color, Drawable image) {
+    public static BitmapDrawable colorize(Resources resources, int color, Drawable image) {
         Bitmap b = ((BitmapDrawable) image).getBitmap();
         BitmapDrawable b1 = new BitmapDrawable(resources, b);
         // remove any alpha
@@ -88,7 +88,7 @@ public class BitmapUtils {
         return b1;
     }
 
-    public static Drawable shadow(Resources resources, Drawable image) {
+    public static BitmapDrawable shadow(Resources resources, Drawable image) {
         Bitmap b = ((BitmapDrawable) image).getBitmap();
 
         BlurMaskFilter blurFilter = new BlurMaskFilter(5, BlurMaskFilter.Blur.OUTER);
@@ -107,7 +107,7 @@ public class BitmapUtils {
         return new BitmapDrawable(resources, bmResult);
     }
 
-    public static Drawable glow(Resources resources, int glowColor, Drawable src) {
+    public static BitmapDrawable glow(Resources resources, int glowColor, Drawable src) {
         Bitmap b = ((BitmapDrawable) src).getBitmap();
 
         // An added margin to the initial image
@@ -145,7 +145,7 @@ public class BitmapUtils {
         return context.getResources().getDrawable(R.drawable.ic_default);
     }
 
-    public static Drawable compose(Resources resources, Drawable icon, Context context, Drawable iconBack,
+    public static BitmapDrawable compose(Resources resources, Drawable icon, Context context, Drawable iconBack,
             Drawable iconMask, Drawable iconUpon, float scale) {
         Bitmap b = ((BitmapDrawable) icon).getBitmap();
         int width = b.getWidth();
@@ -191,15 +191,13 @@ public class BitmapUtils {
         return new BitmapDrawable(resources, bitmap);
     }
 
-    public static Drawable overlay(Resources resources, Bitmap b, Drawable icon) {
-        int width = b.getWidth();
-        int height = b.getHeight();
-
+    public static BitmapDrawable overlay(Resources resources, Drawable b, Drawable icon, int width, int height) {
         Bitmap bmp = Bitmap.createBitmap(width, height + 40,
                 Bitmap.Config.ARGB_8888);
 
         Canvas c = new Canvas(bmp);
-        c.drawBitmap(b, 0, 40, null);
+        b.setBounds(0, 40, width, height);
+        b.draw(c);
         c.drawBitmap(((BitmapDrawable) icon).getBitmap(), 0, 0, null);
         return new BitmapDrawable(resources, bmp);
     }

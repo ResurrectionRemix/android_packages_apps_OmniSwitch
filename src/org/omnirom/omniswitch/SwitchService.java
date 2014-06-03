@@ -105,8 +105,6 @@ public class SwitchService extends Service {
         mManager.shutdownService();
 
         mIsRunning = false;
-
-        // TODO
         BitmapCache.getInstance(this).clear();
     }
 

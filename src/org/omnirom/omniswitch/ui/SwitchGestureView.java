@@ -40,7 +40,6 @@ import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -122,21 +121,19 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             } else {
                 mLongPress = true;
                 mHandleRecentsUpdate = true;
-                RecentTasksLoader.getInstance(mContext).loadTasksInBackground(mRecentsManager);
+                RecentTasksLoader.getInstance(mContext).loadTasksInBackground(mRecentsManager, false);
             }
         }};
     private PackageTextView[] mCurrentItemEnv= new PackageTextView[3];
 
     private int mCurrentRecentItemIndex;
     private boolean mLongPress;
-    private boolean mHasThumbPermission;
     private int mLevel;
     private int mLockedLevel;
     private int[] mVerticalBorders = new int[4];
     private List<PackageTextView> mFavoriteList;
     private int mCurrentFavoriteItemIndex;
     private boolean mSpeedSwitcher;
-    private int mSlop;
     private List<PackageTextView> mActionList;
     private int mCurrentActionItemIndex;
     private int mLevelX = -1;
@@ -146,6 +143,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private View mLevelChangeIndicator;
     private FrameLayout mItemView;
     private boolean mShowIndicators = false;
+    private boolean mShowTumb = true;
     private boolean mShowingSpeedSwitcher;
 
     public SwitchGestureView(Context context) {
@@ -181,13 +179,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         list.addView(listLayout);
         mAllLists[2] = list;
 
-        mHasThumbPermission = hasThumbnailPermission();
         mDragHandleImage = mContext.getResources().getDrawable(
                 R.drawable.drag_handle);
         mDragHandleHiddenImage = mContext.getResources().getDrawable(
                 R.drawable.drag_handle_overlay);
-        ViewConfiguration vc = ViewConfiguration.get(context);
-        mSlop = vc.getScaledTouchSlop();
 
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -322,7 +317,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     mLongPress = false;
 
                     RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
-                    RecentTasksLoader.getInstance(mContext).preloadTasks();
+                    RecentTasksLoader.getInstance(mContext).preloadTasks(false);
 
                     mDownPoint[0] = event.getRawX();
                     mDownPoint[1] = event.getRawY();
@@ -778,11 +773,11 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         updateCurrentItemEnv();
         layoutEnvItems();
 
-        if (mHasThumbPermission && item.getTask() != null){
+        if (mShowTumb && item.getTask() != null){
             loadTaskThumb(item);
         }
 
-        if (mHasThumbPermission && item.getTask() != null && item.isThumbLoaded()){
+        if (mShowTumb && item.getTask() != null && item.isThumbLoaded()){
             item.setCompoundDrawablesWithIntrinsicBounds(null, item.getThumb(), null, null);
         } else {
             item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
@@ -790,10 +785,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (mConfiguration.mShowLabels) {
             item.setText(item.getLabel());
         }
-    }
-
-    private boolean hasThumbnailPermission() {
-        return !mConfiguration.mRestrictedMode;
     }
 
     private void buildFavoriteItems(List<String> favoriteList){
@@ -804,6 +795,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             String intent = nextFavorite.next();
             PackageTextView item = getPackageItemTemplate();
             PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
+            if (packageItem == null){
+                Log.d(TAG, "failed to add " + intent);
+                continue;
+            }
             item.setIntent(packageItem.getIntent());
             item.setLabel(packageItem.getTitle());
             Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), packageItem, mConfiguration, 100);
@@ -1071,10 +1066,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
         if (left != null){
             left.setText("");
-            if (mHasThumbPermission && left.getTask() != null){
+            if (mShowTumb && left.getTask() != null){
                 loadTaskThumb(left);
             }
-            if (mHasThumbPermission && left.getTask() != null && left.isThumbLoaded()){
+            if (mShowTumb && left.getTask() != null && left.isThumbLoaded()){
                 left.setCompoundDrawablesWithIntrinsicBounds(null, left.getThumb(), null, null);
             } else {
                 left.setCompoundDrawablesWithIntrinsicBounds(null, left.getOriginalImage(), null, null);
@@ -1082,10 +1077,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         if (right != null){
             right.setText("");
-            if (mHasThumbPermission && right.getTask() != null){
+            if (mShowTumb && right.getTask() != null){
                 loadTaskThumb(right);
             }
-            if (mHasThumbPermission && right.getTask() != null && right.isThumbLoaded()){
+            if (mShowTumb && right.getTask() != null && right.isThumbLoaded()){
                 right.setCompoundDrawablesWithIntrinsicBounds(null, right.getThumb(), null, null);
             } else {
                 right.setCompoundDrawablesWithIntrinsicBounds(null, right.getOriginalImage(), null, null);
@@ -1144,13 +1139,14 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         if (item.getTask() != null && !item.isThumbLoaded()){
             TaskDescription ad = item.getTask();
-            Bitmap thumb = RecentTasksLoader.getInstance(mContext).loadThumbnail(item.getTask());
+            Drawable thumb = RecentTasksLoader.getInstance(mContext).loadThumbnail(item.getTask());
             if (thumb != null){
                 Drawable icon = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), ad, ad.getIcon(), mConfiguration,  60);
-                Drawable d = BitmapUtils.overlay(mContext.getResources(), thumb, icon);
+                Drawable d = BitmapUtils.overlay(mContext.getResources(), thumb, icon,
+                        mConfiguration.mThumbnailWidth,
+                        mConfiguration.mThumbnailHeight);
                 item.setThumb(d);
             }
-//            item.setThumb(mConfiguration.mDefaultThumbnailBackground);
         }
     }
 
@@ -1334,7 +1330,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     }
 
     private FrameLayout.LayoutParams getListViewParams(int level){
-        int width = (level == 1 && mHasThumbPermission) ? mConfiguration.mThumbnailWidth * 3 : mConfiguration.getCurrentOverlayWidth();
+        int width = (level == 1 && mShowTumb) ? mConfiguration.mThumbnailWidth * 3 : mConfiguration.getCurrentOverlayWidth();
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 width,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -1344,7 +1340,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     }
 
     private int getListItemWidth(int level) {
-        if (level == 1 && mHasThumbPermission){
+        if (level == 1 && mShowTumb){
             return mConfiguration.mThumbnailWidth + mConfiguration.mIconBorder;
         }
         return mConfiguration.getCurrentOverlayWidth() / 3;

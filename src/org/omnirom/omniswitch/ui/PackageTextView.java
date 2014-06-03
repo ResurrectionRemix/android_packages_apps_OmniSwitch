@@ -128,4 +128,9 @@ public class PackageTextView extends TextView {
     public Drawable getGlowImage() {
         return mGlowImage;
     }
+
+    @Override
+    public String toString() {
+        return getLabel().toString();
+    }
 }

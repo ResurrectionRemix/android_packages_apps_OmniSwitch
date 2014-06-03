@@ -34,6 +34,7 @@ public final class TaskDescription {
     private boolean mLoaded;
     private boolean mKilled;
     private ActivityInfo mActivityInfo;
+    private Drawable mThumb;
 
     public TaskDescription(int _taskId, int _persistentTaskId,
             ResolveInfo _resolveInfo, Intent _intent, String _packageName,
@@ -118,5 +119,13 @@ public final class TaskDescription {
     @Override
     public String toString() {
         return mLabel.toString();
+    }
+
+    public Drawable getThumb() {
+        return mThumb;
+    }
+
+    public void setThumb(Drawable thumb) {
+        mThumb = thumb;
     }
 }

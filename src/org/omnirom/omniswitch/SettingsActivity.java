@@ -17,13 +17,11 @@
  */
 package org.omnirom.omniswitch;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.CheckboxListDialog;
-import org.omnirom.omniswitch.ui.FavoriteDialog;
 import org.omnirom.omniswitch.ui.IconPackHelper;
 import org.omnirom.omniswitch.ui.NumberPickerPreference;
 import org.omnirom.omniswitch.ui.SeekBarPreference;

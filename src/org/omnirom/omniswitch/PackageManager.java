@@ -17,6 +17,7 @@
  */
 package org.omnirom.omniswitch;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,12 +47,10 @@ public class PackageManager {
     private Context mContext;
     private boolean mInitDone;
     private static PackageManager sInstance;
-//    private String mCurrentIconPack = "";
 
     public static class PackageItem implements Comparable<PackageItem> {
         private CharSequence title;
         private String packageName;
-        private Drawable icon;
         private Intent intent;
         private ActivityInfo activity;
 
@@ -61,10 +60,6 @@ public class PackageManager {
 
         public CharSequence getTitle() {
             return title;
-        }
-
-        public Drawable getIcon() {
-            return icon;
         }
 
         public ActivityInfo getActivityInfo() {
@@ -117,9 +112,30 @@ public class PackageManager {
         mInitDone = false;
     }
 
+    public Drawable getPackageIcon(PackageItem item) {
+        final android.content.pm.PackageManager pm = mContext.getPackageManager();
+
+        Drawable icon = null;
+        if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+            int iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(item.activity);
+            if (iconId != 0) {
+                icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
+            }
+        }
+        if (icon == null || !IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+            try {
+                icon = pm.getActivityIcon(item.intent);
+            } catch (NameNotFoundException e) {
+            }
+        }
+        if (icon == null) {
+            icon = BitmapUtils.getDefaultActivityIcon(mContext);
+        }
+        return icon;
+    }
+
     public synchronized void updatePackageList(boolean removed, String pkg) {
         final android.content.pm.PackageManager pm = mContext.getPackageManager();
-        // TODO
         BitmapCache.getInstance(mContext).clear();
 
         mInstalledPackages.clear();
@@ -147,22 +163,6 @@ public class PackageManager {
             intent.setComponent(name);
             item.intent = intent;
 
-            if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
-                int iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(activity);
-                if (iconId != 0) {
-                    item.icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
-                }
-            }
-            if (item.icon == null || !IconPackHelper.getInstance(mContext).isIconPackLoaded()){
-                try {
-                    item.icon = pm.getActivityIcon(intent);
-                } catch (NameNotFoundException e) {
-                    continue;
-                }
-            }
-            if (item.icon == null) {
-                item.icon = BitmapUtils.getDefaultActivityIcon(mContext);
-            }
             item.title = Utils.getActivityLabel(pm, intent);
             if (item.title == null) {
                 item.title = appInfo.loadLabel(pm);
@@ -178,35 +178,7 @@ public class PackageManager {
     }
 
     public synchronized void updatePackageIcons() {
-        final android.content.pm.PackageManager pm = mContext.getPackageManager();
-        // TODO
         BitmapCache.getInstance(mContext).clear();
-
-        Iterator<PackageItem> nextPackage = mInstalledPackagesList.iterator();
-        while(nextPackage.hasNext()){
-            PackageItem item = nextPackage.next();
-            item.icon = null;
-            if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
-                int iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(item.activity);
-                if (iconId != 0) {
-                    item.icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
-                }
-            }
-            if (item.icon == null || !IconPackHelper.getInstance(mContext).isIconPackLoaded()){
-                try {
-                    item.icon = pm.getActivityIcon(item.intent);
-                } catch (NameNotFoundException e) {
-                    continue;
-                }
-            }
-            if (item.icon == null) {
-                item.icon = BitmapUtils.getDefaultActivityIcon(mContext);
-            }
-        }
-    }
-
-    public synchronized Drawable getIcon(String intent) {
-        return getPackageMap().get(intent).getIcon();
     }
 
     public synchronized CharSequence getTitle(String intent) {
@@ -215,6 +187,31 @@ public class PackageManager {
 
     public synchronized PackageManager.PackageItem getPackageItem(String intent) {
         return getPackageMap().get(intent);
+    }
+
+    public synchronized PackageManager.PackageItem getPackageItemByComponent(Intent intent) {
+        ComponentName name = intent.getComponent();
+        String pkgName = name.getPackageName();
+        //String className = name.getClassName();
+
+        Iterator<PackageItem> nextPackage = mInstalledPackagesList.iterator();
+        while(nextPackage.hasNext()){
+            PackageItem item = nextPackage.next();
+            String intentString = item.getIntent();
+            try {
+                intent = Intent.parseUri(intentString, 0);
+            } catch (URISyntaxException e) {
+                return null;
+            }
+            name = intent.getComponent();
+            String pPkgName = name.getPackageName();
+            //String pClassName = name.getClassName();
+            // TODO: match more then just the package name
+            if (pkgName.equals(pPkgName)){
+                return item;
+            }
+        }
+        return null;
     }
 
     public synchronized boolean contains(String intent) {
@@ -244,11 +241,4 @@ public class PackageManager {
                     .commit();
         }
     }
-
-//    public void updatePrefs(SharedPreferences prefs, String key) {
-//        if (key == null || key.equals(SettingsActivity.PREF_ICONPACK)){
-//            String iconPack = prefs.getString(SettingsActivity.PREF_ICONPACK, "");
-//            mCurrentIconPack = iconPack;
-//        }
-//    }
 }

@@ -55,7 +55,7 @@ public class SwitchManager {
             if(DEBUG){
                 Log.d(TAG, "hide");
             }
-            mGestureView.setHandleRecentsUpdate(true);
+            RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
             mLayout.setHandleRecentsUpdate(false);
             mLayout.hide();
         }
@@ -67,7 +67,6 @@ public class SwitchManager {
                 Log.d(TAG, "show");
             }
             mLayout.setHandleRecentsUpdate(true);
-            mGestureView.setHandleRecentsUpdate(false);
             // update task list
             reload();
 

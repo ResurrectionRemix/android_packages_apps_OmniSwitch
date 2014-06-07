@@ -52,6 +52,7 @@ public class RecentTasksLoader {
     private List<TaskDescription> mLoadedTasks;
     private boolean mPreloaded;
     private SwitchManager mSwitchManager;
+    private ActivityManager mActivityManager;
 
     private enum State {
         LOADING, IDLE
@@ -76,6 +77,8 @@ public class RecentTasksLoader {
         mContext = context;
         mHandler = new Handler();
         mLoadedTasks = new ArrayList<TaskDescription>();
+        mActivityManager = (ActivityManager)
+                mContext.getSystemService(Context.ACTIVITY_SERVICE);
     }
 
     public List<TaskDescription> getLoadedTasks() {
@@ -143,12 +146,11 @@ public class RecentTasksLoader {
         mHandler.post(mPreloadTasksRunnable);
     }
 
-    public void cancelPreloadingTasks() {
-        cancelLoadingTasks();
-        mHandler.removeCallbacks(mPreloadTasksRunnable);
-    }
-
     public void cancelLoadingTasks() {
+        if (DEBUG){
+            Log.d(TAG, "cancelLoadingTasks state = " + mState);
+        }
+        mHandler.removeCallbacks(mPreloadTasksRunnable);
         if (mTaskLoader != null) {
             mTaskLoader.cancel(false);
             mTaskLoader = null;
@@ -187,8 +189,6 @@ public class RecentTasksLoader {
             protected void onProgressUpdate(
                     List<TaskDescription>... values) {
                 if (!isCancelled()) {
-                    List<TaskDescription> newTasks = values[0];
-                    mLoadedTasks.addAll(newTasks);
                     if (mSwitchManager != null){
                         if (DEBUG){
                             Log.d(TAG, "recents loaded");
@@ -205,18 +205,14 @@ public class RecentTasksLoader {
                 final int origPri = Process.getThreadPriority(Process.myTid());
                 Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
                 final PackageManager pm = mContext.getPackageManager();
-                final ActivityManager am = (ActivityManager) mContext
-                        .getSystemService(Context.ACTIVITY_SERVICE);
 
-                final List<ActivityManager.RecentTaskInfo> recentTasks = am
+                final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
                         .getRecentTasks(MAX_TASKS,
                                 ActivityManager.RECENT_IGNORE_UNAVAILABLE);
                 int numTasks = recentTasks.size();
                 ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN)
                         .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(
                                 pm, 0);
-
-                List<TaskDescription> tasks = new ArrayList<TaskDescription>();
 
                 for (int i = 0; i < numTasks; ++i) {
                     if (isCancelled()) {
@@ -247,12 +243,12 @@ public class RecentTasksLoader {
 
                     if (item != null) {
                         // TODO we would not need to do that if already loaded
-                        tasks.add(item);
+                        mLoadedTasks.add(item);
                         loadTaskIcon(item);
                     }
                 }
                 if (!isCancelled()) {
-                    publishProgress(tasks);
+                    publishProgress(mLoadedTasks);
                 }
                 if (DEBUG){
                     Log.d(TAG, "loadTasksInBackground end " + System.currentTimeMillis());

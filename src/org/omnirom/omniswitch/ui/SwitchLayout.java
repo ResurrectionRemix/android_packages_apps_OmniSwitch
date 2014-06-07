@@ -148,7 +148,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private ButtonScrollView mButtonList;
     private LinearLayout mButtonListItems;
     private List<PackageTextView> mActionList;
-    private boolean mHandleRecentsUpdate = true;
+    private boolean mHandleRecentsUpdate;
 
     private class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 

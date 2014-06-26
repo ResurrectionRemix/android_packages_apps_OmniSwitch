@@ -17,14 +17,16 @@
  */
 package org.omnirom.omniswitch.ui;
 
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.TaskDescription;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-public class PackageTextView extends TextView {
+public class PackageTextView extends TextView implements TaskDescription.ThumbChangeListener {
 
     private String mIntent;
     private Drawable mOriginalImage;
@@ -33,8 +35,8 @@ public class PackageTextView extends TextView {
     private TaskDescription mTask;
     private Drawable mThumbImage;
     private CharSequence mLabel;
-    private boolean mThumbLoaded;
     private Runnable mAction;
+    private Handler mHandler = new Handler();
 
     public PackageTextView(Context context) {
         super(context);
@@ -68,20 +70,20 @@ public class PackageTextView extends TextView {
         return mTask;
     }
 
-    public void setTask(TaskDescription task) {
+    public void setTask(TaskDescription task, boolean loadThumb) {
         mTask = task;
+        if (loadThumb){
+            updateThumb();
+            mTask.addThumbChangeListener(this);
+        }
     }
 
     public Drawable getThumb() {
-        if (!mThumbLoaded) {
-            return mOriginalImage;
-        }
         return mThumbImage;
     }
 
-    public void setThumb(Drawable thumb) {
+    private void setThumb(Drawable thumb) {
         mThumbImage = thumb;
-        mThumbLoaded = true;
     }
 
     public CharSequence getLabel() {
@@ -101,10 +103,6 @@ public class PackageTextView extends TextView {
 
     public void setSmallImage(Drawable smallImage) {
         mSmallImage = smallImage;
-    }
-
-    public boolean isThumbLoaded() {
-        return mThumbLoaded;
     }
 
     public void runAction() {
@@ -132,5 +130,30 @@ public class PackageTextView extends TextView {
     @Override
     public String toString() {
         return getLabel().toString();
+    }
+
+    private void updateThumb() {
+        if (getTask() != null){
+            // called because the thumb has changed from the default
+            Drawable thumb = getTask().getThumb();
+            if (thumb != null){
+                SwitchConfiguration configuration = SwitchConfiguration.getInstance(mContext);
+                Drawable icon = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), getTask(), getTask().getIcon(), configuration,  60);
+                Drawable d = BitmapUtils.overlay(mContext.getResources(), thumb, icon,
+                        configuration.mThumbnailWidth,
+                        configuration.mThumbnailHeight);
+                setThumb(d);
+                setCompoundDrawablesWithIntrinsicBounds(null, getThumb(), null, null);
+            }
+        }
+    }
+
+    @Override
+    public void thumbChanged() {
+        mHandler.post(new Runnable(){
+            @Override
+            public void run() {
+                updateThumb();
+            }});
     }
 }

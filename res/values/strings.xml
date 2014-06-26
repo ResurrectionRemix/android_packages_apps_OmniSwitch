@@ -108,4 +108,6 @@
     <string name="immersive_mode_help">Toggle immersive mode</string>
     <string name="package_add_favorite_title">Add to favorites</string>
     <string name="package_remove_favorite_title">Remove from favorites</string>
+    <string name="flat_style_summary">Use solid background for overlay view</string>
+    <string name="flat_style_title">Flat style</string>
 </resources>

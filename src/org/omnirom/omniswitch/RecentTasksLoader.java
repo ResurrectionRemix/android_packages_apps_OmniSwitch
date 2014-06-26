@@ -19,7 +19,6 @@ package org.omnirom.omniswitch;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.ColorDrawableWithDimensions;
@@ -51,16 +50,13 @@ public class RecentTasksLoader {
                                                             // non-apps
     private Context mContext;
     private AsyncTask<Void, List<TaskDescription>, Void> mTaskLoader;
-    private AsyncTask<Void, TaskDescription, Void> mThumbnailLoader;
     private Handler mHandler;
     private List<TaskDescription> mLoadedTasks;
     private boolean mPreloaded;
     private SwitchManager mSwitchManager;
     private ActivityManager mActivityManager;
-    private Object mLock = new Object();
     private Drawable mDefaultThumbnailBackground;
     private PreloadTaskRunnable mPreloadTasksRunnable;
-    private LinkedBlockingQueue<TaskDescription> mTasksWaitingForThumbnails;
 
     private enum State {
         LOADING, IDLE
@@ -85,7 +81,6 @@ public class RecentTasksLoader {
         mContext = context;
         mHandler = new Handler();
         mLoadedTasks = new ArrayList<TaskDescription>();
-        mTasksWaitingForThumbnails = new LinkedBlockingQueue<TaskDescription>();
         mActivityManager = (ActivityManager)
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
@@ -156,23 +151,17 @@ public class RecentTasksLoader {
     }
 
     private class PreloadTaskRunnable implements Runnable {
-        private boolean mLoadThumbs;
-
-        PreloadTaskRunnable(boolean loadThumbs) {
-            mLoadThumbs = loadThumbs;
-        }
-
         @Override
         public void run() {
             if (DEBUG){
                 Log.d(TAG, "preload start " + System.currentTimeMillis());
             }
-            loadTasksInBackground(null, mLoadThumbs);
+            loadTasksInBackground(null);
         }
     }
 
-    public void preloadTasks(boolean withThumb) {
-        mPreloadTasksRunnable = new PreloadTaskRunnable(withThumb);
+    public void preloadTasks() {
+        mPreloadTasksRunnable = new PreloadTaskRunnable();
         mHandler.post(mPreloadTasksRunnable);
     }
 
@@ -184,21 +173,16 @@ public class RecentTasksLoader {
             mTaskLoader.cancel(false);
             mTaskLoader = null;
         }
-        if (mThumbnailLoader != null) {
-            mThumbnailLoader.cancel(false);
-            mThumbnailLoader = null;
-        }
         if (mPreloadTasksRunnable != null) {
             mHandler.removeCallbacks(mPreloadTasksRunnable);
             mPreloadTasksRunnable = null;
         }
         mLoadedTasks.clear();
-        mTasksWaitingForThumbnails.clear();
         mPreloaded = false;
         mState = State.IDLE;
     }
 
-    public void loadTasksInBackground(final SwitchManager manager, final boolean loadThumbs) {
+    public void loadTasksInBackground(final SwitchManager manager) {
         if (DEBUG){
             Log.d(TAG, "loadTasksInBackground " + manager + " start " + System.currentTimeMillis());
         }
@@ -224,7 +208,6 @@ public class RecentTasksLoader {
         }
         mState = State.LOADING;
         mLoadedTasks.clear();
-        mTasksWaitingForThumbnails.clear();
 
         mTaskLoader = new AsyncTask<Void, List<TaskDescription>, Void>() {
             @Override
@@ -284,17 +267,8 @@ public class RecentTasksLoader {
                             recentInfo.origActivity, recentInfo.description);
 
                     if (item != null) {
-                        if (loadThumbs){
-                            while (true) {
-                                try {
-                                    mTasksWaitingForThumbnails.put(item);
-                                    break;
-                                } catch (InterruptedException e) {
-                                }
-                            }
-                        }
-
-                        // TODO we would not need to do that if already loaded
+                        item.setInitThumb(true);
+                        item.setThumb(mDefaultThumbnailBackground);
                         mLoadedTasks.add(item);
                         loadTaskIcon(item);
                     }
@@ -307,24 +281,10 @@ public class RecentTasksLoader {
                 }
                 mState = State.IDLE;
                 Process.setThreadPriority(origPri);
-
-                if (loadThumbs){
-                    while (true) {
-                        try {
-                            mTasksWaitingForThumbnails.put(new TaskDescription());
-                            break;
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-
                 return null;
             }
         };
         mTaskLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        if (loadThumbs){
-            loadThumbs();
-        }
     }
 
     void loadTaskIcon(TaskDescription td) {
@@ -368,67 +328,36 @@ public class RecentTasksLoader {
         return BitmapUtils.getDefaultActivityIcon(mContext);
     }
 
-    public Drawable loadThumbnail(TaskDescription td) {
-        synchronized(mLock){
-            Drawable d = td.getThumb();
-            if (d == null){
-                if (DEBUG){
-                    Log.d(TAG, "load thumb " + td);
+    public void loadThumbnail(final TaskDescription td) {
+        Drawable d = td.getThumb();
+        if (d == null || td.isInitThumb()){
+            AsyncTask<Void, TaskDescription, Void> thumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
+                @Override
+                protected void onProgressUpdate(TaskDescription... values) {
                 }
-                Bitmap b = null;
-                if (hasSystemPermission(mContext)){
-                    b = mActivityManager.getTaskTopThumbnail(td.persistentTaskId);
-                }
-                if (b != null) {
-                    td.setThumb(new BitmapDrawable(mContext.getResources(), b));
-                } else {
-                    td.setThumb(mDefaultThumbnailBackground);
-                }
-                d = td.getThumb();
-            }
-            return d;
-        }
-    }
+                @Override
+                protected Void doInBackground(Void... params) {
+                    final int origPri = Process.getThreadPriority(Process.myTid());
+                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
-    private void loadThumbs() {
-        if (DEBUG){
-            Log.d(TAG, "loadThumbs start " + System.currentTimeMillis());
-        }
-
-        mThumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
-            @Override
-            protected void onProgressUpdate(TaskDescription... values) {
-            }
-            @Override
-            protected Void doInBackground(Void... params) {
-                final int origPri = Process.getThreadPriority(Process.myTid());
-                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-
-                while (true) {
-                    if (isCancelled()) {
-                        break;
+                    if (DEBUG){
+                        Log.d(TAG, "load thumb " + td);
                     }
-                    TaskDescription td = null;
-                    while (td == null) {
-                        try {
-                            td = mTasksWaitingForThumbnails.take();
-                        } catch (InterruptedException e) {
+
+                    td.setInitThumb(false);
+                    if (hasSystemPermission(mContext)){
+                        Bitmap b = mActivityManager.getTaskTopThumbnail(td.persistentTaskId);
+                        if (b != null) {
+                            td.setThumb(new BitmapDrawable(mContext.getResources(), b));
                         }
                     }
-                    if (td.isNull()) { // end sentinel
-                        break;
-                    }
-                    loadThumbnail(td);
-                }
 
-                Process.setThreadPriority(origPri);
-                if (DEBUG){
-                    Log.d(TAG, "loadThumbs end " + System.currentTimeMillis());
+                    Process.setThreadPriority(origPri);
+                    return null;
                 }
-                return null;
-            }
-        };
-        mThumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            };
+            thumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
     }
 
     private boolean hasSystemPermission(Context context) {

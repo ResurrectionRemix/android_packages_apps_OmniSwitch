@@ -20,11 +20,4 @@
     <!-- view background color -->
     <solid android:color="#000000" >
     </solid>
-    <!-- Here is the corner radius -->
-    <corners
-        android:bottomLeftRadius="0dp"
-        android:bottomRightRadius="10dp"
-        android:topLeftRadius="0dp"
-        android:topRightRadius="10dp" >
-    </corners>
 </shape>

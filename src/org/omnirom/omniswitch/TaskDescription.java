@@ -17,6 +17,10 @@
  */
 package org.omnirom.omniswitch;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
@@ -35,6 +39,12 @@ public final class TaskDescription {
     private boolean mKilled;
     private ActivityInfo mActivityInfo;
     private Drawable mThumb;
+    private boolean mInitThumb = false;
+    private List<ThumbChangeListener> mListener;
+
+    public static interface ThumbChangeListener {
+        public void thumbChanged();
+    }
 
     public TaskDescription(int _taskId, int _persistentTaskId,
             ResolveInfo _resolveInfo, Intent _intent, String _packageName,
@@ -47,6 +57,7 @@ public final class TaskDescription {
         description = _description;
         packageName = _packageName;
         mActivityInfo = resolveInfo.activityInfo;
+        mListener = new ArrayList<ThumbChangeListener>();
     }
 
     public TaskDescription() {
@@ -127,5 +138,28 @@ public final class TaskDescription {
 
     public void setThumb(Drawable thumb) {
         mThumb = thumb;
+        if (!mInitThumb){
+            callListener();
+        }
+    }
+
+    public boolean isInitThumb() {
+        return mInitThumb;
+    }
+
+    public void setInitThumb(boolean value) {
+        mInitThumb = value;
+    }
+
+    public void addThumbChangeListener(ThumbChangeListener client) {
+        mListener.add(client);
+    }
+
+    private void callListener() {
+        Iterator<ThumbChangeListener> nextListener = mListener.iterator();
+        while(nextListener.hasNext()){
+            ThumbChangeListener listener = nextListener.next();
+            listener.thumbChanged();
+        }
     }
 }

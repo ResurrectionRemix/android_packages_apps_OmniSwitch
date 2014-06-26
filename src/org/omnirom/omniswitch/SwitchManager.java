@@ -121,7 +121,7 @@ public class SwitchManager {
     }
 
     public void reload() {
-        RecentTasksLoader.getInstance(mContext).loadTasksInBackground(this, false);
+        RecentTasksLoader.getInstance(mContext).loadTasksInBackground(this);
     }
 
     public void switchTask(TaskDescription ad, boolean close) {

@@ -50,6 +50,11 @@
             android:key="dim_behind"
             android:summary="@string/dim_behind_summary"
             android:title="@string/dim_behind_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="flat_style"
+            android:summary="@string/flat_style_summary"
+            android:title="@string/flat_style_title" />
         <ListPreference
             android:entries="@array/gravity_entries"
             android:entryValues="@array/gravity_values"

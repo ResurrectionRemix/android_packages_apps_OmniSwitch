@@ -121,7 +121,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             } else {
                 mLongPress = true;
                 mHandleRecentsUpdate = true;
-                RecentTasksLoader.getInstance(mContext).loadTasksInBackground(mRecentsManager, false);
+                RecentTasksLoader.getInstance(mContext).loadTasksInBackground(mRecentsManager);
             }
         }};
     private PackageTextView[] mCurrentItemEnv= new PackageTextView[3];
@@ -317,7 +317,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     mLongPress = false;
 
                     RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
-                    RecentTasksLoader.getInstance(mContext).preloadTasks(false);
+                    RecentTasksLoader.getInstance(mContext).preloadTasks();
 
                     mDownPoint[0] = event.getRawX();
                     mDownPoint[1] = event.getRawY();
@@ -703,7 +703,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         while(nextTask.hasNext() && i < mConfiguration.mLimitItemsX){
             TaskDescription ad = nextTask.next();
             PackageTextView item = getPackageItemTemplate();
-            item.setTask(ad);
+            item.setTask(ad, true);
             item.setLabel(ad.getLabel());
             Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), ad, ad.getIcon(), mConfiguration, 100);
             item.setOriginalImage(d);
@@ -775,10 +775,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
         if (mShowTumb && item.getTask() != null){
             loadTaskThumb(item);
-        }
-
-        if (mShowTumb && item.getTask() != null && item.isThumbLoaded()){
-            item.setCompoundDrawablesWithIntrinsicBounds(null, item.getThumb(), null, null);
         } else {
             item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
         }
@@ -1068,9 +1064,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             left.setText("");
             if (mShowTumb && left.getTask() != null){
                 loadTaskThumb(left);
-            }
-            if (mShowTumb && left.getTask() != null && left.isThumbLoaded()){
-                left.setCompoundDrawablesWithIntrinsicBounds(null, left.getThumb(), null, null);
             } else {
                 left.setCompoundDrawablesWithIntrinsicBounds(null, left.getOriginalImage(), null, null);
             }
@@ -1079,9 +1072,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             right.setText("");
             if (mShowTumb && right.getTask() != null){
                 loadTaskThumb(right);
-            }
-            if (mShowTumb && right.getTask() != null && right.isThumbLoaded()){
-                right.setCompoundDrawablesWithIntrinsicBounds(null, right.getThumb(), null, null);
             } else {
                 right.setCompoundDrawablesWithIntrinsicBounds(null, right.getOriginalImage(), null, null);
             }
@@ -1137,16 +1127,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (DEBUG){
             Log.d(TAG, "loadTaskThumb:" + item.getLabel());
         }
-        if (item.getTask() != null && !item.isThumbLoaded()){
-            TaskDescription ad = item.getTask();
-            Drawable thumb = RecentTasksLoader.getInstance(mContext).loadThumbnail(item.getTask());
-            if (thumb != null){
-                Drawable icon = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), ad, ad.getIcon(), mConfiguration,  60);
-                Drawable d = BitmapUtils.overlay(mContext.getResources(), thumb, icon,
-                        mConfiguration.mThumbnailWidth,
-                        mConfiguration.mThumbnailHeight);
-                item.setThumb(d);
-            }
+        if (item.getTask() != null){
+            RecentTasksLoader.getInstance(mContext).loadThumbnail(item.getTask());
         }
     }
 

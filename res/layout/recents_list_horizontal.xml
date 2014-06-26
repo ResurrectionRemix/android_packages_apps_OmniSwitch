@@ -20,7 +20,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingBottom="10dp" >
-    <include layout="@layout/buttons" />
+    <LinearLayout
+        android:id="@+id/button_list_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <org.omnirom.omniswitch.ui.ButtonScrollView
+            android:id="@+id/button_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="5dip" >
+            <LinearLayout
+                android:id="@+id/button_list_items"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+            </LinearLayout>
+        </org.omnirom.omniswitch.ui.ButtonScrollView>
+    </LinearLayout>
     <include layout="@layout/recents_rambar" />
     <RelativeLayout
         android:layout_width="match_parent"
@@ -35,40 +53,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp" />
+                android:paddingEnd="4dip"
+                android:paddingStart="4dip" />
             <TextView
                 android:id="@+id/no_recent_apps"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:gravity="center_horizontal|center_vertical"
-                android:shadowColor="@color/text_shadow"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="5"
                 android:text="@string/no_recent_apps_title"
-                android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:textStyle="bold"
                 android:visibility="gone" />
             <ImageButton
                 android:id="@+id/openFavorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="center"
                 android:background="@android:color/transparent"
-                android:minHeight="40dip"
-                android:minWidth="150dip"
+                android:minWidth="80dip"
                 android:scaleType="centerInside"
-                android:src="@drawable/arrow_down" />
+                android:src="@drawable/ic_expand_down" />
             <org.omnirom.omniswitch.ui.HorizontalListView
                 android:id="@+id/favorite_list_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp" />
+                android:paddingEnd="4dip"
+                android:paddingStart="4dip" />
         </LinearLayout>
         <GridView
             android:id="@+id/app_drawer"

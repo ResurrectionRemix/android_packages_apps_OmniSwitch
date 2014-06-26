@@ -80,6 +80,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_SPEED_SWITCHER_BUTTON_NEW = "speed_switch_button_new";
     public static final String PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1,5:1";
     public static final String PREF_SPEED_SWITCHER_ITEMS = "speed_switch_items";
+    public static final String PREF_FLAT_STYLE = "flat_style";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;

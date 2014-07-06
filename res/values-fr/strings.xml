@@ -106,4 +106,6 @@
     <string name="immersive_mode_help">Basculer en mode immersif</string>
     <string name="package_add_favorite_title">Ajouter aux favoris</string>
     <string name="package_remove_favorite_title">Supprimer des favoris</string>
+    <string name="flat_style_summary">Utiliser un fond plat pour l\'affichage de la vue superposée</string>
+    <string name="flat_style_title">Style plat</string>
 </resources>

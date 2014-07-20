@@ -320,8 +320,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mRecents = (LinearLayout) mView.findViewById(R.id.recents);
 
         mRecentListHorizontal = (HorizontalListView) mView.findViewById(R.id.recent_list_horizontal);
-        mRecentListHorizontal.setDividerWidth(8);
-        
+
         mNoRecentApps = (TextView) mView
                 .findViewById(R.id.no_recent_apps);
 
@@ -394,7 +393,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         mFavoriteListHorizontal = (HorizontalListView) mView
                   .findViewById(R.id.favorite_list_horizontal);
-        mFavoriteListHorizontal.setDividerWidth(8);
 
         mFavoriteListHorizontal.setSelectionListener(mSelectionGlowListener);
 
@@ -581,11 +579,17 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
         mRamUsageBarContainer.setVisibility(mConfiguration.mShowRambar ? View.VISIBLE : View.GONE);
 
+        mConfiguration.calcHorizontalDivider();
+
         mFavoriteListHorizontal.setLayoutParams(getListParams());
         mFavoriteListHorizontal.scrollTo(0);
+        mFavoriteListHorizontal.setDividerWidth(mConfiguration.mHorizontalDividerWidth);
+        mFavoriteListHorizontal.setPadding(mConfiguration.mHorizontalDividerWidth / 2, 0, mConfiguration.mHorizontalDividerWidth / 2, 0);
 
         mRecentListHorizontal.setLayoutParams(getRecentsListParams());
         mRecentListHorizontal.scrollTo(0);
+        mRecentListHorizontal.setDividerWidth(mConfiguration.mHorizontalDividerWidth);
+        mRecentListHorizontal.setPadding(mConfiguration.mHorizontalDividerWidth / 2, 0, mConfiguration.mHorizontalDividerWidth / 2, 0);
 
         mNoRecentApps.setLayoutParams(getListParams());
         // TODO
@@ -1041,6 +1045,20 @@ public class SwitchLayout implements OnShowcaseEventListener {
     public void updateLayout() {
         try {
             if (mShowing){
+                mConfiguration.calcHorizontalDivider();
+
+                mFavoriteListHorizontal.setDividerWidth(mConfiguration.mHorizontalDividerWidth);
+                mFavoriteListHorizontal.setPadding(mConfiguration.mHorizontalDividerWidth / 2, 0, mConfiguration.mHorizontalDividerWidth / 2, 0);
+
+                mRecentListHorizontal.setDividerWidth(mConfiguration.mHorizontalDividerWidth);
+                mRecentListHorizontal.setPadding(mConfiguration.mHorizontalDividerWidth / 2, 0, mConfiguration.mHorizontalDividerWidth / 2, 0);
+
+                mFavoriteListAdapter.notifyDataSetChanged();
+                mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
+
+                mRecentListAdapter.notifyDataSetChanged();
+                mRecentListHorizontal.setAdapter(mRecentListAdapter);
+
                 mWindowManager.updateViewLayout(mPopupView, getParams(mConfiguration.mBackgroundOpacity));
                 mAppDrawer.requestLayout();
             }

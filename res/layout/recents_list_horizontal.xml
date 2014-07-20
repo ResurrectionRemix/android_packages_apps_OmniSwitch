@@ -52,9 +52,7 @@
                 android:id="@+id/recent_list_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:paddingEnd="4dip"
-                android:paddingStart="4dip" />
+                android:layout_gravity="center_horizontal" />
             <TextView
                 android:id="@+id/no_recent_apps"
                 android:layout_width="match_parent"
@@ -77,9 +75,7 @@
                 android:id="@+id/favorite_list_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:paddingEnd="4dip"
-                android:paddingStart="4dip" />
+                android:layout_gravity="center_horizontal" />
         </LinearLayout>
         <GridView
             android:id="@+id/app_drawer"

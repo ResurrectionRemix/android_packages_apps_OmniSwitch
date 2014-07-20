@@ -40,7 +40,6 @@ public class SwitchConfiguration {
     public int mIconBorder = 8; // in dp
     public float mDensity;
     public int mMaxWidth;
-    public int mItemWidth;
     public int mMaxHeight;
     public boolean mShowRambar;
     public int mStartYRelative;
@@ -69,11 +68,11 @@ public class SwitchConfiguration {
     public Map<Integer, Boolean> mSpeedSwitchButtons;
     public int mLimitItemsX = 10;
     public boolean mFlatStyle;
+    public int mHorizontalDividerWidth;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
     private int mDefaultHandleHeight;
-    private int mHorizontalMargin;
 
     public static SwitchConfiguration getInstance(Context context) {
         if (mInstance == null) {
@@ -95,7 +94,6 @@ public class SwitchConfiguration {
         mGlowColor = context.getResources().getColor(R.color.glow_color);
         mFlatGlowColor = context.getResources().getColor(R.color.flat_glow_color);
         mDefaultHandleHeight = Math.round(100 * mDensity);
-        mHorizontalMargin = Math.round(5 * mDensity);
         mRestrictedMode = !hasSystemPermission(context);
         mLevelHeight = Math.round(80 * mDensity);
         mItemChangeWidthX = Math.round(40 * mDensity);
@@ -103,6 +101,7 @@ public class SwitchConfiguration {
         mSmallIconSizePx = Math.round(mSmallIconSizePx * mDensity);
         mActionIconSizePx = Math.round(mActionIconSize * mDensity);
         mLevelChangeWidthX = Math.round(60 * mDensity);
+        mHorizontalDividerWidth = 0;
 
         // Render the default thumbnail background
         mThumbnailWidth = (int) context.getResources().getDimensionPixelSize(
@@ -134,7 +133,6 @@ public class SwitchConfiguration {
 
         mMaxWidth = Math.round((mIconSize + mIconBorder) * mDensity);
         mMaxHeight = Math.round((mIconSize + 3 * mIconBorder) * mDensity);
-        mItemWidth = mMaxWidth + 12;
 
         mDragHandleColor = prefs.getInt(
                 SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
@@ -180,7 +178,7 @@ public class SwitchConfiguration {
     public int getCurrentOverlayWidth() {
         if (isLandscape()) {
             // landscape
-            return Math.max(mItemWidth * 6,
+            return Math.max(mMaxWidth * 6,
                 (int) (getCurrentDisplayWidth() * 0.66f));
         }
         return getCurrentDisplayWidth();
@@ -218,5 +216,16 @@ public class SwitchConfiguration {
         int result = context
                 .checkCallingOrSelfPermission(android.Manifest.permission.REMOVE_TASKS);
         return result == android.content.pm.PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void calcHorizontalDivider() {
+        mHorizontalDividerWidth = 0;
+        int numColumns = getCurrentOverlayWidth() / mMaxWidth;
+        if (numColumns > 1) {
+            int equalWidth = getCurrentOverlayWidth() / numColumns;
+            if (equalWidth > mMaxWidth) {
+                mHorizontalDividerWidth = equalWidth - mMaxWidth;
+            }
+        }
     }
 }

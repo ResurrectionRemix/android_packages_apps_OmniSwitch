@@ -131,7 +131,7 @@ public class SwitchService extends Service {
         }
 
         private void hide() {
-            mManager.hide();
+            mManager.hide(false);
         }
 
         @Override

@@ -57,6 +57,7 @@ public class RecentTasksLoader {
     private ActivityManager mActivityManager;
     private Drawable mDefaultThumbnailBackground;
     private PreloadTaskRunnable mPreloadTasksRunnable;
+    private boolean mHasThumbPermissions;
 
     private enum State {
         LOADING, IDLE
@@ -91,6 +92,7 @@ public class RecentTasksLoader {
                 .getDimensionPixelSize(R.dimen.thumbnail_height);
         mDefaultThumbnailBackground = new ColorDrawableWithDimensions(
                 Color.BLACK, thumbnailWidth, thumbnailHeight);
+        mHasThumbPermissions = hasSystemPermission(context);
     }
 
     public List<TaskDescription> getLoadedTasks() {
@@ -156,13 +158,17 @@ public class RecentTasksLoader {
             if (DEBUG){
                 Log.d(TAG, "preload start " + System.currentTimeMillis());
             }
-            loadTasksInBackground(null);
+            loadTasksInBackground();
         }
     }
 
     public void preloadTasks() {
         mPreloadTasksRunnable = new PreloadTaskRunnable();
         mHandler.post(mPreloadTasksRunnable);
+    }
+
+    public void setSwitchManager(final SwitchManager manager) {
+        mSwitchManager = manager;
     }
 
     public void cancelLoadingTasks() {
@@ -182,30 +188,27 @@ public class RecentTasksLoader {
         mState = State.IDLE;
     }
 
-    public void loadTasksInBackground(final SwitchManager manager) {
+    public void loadTasksInBackground() {
         if (DEBUG){
-            Log.d(TAG, "loadTasksInBackground " + manager + " start " + System.currentTimeMillis());
+            Log.d(TAG, "loadTasksInBackground " + mSwitchManager + " start " + System.currentTimeMillis());
         }
-        mSwitchManager = manager;
-
+        if (mPreloaded && mState != State.IDLE) {
+            if (DEBUG){
+                Log.d(TAG, "recents preloaded: waiting for done");
+            }
+            return;
+        }
         if(mPreloaded && mSwitchManager != null){
             if (DEBUG){
                 Log.d(TAG, "recents preloaded " + mLoadedTasks);
             }
             mSwitchManager.update(mLoadedTasks);
-            mPreloaded = false;
-            return;
-        }
-
-        if (mState != State.IDLE) {
-            if (DEBUG){
-                Log.d(TAG, "waiting for done");
-            }
             return;
         }
         if (DEBUG){
             Log.d(TAG, "recents load");
         }
+        mPreloaded = true;
         mState = State.LOADING;
         mLoadedTasks.clear();
 
@@ -220,7 +223,9 @@ public class RecentTasksLoader {
                         }
                         mSwitchManager.update(mLoadedTasks);
                     } else {
-                        mPreloaded = true;
+                        if (DEBUG){
+                            Log.d(TAG, "recents preloaded");
+                        }
                     }
                 }
             }
@@ -271,6 +276,18 @@ public class RecentTasksLoader {
                         item.setThumb(mDefaultThumbnailBackground);
                         mLoadedTasks.add(item);
                         loadTaskIcon(item);
+
+                        if (mHasThumbPermissions && i < 3){
+                            if (DEBUG){
+                                Log.d(TAG, "load thumb " + item);
+                            }
+
+                            item.setInitThumb(false);
+                            Bitmap b = mActivityManager.getTaskTopThumbnail(item.persistentTaskId);
+                            if (b != null) {
+                                item.setThumb(new BitmapDrawable(mContext.getResources(), b));
+                            }
+                        }
                     }
                 }
                 if (!isCancelled()) {
@@ -329,6 +346,10 @@ public class RecentTasksLoader {
     }
 
     public void loadThumbnail(final TaskDescription td) {
+        if (!mHasThumbPermissions) {
+            td.setInitThumb(false);
+            return;
+        }
         Drawable d = td.getThumb();
         if (d == null || td.isInitThumb()){
             AsyncTask<Void, TaskDescription, Void> thumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
@@ -345,7 +366,7 @@ public class RecentTasksLoader {
                     }
 
                     td.setInitThumb(false);
-                    if (hasSystemPermission(mContext)){
+                    if (mHasThumbPermissions){
                         Bitmap b = mActivityManager.getTaskTopThumbnail(td.persistentTaskId);
                         if (b != null) {
                             td.setThumb(new BitmapDrawable(mContext.getResources(), b));

@@ -50,14 +50,21 @@ public class SwitchManager {
         init();
     }
 
-    public void hide() {
+    public void hide(boolean fast) {
         if (isShowing()) {
             if(DEBUG){
                 Log.d(TAG, "hide");
             }
-            RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
-            mLayout.setHandleRecentsUpdate(false);
-            mLayout.hide();
+            mLayout.hide(fast);
+        }
+    }
+
+    public void hideHidden() {
+        if (isShowing()) {
+            if(DEBUG){
+                Log.d(TAG, "hideHidden");
+            }
+            mLayout.hideHidden();
         }
     }
 
@@ -67,11 +74,25 @@ public class SwitchManager {
                 Log.d(TAG, "show");
             }
             mLayout.setHandleRecentsUpdate(true);
-            // update task list
-            reload();
+
+            RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
+            RecentTasksLoader.getInstance(mContext).setSwitchManager(this);
+            RecentTasksLoader.getInstance(mContext).loadTasksInBackground();
 
             // show immediately
             mLayout.show();
+        }
+    }
+
+    public void showHidden() {
+        if (!isShowing()) {
+            if(DEBUG){
+                Log.d(TAG, "showHidden");
+            }
+            mLayout.setHandleRecentsUpdate(true);
+
+            // show immediately
+            mLayout.showHidden();
         }
     }
 
@@ -86,11 +107,8 @@ public class SwitchManager {
 
         mLoadedTasks = new ArrayList<TaskDescription>();
 
-        mLayout = new SwitchLayout(mContext);
-        mLayout.setRecentsManager(this);
-
-        mGestureView = new SwitchGestureView(mContext);
-        mGestureView.setRecentsManager(this);
+        mLayout = new SwitchLayout(this, mContext);
+        mGestureView = new SwitchGestureView(this, mContext);
     }
 
     public void killManager() {
@@ -112,16 +130,8 @@ public class SwitchManager {
         }
         mLoadedTasks.clear();
         mLoadedTasks.addAll(taskList);
-        if(mLayout.isHandleRecentsUpdate()){
-            mLayout.update(mLoadedTasks);
-        }
-        if(mGestureView.isHandleRecentsUpdate()){
-            mGestureView.update(mLoadedTasks);
-        }
-    }
-
-    public void reload() {
-        RecentTasksLoader.getInstance(mContext).loadTasksInBackground(this);
+        mLayout.update();
+        mGestureView.update();
     }
 
     public void switchTask(TaskDescription ad, boolean close) {
@@ -136,7 +146,7 @@ public class SwitchManager {
         }
 
         if(close){
-            close();
+            hide(true);
         }
 
         if (ad.getTaskId() >= 0) {
@@ -173,7 +183,7 @@ public class SwitchManager {
         }
         ad.setKilled();
         mLoadedTasks.remove(ad);
-        mLayout.refresh(mLoadedTasks);
+        mLayout.refresh();
     }
 
     public void killAll(boolean close) {
@@ -185,7 +195,7 @@ public class SwitchManager {
 
         if (mLoadedTasks.size() == 0) {
             if(close){
-                close();
+                hide(true);
             }
             return;
         }
@@ -212,7 +222,7 @@ public class SwitchManager {
 
         if (mLoadedTasks.size() == 0) {
             if(close){
-                close();
+                hide(true);
             }
             return;
         }
@@ -229,7 +239,7 @@ public class SwitchManager {
             ad.setKilled();
         }
         if(close){
-            close();
+            hide(true);
         }
     }
 
@@ -242,7 +252,7 @@ public class SwitchManager {
 
         if (mLoadedTasks.size() == 0) {
             if(close){
-                close();
+                hide(true);
             }
             return;
         }
@@ -257,13 +267,13 @@ public class SwitchManager {
             ad.setKilled();
         }
         if(close){
-            close();
+            hide(true);
         }
     }
 
     public void goHome(boolean close) {
         if(close){
-            close();
+            hide(true);
         }
 
         Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
@@ -281,7 +291,7 @@ public class SwitchManager {
     public void toggleLastApp(boolean close) {
         if (mLoadedTasks.size() < 2) {
             if(close){
-                close();
+                hide(true);
             }
             return;
         }
@@ -289,10 +299,10 @@ public class SwitchManager {
         TaskDescription ad = mLoadedTasks.get(1);
         switchTask(ad, close);
     }
-    
+
     public void startIntentFromtString(String intent, boolean close) {
         if(close){
-            close();
+            hide(true);
         }
 
         try {
@@ -304,7 +314,7 @@ public class SwitchManager {
             Log.e(TAG, "ActivityNotFound: [" + intent + "]");
         }
     }
-    
+
     public void updateLayout() {
         if (mLayout.isShowing()){
             mLayout.updateLayout();
@@ -314,14 +324,8 @@ public class SwitchManager {
         }
     }
 
-    public void close(){
-        Intent hideRecent = new Intent(
-                SwitchService.RecentsReceiver.ACTION_HIDE_OVERLAY);
-        mContext.sendBroadcast(hideRecent);
-    }
-
     public void startApplicationDetailsActivity(String packageName) {
-        close();
+        hide(true);
 
         Intent intent = new Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts(
@@ -332,7 +336,7 @@ public class SwitchManager {
     }
 
     public void startSettingssActivity() {
-        close();
+        hide(true);
 
         Intent intent = new Intent(Settings.ACTION_SETTINGS, null);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -341,7 +345,7 @@ public class SwitchManager {
     }
 
     public void startOmniSwitchSettingsActivity() {
-        close();
+        hide(true);
 
         Intent mainActivity = new Intent(mContext,
                 SettingsActivity.class);
@@ -352,5 +356,25 @@ public class SwitchManager {
 
     public void shutdownService() {
         mLayout.shutdownService();
+    }
+
+    public void slideLayout(float distanceX) {
+        mLayout.slideLayout(distanceX);
+    }
+
+    public void finishSlideLayout() {
+        mLayout.finishSlideLayout();
+    }
+
+    public void openSlideLayout(boolean fromFling) {
+        mLayout.openSlideLayout(fromFling);
+    }
+
+    public void canceSlideLayout() {
+        mLayout.canceSlideLayout();
+    }
+
+    public List<TaskDescription> getTasks() {
+        return mLoadedTasks;
     }
 }

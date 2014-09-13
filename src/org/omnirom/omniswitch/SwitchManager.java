@@ -75,6 +75,7 @@ public class SwitchManager {
             }
             mLayout.setHandleRecentsUpdate(true);
 
+            clearTasks();
             RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
             RecentTasksLoader.getInstance(mContext).setSwitchManager(this);
             RecentTasksLoader.getInstance(mContext).loadTasksInBackground();
@@ -376,5 +377,9 @@ public class SwitchManager {
 
     public List<TaskDescription> getTasks() {
         return mLoadedTasks;
+    }
+
+    public void clearTasks() {
+        mLoadedTasks.clear();
     }
 }

@@ -735,6 +735,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         if (mPopupView == null){
             createView();
         }
+        mRecentListAdapter.notifyDataSetChanged();
         initView();
 
         if(DEBUG){
@@ -837,7 +838,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mRecentListHorizontal.setVisibility(View.VISIBLE);
         mTaskLoadDone = false;
         mUpdateNoRecentsTasksDone = false;
-        mRecentListAdapter.notifyDataSetChanged();
         mAppDrawer.scrollTo(0, 0);
 
         mRecentsManager.getSwitchGestureView().overlayHidden();

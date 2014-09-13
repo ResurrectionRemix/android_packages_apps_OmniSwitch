@@ -332,6 +332,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     mLongPress = false;
                     mFlingEnable = true;
 
+                    mRecentsManager.clearTasks();
                     RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
                     RecentTasksLoader.getInstance(mContext).setSwitchManager(mRecentsManager);
                     RecentTasksLoader.getInstance(mContext).preloadTasks();

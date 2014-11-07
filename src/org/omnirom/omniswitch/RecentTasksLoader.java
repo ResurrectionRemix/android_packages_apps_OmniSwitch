@@ -277,7 +277,7 @@ public class RecentTasksLoader {
                         mLoadedTasks.add(item);
                         loadTaskIcon(item);
 
-                        if (mHasThumbPermissions && i < 3){
+                        /*if (mHasThumbPermissions && i < 3){
                             if (DEBUG){
                                 Log.d(TAG, "load thumb " + item);
                             }
@@ -287,7 +287,7 @@ public class RecentTasksLoader {
                             if (b != null) {
                                 item.setThumb(new BitmapDrawable(mContext.getResources(), b));
                             }
-                        }
+                        }*/
                     }
                 }
                 if (!isCancelled()) {
@@ -366,12 +366,12 @@ public class RecentTasksLoader {
                     }
 
                     td.setInitThumb(false);
-                    if (mHasThumbPermissions){
+                    /*if (mHasThumbPermissions){
                         Bitmap b = mActivityManager.getTaskTopThumbnail(td.persistentTaskId);
                         if (b != null) {
                             td.setThumb(new BitmapDrawable(mContext.getResources(), b));
                         }
-                    }
+                    }*/
 
                     Process.setThreadPriority(origPri);
                     return null;

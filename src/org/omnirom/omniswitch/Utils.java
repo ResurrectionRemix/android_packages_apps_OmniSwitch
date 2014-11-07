@@ -145,11 +145,11 @@ public class Utils {
     }
 
     public static void toggleImmersiveMode(Context context) {
-        boolean immersive = Settings.System.getInt(context.getContentResolver(),
+        /*boolean immersive = Settings.System.getInt(context.getContentResolver(),
                 Settings.System.IMMERSIVE_MODE, 0) == 1;
 
         Settings.System.putInt(context.getContentResolver(),
-                Settings.System.IMMERSIVE_MODE, !immersive ? 1 : 0);
+                Settings.System.IMMERSIVE_MODE, !immersive ? 1 : 0);*/
     }
 
     public static void removeFromFavorites(Context context, String item, List<String> favoriteList) {

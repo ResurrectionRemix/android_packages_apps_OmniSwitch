@@ -45,7 +45,7 @@ public class FavoritePreference extends DialogPreference {
     }
 
     @Override
-    protected Dialog createDialog() {
+    public Dialog getDialog() {
         String favoriteListString = getSharedPreferences().getString(SettingsActivity.PREF_FAVORITE_APPS, "");
         List<String> favoriteList = new ArrayList<String>();
         Utils.parseFavorites(favoriteListString, favoriteList);

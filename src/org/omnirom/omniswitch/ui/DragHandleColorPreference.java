@@ -80,7 +80,7 @@ public class DragHandleColorPreference extends DialogPreference {
     }
 
     @Override
-    protected Dialog createDialog() {
+    public Dialog getDialog() {
         final ColorPickerDialog d = new ColorPickerDialog(getContext(),
                 mColorValue);
 

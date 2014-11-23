@@ -67,7 +67,7 @@ public class SwitchConfiguration {
     public boolean mLimitLevelChangeX = true;
     public Map<Integer, Boolean> mSpeedSwitchButtons;
     public int mLimitItemsX = 10;
-    public boolean mFlatStyle;
+    public boolean mFlatStyle = true;
     public int mHorizontalDividerWidth;
 
     public static SwitchConfiguration mInstance;
@@ -153,7 +153,7 @@ public class SwitchConfiguration {
         mSpeedSwitchButtons = Utils.buttonStringToMap(prefs.getString(SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_NEW,
                 SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW), SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
         mLimitItemsX = prefs.getInt(SettingsActivity.PREF_SPEED_SWITCHER_ITEMS, 10);
-        mFlatStyle = prefs.getBoolean(SettingsActivity.PREF_FLAT_STYLE, false);
+        mFlatStyle = prefs.getBoolean(SettingsActivity.PREF_FLAT_STYLE, true);
     }
 
     // includes rotation

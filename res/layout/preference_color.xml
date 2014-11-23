@@ -16,14 +16,12 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/app_light_pref"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:paddingLeft="8dp"
-    android:paddingRight="18dp" >
+    android:gravity="center_vertical"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
     >
     <RelativeLayout
         android:layout_width="0dip"
@@ -36,7 +34,7 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceListItem" />
         <TextView
             android:id="@+android:id/summary"
             android:layout_width="wrap_content"

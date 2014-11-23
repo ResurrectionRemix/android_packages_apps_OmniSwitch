@@ -29,24 +29,26 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.preference.DialogPreference;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 
-public class DragHandleColorPreference extends DialogPreference {
+public class DragHandleColorPreference extends Preference implements DialogInterface.OnDismissListener {
     private ImageView mLightColorView;
     private int mColorValue;
     private Resources mResources;
     private SharedPreferences mPrefs;
+    /** The dialog, if it is showing. */
+    private Dialog mDialog;
 
     /**
      * @param context
      * @param attrs
      */
     public DragHandleColorPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        super(context, attrs, com.android.internal.R.attr.preferenceStyle);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         mColorValue = mPrefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,
                 getContext().getResources().getColor(R.color.holo_blue_light));
@@ -80,7 +82,14 @@ public class DragHandleColorPreference extends DialogPreference {
     }
 
     @Override
-    public Dialog getDialog() {
+    protected void onClick() {
+        if (mDialog != null && mDialog.isShowing()) return;
+        mDialog = getDialog();
+        mDialog.setOnDismissListener(this);
+        mDialog.show();
+    }
+
+    private Dialog getDialog() {
         final ColorPickerDialog d = new ColorPickerDialog(getContext(),
                 mColorValue);
 
@@ -131,5 +140,10 @@ public class DragHandleColorPreference extends DialogPreference {
         shape.setIntrinsicWidth(width);
         shape.getPaint().setColor(color);
         return shape;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        mDialog = null;
     }
 }

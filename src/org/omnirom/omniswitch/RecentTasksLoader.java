@@ -19,6 +19,7 @@ package org.omnirom.omniswitch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 
 import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.ColorDrawableWithDimensions;
@@ -33,12 +34,14 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Process;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 public class RecentTasksLoader {
@@ -58,6 +61,13 @@ public class RecentTasksLoader {
     private Drawable mDefaultThumbnailBackground;
     private PreloadTaskRunnable mPreloadTasksRunnable;
     private boolean mHasThumbPermissions;
+
+    final static BitmapFactory.Options sBitmapOptions;
+
+    static {
+        sBitmapOptions = new BitmapFactory.Options();
+        sBitmapOptions.inMutable = true;
+    }
 
     private enum State {
         LOADING, IDLE
@@ -277,17 +287,17 @@ public class RecentTasksLoader {
                         mLoadedTasks.add(item);
                         loadTaskIcon(item);
 
-                        /*if (mHasThumbPermissions && i < 3){
+                        if (mHasThumbPermissions && i < 3){
                             if (DEBUG){
                                 Log.d(TAG, "load thumb " + item);
                             }
 
                             item.setInitThumb(false);
-                            Bitmap b = mActivityManager.getTaskTopThumbnail(item.persistentTaskId);
+                            Bitmap b = getThumbnail(item.persistentTaskId);
                             if (b != null) {
                                 item.setThumb(new BitmapDrawable(mContext.getResources(), b));
                             }
-                        }*/
+                        }
                     }
                 }
                 if (!isCancelled()) {
@@ -302,6 +312,28 @@ public class RecentTasksLoader {
             }
         };
         mTaskLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    /**
+     * Returns a task thumbnail from the activity manager
+     */
+    private Bitmap getThumbnail(int taskId) {
+        ActivityManager.TaskThumbnail taskThumbnail = mActivityManager.getTaskThumbnail(taskId);
+        if (taskThumbnail == null) return null;
+
+        Bitmap thumbnail = taskThumbnail.mainThumbnail;
+        ParcelFileDescriptor descriptor = taskThumbnail.thumbnailFileDescriptor;
+        if (thumbnail == null && descriptor != null) {
+            thumbnail = BitmapFactory.decodeFileDescriptor(descriptor.getFileDescriptor(),
+                    null, sBitmapOptions);
+        }
+        if (descriptor != null) {
+            try {
+                descriptor.close();
+            } catch (IOException e) {
+            }
+        }
+        return thumbnail;
     }
 
     void loadTaskIcon(TaskDescription td) {
@@ -366,12 +398,12 @@ public class RecentTasksLoader {
                     }
 
                     td.setInitThumb(false);
-                    /*if (mHasThumbPermissions){
-                        Bitmap b = mActivityManager.getTaskTopThumbnail(td.persistentTaskId);
+                    if (mHasThumbPermissions){
+                        Bitmap b = getThumbnail(td.persistentTaskId);
                         if (b != null) {
                             td.setThumb(new BitmapDrawable(mContext.getResources(), b));
                         }
-                    }*/
+                    }
 
                     Process.setThreadPriority(origPri);
                     return null;

@@ -19,6 +19,7 @@ package org.omnirom.omniswitch;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.CheckboxListDialog;
@@ -26,6 +27,7 @@ import org.omnirom.omniswitch.ui.IconPackHelper;
 import org.omnirom.omniswitch.ui.NumberPickerPreference;
 import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
+import org.omnirom.omniswitch.ui.FavoriteDialog;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -231,6 +233,13 @@ public class SettingsActivity extends PreferenceActivity implements
             return true;
         } else if (preference == mIconpack){
             IconPackHelper.pickIconPack(this);
+            return true;
+        } else if (preference == mFavoriteAppsConfig) {
+            String favoriteListString = mPrefs.getString(PREF_FAVORITE_APPS, "");
+            List<String> favoriteList = new ArrayList<String>();
+            Utils.parseFavorites(favoriteListString, favoriteList);
+            FavoriteDialog dialog = new FavoriteDialog(this, favoriteList);
+            dialog.show();
             return true;
         }
         return false;

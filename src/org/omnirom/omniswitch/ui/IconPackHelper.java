@@ -20,6 +20,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -33,12 +34,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ListView;
 
-public class IconPackHelper {
+public class IconPackHelper implements DialogInterface.OnDismissListener {
     static final String ICON_MASK_TAG = "iconmask";
     static final String ICON_BACK_TAG = "iconback";
     static final String ICON_UPON_TAG = "iconupon";
@@ -64,6 +68,8 @@ public class IconPackHelper {
     private float mIconScale;
     private String mCurrentIconPack = "";
     private boolean mLoading;
+    private AlertDialog mDialog;
+    private ListView mListView;
 
     private static IconPackHelper sInstance;
 
@@ -112,7 +118,7 @@ public class IconPackHelper {
         return null;
     }
 
-    public static Map<String, IconPackInfo> getSupportedPackages(Context context) {
+    private Map<String, IconPackInfo> getSupportedPackages(Context context) {
         Intent i = new Intent();
         Map<String, IconPackInfo> packages = new HashMap<String, IconPackInfo>();
         android.content.pm.PackageManager packageManager = context.getPackageManager();
@@ -135,7 +141,7 @@ public class IconPackHelper {
         return packages;
     }
 
-    private static void loadResourcesFromXmlParser(XmlPullParser parser,
+    private void loadResourcesFromXmlParser(XmlPullParser parser,
             Map<String, String> iconPackResources) throws XmlPullParserException, IOException {
         int eventType = parser.getEventType();
         do {
@@ -203,7 +209,7 @@ public class IconPackHelper {
         } while ((eventType = parser.next()) != XmlPullParser.END_DOCUMENT);
     }
 
-    private static void loadApplicationResources(Context context,
+    private void loadApplicationResources(Context context,
             Map<String, String> iconPackResources, String packageName) {
         Field[] drawableItems = null;
         try {
@@ -273,7 +279,7 @@ public class IconPackHelper {
         return true;
     }
 
-    private static Map<String, String> getIconPackResources(Context context, String packageName) {
+    private Map<String, String> getIconPackResources(Context context, String packageName) {
         if (TextUtils.isEmpty(packageName)) {
             return null;
         }
@@ -378,26 +384,52 @@ public class IconPackHelper {
         mIconScale = 1f;
     }
 
-    public static void pickIconPack(final Context context) {
+    public void pickIconPack(final Context context) {
+        if (mDialog != null) {
+            return;
+        }
         Map<String, IconPackInfo> supportedPackages = getSupportedPackages(context);
         if (supportedPackages.isEmpty()) {
             Toast.makeText(context, R.string.no_iconpacks_summary, Toast.LENGTH_SHORT).show();
             return;
         }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        .setTitle(R.string.dialog_pick_iconpack_title)
+        .setOnDismissListener(this)
+        .setNegativeButton(android.R.string.cancel, null)
+        .setView(createDialogView(context, supportedPackages));
+        mDialog = builder.show();
+    }
 
+    private View createDialogView(final Context context, Map<String, IconPackInfo> supportedPackages) {
+        final LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View view = inflater.inflate(R.layout.dialog_iconpack, null);
         final IconAdapter adapter = new IconAdapter(context, supportedPackages);
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.dialog_pick_iconpack_title);
-            builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int position) {
-                    if (adapter.isCurrentIconPack(position)) {
-                        return;
-                    }
-                    String selectedPackage = adapter.getItem(position);
-                    PreferenceManager.getDefaultSharedPreferences(context).edit().putString(SettingsActivity.PREF_ICONPACK, selectedPackage).commit();
+
+        mListView = (ListView) view.findViewById(R.id.iconpack_list);
+        mListView.setAdapter(adapter);
+        mListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                        int position, long id) {
+                if (adapter.isCurrentIconPack(position)) {
+                    return;
                 }
-            });
-        builder.show();
+                String selectedPackage = adapter.getItem(position);
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(SettingsActivity.PREF_ICONPACK, selectedPackage).commit();
+                mDialog.dismiss();
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        if (mDialog != null) {
+            mDialog = null;
+        }
     }
 
     public boolean isIconPackLoaded() {
@@ -498,7 +530,7 @@ public class IconPackHelper {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = mLayoutInflater.inflate(R.layout.iconpack_chooser, null);
+                convertView = mLayoutInflater.inflate(R.layout.iconpack_view, null);
             }
             IconPackInfo info = mSupportedPackages.get(position);
             TextView txtView = (TextView) convertView.findViewById(R.id.title);

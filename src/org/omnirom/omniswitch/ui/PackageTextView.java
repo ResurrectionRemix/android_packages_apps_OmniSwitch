@@ -31,7 +31,6 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
     private String mIntent;
     private Drawable mOriginalImage;
     private Drawable mSmallImage;
-    private Drawable mGlowImage;
     private TaskDescription mTask;
     private Drawable mThumbImage;
     private CharSequence mLabel;
@@ -117,14 +116,6 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
 
     public boolean isAction() {
         return mAction != null;
-    }
-
-    public void setGlowImage(Drawable image) {
-        mGlowImage = image;
-    }
-
-    public Drawable getGlowImage() {
-        return mGlowImage;
     }
 
     @Override

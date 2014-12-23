@@ -34,7 +34,6 @@
         <item>@string/settings</item>
         <item>@string/allapps</item>
         <item>@string/back</item>
-        <item>@string/immersive_mode</item>
     </string-array>
     <string-array name="gravity_entries" translatable="false">
         <item>@string/gravity_center</item>
@@ -50,6 +49,5 @@
         <item>@string/kill_current</item>
         <item>@string/kill_all_apps</item>
         <item>@string/kill_other_apps</item>
-        <item>@string/immersive_mode</item>
     </string-array>
 </resources>

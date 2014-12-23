@@ -19,6 +19,7 @@ package org.omnirom.omniswitch.ui;
 
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.colorpicker.ColorPickerDialog;
 
 import android.app.AlertDialog;
@@ -42,6 +43,7 @@ public class DragHandleColorPreference extends Preference implements DialogInter
     private SharedPreferences mPrefs;
     /** The dialog, if it is showing. */
     private Dialog mDialog;
+    private SwitchConfiguration mConfiguration;
 
     /**
      * @param context
@@ -49,9 +51,10 @@ public class DragHandleColorPreference extends Preference implements DialogInter
      */
     public DragHandleColorPreference(Context context, AttributeSet attrs) {
         super(context, attrs, com.android.internal.R.attr.preferenceStyle);
+        mConfiguration = SwitchConfiguration.getInstance(context);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         mColorValue = mPrefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,
-                getContext().getResources().getColor(R.color.holo_blue_light));
+                mConfiguration.mDefaultColor);
         init();
     }
 
@@ -110,7 +113,7 @@ public class DragHandleColorPreference extends Preference implements DialogInter
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mColorValue = getContext().getResources().getColor(R.color.holo_blue_light);
+                        mColorValue = mConfiguration.mDefaultColor;
                         updatePreferenceViews();
                         mPrefs.edit()
                                 .putInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,

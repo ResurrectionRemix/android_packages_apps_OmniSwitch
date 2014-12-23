@@ -22,75 +22,79 @@
     android:orientation="horizontal" >
     <LinearLayout
         android:id="@+id/drag_handle_view_left"
-        android:layout_width="60dp"
+        android:layout_width="40dp"
         android:layout_height="fill_parent"
         android:layout_gravity="top"
-        android:background="@color/settings_gesture_view_bg"
         android:orientation="vertical" >
     </LinearLayout>
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:background="@color/settings_gesture_view_bg"
-        android:orientation="vertical" >
-        <RelativeLayout
+        android:background="@drawable/overlay_bg_flat"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/alert_dialog_padding_material"
+        android:paddingEnd="@dimen/alert_dialog_padding_material" >
+        <TextView
+            android:singleLine="true"
+            android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:orientation="vertical" >
+            android:textAlignment="viewStart"
+            android:text="@string/adjust_handle_title"
+            style="?android:attr/windowTitleStyle"
+            android:paddingTop="@dimen/alert_dialog_padding_material" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:minHeight="48dp" >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/adjust_handle_help"
+                android:paddingBottom="12dp"/>
             <Button
                 android:id="@+id/location_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="@color/settings_gesture_button_bg"
-                android:text="@string/location_left"
-                android:textColor="@color/settings_gesture_button_fg" />
+                android:text="@string/location_left"/>
             <Button
                 android:id="@+id/reset_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/location_button"
-                android:layout_margin="10dp"
-                android:background="@color/settings_gesture_button_bg"
-                android:text="@string/reset"
-                android:textColor="@color/settings_gesture_button_fg" />
-        </RelativeLayout>
+                android:text="@string/reset"/>
+        </LinearLayout>
         <LinearLayout
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal" >
+            android:layoutDirection="locale"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="end" >
             <Button
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@color/settings_gesture_button_bg"
-                android:text="@android:string/cancel"
-                android:textColor="@color/settings_gesture_button_fg" />
+                style="?android:attr/buttonBarNegativeButtonStyle"
+                android:text="@android:string/cancel"/>
             <Button
                 android:id="@+id/ok_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight="1"
-                android:background="@color/settings_gesture_button_bg"
-                android:text="@android:string/ok"
-                android:textColor="@color/settings_gesture_button_fg" />
+                style="?android:attr/buttonBarPositiveButtonStyle"
+                android:text="@android:string/ok"/>
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/drag_handle_view_right"
-        android:layout_width="60dp"
+        android:layout_width="40dp"
         android:layout_height="fill_parent"
         android:layout_gravity="top"
-        android:background="@color/settings_gesture_view_bg"
         android:orientation="vertical" >
     </LinearLayout>
 </LinearLayout>

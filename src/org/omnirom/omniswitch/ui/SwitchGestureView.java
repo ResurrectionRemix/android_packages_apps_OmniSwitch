@@ -1207,7 +1207,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_HOME){
             item = getPackageItemTemplate();
-            d = mContext.getResources().getDrawable(R.drawable.home);
+            d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_home);
             item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
 
             d = BitmapUtils.resize(mContext.getResources(),
@@ -1227,7 +1227,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_BACK){
             item = getPackageItemTemplate();
-            d = mContext.getResources().getDrawable(R.drawable.back);
+            d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back);
             item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
 
             d = BitmapUtils.resize(mContext.getResources(),
@@ -1302,28 +1302,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 @Override
                 public void run() {
                     mRecentsManager.killOther(false);
-                }});
-            return item;
-        }
-        if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_IMMERSIVE_MODE){
-            item = getPackageItemTemplate();
-            d = mContext.getResources().getDrawable(R.drawable.immersive_mode);
-            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
-
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mActionIconSize,
-                    mConfiguration.mIconBorder,
-                    mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
-
-            item.setLabel(mContext.getResources().getString(R.string.immersive_mode_help));
-            item.setAction(new Runnable(){
-                @Override
-                public void run() {
-                    if (!mConfiguration.mRestrictedMode){
-                        Utils.toggleImmersiveMode(mContext);
-                    }
                 }});
             return item;
         }

@@ -53,13 +53,13 @@ public class BitmapUtils {
         Bitmap b = ((BitmapDrawable) image).getBitmap();
 
         // create a border around the icon
-        Bitmap bmResult = Bitmap.createBitmap(size + border, size + 3 * border,
+        Bitmap bmResult = Bitmap.createBitmap(size + border, size + border,
                 Bitmap.Config.ARGB_8888);
         Canvas tempCanvas = new Canvas(bmResult);
 
         Bitmap bitmapResized = Bitmap.createScaledBitmap(b, size,
                 size, true);
-        tempCanvas.drawBitmap(bitmapResized, border/2, border, null);
+        tempCanvas.drawBitmap(bitmapResized, border/2, border/2, null);
         return new BitmapDrawable(resources, bmResult);
     }
 

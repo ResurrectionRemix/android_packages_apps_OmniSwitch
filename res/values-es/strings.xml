@@ -17,8 +17,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">OmniSwitch</string>
-    <string name="status_bar_recent_remove_item_title">Detener</string>
-    <string name="status_bar_recent_inspect_item_title">Información</string>
+    <string name="package_stop_task_title">Detener</string>
+    <string name="package_inspect_item_title">Información</string>
     <string name="recents_settings_title">OmniSwitch</string>
     <string name="start_on_boot_title">Ejecutar al arrancar</string>
     <string name="start_on_boot_summary">Ejecutar y activar en el arranque del dispositivo</string>

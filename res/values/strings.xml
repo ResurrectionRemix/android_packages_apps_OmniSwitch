@@ -17,7 +17,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">OmniSwitch</string>
-    <string name="status_bar_recent_remove_item_title">Stop</string>
+    <string name="package_stop_task_title">Stop</string>
     <string name="package_inspect_item_title">App info</string>
     <string name="recents_settings_title">OmniSwitch</string>
     <string name="start_on_boot_title">Start on boot</string>
@@ -27,6 +27,7 @@
     <string name="animate_title">Animate</string>
     <string name="animate_title_summary">Animate show and hide of overlay view</string>
     <string name="adjust_handle_title">Position and size</string>
+    <string name="adjust_handle_help">Move and resize drag handle.\nPress button to switch between left and right side of the display.</string>
     <string name="sc_drag_handle_title">Drag handle</string>
     <string name="sc_drag_handle_body">\nSwipe horizontally to open\n\nPress button or outside to close\n\nLong press to open quick switcher</string>
     <string name="sc_favorite_title">Favorite apps</string>
@@ -52,15 +53,15 @@
     <string name="favorite_apps_config_summary">Define apps shown in favorites view</string>
     <string name="favorite_apps_add_dialog_title">Add apps</string>
     <string name="favorite_add">Add\u2026</string>
-    <string name="location_left" translatable="false">&lt;&lt;</string>
-    <string name="location_right" translatable="false">&gt;&gt;</string>
+    <string name="location_left">Left</string>
+    <string name="location_right">Right</string>
     <string name="reset">Default</string>
     <string name="toogle_last_app_help">Switch to last app</string>
     <string name="kill_all_apps_help">Kill all apps</string>
     <string name="kill_other_apps_help">Kill other apps</string>
     <string name="settings_help">Settings</string>
     <string name="home_help">Home</string>
-    <string name="toogle_last_app">Switch to last app</string>
+    <string name="toogle_last_app">Last app</string>
     <string name="kill_all_apps">Kill all</string>
     <string name="kill_other_apps">Kill other</string>
     <string name="settings">Settings</string>
@@ -74,7 +75,7 @@
     <string name="drag_handle_enable_title">Enable</string>
     <string name="drag_handle_enable_summary">Disable only if you use another activation method</string>
     <string name="allapps_help">App drawer</string>
-    <string name="allapps">App drawer</string>
+    <string name="allapps">Apps</string>
     <string name="dim_behind_title">Dim background</string>
     <string name="dim_behind_summary">Apply opacity to complete screen</string>
     <string name="gravity_title">Horizontal gravity</string>
@@ -110,4 +111,5 @@
     <string name="package_remove_favorite_title">Remove from favorites</string>
     <string name="flat_style_summary">Use solid background for overlay view</string>
     <string name="flat_style_title">Flat style</string>
+    <string name="open_favorite_help">Open/close favorites view</string>
 </resources>

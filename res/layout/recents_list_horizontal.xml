@@ -18,31 +18,30 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="10dp" >
+    android:orientation="vertical" >
     <LinearLayout
         android:id="@+id/button_list_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-        <org.omnirom.omniswitch.ui.ButtonScrollView
+        <HorizontalScrollView
             android:id="@+id/button_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="5dip" >
+            android:layout_gravity="center_horizontal" >
             <LinearLayout
                 android:id="@+id/button_list_items"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
             </LinearLayout>
-        </org.omnirom.omniswitch.ui.ButtonScrollView>
+        </HorizontalScrollView>
     </LinearLayout>
     <include layout="@layout/recents_rambar" />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dip" >
         <LinearLayout
             android:id="@+id/recents"
             android:layout_width="match_parent"
@@ -62,15 +61,13 @@
                 android:text="@string/no_recent_apps_title"
                 android:textSize="20sp"
                 android:visibility="gone" />
-            <ImageButton
+            <ImageView
                 android:id="@+id/openFavorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@android:color/transparent"
                 android:minWidth="80dip"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_expand_down" />
+                android:scaleType="centerInside" />
             <org.omnirom.omniswitch.ui.HorizontalListView
                 android:id="@+id/favorite_list_horizontal"
                 android:layout_width="match_parent"
@@ -81,7 +78,6 @@
             android:id="@+id/app_drawer"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:listSelector="@android:color/transparent"
             android:numColumns="auto_fit"
             android:smoothScrollbar="true"
             android:stretchMode="spacingWidthUniform"

@@ -87,15 +87,15 @@ public class SettingsGestureView {
         mSlop = vc.getScaledTouchSlop();
         mConfiguration = SwitchConfiguration.getInstance(mContext);
 
-        mDragHandleLimiterHeight = (int) (40 * mDensity + 0.5);
-        mDragHandleMinHeight = (int) (60 * mDensity + 0.5);
+        mDragHandleLimiterHeight = Math.round(20 * mDensity);
+        mDragHandleMinHeight = Math.round(60 * mDensity);
 
         mDragHandle = mContext.getResources().getDrawable(
                 R.drawable.drag_handle);
         mDragHandleStart = mContext.getResources().getDrawable(
-                R.drawable.drag_handle_start);
+                R.drawable.drag_handle_marker);
         mDragHandleEnd = mContext.getResources().getDrawable(
-                R.drawable.drag_handle_end);
+                R.drawable.drag_handle_marker);
 
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -225,71 +225,43 @@ public class SettingsGestureView {
             }
         });
 
-        mOkButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-
-                switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    Editor edit = mPrefs.edit();
-                    edit.putInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, mLocation);
-                    int relHeight = (int)(mStartY / (mConfiguration.getCurrentDisplayHeight() /100));
-                    edit.putInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeight);
-                    edit.putInt(SettingsActivity.PREF_HANDLE_HEIGHT, mEndY - mStartY);
-                    edit.commit();
-                    hide();
-                }
-                return true;
+        mOkButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Editor edit = mPrefs.edit();
+                edit.putInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, mLocation);
+                int relHeight = (int)(mStartY / (mConfiguration.getCurrentDisplayHeight() /100));
+                edit.putInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeight);
+                edit.putInt(SettingsActivity.PREF_HANDLE_HEIGHT, mEndY - mStartY);
+                edit.commit();
+                hide();
             }
         });
 
-        mCancelButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-
-                switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    hide();
-                }
-                return true;
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                hide();
             }
         });
-        
-        mLocationButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
 
-                switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    if (mLocation == 1){
-                        mLocation = 0;
-                        mLocationButton.setText(mContext.getResources().getString(R.string.location_left));
-                    } else {
-                        mLocation = 1;
-                        mLocationButton.setText(mContext.getResources().getString(R.string.location_right));
-                    }
-                    updateLayout();
+        mLocationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mLocation == 1){
+                    mLocation = 0;
+                    mLocationButton.setText(mContext.getResources().getString(R.string.location_left));
+                } else {
+                    mLocation = 1;
+                    mLocationButton.setText(mContext.getResources().getString(R.string.location_right));
                 }
-                return true;
+                updateLayout();
             }
         });
-        
-        mResetButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
 
-                switch (action) {
-                case MotionEvent.ACTION_DOWN:
-                    resetPosition();
-                }
-                return true;
+        mResetButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                resetPosition();
             }
         });
-        
+
         mView.setFocusableInTouchMode(true);
         mView.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -311,7 +283,7 @@ public class SettingsGestureView {
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                 PixelFormat.TRANSLUCENT);
         lp.gravity = Gravity.CENTER;
-        lp.dimAmount = 0.8f;
+        lp.dimAmount = 0.6f;
         return lp;
     }
 
@@ -392,8 +364,7 @@ public class SettingsGestureView {
         } else {
             mLocationButton.setText(mContext.getResources().getString(R.string.location_left));
         }
-        mColor = mPrefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR,
-                mContext.getResources().getColor(R.color.holo_blue_light));
+        mColor = mPrefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR, mConfiguration.mDefaultColor);
     }
 
     public void show() {

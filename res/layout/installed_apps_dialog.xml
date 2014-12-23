@@ -17,7 +17,9 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/alert_dialog_padding_material"
+    android:paddingEnd="@dimen/alert_dialog_padding_material" >
     <ListView
         android:id="@+id/installed_apps"
         android:layout_width="match_parent"

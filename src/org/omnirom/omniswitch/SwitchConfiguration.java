@@ -40,7 +40,6 @@ public class SwitchConfiguration {
     public int mIconBorder = 8; // in dp
     public float mDensity;
     public int mMaxWidth;
-    public int mMaxHeight;
     public boolean mShowRambar;
     public int mStartYRelative;
     public int mDragHandleHeight;
@@ -48,8 +47,6 @@ public class SwitchConfiguration {
     public boolean mShowLabels = true;
     public int mDragHandleColor;
     public float mDragHandleOpacity;
-    public int mGlowColor;
-    public int mFlatGlowColor;
     public int mDefaultColor;
     public int mIconDpi;
     public boolean mAutoHide;
@@ -69,10 +66,13 @@ public class SwitchConfiguration {
     public int mLimitItemsX = 10;
     public boolean mFlatStyle = true;
     public int mHorizontalDividerWidth;
+    public float mLabelFontSize;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
     private int mDefaultHandleHeight;
+    private int mLabelFontSizePx;
+    public int mMaxHeight;
 
     public static SwitchConfiguration getInstance(Context context) {
         if (mInstance == null) {
@@ -90,9 +90,7 @@ public class SwitchConfiguration {
         Point size = new Point();
         mWindowManager.getDefaultDisplay().getSize(size);
         mDefaultColor = context.getResources()
-                .getColor(R.color.holo_blue_light);
-        mGlowColor = context.getResources().getColor(R.color.glow_color);
-        mFlatGlowColor = context.getResources().getColor(R.color.flat_glow_color);
+                .getColor(R.color.material_green);
         mDefaultHandleHeight = Math.round(100 * mDensity);
         mRestrictedMode = !hasSystemPermission(context);
         mLevelHeight = Math.round(80 * mDensity);
@@ -132,7 +130,10 @@ public class SwitchConfiguration {
                 mDefaultHandleHeight);
 
         mMaxWidth = Math.round((mIconSize + mIconBorder) * mDensity);
-        mMaxHeight = Math.round((mIconSize + 3 * mIconBorder) * mDensity);
+        mMaxHeight = Math.round((mIconSize + mIconBorder) * mDensity);
+        mLabelFontSize = 15f;
+        // add a small gap
+        mLabelFontSizePx = Math.round((mLabelFontSize + mIconBorder) * mDensity);
 
         mDragHandleColor = prefs.getInt(
                 SettingsActivity.PREF_DRAG_HANDLE_COLOR, mDefaultColor);
@@ -227,5 +228,9 @@ public class SwitchConfiguration {
                 mHorizontalDividerWidth = equalWidth - mMaxWidth;
             }
         }
+    }
+
+    public int getItemMaxHeight() {
+        return mShowLabels ? mMaxHeight + mLabelFontSizePx :  mMaxHeight;
     }
 }

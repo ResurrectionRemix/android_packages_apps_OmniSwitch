@@ -53,12 +53,12 @@
     <string name="favorite_apps_add_dialog_title">Añadir aplicaciones</string>
     <string name="favorite_add">Añadir\u2026</string>
     <string name="reset">Por defecto</string>
-    <string name="toogle_last_app_help">Cambiar a la última aplicación</string>
+    <string name="toggle_last_app_help">Cambiar a la última aplicación</string>
     <string name="kill_all_apps_help">Cerrar todas las aplicaciones</string>
     <string name="kill_other_apps_help">Cerrar otras aplicaciones</string>
     <string name="settings_help">Ajustes</string>
     <string name="home_help">Inicio</string>
-    <string name="toogle_last_app">Ir a la última</string>
+    <string name="toggle_last_app">Ir a la última</string>
     <string name="kill_all_apps">Cerrar todas</string>
     <string name="kill_other_apps">Cerrar las otras</string>
     <string name="settings">Ajustes</string>

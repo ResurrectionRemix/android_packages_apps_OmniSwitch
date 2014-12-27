@@ -1403,7 +1403,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 @Override
                 public boolean onLongClick(View v) {
                     Toast.makeText(mContext,
-                            mContext.getResources().getString(R.string.toogle_last_app_help), Toast.LENGTH_SHORT).show();
+                            mContext.getResources().getString(R.string.toggle_last_app_help), Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });

@@ -29,7 +29,7 @@
     <string-array name="button_entries" translatable="false">
         <item>@string/kill_all_apps</item>
         <item>@string/kill_other_apps</item>
-        <item>@string/toogle_last_app</item>
+        <item>@string/toggle_last_app</item>
         <item>@string/home</item>
         <item>@string/settings</item>
         <item>@string/allapps</item>

@@ -276,6 +276,8 @@ public class SwipeDismissHorizontalListViewTouchListener implements
                 // cancel
                 mDownView.animate().translationY(0).alpha(1)
                         .setDuration(mAnimationTime).setListener(null);
+                // kill selection
+                mListView.unpressTouchedChild();
             }
             mVelocityTracker.recycle();
             mVelocityTracker = null;

@@ -1152,7 +1152,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     }
 
     /** If a view is currently pressed then unpress it */
-    private void unpressTouchedChild() {
+    public void unpressTouchedChild() {
         if (mViewBeingTouched != null) {
             // Set the view as not pressed
             mViewBeingTouched.setPressed(false);

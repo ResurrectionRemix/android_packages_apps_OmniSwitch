@@ -65,6 +65,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.ContextThemeWrapper;
 import android.view.ViewAnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -895,7 +896,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private void handleLongPressRecent(final TaskDescription ad, View view) {
-        final PopupMenu popup = new PopupMenu(mContext, view);
+        final Context wrapper = new ContextThemeWrapper(mContext, R.style.PopupMenu);
+        final PopupMenu popup = new PopupMenu(wrapper, view);
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.recent_popup_menu,
                 popup.getMenu());
@@ -937,7 +939,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private void handleLongPressFavorite(final PackageManager.PackageItem packageItem, View view) {
-        final PopupMenu popup = new PopupMenu(mContext, view);
+        final Context wrapper = new ContextThemeWrapper(mContext, R.style.PopupMenu);
+        final PopupMenu popup = new PopupMenu(wrapper, view);
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.favorite_popup_menu,
                 popup.getMenu());
@@ -962,7 +965,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private void handleLongPressAppDrawer(final PackageManager.PackageItem packageItem, View view) {
-        final PopupMenu popup = new PopupMenu(mContext, view);
+        final Context wrapper = new ContextThemeWrapper(mContext, R.style.PopupMenu);
+        final PopupMenu popup = new PopupMenu(wrapper, view);
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.package_popup_menu,
                 popup.getMenu());

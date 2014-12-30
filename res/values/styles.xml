@@ -62,4 +62,7 @@
         <item name="sv_backgroundColor">#F0333333</item>
         <item name="sv_buttonText">@android:string/ok</item>
     </style>
+
+    <style name="PopupMenu" parent="@android:style/Theme.Material.Light">
+    </style>
 </resources>

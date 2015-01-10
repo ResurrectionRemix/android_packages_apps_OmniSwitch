@@ -277,6 +277,11 @@ public class RecentTasksLoader {
                         continue;
                     }
 
+                    // dont load AOSP recents - com.android.systemui/.recents.RecentsActivity
+                    if (intent.getComponent().flattenToShortString().contains(".recents.RecentsActivity")) {
+                        continue;
+                    }
+
                     TaskDescription item = createTaskDescription(recentInfo.id,
                             recentInfo.persistentId, recentInfo.baseIntent,
                             recentInfo.origActivity, recentInfo.description);
@@ -341,9 +346,10 @@ public class RecentTasksLoader {
         Drawable icon = getFullResIcon(td.resolveInfo, pm);
 
         synchronized (td) {
-            if (icon != null) {
-                td.setIcon(icon);
+            if (icon == null) {
+                icon = BitmapUtils.getDefaultActivityIcon(mContext);
             }
+            td.setIcon(icon);
             td.setLoaded(true);
         }
     }
@@ -351,6 +357,7 @@ public class RecentTasksLoader {
     private Drawable getFullResIcon(ResolveInfo info,
             PackageManager packageManager) {
         Resources resources;
+        final Drawable defaultIcon = BitmapUtils.getDefaultActivityIcon(mContext);
         try {
             resources = packageManager
                     .getResourcesForApplication(info.activityInfo.applicationInfo);
@@ -362,19 +369,27 @@ public class RecentTasksLoader {
             if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
                 iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
                 if (iconId != 0) {
-                    return IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
+                    Drawable icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
+                    if (!(icon instanceof BitmapDrawable)) {
+                        icon = defaultIcon;
+                    }
+                    return icon;
                 }
             }
             iconId = info.activityInfo.getIconResource();
             if (iconId != 0) {
                 try {
-                    return resources.getDrawable(iconId);
+                    Drawable icon = resources.getDrawable(iconId);
+                    if (!(icon instanceof BitmapDrawable)) {
+                        icon = defaultIcon;
+                    }
+                    return icon;
                 } catch(Resources.NotFoundException e){
                     // ignore and use default below
                 }
             }
         }
-        return BitmapUtils.getDefaultActivityIcon(mContext);
+        return defaultIcon;
     }
 
     public void loadThumbnail(final TaskDescription td) {

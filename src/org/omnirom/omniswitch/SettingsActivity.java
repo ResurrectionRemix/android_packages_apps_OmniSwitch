@@ -83,6 +83,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1";
     public static final String PREF_SPEED_SWITCHER_ITEMS = "speed_switch_items";
     public static final String PREF_FLAT_STYLE = "flat_style";
+    public static final String PREF_BUTTON_POS = "button_pos";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -120,6 +121,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private Drawable[] mSpeedSwitchButtonImages;
     private String mSpeedSwitchButtons;
     private NumberPickerPreference mSpeedSwitchItems;
+    private ListPreference mButtonPos;
 
     @Override
     public void onPause() {
@@ -178,6 +180,12 @@ public class SettingsActivity extends PreferenceActivity implements
         mSpeedSwitchItems.setMaxValue(20);
         mSpeedSwitchButtonConfig = (Preference) findPreference(PREF_SPEED_SWITCHER_BUTTON_CONFIG);
         mSpeedSwitchButtons = mPrefs.getString(PREF_SPEED_SWITCHER_BUTTON_NEW, PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
+        mButtonPos = (ListPreference) findPreference(PREF_BUTTON_POS);
+        mButtonPos.setOnPreferenceChangeListener(this);
+        idx = mButtonPos.findIndexOfValue(mPrefs.getString(PREF_BUTTON_POS,
+                mButtonPos.getEntryValues()[0].toString()));
+        mButtonPos.setValueIndex(idx);
+        mButtonPos.setSummary(mButtonPos.getEntries()[idx]);
         initButtons();
 
         mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -264,6 +272,12 @@ public class SettingsActivity extends PreferenceActivity implements
             int idx = mGravity.findIndexOfValue(value);
             mGravity.setSummary(mGravity.getEntries()[idx]);
             mGravity.setValueIndex(idx);
+            return true;
+        } else if (preference == mButtonPos) {
+            String value = (String) newValue;
+            int idx = mButtonPos.findIndexOfValue(value);
+            mButtonPos.setSummary(mButtonPos.getEntries()[idx]);
+            mButtonPos.setValueIndex(idx);
             return true;
         }
 

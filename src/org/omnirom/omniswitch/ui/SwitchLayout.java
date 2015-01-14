@@ -386,11 +386,6 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mNoRecentApps = (TextView) mView
                 .findViewById(R.id.no_recent_apps);
 
-        mButtonList = (HorizontalScrollView) mView.findViewById(R.id.button_list);
-        mButtonList.setHorizontalScrollBarEnabled(false);
-        mButtonListItems = (LinearLayout) mView.findViewById(R.id.button_list_items);
-        mButtonListContainer = (LinearLayout) mView.findViewById(R.id.button_list_container);
-
         mRecentListHorizontal
         .setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -581,6 +576,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private synchronized void initView(){
+        if (mButtonListContainer != null) {
+            mButtonListContainer.setVisibility(View.GONE);
+        }
+        mButtonList = (HorizontalScrollView) mView.findViewById(mConfiguration.mButtonPos == 0 ?  R.id.button_list_top : R.id.button_list_bottom);
+        mButtonList.setHorizontalScrollBarEnabled(false);
+        mButtonListItems = (LinearLayout) mView.findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_items_top : R.id.button_list_items_bottom);
+        mButtonListContainer = (LinearLayout) mView.findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_container_top : R.id.button_list_container_bottom);
+        mButtonListContainer.setVisibility(View.VISIBLE);
+
         updateStyle();
 
         if (mConfiguration.mFlatStyle) {

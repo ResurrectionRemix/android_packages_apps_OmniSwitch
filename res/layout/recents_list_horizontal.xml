@@ -20,17 +20,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     <LinearLayout
-        android:id="@+id/button_list_container"
+        android:id="@+id/button_list_container_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:orientation="vertical" >
         <HorizontalScrollView
-            android:id="@+id/button_list"
+            android:id="@+id/button_list_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" >
             <LinearLayout
-                android:id="@+id/button_list_items"
+                android:id="@+id/button_list_items_top"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -83,4 +84,23 @@
             android:stretchMode="spacingWidthUniform"
             android:visibility="gone" />
     </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/button_list_container_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical" >
+        <HorizontalScrollView
+            android:id="@+id/button_list_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" >
+            <LinearLayout
+                android:id="@+id/button_list_items_bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
 </LinearLayout>

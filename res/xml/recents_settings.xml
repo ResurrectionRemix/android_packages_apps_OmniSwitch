@@ -75,6 +75,12 @@
             android:key="button_config"
             android:summary="@string/buttons_summary"
             android:title="@string/buttons_title" />
+        <ListPreference
+            android:entries="@array/button_pos_entries"
+            android:entryValues="@array/button_pos_values"
+            android:key="button_pos"
+            android:summary="@string/button_pos_top"
+            android:title="@string/button_pos_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="category_drag_handle"

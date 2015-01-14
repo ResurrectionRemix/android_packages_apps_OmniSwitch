@@ -67,6 +67,7 @@ public class SwitchConfiguration {
     public boolean mFlatStyle = true;
     public int mHorizontalDividerWidth;
     public float mLabelFontSize;
+    public int mButtonPos = 0; // 0 = top 1 = bottom
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
@@ -155,6 +156,8 @@ public class SwitchConfiguration {
                 SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW), SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
         mLimitItemsX = prefs.getInt(SettingsActivity.PREF_SPEED_SWITCHER_ITEMS, 10);
         mFlatStyle = prefs.getBoolean(SettingsActivity.PREF_FLAT_STYLE, true);
+        String buttonPos = prefs.getString(SettingsActivity.PREF_BUTTON_POS, "0");
+        mButtonPos = Integer.valueOf(buttonPos);
     }
 
     // includes rotation

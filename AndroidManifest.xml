@@ -55,5 +55,11 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+        <!-- to update labels -->
+        <receiver android:name="org.omnirom.omniswitch.LocaleChangeReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCALE_CHANGED"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

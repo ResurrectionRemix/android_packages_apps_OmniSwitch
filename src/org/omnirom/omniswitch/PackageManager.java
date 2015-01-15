@@ -39,8 +39,11 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class PackageManager {
+    private static final boolean DEBUG = false;
+    private static final String TAG = "PackageManager";
 
     private Map<String, PackageItem> mInstalledPackages;
     private List<PackageItem> mInstalledPackagesList;
@@ -94,14 +97,14 @@ public class PackageManager {
 
     public synchronized List<PackageItem> getPackageList() {
         if(!mInitDone){
-            updatePackageList(false, null);
+            updatePackageList();
         }
         return mInstalledPackagesList;
     }
 
     public synchronized Map<String, PackageItem> getPackageMap() {
         if(!mInitDone){
-            updatePackageList(false, null);
+            updatePackageList();
         }
         return mInstalledPackages;
     }
@@ -134,7 +137,8 @@ public class PackageManager {
         return icon;
     }
 
-    public synchronized void updatePackageList(boolean removed, String pkg) {
+    public synchronized void updatePackageList() {
+        if (DEBUG) Log.d(TAG, "updatePackageList");
         final android.content.pm.PackageManager pm = mContext.getPackageManager();
         BitmapCache.getInstance(mContext).clear();
 

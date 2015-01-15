@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2015 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
+import android.preference.PreferenceManager;
+import android.content.SharedPreferences;
 
-public class PackageReceiver extends BroadcastReceiver {
+import org.omnirom.omniswitch.SwitchConfiguration;
+
+public class LocaleChangeReceiver extends BroadcastReceiver {
     private static final boolean DEBUG = false;
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        if (DEBUG) Log.d("PackageReceiver", "onReceive " + intent.getAction());
+        if (DEBUG) Log.d("LocaleChangeReceiver", "onReceive " + intent.getAction());
         if (SwitchService.isRunning()){
             PackageManager.getInstance(context).updatePackageList();
+
+            // to force a reload of all adapters that show packages
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            boolean value = prefs.getBoolean("LOCALE_CHANGED", false);
+            prefs.edit().putBoolean("LOCALE_CHANGED", !value).commit();
         }
     }
 }

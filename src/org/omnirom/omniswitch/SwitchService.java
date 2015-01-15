@@ -77,7 +77,7 @@ public class SwitchService extends Service {
         filter.addAction(Intent.ACTION_SHUTDOWN);
 
         registerReceiver(mReceiver, filter);
-        PackageManager.getInstance(this).updatePackageList(false, null);
+        PackageManager.getInstance(this).updatePackageList();
 
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         updatePrefs(mPrefs, null);

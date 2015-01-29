@@ -25,4 +25,5 @@
     <color name="ripple_material_light">#40000000</color>
     <color name="ripple_material_dark">#40ffffff</color>
     <color name="material_green">#009587</color>
+    <color name="fake_window_shade_color">#40424242</color>
 </resources>

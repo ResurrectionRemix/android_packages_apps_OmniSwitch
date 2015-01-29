@@ -131,7 +131,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private int[] mVerticalBorders = new int[4];
     private List<PackageTextView> mFavoriteList;
     private int mCurrentFavoriteItemIndex;
-    private boolean mSpeedSwitcher;
     private List<PackageTextView> mActionList;
     private int mCurrentActionItemIndex;
     private int mLevelX = -1;
@@ -342,7 +341,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     mInitDownPoint[0] = xRaw;
                     mInitDownPoint[1] = yRaw;
                     mLastX = xRaw;
-                    if(mSpeedSwitcher && !mHidden){
+                    if(mConfiguration.mSpeedSwitcher && !mHidden){
                         mHandler.postDelayed(mLongPressRunnable, ViewConfiguration.getLongPressTimeout());
                     }
                     break;
@@ -506,11 +505,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         updateButton(true);
 
-        mSpeedSwitcher = prefs.getBoolean(SettingsActivity.PREF_SPEED_SWITCHER, false);
-        String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
-        List<String> favoriteList = new ArrayList<String>();
-        Utils.parseFavorites(favoriteListString, favoriteList);
-        buildFavoriteItems(favoriteList);
+        buildFavoriteItems(mConfiguration.mFavoriteList);
         buildActionList();
         mShowcaseQuickDone = prefs.getBoolean(KEY_SHOWCASE_QUICK, false);
         mShowcaseHandleDone = prefs.getBoolean(KEY_SHOWCASE_HANDLE, false);
@@ -742,7 +737,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     }
 
     private synchronized void loadRecentItems() {
-        if (!mSpeedSwitcher) {
+        if (!mConfiguration.mSpeedSwitcher) {
             Log.d(TAG, "loadRecentItems: called with !mSpeedSwitcher");
             return;
         }
@@ -1052,7 +1047,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     }
 
     public boolean isHandleRecentsUpdate() {
-        return mSpeedSwitcher && mHandleRecentsUpdate;
+        return mConfiguration.mSpeedSwitcher && mHandleRecentsUpdate;
     }
 
     private boolean isValidCoordinate(int xPos, int yPos){

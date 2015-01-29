@@ -42,6 +42,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -67,6 +68,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.ContextThemeWrapper;
 import android.view.ViewAnimationUtils;
+import android.view.ViewOutlineProvider;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -348,6 +350,20 @@ public class SwitchLayout implements OnShowcaseEventListener {
         }
     };
 
+    private static final ViewOutlineProvider BUTTON_OUTLINE_PROVIDER = new ViewOutlineProvider() {
+        @Override
+        public void getOutline(View view, Outline outline) {
+            outline.setRect(0, 0, view.getWidth(), view.getHeight());
+        }
+    };
+
+    private static final ViewOutlineProvider BAR_OUTLINE_PROVIDER = new ViewOutlineProvider() {
+        @Override
+        public void getOutline(View view, Outline outline) {
+            outline.setRect(0, 0, view.getWidth(), view.getHeight());
+        }
+    };
+
     public SwitchLayout(SwitchManager manager, Context context) {
         mContext = context;
         mRecentsManager = manager;
@@ -587,7 +603,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
         updateStyle();
 
-        if (mConfiguration.mFlatStyle) {
+        if (mConfiguration.mBgStyle == 0) {
             mView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg_flat));
         } else {
             mView.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg));
@@ -602,19 +618,16 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mConfiguration.calcHorizontalDivider();
 
         mFavoriteListHorizontal.setLayoutParams(getListParams());
-        //mFavoriteListHorizontal.setBackgroundColor(Color.BLUE);
         mFavoriteListHorizontal.scrollTo(0);
         mFavoriteListHorizontal.setDividerWidth(mConfiguration.mHorizontalDividerWidth);
         mFavoriteListHorizontal.setPadding(mConfiguration.mHorizontalDividerWidth / 2, 0, mConfiguration.mHorizontalDividerWidth / 2, 0);
 
         mRecentListHorizontal.setLayoutParams(getListParams());
-        //mRecentListHorizontal.setBackgroundColor(Color.GREEN);
         mRecentListHorizontal.scrollTo(0);
         mRecentListHorizontal.setDividerWidth(mConfiguration.mHorizontalDividerWidth);
         mRecentListHorizontal.setPadding(mConfiguration.mHorizontalDividerWidth / 2, 0, mConfiguration.mHorizontalDividerWidth / 2, 0);
 
         mNoRecentApps.setLayoutParams(getListParams());
-        // TODO
         mAppDrawer.setColumnWidth(mConfiguration.mMaxWidth);
         mAppDrawer.setLayoutParams(getAppDrawerParams());
         mAppDrawer.requestLayout();
@@ -631,7 +644,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         mFavoriteListHorizontal.setVisibility(mShowFavorites ? View.VISIBLE : View.GONE);
         mOpenFavorite.setVisibility(mHasFavorites ? View.VISIBLE : View.GONE);
         mOpenFavorite.setRotation(mShowFavorites ? ROTATE_180_DEGREE : 0);
-        mOpenFavorite.setBackgroundResource(mConfiguration.mFlatStyle ? R.drawable.ripple_dark : R.drawable.ripple_light);
+        mOpenFavorite.setBackgroundResource(mConfiguration.mBgStyle == 0 ? R.drawable.ripple_dark : R.drawable.ripple_light);
 
         if(mHasFavorites && !mShowcaseDone){
             mOpenFavorite.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -1001,8 +1014,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             Log.d(TAG, "updatePrefs");
         }
         mFavoriteList.clear();
-        String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
-        Utils.parseFavorites(favoriteListString, mFavoriteList);
+        mFavoriteList.addAll(mConfiguration.mFavoriteList);
 
         List<String> favoriteList = new ArrayList<String>();
         favoriteList.addAll(mFavoriteList);
@@ -1126,7 +1138,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
 
     private PackageTextView getPackageItemTemplate() {
         PackageTextView item = new PackageTextView(mContext);
-        if (mConfiguration.mFlatStyle){
+        if (mConfiguration.mBgStyle == 0){
             item.setTextColor(Color.BLACK);
             item.setShadowLayer(0, 0, 0, Color.BLACK);
         } else {
@@ -1138,7 +1150,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
         item.setGravity(Gravity.CENTER);
         item.setLayoutParams(getListItemParams());
         item.setMaxLines(1);
-        item.setBackgroundResource(mConfiguration.mFlatStyle ? R.drawable.ripple_dark : R.drawable.ripple_light);
+        item.setBackgroundResource(mConfiguration.mBgStyle == 0 ? R.drawable.ripple_dark : R.drawable.ripple_light);
         return item;
     }
 
@@ -1546,13 +1558,15 @@ public class SwitchLayout implements OnShowcaseEventListener {
     }
 
     private void updateStyle() {
-        if (mConfiguration.mFlatStyle){
+        if (mConfiguration.mBgStyle == 0){
             mButtonListContainer.setBackground(mContext.getResources().getDrawable(R.drawable.overlay_bg_button_flat));
             mForegroundProcessText.setShadowLayer(0, 0, 0, Color.BLACK);
             mBackgroundProcessText.setShadowLayer(0, 0, 0, Color.BLACK);
             mNoRecentApps.setTextColor(Color.BLACK);
             mNoRecentApps.setShadowLayer(0, 0, 0, Color.BLACK);
             mOpenFavorite.setImageDrawable(BitmapUtils.colorize(mContext.getResources(), mContext.getResources().getColor(R.color.button_bg_flat_color), mContext.getResources().getDrawable(R.drawable.ic_expand_down)));
+            mRamUsageBarContainer.setOutlineProvider(BAR_OUTLINE_PROVIDER);
+            mButtonListContainer.setOutlineProvider(BUTTON_OUTLINE_PROVIDER);
         } else {
             mButtonListContainer.setBackground(null);
             mForegroundProcessText.setShadowLayer(5, 0, 0, Color.BLACK);
@@ -1560,6 +1574,8 @@ public class SwitchLayout implements OnShowcaseEventListener {
             mNoRecentApps.setTextColor(Color.WHITE);
             mNoRecentApps.setShadowLayer(5, 0, 0, Color.BLACK);
             mOpenFavorite.setImageDrawable(BitmapUtils.shadow(mContext.getResources(), mContext.getResources().getDrawable(R.drawable.ic_expand_down)));
+            mRamUsageBarContainer.setOutlineProvider(null);
+            mButtonListContainer.setOutlineProvider(null);
         }
     }
 

@@ -18,6 +18,8 @@
 package org.omnirom.omniswitch;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.omnirom.omniswitch.ui.BitmapCache;
 
@@ -28,8 +30,8 @@ import android.preference.PreferenceManager;
 import android.view.WindowManager;
 
 public class SwitchConfiguration {
-    public float mBackgroundOpacity = 0.5f;
-    public boolean mDimBehind;
+    public float mBackgroundOpacity = 0.7f;
+    public boolean mDimBehind = true;
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
@@ -40,7 +42,7 @@ public class SwitchConfiguration {
     public int mIconBorder = 8; // in dp
     public float mDensity;
     public int mMaxWidth;
-    public boolean mShowRambar;
+    public boolean mShowRambar = true;
     public int mStartYRelative;
     public int mDragHandleHeight;
     public int mDragHandleWidth;
@@ -64,10 +66,12 @@ public class SwitchConfiguration {
     public boolean mLimitLevelChangeX = true;
     public Map<Integer, Boolean> mSpeedSwitchButtons;
     public int mLimitItemsX = 10;
-    public boolean mFlatStyle = true;
     public int mHorizontalDividerWidth;
     public float mLabelFontSize;
     public int mButtonPos = 0; // 0 = top 1 = bottom
+    public int mBgStyle = 0; // 0 = solid 1 = transparent
+    public List<String> mFavoriteList = new ArrayList<String>();
+    public boolean mSpeedSwitcher = true;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
@@ -110,16 +114,25 @@ public class SwitchConfiguration {
         updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
     }
 
+    public void initDefaults(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!prefs.contains(SettingsActivity.PREF_BG_STYLE) &&
+                prefs.contains(SettingsActivity.PREF_FLAT_STYLE)) {
+            boolean flatStyle = prefs.getBoolean(SettingsActivity.PREF_FLAT_STYLE, true);
+            prefs.edit().putString(SettingsActivity.PREF_BG_STYLE, flatStyle ? "0" : "1").commit();
+        }
+    }
+
     public void updatePrefs(SharedPreferences prefs, String key) {
         mLocation = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, 0);
-        int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 50);
+        int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 70);
         mBackgroundOpacity = (float) opacity / 100.0f;
         mAnimate = prefs.getBoolean(SettingsActivity.PREF_ANIMATE, true);
         String iconSize = prefs
                 .getString(SettingsActivity.PREF_ICON_SIZE, "60");
         mIconSize = Integer.valueOf(iconSize);
         mShowRambar = prefs
-                .getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, false);
+                .getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, true);
         mShowLabels = prefs.getBoolean(SettingsActivity.PREF_SHOW_LABELS, true);
 
         int relHeightStart = (int) (getDefaultOffsetStart() / (getCurrentDisplayHeight() / 100));
@@ -144,7 +157,7 @@ public class SwitchConfiguration {
                 false);
         mDragHandleShow = prefs.getBoolean(
                 SettingsActivity.PREF_DRAG_HANDLE_ENABLE, true);
-        mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, false);
+        mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, true);
         String gravity = prefs.getString(SettingsActivity.PREF_GRAVITY, "0");
         mGravity = Integer.valueOf(gravity);
         mDragHandleWidth = Math.round(20 * mDensity);
@@ -155,9 +168,20 @@ public class SwitchConfiguration {
         mSpeedSwitchButtons = Utils.buttonStringToMap(prefs.getString(SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_NEW,
                 SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW), SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
         mLimitItemsX = prefs.getInt(SettingsActivity.PREF_SPEED_SWITCHER_ITEMS, 10);
-        mFlatStyle = prefs.getBoolean(SettingsActivity.PREF_FLAT_STYLE, true);
         String buttonPos = prefs.getString(SettingsActivity.PREF_BUTTON_POS, "0");
         mButtonPos = Integer.valueOf(buttonPos);
+        String bgStyle = prefs.getString(SettingsActivity.PREF_BG_STYLE, "0");
+        mBgStyle = Integer.valueOf(bgStyle);
+
+        mFavoriteList.clear();
+        String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
+        Utils.parseFavorites(favoriteListString, mFavoriteList);
+        mSpeedSwitcher = prefs.getBoolean(SettingsActivity.PREF_SPEED_SWITCHER, true);
+    }
+
+    public void resetDefaults(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().clear().commit();
     }
 
     // includes rotation

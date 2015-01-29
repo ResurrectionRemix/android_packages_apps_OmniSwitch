@@ -39,22 +39,23 @@
             android:key="iconpack"
             android:summary="@string/icon_pack_summary"
             android:title="@string/icon_pack_title" />
+         <ListPreference
+            android:entries="@array/bg_style_entries"
+            android:entryValues="@array/bg_style_values"
+            android:key="bg_style"
+            android:summary="@string/bg_style_solid"
+            android:title="@string/bg_style_title" />
         <org.omnirom.omniswitch.ui.SeekBarPreference
-            android:defaultValue="60"
+            android:defaultValue="70"
             android:key="opacity"
             android:max="100"
             android:summary="@string/opacity_summary"
             android:title="@string/opacity_title" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="dim_behind"
             android:summary="@string/dim_behind_summary"
             android:title="@string/dim_behind_title" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="flat_style"
-            android:summary="@string/flat_style_summary"
-            android:title="@string/flat_style_title" />
         <ListPreference
             android:entries="@array/gravity_entries"
             android:entryValues="@array/gravity_values"
@@ -62,7 +63,7 @@
             android:summary="@string/gravity_center"
             android:title="@string/gravity_title" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="show_rambar"
             android:summary="@string/show_rambar_summary"
             android:title="@string/show_rambar_title" />
@@ -115,7 +116,7 @@
         android:key="category_speed_switcher"
         android:title="@string/category_speed_switcher_title" >
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:dependency="drag_handle_enable"
             android:key="speed_switcher"
             android:summary="@string/speed_switcher_enable_summary"

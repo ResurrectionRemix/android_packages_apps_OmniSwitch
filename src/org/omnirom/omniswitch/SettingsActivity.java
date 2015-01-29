@@ -84,6 +84,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_SPEED_SWITCHER_ITEMS = "speed_switch_items";
     public static final String PREF_FLAT_STYLE = "flat_style";
     public static final String PREF_BUTTON_POS = "button_pos";
+    public static final String PREF_BG_STYLE = "bg_style";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -122,6 +123,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private String mSpeedSwitchButtons;
     private NumberPickerPreference mSpeedSwitchItems;
     private ListPreference mButtonPos;
+    private ListPreference mBgStyle;
 
     @Override
     public void onPause() {
@@ -159,7 +161,7 @@ public class SettingsActivity extends PreferenceActivity implements
         mIconSize.setValueIndex(idx);
         mIconSize.setSummary(mIconSize.getEntries()[idx]);
         mOpacity = (SeekBarPreference) findPreference(PREF_OPACITY);
-        mOpacity.setInitValue(mPrefs.getInt(PREF_OPACITY, 50));
+        mOpacity.setInitValue(mPrefs.getInt(PREF_OPACITY, 70));
         mOpacity.setOnPreferenceChangeListener(this);
         mDragHandleOpacity = (SeekBarPreference) findPreference(PREF_DRAG_HANDLE_OPACITY);
         mDragHandleOpacity.setInitValue(mPrefs.getInt(PREF_DRAG_HANDLE_OPACITY, 100));
@@ -180,13 +182,22 @@ public class SettingsActivity extends PreferenceActivity implements
         mSpeedSwitchItems.setMaxValue(20);
         mSpeedSwitchButtonConfig = (Preference) findPreference(PREF_SPEED_SWITCHER_BUTTON_CONFIG);
         mSpeedSwitchButtons = mPrefs.getString(PREF_SPEED_SWITCHER_BUTTON_NEW, PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
+
         mButtonPos = (ListPreference) findPreference(PREF_BUTTON_POS);
         mButtonPos.setOnPreferenceChangeListener(this);
         idx = mButtonPos.findIndexOfValue(mPrefs.getString(PREF_BUTTON_POS,
                 mButtonPos.getEntryValues()[0].toString()));
         mButtonPos.setValueIndex(idx);
         mButtonPos.setSummary(mButtonPos.getEntries()[idx]);
+
         initButtons();
+
+        mBgStyle = (ListPreference) findPreference(PREF_BG_STYLE);
+        mBgStyle.setOnPreferenceChangeListener(this);
+        idx = mBgStyle.findIndexOfValue(mPrefs.getString(PREF_BG_STYLE,
+                mBgStyle.getEntryValues()[0].toString()));
+        mBgStyle.setValueIndex(idx);
+        mBgStyle.setSummary(mBgStyle.getEntries()[idx]);
 
         mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
@@ -278,6 +289,12 @@ public class SettingsActivity extends PreferenceActivity implements
             int idx = mButtonPos.findIndexOfValue(value);
             mButtonPos.setSummary(mButtonPos.getEntries()[idx]);
             mButtonPos.setValueIndex(idx);
+            return true;
+        } else if (preference == mBgStyle) {
+            String value = (String) newValue;
+            int idx = mBgStyle.findIndexOfValue(value);
+            mBgStyle.setSummary(mBgStyle.getEntries()[idx]);
+            mBgStyle.setValueIndex(idx);
             return true;
         }
 

@@ -57,6 +57,7 @@ public class SwitchService extends Service {
     public void onCreate() {
         super.onCreate();
         mConfiguration = SwitchConfiguration.getInstance(this);
+        mConfiguration.initDefaults(this);
 
         if(mConfiguration.mRestrictedMode){
             createErrorNotification();

@@ -24,7 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:elevation="@dimen/button_elevation" >
         <HorizontalScrollView
             android:id="@+id/button_list_top"
             android:layout_width="wrap_content"
@@ -38,16 +39,18 @@
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
-    <include layout="@layout/recents_rambar" />
+    <include layout="@layout/recents_rambar"
+	android:layout_marginStart="@dimen/fake_shadow_width"
+	android:layout_marginEnd="@dimen/fake_shadow_width" />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="5dip" >
+        android:layout_height="match_parent" >
         <LinearLayout
             android:id="@+id/recents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:paddingBottom="8dip" >
             <org.omnirom.omniswitch.ui.HorizontalListView
                 android:id="@+id/recent_list_horizontal"
                 android:layout_width="match_parent"
@@ -82,14 +85,16 @@
             android:numColumns="auto_fit"
             android:smoothScrollbar="true"
             android:stretchMode="spacingWidthUniform"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:clipToPadding="false" />
     </RelativeLayout>
     <LinearLayout
         android:id="@+id/button_list_container_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:elevation="@dimen/button_elevation" >
         <HorizontalScrollView
             android:id="@+id/button_list_bottom"
             android:layout_width="wrap_content"

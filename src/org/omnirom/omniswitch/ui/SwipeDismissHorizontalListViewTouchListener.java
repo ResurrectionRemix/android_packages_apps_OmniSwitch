@@ -250,34 +250,36 @@ public class SwipeDismissHorizontalListViewTouchListener implements
             if(DEBUG){
                 Log.d(TAG, "ACTION_UP");
             }
-
-            float deltaY = motionEvent.getRawY() - mDownY;
-            mVelocityTracker.addMovement(motionEvent);
-            mVelocityTracker.computeCurrentVelocity(1000);
-            float velocityY = mVelocityTracker.getYVelocity();
-            float absVelocityX = Math.abs(mVelocityTracker.getXVelocity());
-            float absVelocityY = Math.abs(velocityY);
-            boolean dismiss = false;
-            boolean dismissUp = false;
-            if (Math.abs(deltaY) > mViewHeight * 0.5) {
-                dismiss = true;
-                dismissUp = deltaY < 0;
-            } else if (mMinFlingVelocity <= absVelocityX
-                    && absVelocityX <= mMaxFlingVelocity
-                    && absVelocityY < absVelocityX) {
-                // dismiss only if flinging in the same direction as dragging
-                dismiss = (velocityY < 0) == (deltaY < 0);
-                dismissUp = mVelocityTracker.getYVelocity() < 0;
-            }
-            if (dismiss) {
-                // dismiss
-                dismiss(mDownView, mDownPosition, dismissUp);
-            } else {
-                // cancel
-                mDownView.animate().translationY(0).alpha(1)
-                        .setDuration(mAnimationTime).setListener(null);
-                // kill selection
-                mListView.unpressTouchedChild();
+            
+            if (mSwiping) {
+                float deltaY = motionEvent.getRawY() - mDownY;
+                mVelocityTracker.addMovement(motionEvent);
+                mVelocityTracker.computeCurrentVelocity(1000);
+                float velocityY = mVelocityTracker.getYVelocity();
+                float absVelocityX = Math.abs(mVelocityTracker.getXVelocity());
+                float absVelocityY = Math.abs(velocityY);
+                boolean dismiss = false;
+                boolean dismissUp = false;
+                if (Math.abs(deltaY) > mViewHeight * 0.75f) {
+                    dismiss = true;
+                    dismissUp = deltaY < 0;
+                } else if (mMinFlingVelocity <= absVelocityX
+                        && absVelocityX <= mMaxFlingVelocity
+                        && absVelocityY < absVelocityX) {
+                    // dismiss only if flinging in the same direction as dragging
+                    dismiss = (velocityY < 0) == (deltaY < 0);
+                    dismissUp = mVelocityTracker.getYVelocity() < 0;
+                }
+                if (dismiss) {
+                    // dismiss
+                    dismiss(mDownView, mDownPosition, dismissUp);
+                } else {
+                    // cancel
+                    mDownView.animate().translationY(0).alpha(1)
+                            .setDuration(mAnimationTime).setListener(null);
+                    // kill selection
+                    mListView.unpressTouchedChild();
+                }
             }
             mVelocityTracker.recycle();
             mVelocityTracker = null;
@@ -325,10 +327,9 @@ public class SwipeDismissHorizontalListViewTouchListener implements
             if (mSwiping) {
                 mDownView.setTranslationY(deltaY);
                 mDownView
-                        .setAlpha(Math.max(
-                                0.15f,
+                        .setAlpha(
                                 Math.min(1f, 1f - 2f * Math.abs(deltaY)
-                                        / mViewHeight)));
+                                        / mViewHeight * 0.75f));
                 return true;
             }
             break;

@@ -56,12 +56,12 @@
     <string name="location_left">Left</string>
     <string name="location_right">Right</string>
     <string name="reset">Default</string>
+    <string name="toggle_last_app">Last app</string>
     <string name="toggle_last_app_help">Switch to last app</string>
     <string name="kill_all_apps_help">Kill all apps</string>
     <string name="kill_other_apps_help">Kill other apps</string>
     <string name="settings_help">Settings</string>
     <string name="home_help">Home</string>
-    <string name="toogle_last_app">Last app</string>
     <string name="kill_all_apps">Kill all</string>
     <string name="kill_other_apps">Kill other</string>
     <string name="settings">Settings</string>
@@ -116,4 +116,6 @@
     <string name="bg_style_solid">Solid</string>
     <string name="bg_style_transparent">Transparent</string>
     <string name="bg_style_title">Background style</string>
+    <string name="lock_to_app">Pin app</string>
+    <string name="lock_app_help">Pin app</string>
 </resources>

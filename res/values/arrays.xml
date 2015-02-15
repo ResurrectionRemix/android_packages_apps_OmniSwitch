@@ -34,6 +34,7 @@
         <item>@string/settings</item>
         <item>@string/allapps</item>
         <item>@string/back</item>
+        <item>@string/lock_to_app</item>
     </string-array>
     <string-array name="gravity_entries" translatable="false">
         <item>@string/gravity_center</item>
@@ -49,6 +50,7 @@
         <item>@string/kill_current</item>
         <item>@string/kill_all_apps</item>
         <item>@string/kill_other_apps</item>
+        <item>@string/lock_to_app</item>
     </string-array>
     <string-array name="button_pos_entries" translatable="false">
         <item>@string/button_pos_top</item>

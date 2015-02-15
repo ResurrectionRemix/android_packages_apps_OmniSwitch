@@ -252,7 +252,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     if(mLongPress){
                         if (mCurrentItemEnv[1] != null){
                             if (mLevel == 0 ){
-                                mRecentsManager.switchTask(mCurrentItemEnv[1].getTask(), false);
+                                mRecentsManager.switchTask(mCurrentItemEnv[1].getTask(), false, false);
                             } else if (mLevel == 1){
                                 mRecentsManager.startIntentFromtString(mCurrentItemEnv[1].getIntent(), false);
                             } else if (mLevel == -1){
@@ -1300,6 +1300,27 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 }});
             return item;
         }
+        if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_LOCK_APP){
+            item = getPackageItemTemplate();
+            d = mContext.getResources().getDrawable(R.drawable.lock_app_pin);
+            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
+
+            d = BitmapUtils.resize(mContext.getResources(),
+                    d,
+                    mConfiguration.mActionIconSize,
+                    mConfiguration.mIconBorder,
+                    mConfiguration.mDensity);
+            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+
+            item.setLabel(mContext.getResources().getString(R.string.lock_to_app));
+            item.setAction(new Runnable(){
+                @Override
+                public void run() {
+                    Utils.toggleLockModeOnCurrent(mContext);
+                }});
+            return item;
+        }
+
         return null;
     }
 

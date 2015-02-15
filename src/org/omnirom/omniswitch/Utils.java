@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import android.app.ActivityManagerNative;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,9 +29,11 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.input.InputManager;
 import android.os.Handler;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -167,6 +169,29 @@ public class Utils {
             favoriteList.add(item);
             prefs.edit().putString(SettingsActivity.PREF_FAVORITE_APPS,
                     Utils.flattenFavorites(favoriteList)).commit();
+        }
+    }
+
+    public static boolean isLockToAppEnabled(Context context) {
+        try {
+            return Settings.System.getInt(context.getContentResolver(), Settings.System.LOCK_TO_APP_ENABLED)
+                != 0;
+        } catch (SettingNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static void toggleLockModeOnCurrent(Context context) {
+        if (!isLockToAppEnabled(context)) {
+            return;
+        }
+        try {
+            if (ActivityManagerNative.getDefault().isInLockTaskMode()) {
+                ActivityManagerNative.getDefault().stopLockTaskModeOnCurrent();
+            } else {
+                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
+            }
+        } catch (RemoteException e) {
         }
     }
 }

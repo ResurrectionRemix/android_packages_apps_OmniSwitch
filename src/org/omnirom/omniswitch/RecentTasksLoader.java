@@ -248,7 +248,9 @@ public class RecentTasksLoader {
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
                         .getRecentTasks(MAX_TASKS,
-                                ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+                                ActivityManager.RECENT_IGNORE_UNAVAILABLE |
+                                ActivityManager.RECENT_INCLUDE_PROFILES) ;
+
                 int numTasks = recentTasks.size();
                 ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN)
                         .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(

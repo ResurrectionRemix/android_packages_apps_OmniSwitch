@@ -5,7 +5,7 @@
     android:versionCode="2"
     android:versionName="1.1" >
     <!-- ActivityManager -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.REAL_GET_TASKS" />
     <uses-permission android:name="android.permission.GET_DETAILED_TASKS" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.REMOVE_TASKS" />
@@ -20,12 +20,11 @@
     <uses-permission android:name="android.permission.READ_FRAME_BUFFER" />
     <uses-permission android:name="android.permission.INJECT_EVENTS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.MANAGE_ACTIVITY_STACKS" />
     <uses-sdk
         android:minSdkVersion="21"
         android:targetSdkVersion="21" />
     <application
-        android:allowBackup="false"
-        android:allowClearUserData="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:persistent="true"

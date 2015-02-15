@@ -109,6 +109,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
     private ImageView mSettingsButton;
     private ImageView mAllappsButton;
     private ImageView mBackButton;
+    private ImageView mLockToAppButton;
     private RecentListAdapter mRecentListAdapter;
     private FavoriteListAdapter mFavoriteListAdapter;
     private Context mContext;
@@ -408,7 +409,7 @@ public class SwitchLayout implements OnShowcaseEventListener {
             public void onItemClick(AdapterView<?> parent,
                     View view, int position, long id) {
                 TaskDescription task = mRecentsManager.getTasks().get(position);
-                mRecentsManager.switchTask(task, mAutoClose);
+                mRecentsManager.switchTask(task, mAutoClose, false);
             }
         });
 
@@ -1518,6 +1519,24 @@ public class SwitchLayout implements OnShowcaseEventListener {
                 }
             });
             return mBackButton;
+        }
+
+        if (buttonId == SettingsActivity.BUTTON_LOCK_APP){
+            mLockToAppButton = getActionButtonTemplate(mContext.getResources().getDrawable(R.drawable.lock_app_pin));
+            mLockToAppButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    Utils.toggleLockModeOnCurrent(mContext);
+                }
+            });
+            mLockToAppButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(mContext,
+                            mContext.getResources().getString(R.string.lock_app_help), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+            return mLockToAppButton;
         }
         return null;
     }

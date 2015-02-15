@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2013-2015 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import org.omnirom.omniswitch.ui.SwitchGestureView;
 import org.omnirom.omniswitch.ui.SwitchLayout;
 
 import android.app.ActivityManager;
+import android.app.ActivityOptions;
 import android.app.TaskStackBuilder;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -135,7 +136,7 @@ public class SwitchManager {
         mGestureView.update();
     }
 
-    public void switchTask(TaskDescription ad, boolean close) {
+    public void switchTask(TaskDescription ad, boolean close, boolean customAnim) {
         if (ad.isKilled()) {
             return;
         }
@@ -152,8 +153,14 @@ public class SwitchManager {
 
         if (ad.getTaskId() >= 0) {
             // This is an active task; it should just go to the foreground.
-            am.moveTaskToFront(ad.getTaskId(),
-                    ActivityManager.MOVE_TASK_WITH_HOME);
+            if (customAnim) {
+                final ActivityOptions opts = ActivityOptions.makeCustomAnimation(mContext,
+                        com.android.internal.R.anim.last_app_in,
+                        com.android.internal.R.anim.last_app_out);
+                am.moveTaskToFront(ad.getTaskId(), ActivityManager.MOVE_TASK_NO_USER_ACTION, opts.toBundle());
+            } else {
+                am.moveTaskToFront(ad.getTaskId(), ActivityManager.MOVE_TASK_NO_USER_ACTION);
+            }
         } else {
             Intent intent = ad.getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
@@ -298,7 +305,7 @@ public class SwitchManager {
         }
 
         TaskDescription ad = mLoadedTasks.get(1);
-        switchTask(ad, close);
+        switchTask(ad, close, true);
     }
 
     public void startIntentFromtString(String intent, boolean close) {

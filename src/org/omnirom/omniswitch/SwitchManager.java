@@ -184,8 +184,7 @@ public class SwitchManager {
         final ActivityManager am = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
-        am.removeTask(ad.getPersistentTaskId(),
-                ActivityManager.REMOVE_TASK_KILL_PROCESS);
+        am.removeTask(ad.getPersistentTaskId());
         if(DEBUG){
             Log.d(TAG, "kill " + ad.getPackageName());
         }
@@ -211,8 +210,7 @@ public class SwitchManager {
         Iterator<TaskDescription> nextTask = mLoadedTasks.iterator();
         while (nextTask.hasNext()) {
             TaskDescription ad = nextTask.next();
-            am.removeTask(ad.getPersistentTaskId(),
-                    ActivityManager.REMOVE_TASK_KILL_PROCESS);
+            am.removeTask(ad.getPersistentTaskId());
             if(DEBUG){
                 Log.d(TAG, "kill " + ad.getPackageName());
             }
@@ -239,8 +237,7 @@ public class SwitchManager {
         nextTask.next();
         while (nextTask.hasNext()) {
             TaskDescription ad = nextTask.next();
-            am.removeTask(ad.getPersistentTaskId(),
-                    ActivityManager.REMOVE_TASK_KILL_PROCESS);
+            am.removeTask(ad.getPersistentTaskId());
             if(DEBUG){
                 Log.d(TAG, "kill " + ad.getPackageName());
             }
@@ -267,8 +264,7 @@ public class SwitchManager {
 
         if (mLoadedTasks.size() >= 1){
             TaskDescription ad = mLoadedTasks.get(0);
-            am.removeTask(ad.getPersistentTaskId(),
-                    ActivityManager.REMOVE_TASK_KILL_PROCESS);
+            am.removeTask(ad.getPersistentTaskId());
             if(DEBUG){
                 Log.d(TAG, "kill " + ad.getPackageName());
             }

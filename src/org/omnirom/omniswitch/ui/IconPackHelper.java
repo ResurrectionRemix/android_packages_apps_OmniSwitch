@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import org.omnirom.omniswitch.PackageManager;
 import org.omnirom.omniswitch.R;
@@ -41,6 +42,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ListView;
+import android.util.Log;
 
 public class IconPackHelper implements DialogInterface.OnDismissListener {
     static final String ICON_MASK_TAG = "iconmask";
@@ -64,7 +66,9 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
     private Context mContext;
     private String mLoadedIconPackName;
     private Resources mLoadedIconPackResource;
-    private Drawable mIconBack, mIconUpon, mIconMask;
+    private Drawable mIconUpon, mIconMask;
+    private List<Drawable> mIconBackList;
+    private List<String> mIconBackStrings;
     private float mIconScale;
     private String mCurrentIconPack = "";
     private boolean mLoading;
@@ -81,8 +85,8 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
         return sInstance;
     }
 
-    public Drawable getIconBack() {
-        return mIconBack;
+    public List<Drawable> getIconBackList() {
+        return mIconBackList;
     }
 
     public Drawable getIconMask() {
@@ -99,6 +103,8 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
 
     private IconPackHelper() {
         mIconPackResources = new HashMap<String, String>();
+        mIconBackList = new ArrayList<Drawable>();
+        mIconBackStrings = new ArrayList<String>();
     }
 
     private void setContext(Context context) {
@@ -113,6 +119,16 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
                 if (id != 0) {
                     return mLoadedIconPackResource.getDrawable(id);
                 }
+            }
+        }
+        return null;
+    }
+
+    private Drawable getDrawableWithName(String name) {
+        if (isIconPackLoaded()) {
+            int id = getResourceIdForDrawable(name);
+            if (id != 0) {
+                return mLoadedIconPackResource.getDrawable(id);
             }
         }
         return null;
@@ -150,12 +166,21 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
                 continue;
             }
 
+            if (parser.getName().equalsIgnoreCase(ICON_BACK_TAG)) {
+                String icon = parser.getAttributeValue(null, "img");
+                if (icon == null) {
+                    for (int i = 0; i < parser.getAttributeCount(); i++) {
+                        mIconBackStrings.add(parser.getAttributeValue(i));
+                    }
+                }
+                continue;
+            }
+
             if (parser.getName().equalsIgnoreCase(ICON_MASK_TAG) ||
-                    parser.getName().equalsIgnoreCase(ICON_BACK_TAG) ||
                     parser.getName().equalsIgnoreCase(ICON_UPON_TAG)) {
                 String icon = parser.getAttributeValue(null, "img");
                 if (icon == null) {
-                    if (parser.getAttributeCount() == 1) {
+                    if (parser.getAttributeCount() > 0) {
                         icon = parser.getAttributeValue(0);
                     }
                 }
@@ -166,7 +191,7 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
             if (parser.getName().equalsIgnoreCase(ICON_SCALE_TAG)) {
                 String factor = parser.getAttributeValue(null, "factor");
                 if (factor == null) {
-                    if (parser.getAttributeCount() == 1) {
+                    if (parser.getAttributeCount() > 0) {
                         factor = parser.getAttributeValue(0);
                     }
                 }
@@ -250,6 +275,8 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
 
     private boolean loadIconPack() {
         String packageName = mCurrentIconPack;
+        mIconBackList.clear();
+        mIconBackStrings.clear();
         if (TextUtils.isEmpty(packageName)){
             return false;
         }
@@ -265,9 +292,15 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
         }
         mLoadedIconPackResource = res;
         mLoadedIconPackName = packageName;
-        mIconBack = getDrawableForName(ICON_BACK_TAG);
         mIconMask = getDrawableForName(ICON_MASK_TAG);
         mIconUpon = getDrawableForName(ICON_UPON_TAG);
+        for (int i = 0; i < mIconBackStrings.size(); i++) {
+            String backIconString = mIconBackStrings.get(i);
+            Drawable backIcon = getDrawableWithName(backIconString);
+            if (backIcon != null) {
+                mIconBackList.add(backIcon);
+            }
+        }
         String scale = mIconPackResources.get(ICON_SCALE_TAG);
         if (scale != null) {
             try {
@@ -379,7 +412,8 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
         mLoadedIconPackName = null;
         mIconPackResources = null;
         mIconMask = null;
-        mIconBack = null;
+        mIconBackList.clear();
+        mIconBackStrings.clear();
         mIconUpon = null;
         mIconScale = 1f;
     }

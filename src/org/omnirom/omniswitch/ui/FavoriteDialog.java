@@ -19,13 +19,15 @@ package org.omnirom.omniswitch.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.omnirom.omniswitch.PackageManager;
 import org.omnirom.omniswitch.PackageManager.PackageItem;
 import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.dslv.DragSortController;
 import org.omnirom.omniswitch.dslv.DragSortListView;
 
@@ -56,10 +58,18 @@ public class FavoriteDialog extends AlertDialog implements
     private FavoriteListAdapter mFavoriteAdapter;
     private DragSortListView mFavoriteConfigList;
     private AlertDialog mAddFavoriteDialog;
+    private int mIconSize;
+    private SwitchConfiguration mConfiguration;
 
     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT);
+
+    private class ViewHolder {
+        TextView item;
+        CheckBox check;
+        ImageView image;
+    }
 
     public class FavoriteListAdapter extends ArrayAdapter<String> {
 
@@ -70,19 +80,27 @@ public class FavoriteDialog extends AlertDialog implements
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView = null;
-            rowView = mInflater.inflate(R.layout.favorite_app_item, parent,
-                    false);
+            ViewHolder holder = null;
+            if (convertView != null) {
+                holder = (ViewHolder) convertView.getTag();
+            } else {
+                convertView = getLayoutInflater().inflate(
+                        R.layout.favorite_app_item, parent, false);
+                holder = new ViewHolder();
+                convertView.setTag(holder);
+
+                holder.item = (TextView) convertView
+                            .findViewById(R.id.app_item);
+                holder.image = (ImageView) convertView
+                            .findViewById(R.id.app_icon);
+            }
             String intent = mFavoriteList.get(position);
             PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
-
-            final TextView item = (TextView) rowView
-                    .findViewById(R.id.app_item);
-            item.setText(packageItem.getTitle());
-            final ImageView image = (ImageView) rowView
-                    .findViewById(R.id.app_icon);
-            image.setImageDrawable(BitmapCache.getInstance(mContext).getPackageIcon(mContext.getResources(), packageItem));
-            return rowView;
+            holder.item.setText(packageItem.getTitle());
+            holder.image.setImageDrawable(BitmapCache.getInstance(mContext)
+                        .getPackageIcon(mContext.getResources(), packageItem,
+                        mConfiguration, mIconSize));
+            return convertView;
         }
     }
 
@@ -143,6 +161,11 @@ public class FavoriteDialog extends AlertDialog implements
 
         super.onCreate(savedInstanceState);
 
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
+        //mIconSize = (int)(context.getResources().getDimension(com.android.internal.R.dimen.app_icon_size) /
+        //        context.getResources().getDisplayMetrics().density);
+
+        mIconSize = mConfiguration.mIconSize;
         mFavoriteConfigList = (DragSortListView) view
                 .findViewById(R.id.favorite_apps);
         mFavoriteAdapter = new FavoriteListAdapter(mContext,
@@ -224,7 +247,7 @@ public class FavoriteDialog extends AlertDialog implements
         mAddFavoriteDialog.show();
     }
 
-    public void applyChanges(List<String> favoriteList) {
+    public void applyChanges(Set<String> favoriteList) {
         mFavoriteList.clear();
         mFavoriteList.addAll(favoriteList);
         mFavoriteAdapter.notifyDataSetChanged();
@@ -234,14 +257,14 @@ public class FavoriteDialog extends AlertDialog implements
             DialogInterface.OnClickListener {
 
         private PackageAdapter mPackageAdapter;
-        private List<String> mChangedFavoriteList;
+        private Set<String> mChangedFavoriteList;
         private ListView mListView;
         private List<PackageItem> mInstalledPackages;
 
         private class PackageAdapter extends BaseAdapter {
 
             private void reloadList() {
-                mInstalledPackages = new LinkedList<PackageItem>();
+                mInstalledPackages = new ArrayList<PackageItem>();
                 mInstalledPackages.addAll(PackageManager.getInstance(mContext).getPackageList());
                 Collections.sort(mInstalledPackages);
             }
@@ -286,18 +309,14 @@ public class FavoriteDialog extends AlertDialog implements
                 }
                 PackageItem applicationInfo = getItem(position);
                 holder.item.setText(applicationInfo.getTitle());
-                holder.image.setImageDrawable(BitmapCache.getInstance(mContext).getPackageIcon(mContext.getResources(), applicationInfo));
+                holder.image.setImageDrawable(BitmapCache.getInstance(mContext)
+                        .getPackageIcon(mContext.getResources(), applicationInfo,
+                        mConfiguration, mIconSize));
                 holder.check.setChecked(mChangedFavoriteList
                         .contains(applicationInfo.getIntent()));
 
                 return convertView;
             }
-        }
-
-        private class ViewHolder {
-            TextView item;
-            CheckBox check;
-            ImageView image;
         }
 
         protected AddFavoriteDialog(Context context) {
@@ -328,7 +347,7 @@ public class FavoriteDialog extends AlertDialog implements
                     context.getString(android.R.string.cancel), this);
 
             super.onCreate(savedInstanceState);
-            mChangedFavoriteList = new ArrayList<String>();
+            mChangedFavoriteList = new HashSet<String>();
             mChangedFavoriteList.addAll(mFavoriteList);
 
             mListView = (ListView) view.findViewById(R.id.installed_apps);

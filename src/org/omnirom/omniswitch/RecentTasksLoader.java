@@ -42,15 +42,13 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Process;
 import android.os.ParcelFileDescriptor;
+import android.os.SystemClock;
 import android.util.Log;
 
 public class RecentTasksLoader {
     private static final String TAG = "RecentTasksLoader";
     private static final boolean DEBUG = false;
 
-    private static final int DISPLAY_TASKS = 20;
-    private static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for
-                                                            // non-apps
     private Context mContext;
     private AsyncTask<Void, List<TaskDescription>, Void> mTaskLoader;
     private Handler mHandler;
@@ -61,6 +59,7 @@ public class RecentTasksLoader {
     private Drawable mDefaultThumbnailBackground;
     private PreloadTaskRunnable mPreloadTasksRunnable;
     private boolean mHasThumbPermissions;
+    private SwitchConfiguration mConfiguration;
 
     final static BitmapFactory.Options sBitmapOptions;
 
@@ -103,6 +102,7 @@ public class RecentTasksLoader {
         mDefaultThumbnailBackground = new ColorDrawableWithDimensions(
                 Color.BLACK, thumbnailWidth, thumbnailHeight);
         mHasThumbPermissions = hasSystemPermission(context);
+        mConfiguration = SwitchConfiguration.getInstance(mContext);
     }
 
     public List<TaskDescription> getLoadedTasks() {
@@ -222,6 +222,9 @@ public class RecentTasksLoader {
         mState = State.LOADING;
         mLoadedTasks.clear();
 
+        final long currentTime = System.currentTimeMillis();
+        final long bootTimeMillis = currentTime - SystemClock.elapsedRealtime();
+
         mTaskLoader = new AsyncTask<Void, List<TaskDescription>, Void>() {
             @Override
             protected void onProgressUpdate(
@@ -247,7 +250,7 @@ public class RecentTasksLoader {
                 final PackageManager pm = mContext.getPackageManager();
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
-                        .getRecentTasks(MAX_TASKS,
+                        .getRecentTasks(ActivityManager.getMaxRecentTasksStatic(),
                                 ActivityManager.RECENT_IGNORE_UNAVAILABLE |
                                 ActivityManager.RECENT_INCLUDE_PROFILES) ;
 
@@ -282,6 +285,22 @@ public class RecentTasksLoader {
                     // dont load AOSP recents - com.android.systemui/.recents.RecentsActivity
                     if (intent.getComponent().flattenToShortString().contains(".recents.RecentsActivity")) {
                         continue;
+                    }
+
+                    if (mConfiguration.mFilterActive) {
+                        long lastActiveTime = recentInfo.lastActiveTime;
+                        long firstActiveTime = recentInfo.firstActiveTime;
+                        if (DEBUG) {
+                            Log.d(TAG, intent.getComponent().getPackageName() + ":" + firstActiveTime + ":" + lastActiveTime + ":" + bootTimeMillis);
+                        }
+                        // only show active since boot
+                        if (mConfiguration.mFilterBoot && lastActiveTime < bootTimeMillis) {
+                            continue;
+                        }
+                        // filter older then time
+                        if (mConfiguration.mFilterTime != 0 && lastActiveTime < currentTime - mConfiguration.mFilterTime) {
+                            continue;
+                        }
                     }
 
                     TaskDescription item = createTaskDescription(recentInfo.id,
@@ -372,7 +391,7 @@ public class RecentTasksLoader {
                 iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
                 if (iconId != 0) {
                     Drawable icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
-                    if (!(icon instanceof BitmapDrawable)) {
+                    if (icon == null) {
                         icon = defaultIcon;
                     }
                     return icon;
@@ -382,7 +401,7 @@ public class RecentTasksLoader {
             if (iconId != 0) {
                 try {
                     Drawable icon = resources.getDrawable(iconId);
-                    if (!(icon instanceof BitmapDrawable)) {
+                    if (icon == null) {
                         icon = defaultIcon;
                     }
                     return icon;

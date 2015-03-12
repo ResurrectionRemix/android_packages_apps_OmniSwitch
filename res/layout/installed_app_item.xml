@@ -24,12 +24,12 @@
     android:paddingStart="?android:attr/listPreferredItemPaddingStart" >
     <ImageView
         android:id="@+id/app_icon"
-        android:layout_width="@android:dimen/app_icon_size"
-        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="8dip"
         android:contentDescription="@null"
-        android:scaleType="centerInside" />
+        android:scaleType="center" />
     <TextView
         android:id="@+id/app_item"
         android:layout_width="0dip"

@@ -334,21 +334,18 @@ public class SettingsGestureView {
         Drawable d1 = mDragHandleStart;
         Drawable d2 = mDragHandleEnd;
 
-        if (mLocation == 1) {
-            d = BitmapUtils.rotate(mContext.getResources(), d, 180);
-            d1 = BitmapUtils.rotate(mContext.getResources(), mDragHandleEnd, 180);
-            d2 = BitmapUtils.rotate(mContext.getResources(), mDragHandleStart, 180);
-        }
-
         mDragButton.setScaleType(ImageView.ScaleType.FIT_XY);
         mDragButton.setImageDrawable(BitmapUtils.colorize(mContext.getResources(), mColor, d));
         mDragButton.getDrawable().setColorFilter(mColor, Mode.SRC_ATOP);
+        mDragButton.setRotation(mLocation == 1 ? 180 : 0);
         
         mDragButtonStart.setScaleType(ImageView.ScaleType.FIT_XY);
         mDragButtonStart.setImageDrawable(d1);
+        mDragButtonStart.setRotation(mLocation == 1 ? 180 : 0);
 
         mDragButtonEnd.setScaleType(ImageView.ScaleType.FIT_XY);
         mDragButtonEnd.setImageDrawable(d2);
+        mDragButtonEnd.setRotation(mLocation == 1 ? 180 : 0);
     }
 
     // cannot use SwitchConfiguration since service must not

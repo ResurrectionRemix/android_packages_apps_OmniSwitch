@@ -24,20 +24,20 @@
     android:paddingStart="?android:attr/listPreferredItemPaddingStart" >
     <org.omnirom.omniswitch.dslv.DragGripView
         android:id="@+id/drag_handle"
-        android:layout_width="@android:dimen/app_icon_size"
-        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
         android:color="#999999" />
     <ImageView
         android:id="@+id/app_icon"
-        android:layout_width="@android:dimen/app_icon_size"
-        android:layout_height="@android:dimen/app_icon_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="8dip"
         android:contentDescription="@null"
-        android:scaleType="centerInside" />
+        android:scaleType="center" />
     <TextView
         android:id="@+id/app_item"
         android:layout_width="0dip"

@@ -132,7 +132,8 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
                 Drawable icon = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), getTask(), getTask().getIcon(), configuration,  60);
                 Drawable d = BitmapUtils.overlay(mContext.getResources(), thumb, icon,
                         configuration.mThumbnailWidth,
-                        configuration.mThumbnailHeight);
+                        configuration.mThumbnailHeight,
+                        60);
                 setThumb(d);
                 setCompoundDrawablesWithIntrinsicBounds(null, getThumb(), null, null);
             }

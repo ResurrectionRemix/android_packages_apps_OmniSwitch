@@ -72,6 +72,9 @@ public class SwitchConfiguration {
     public int mBgStyle = 0; // 0 = solid 1 = transparent
     public List<String> mFavoriteList = new ArrayList<String>();
     public boolean mSpeedSwitcher = true;
+    public boolean mFilterActive = true;
+    public boolean mFilterBoot = true;
+    public long mFilterTime = 0;
 
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
@@ -105,7 +108,6 @@ public class SwitchConfiguration {
         mActionIconSizePx = Math.round(mActionIconSize * mDensity);
         mLevelChangeWidthX = Math.round(60 * mDensity);
         mHorizontalDividerWidth = 0;
-
         // Render the default thumbnail background
         mThumbnailWidth = (int) context.getResources().getDimensionPixelSize(
                 R.dimen.thumbnail_width);
@@ -129,7 +131,7 @@ public class SwitchConfiguration {
         mBackgroundOpacity = (float) opacity / 100.0f;
         mAnimate = prefs.getBoolean(SettingsActivity.PREF_ANIMATE, true);
         String iconSize = prefs
-                .getString(SettingsActivity.PREF_ICON_SIZE, "60");
+                .getString(SettingsActivity.PREF_ICON_SIZE, String.valueOf(mIconSize));
         mIconSize = Integer.valueOf(iconSize);
         mShowRambar = prefs
                 .getBoolean(SettingsActivity.PREF_SHOW_RAMBAR, true);

@@ -89,6 +89,21 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
         return mIconBackList;
     }
 
+    public Drawable getIconBackFor(CharSequence tag) {
+        if (mIconBackList != null && mIconBackList.size() != 0) {
+            if (mIconBackList.size() == 1) {
+                return mIconBackList.get(0);
+            }
+            try {
+                Drawable back = mIconBackList.get((tag.hashCode() & 0x7fffffff) % mIconBackList.size());
+                return back;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                return mIconBackList.get(0);
+            }
+        }
+        return null;
+    }
+
     public Drawable getIconMask() {
         return mIconMask;
     }

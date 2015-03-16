@@ -161,7 +161,7 @@ public class BitmapUtils {
         return context.getResources().getDrawable(R.drawable.ic_default);
     }
 
-    public static BitmapDrawable compose(Resources resources, Drawable icon, Context context, List<Drawable> iconBackList,
+    public static BitmapDrawable compose(Resources resources, Drawable icon, Context context, Drawable iconBack,
             Drawable iconMask, Drawable iconUpon, float scale, int size) {
         // convert to bitmap first
         if (icon instanceof VectorDrawable) {
@@ -179,7 +179,7 @@ public class BitmapUtils {
         int height = b.getHeight();
 
         // TODO
-        if ((iconBackList == null || iconBackList.size() == 0) && iconMask == null && iconUpon == null){
+        if (iconBack == null && iconMask == null && iconUpon == null){
             scale = 1.0f;
         }
 
@@ -201,19 +201,14 @@ public class BitmapUtils {
                     new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             iconMask.draw(canvas);
         }
-        if (iconBackList != null && iconBackList.size() != 0) {
-            Collections.shuffle(iconBackList);
-            Drawable iconBack = iconBackList.get(0);
-            canvas.setBitmap(null);
-            Bitmap finalBitmap = Bitmap.createBitmap(width, height,
-                    Bitmap.Config.ARGB_8888);
-            canvas.setBitmap(finalBitmap);
+        if (iconBack != null) {
             iconBack.setBounds(icon.getBounds());
+            ((BitmapDrawable) iconBack).getPaint().setXfermode(
+                    new PorterDuffXfermode(PorterDuff.Mode.DST_OVER));
             iconBack.draw(canvas);
-            canvas.drawBitmap(bitmap, null, icon.getBounds(), null);
-            bitmap = finalBitmap;
         }
         if (iconUpon != null) {
+            iconUpon.setBounds(icon.getBounds());
             iconUpon.draw(canvas);
         }
         icon.setBounds(oldBounds);

@@ -91,7 +91,7 @@ public class BitmapCache {
             if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
                     .getResourceIdForActivityIcon(packageItem.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
-                        icon, mContext, getIconPackHelper().getIconBackList(),
+                        icon, mContext, getIconPackHelper().getIconBackFor(packageItem.getTitle()),
                         getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale(), size);
             }
             d = BitmapUtils.resize(resources,
@@ -112,7 +112,7 @@ public class BitmapCache {
             if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
                     .getResourceIdForActivityIcon(packageItem.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
-                        icon, mContext, getIconPackHelper().getIconBackList(),
+                        icon, mContext, getIconPackHelper().getIconBackFor(packageItem.getTitle()),
                         getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale(), size);
             }
             d = BitmapUtils.resize(resources,
@@ -132,7 +132,7 @@ public class BitmapCache {
             if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
                     .getResourceIdForActivityIcon(ad.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
-                        icon, mContext, getIconPackHelper().getIconBackList(),
+                        icon, mContext, getIconPackHelper().getIconBackFor(ad.getLabel()),
                         getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale(), size);
             }
             d = BitmapUtils.resize(resources,

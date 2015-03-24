@@ -83,8 +83,8 @@ public class BitmapCache {
         return IconPackHelper.getInstance(mContext);
     }
 
-    public Drawable getResized(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int size) {
-        String key = bitmapHash(packageItem.getIntent(), size);
+    public Drawable getResized(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int iconSize) {
+        String key = bitmapHash(packageItem.getIntent(), iconSize);
         Drawable d = getBitmapFromMemCache(key);
         if (d == null){
             Drawable icon = PackageManager.getInstance(mContext).getPackageIcon(packageItem);
@@ -92,11 +92,12 @@ public class BitmapCache {
                     .getResourceIdForActivityIcon(packageItem.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
                         icon, mContext, getIconPackHelper().getIconBackFor(packageItem.getTitle()),
-                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale(), size);
+                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
+                        getIconPackHelper().getIconScale(), iconSize, configuration.mDensity);
             }
             d = BitmapUtils.resize(resources,
                     icon,
-                    size,
+                    iconSize,
                     configuration.mIconBorder,
                     configuration.mDensity);
             addBitmapToMemoryCache(key, d);
@@ -104,8 +105,8 @@ public class BitmapCache {
         return d;
     }
 
-    public Drawable getPackageIcon(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int size) {
-        String key = bitmapHash(packageItem.getIntent(), size);
+    public Drawable getPackageIcon(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int iconSize) {
+        String key = bitmapHash(packageItem.getIntent(), iconSize);
         Drawable d = getBitmapFromMemCache(key);
         if (d == null){
             Drawable icon = PackageManager.getInstance(mContext).getPackageIcon(packageItem);
@@ -113,11 +114,12 @@ public class BitmapCache {
                     .getResourceIdForActivityIcon(packageItem.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
                         icon, mContext, getIconPackHelper().getIconBackFor(packageItem.getTitle()),
-                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale(), size);
+                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
+                        getIconPackHelper().getIconScale(), iconSize, configuration.mDensity);
             }
             d = BitmapUtils.resize(resources,
                     icon,
-                    size,
+                    iconSize,
                     configuration.mIconBorder,
                     configuration.mDensity);
             addBitmapToMemoryCache(key, d);
@@ -125,19 +127,20 @@ public class BitmapCache {
         return d;
     }
 
-    public Drawable getResized(Resources resources, TaskDescription ad, Drawable icon, SwitchConfiguration configuration, int size) {
-        String key = bitmapHash(ad.getIntent().toString(), size);
+    public Drawable getResized(Resources resources, TaskDescription ad, Drawable icon, SwitchConfiguration configuration, int iconSize) {
+        String key = bitmapHash(ad.getIntent().toString(), iconSize);
         Drawable d = getBitmapFromMemCache(key);
         if (d == null){
             if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
                     .getResourceIdForActivityIcon(ad.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
                         icon, mContext, getIconPackHelper().getIconBackFor(ad.getLabel()),
-                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(), getIconPackHelper().getIconScale(), size);
+                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
+                        getIconPackHelper().getIconScale(), iconSize, configuration.mDensity);
             }
             d = BitmapUtils.resize(resources,
                     icon,
-                    size,
+                    iconSize,
                     configuration.mIconBorder,
                     configuration.mDensity);
             addBitmapToMemoryCache(key, d);

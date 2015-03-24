@@ -513,6 +513,13 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
         return getResourceIdForDrawable(drawable);
     }
 
+    public int getResourceIdForApp(String pkgName) {
+        ActivityInfo info = new ActivityInfo();
+        info.packageName = pkgName;
+        info.name = "";
+        return getResourceIdForActivityIcon(info);
+    }
+
     static class IconPackInfo {
         String packageName;
         CharSequence label;

@@ -247,7 +247,7 @@ public class FavoriteDialog extends AlertDialog implements
         mAddFavoriteDialog.show();
     }
 
-    public void applyChanges(Set<String> favoriteList) {
+    public void applyChanges(List<String> favoriteList) {
         mFavoriteList.clear();
         mFavoriteList.addAll(favoriteList);
         mFavoriteAdapter.notifyDataSetChanged();
@@ -257,7 +257,8 @@ public class FavoriteDialog extends AlertDialog implements
             DialogInterface.OnClickListener {
 
         private PackageAdapter mPackageAdapter;
-        private Set<String> mChangedFavoriteList;
+        private List<String> mChangedFavoriteList;
+        private Set<String> mChangedFavoriteListSet;
         private ListView mListView;
         private List<PackageItem> mInstalledPackages;
 
@@ -312,7 +313,7 @@ public class FavoriteDialog extends AlertDialog implements
                 holder.image.setImageDrawable(BitmapCache.getInstance(mContext)
                         .getPackageIcon(mContext.getResources(), applicationInfo,
                         mConfiguration, mIconSize));
-                holder.check.setChecked(mChangedFavoriteList
+                holder.check.setChecked(mChangedFavoriteListSet
                         .contains(applicationInfo.getIntent()));
 
                 return convertView;
@@ -347,8 +348,10 @@ public class FavoriteDialog extends AlertDialog implements
                     context.getString(android.R.string.cancel), this);
 
             super.onCreate(savedInstanceState);
-            mChangedFavoriteList = new HashSet<String>();
+            mChangedFavoriteList = new ArrayList<String>();
             mChangedFavoriteList.addAll(mFavoriteList);
+            mChangedFavoriteListSet = new HashSet<String>();
+            mChangedFavoriteListSet.addAll(mFavoriteList);
 
             mListView = (ListView) view.findViewById(R.id.installed_apps);
             mPackageAdapter = new PackageAdapter();
@@ -364,9 +367,11 @@ public class FavoriteDialog extends AlertDialog implements
                     if (viewHolder.check.isChecked()) {
                         if (!mChangedFavoriteList.contains(info.getIntent())) {
                             mChangedFavoriteList.add(info.getIntent());
+                            mChangedFavoriteListSet.add(info.getIntent());
                         }
                     } else {
                         mChangedFavoriteList.remove(info.getIntent());
+                        mChangedFavoriteListSet.remove(info.getIntent());
                     }
                 }
             });

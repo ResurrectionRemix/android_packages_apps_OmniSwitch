@@ -35,6 +35,7 @@ public class SwitchConfiguration {
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
+    public int mIconSizeSettings = 60; // in dip
     public int mBigIconSizePx = 100; // in px
     public int mSmallIconSizePx = 60; // in px
     public int mActionIconSize = 60; // in dp
@@ -179,6 +180,7 @@ public class SwitchConfiguration {
         String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");
         Utils.parseFavorites(favoriteListString, mFavoriteList);
         mSpeedSwitcher = prefs.getBoolean(SettingsActivity.PREF_SPEED_SWITCHER, true);
+        mFilterBoot = prefs.getBoolean(SettingsActivity.PREF_APP_FILTER_BOOT, true);
     }
 
     public void resetDefaults(Context context) {

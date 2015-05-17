@@ -118,4 +118,6 @@
     <string name="bg_style_title">Background style</string>
     <string name="lock_to_app">Pin app</string>
     <string name="lock_app_help">Pin app</string>
+    <string name="app_filter_category_title">App filter</string>
+    <string name="app_filter_boot_title">Apps active since boot</string>
 </resources>

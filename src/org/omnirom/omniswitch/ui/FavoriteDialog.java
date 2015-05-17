@@ -165,7 +165,7 @@ public class FavoriteDialog extends AlertDialog implements
         //mIconSize = (int)(context.getResources().getDimension(com.android.internal.R.dimen.app_icon_size) /
         //        context.getResources().getDisplayMetrics().density);
 
-        mIconSize = mConfiguration.mIconSize;
+        mIconSize = mConfiguration.mIconSizeSettings;
         mFavoriteConfigList = (DragSortListView) view
                 .findViewById(R.id.favorite_apps);
         mFavoriteAdapter = new FavoriteListAdapter(mContext,

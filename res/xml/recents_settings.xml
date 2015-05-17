@@ -83,6 +83,17 @@
             android:summary="@string/button_pos_top"
             android:title="@string/button_pos_title" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="app_filter_category"
+        android:title="@string/app_filter_category_title" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="app_filter_boot"
+            android:title="@string/app_filter_boot_title" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:key="category_drag_handle"
         android:title="@string/category_drag_handle_title" >

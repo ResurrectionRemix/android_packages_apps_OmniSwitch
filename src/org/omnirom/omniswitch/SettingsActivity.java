@@ -85,6 +85,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_FLAT_STYLE = "flat_style";
     public static final String PREF_BUTTON_POS = "button_pos";
     public static final String PREF_BG_STYLE = "bg_style";
+    public static final String PREF_APP_FILTER_BOOT = "app_filter_boot";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;

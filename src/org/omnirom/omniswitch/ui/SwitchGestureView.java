@@ -27,7 +27,6 @@ import org.omnirom.omniswitch.RecentTasksLoader;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchManager;
-import org.omnirom.omniswitch.SwitchService;
 import org.omnirom.omniswitch.TaskDescription;
 import org.omnirom.omniswitch.Utils;
 import org.omnirom.omniswitch.showcase.ShowcaseView;
@@ -38,7 +37,6 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
@@ -139,12 +137,12 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private View mLevelBorderIndicator;
     private View mLevelChangeIndicator;
     private FrameLayout mItemView;
-    private boolean mShowIndicators = false;
-    private boolean mShowTumb = true;
+    private boolean mShowIndicators;
     private boolean mShowingSpeedSwitcher;
     private int mSlop;
     private boolean mFlingEnable = true;
     private float mLastX;
+    private float mThumbRatio = 1.2f;
 
     private GestureDetector mGestureDetector;
     private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
@@ -329,7 +327,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     mShowingSpeedSwitcher = false;
                     mHandleRecentsUpdate = false;
                     mLongPress = false;
-                    mFlingEnable = true;
+                    mFlingEnable = false;
 
                     mRecentsManager.clearTasks();
                     RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
@@ -348,14 +346,15 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 case MotionEvent.ACTION_CANCEL:
                     mHandler.removeCallbacks(mLongPressRunnable);
                     mEnabled = true;
+                    mFlingEnable = false;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (mHidden) {
                         return true;
                     }
+                    mFlingEnable = false;
                     if (Math.abs(distanceX) > mSlop) {
                         mRecentsManager.showHidden();
-                        mFlingEnable = false;
                         mHandler.removeCallbacks(mLongPressRunnable);
                         if (mLastX > xRaw) {
                             // move left
@@ -373,13 +372,14 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                     mLastX = xRaw;
                     break;
                 case MotionEvent.ACTION_UP:
+                    mFlingEnable = false;
                     mHandler.removeCallbacks(mLongPressRunnable);
                     if(mHidden && mConfiguration.mAutoHide){
                         updateDragHandleImage(true);
                         mHandler.postDelayed(mAutoHideRunnable, SwitchConfiguration.AUTO_HIDE_DEFAULT);
                         return true;
                     }
-                    mFlingEnable = true;
+
                     if (Math.abs(distanceX) > mSlop) {
                         mRecentsManager.finishSlideLayout();
                     } else {
@@ -755,12 +755,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         while(nextTask.hasNext() && i < mConfiguration.mLimitItemsX){
             TaskDescription ad = nextTask.next();
             PackageTextView item = getPackageItemTemplate();
-            item.setTask(ad, true);
+            item.setThumbRatio(mThumbRatio);
             item.setLabel(ad.getLabel());
-            Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), ad, ad.getIcon(), mConfiguration, 100);
-            item.setOriginalImage(d);
-            d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), ad, ad.getIcon(), mConfiguration, 60);
-            item.setSmallImage(d);
+            item.setTask(ad, true);
+            item.loadTaskThumb();
             mRecentList.add(item);
             i++;
         }
@@ -784,6 +782,10 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             mHidden = true;
             mView.removeView(mDragButton);
             mWindowManager.updateViewLayout(mView, getParamsFull());
+            try {
+                mView.removeView(mItemView);
+            } catch(Exception e) {
+            }
             mView.addView(mItemView, getItemViewParams());
         }
 
@@ -824,16 +826,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         mCurrentItemEnv[1] = item;
         updateCurrentItemEnv();
-        layoutEnvItems();
-
-        if (mShowTumb && item.getTask() != null){
-            loadTaskThumb(item);
-        } else {
-            item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
-        }
-        if (mConfiguration.mShowLabels) {
-            item.setText(item.getLabel());
-        }
+//        layoutEnvItems();
+//        item.loadTaskThumb();
     }
 
     private void buildFavoriteItems(List<String> favoriteList){
@@ -852,8 +846,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             item.setLabel(packageItem.getTitle());
             Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), packageItem, mConfiguration, 100);
             item.setOriginalImage(d);
-            d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), packageItem, mConfiguration, 60);
-            item.setSmallImage(d);
             mFavoriteList.add(item);
             i++;
         }
@@ -865,7 +857,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         mCurrentItemEnv[1] = item;
         updateCurrentItemEnv();
-        layoutEnvItems();
+//        layoutEnvItems();
 
         item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
         if (mConfiguration.mShowLabels) {
@@ -1105,27 +1097,17 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
     }
 
-    private void layoutEnvItems(){
-        PackageTextView left = mCurrentItemEnv[0];
-        PackageTextView right = mCurrentItemEnv[2];
-
-        if (left != null){
-            left.setText("");
-            if (mShowTumb && left.getTask() != null){
-                loadTaskThumb(left);
-            } else {
-                left.setCompoundDrawablesWithIntrinsicBounds(null, left.getOriginalImage(), null, null);
-            }
-        }
-        if (right != null){
-            right.setText("");
-            if (mShowTumb && right.getTask() != null){
-                loadTaskThumb(right);
-            } else {
-                right.setCompoundDrawablesWithIntrinsicBounds(null, right.getOriginalImage(), null, null);
-            }
-        }
-    }
+//    private void layoutEnvItems(){
+//        PackageTextView left = mCurrentItemEnv[0];
+//        PackageTextView right = mCurrentItemEnv[2];
+//
+//        if (left != null){
+//            left.loadTaskThumb();
+//        }
+//        if (right != null){
+//            right.loadTaskThumb();
+//        }
+//    }
 
     private void resetEnvItems(){
         mCurrentItemEnv[0] = null;
@@ -1172,15 +1154,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
     }
 
-    private void loadTaskThumb(PackageTextView item){
-        if (DEBUG){
-            Log.d(TAG, "loadTaskThumb:" + item.getLabel());
-        }
-        if (item.getTask() != null){
-            RecentTasksLoader.getInstance(mContext).loadThumbnail(item.getTask());
-        }
-    }
-
     private void buildActionList(){
         mActionList.clear();
         Iterator<Integer> nextKey = mConfiguration.mSpeedSwitchButtons.keySet().iterator();
@@ -1203,8 +1176,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_HOME){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_home);
-            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
-
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mActionIconSize,
@@ -1223,8 +1194,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_BACK){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back);
-            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
-
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mActionIconSize,
@@ -1243,8 +1212,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_KILL_CURRENT){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.kill_current);
-            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
-
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mActionIconSize,
@@ -1263,8 +1230,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_KILL_ALL){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.kill_all);
-            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
-
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mActionIconSize,
@@ -1283,8 +1248,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_KILL_OTHER){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.kill_other);
-            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
-
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mActionIconSize,
@@ -1303,8 +1266,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_LOCK_APP){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.lock_app_pin);
-            item.setSmallImage(BitmapUtils.shadow(mContext.getResources(), d));
-
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mActionIconSize,
@@ -1330,13 +1291,9 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         mCurrentItemEnv[1] = item;
         updateCurrentItemEnv();
-        layoutEnvItems();
+//        layoutEnvItems();
 
         item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
-
-//        if (mConfiguration.mShowLabels) {
-//            item.setText(item.getLabel());
-//        }
     }
 
     private int getHorizontalGridIndex(int rawX){
@@ -1360,7 +1317,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     }
 
     private FrameLayout.LayoutParams getListViewParams(int level){
-        int width = (level == 1 && mShowTumb) ? mConfiguration.mThumbnailWidth * 3 : mConfiguration.getCurrentOverlayWidth();
+        int width = level == 1 ? (int)(mConfiguration.mThumbnailWidth * mThumbRatio * 3) : mConfiguration.getCurrentOverlayWidth();
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 width,
                 FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -1370,8 +1327,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     }
 
     private int getListItemWidth(int level) {
-        if (level == 1 && mShowTumb){
-            return mConfiguration.mThumbnailWidth + mConfiguration.mIconBorder;
+        if (level == 1){
+            return (int)(mConfiguration.mThumbnailWidth * mThumbRatio) + mConfiguration.mIconBorder;
         }
         return mConfiguration.getCurrentOverlayWidth() / 3;
     }

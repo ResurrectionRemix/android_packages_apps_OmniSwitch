@@ -16,108 +16,98 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
+	android:layout_width="wrap_content"
 	android:layout_height="match_parent"
-	android:orientation="vertical" >
+	android:orientation="horizontal" >
 
 	<LinearLayout
 		android:id="@+id/button_list_container_top"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
 		android:elevation="@dimen/button_elevation"
-		android:orientation="vertical"
 		android:visibility="gone" >
 
-		<HorizontalScrollView
+		<ScrollView
 			android:id="@+id/button_list_top"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal" >
+			android:layout_gravity="bottom" >
 
 			<LinearLayout
 				android:id="@+id/button_list_items_top"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal" >
+				android:orientation="vertical" >
 			</LinearLayout>
-		</HorizontalScrollView>
+		</ScrollView>
 	</LinearLayout>
 
-	<include layout="@layout/recents_rambar" />
+	<!-- <include layout="@layout/recents_rambar" /> -->
 
-	<RelativeLayout
-		android:layout_width="match_parent"
+	<LinearLayout
+		android:layout_width="wrap_content"
 		android:layout_height="match_parent" >
 
 		<LinearLayout
 			android:id="@+id/recents"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical"
-			android:paddingBottom="8dip" >
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:layout_marginEnd="3dp"
+			android:layout_marginStart="3dp"
+			android:orientation="horizontal" >
 
-			<org.omnirom.omniswitch.ui.HorizontalListView
+			<ListView
 				android:id="@+id/recent_list_horizontal"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_gravity="center_horizontal" />
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent" />
 
 			<TextView
 				android:id="@+id/no_recent_apps"
-				android:layout_width="match_parent"
+				android:layout_width="wrap_content"
 				android:layout_height="match_parent"
-				android:layout_gravity="center"
-				android:gravity="center_horizontal|center_vertical"
+				android:gravity="center"
+				android:rotation="270"
 				android:text="@string/no_recent_apps_title"
 				android:textSize="20sp"
 				android:visibility="gone" />
 
-			<ImageView
-				android:id="@+id/openFavorites"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:scaleType="centerInside" />
-
-			<org.omnirom.omniswitch.ui.HorizontalListView
+			<ListView
 				android:id="@+id/favorite_list_horizontal"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				android:layout_gravity="center_horizontal" />
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent" />
 		</LinearLayout>
 
 		<GridView
 			android:id="@+id/app_drawer"
 			android:layout_width="match_parent"
-			android:layout_height="300dp"
+			android:layout_height="match_parent"
 			android:clipToPadding="false"
 			android:numColumns="auto_fit"
 			android:smoothScrollbar="true"
 			android:stretchMode="spacingWidthUniform"
 			android:visibility="gone" />
-	</RelativeLayout>
+	</LinearLayout>
 
 	<LinearLayout
 		android:id="@+id/button_list_container_bottom"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
 		android:elevation="@dimen/button_elevation"
-		android:orientation="vertical"
 		android:visibility="gone" >
 
-		<HorizontalScrollView
+		<ScrollView
 			android:id="@+id/button_list_bottom"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center_horizontal" >
+			android:layout_gravity="bottom" >
 
 			<LinearLayout
 				android:id="@+id/button_list_items_bottom"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal" >
+				android:orientation="vertical" >
 			</LinearLayout>
-		</HorizontalScrollView>
+		</ScrollView>
 	</LinearLayout>
 
 </LinearLayout>

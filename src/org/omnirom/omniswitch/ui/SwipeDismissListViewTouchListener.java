@@ -131,7 +131,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
     public SwipeDismissListViewTouchListener(ListView listView,
             DismissCallbacks callbacks) {
         ViewConfiguration vc = ViewConfiguration.get(listView.getContext());
-        mSlop = vc.getScaledTouchSlop();
+        mSlop = vc.getScaledTouchSlop() * 2;
         mMinFlingVelocity = vc.getScaledMinimumFlingVelocity() * 16;
         mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
         mAnimationTime = listView.getContext().getResources()
@@ -234,31 +234,33 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                 break;
             }
 
-            float deltaX = motionEvent.getRawX() - mDownX;
-            mVelocityTracker.addMovement(motionEvent);
-            mVelocityTracker.computeCurrentVelocity(1000);
-            float velocityX = mVelocityTracker.getXVelocity();
-            float absVelocityX = Math.abs(velocityX);
-            float absVelocityY = Math.abs(mVelocityTracker.getYVelocity());
-            boolean dismiss = false;
-            boolean dismissRight = false;
-            if (Math.abs(deltaX) > mViewWidth / 2) {
-                dismiss = true;
-                dismissRight = deltaX > 0;
-            } else if (mMinFlingVelocity <= absVelocityX
-                    && absVelocityX <= mMaxFlingVelocity
-                    && absVelocityY < absVelocityX) {
-                // dismiss only if flinging in the same direction as dragging
-                dismiss = (velocityX < 0) == (deltaX < 0);
-                dismissRight = mVelocityTracker.getXVelocity() > 0;
-            }
-            if (dismiss) {
-                // dismiss
-                dismiss(mDownView, mDownPosition, dismissRight);
-            } else {
-                // cancel
-                mDownView.animate().translationX(0).alpha(1)
-                        .setDuration(mAnimationTime).setListener(null);
+            if (mSwiping) {
+                float deltaX = motionEvent.getRawX() - mDownX;
+                mVelocityTracker.addMovement(motionEvent);
+                mVelocityTracker.computeCurrentVelocity(1000);
+                float velocityX = mVelocityTracker.getXVelocity();
+                float absVelocityX = Math.abs(velocityX);
+                float absVelocityY = Math.abs(mVelocityTracker.getYVelocity());
+                boolean dismiss = false;
+                boolean dismissRight = false;
+                if (Math.abs(deltaX) > mViewWidth / 2) {
+                    dismiss = true;
+                    dismissRight = deltaX > 0;
+                } else if (mMinFlingVelocity <= absVelocityX
+                        && absVelocityX <= mMaxFlingVelocity
+                        && absVelocityY < absVelocityX) {
+                    // dismiss only if flinging in the same direction as dragging
+                    dismiss = (velocityX < 0) == (deltaX < 0);
+                    dismissRight = mVelocityTracker.getXVelocity() > 0;
+                }
+                if (dismiss) {
+                    // dismiss
+                    dismiss(mDownView, mDownPosition, dismissRight);
+                } else {
+                    // cancel
+                    mDownView.animate().translationX(0).alpha(1)
+                            .setDuration(mAnimationTime).setListener(null);
+                }
             }
             mVelocityTracker.recycle();
             mVelocityTracker = null;

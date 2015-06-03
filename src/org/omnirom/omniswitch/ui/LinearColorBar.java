@@ -17,28 +17,23 @@
  */
 package org.omnirom.omniswitch.ui;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.LinearGradient;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
-import android.graphics.Shader;
-import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.widget.LinearLayout;
-
 import org.omnirom.omniswitch.R;
 
-public class LinearColorBar extends LinearLayout {
-    static final int LEFT_COLOR = 0xff2196f3;
-    static final int MIDDLE_COLOR = 0xff2196f3;
-    static final int RIGHT_COLOR = 0xff888888;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.AttributeSet;
+import android.widget.LinearLayout;
 
+public class LinearColorBar extends LinearLayout {
     private float mRedRatio;
     private float mYellowRatio;
     private float mGreenRatio;
     private boolean mShowingGreen;
+    private int mLeftColor;
+    private int mMiddleColor;
+    private int mRightColor;
 
     final Rect mRect = new Rect();
     final Paint mPaint = new Paint();
@@ -47,7 +42,13 @@ public class LinearColorBar extends LinearLayout {
         super(context, attrs);
         setWillNotDraw(false);
         mPaint.setStyle(Paint.Style.FILL);
-     }
+        mLeftColor = context.getResources()
+                .getColor(R.color.rambar_left_color);
+        mMiddleColor = context.getResources()
+                .getColor(R.color.rambar_middle_color);
+        mRightColor = context.getResources()
+                .getColor(R.color.rambar_right_color);
+    }
 
     public void setRatios(float red, float yellow, float green) {
         mRedRatio = red;
@@ -92,7 +93,7 @@ public class LinearColorBar extends LinearLayout {
         if (left < right) {
             mRect.left = left;
             mRect.right = right;
-            mPaint.setColor(LEFT_COLOR);
+            mPaint.setColor(mLeftColor);
             canvas.drawRect(mRect, mPaint);
             width -= (right-left);
             left = right;
@@ -103,7 +104,7 @@ public class LinearColorBar extends LinearLayout {
         if (left < right) {
             mRect.left = left;
             mRect.right = right;
-            mPaint.setColor(MIDDLE_COLOR);
+            mPaint.setColor(mMiddleColor);
             canvas.drawRect(mRect, mPaint);
             width -= (right-left);
             left = right;
@@ -114,7 +115,7 @@ public class LinearColorBar extends LinearLayout {
         if (left < right) {
             mRect.left = left;
             mRect.right = right;
-            mPaint.setColor(RIGHT_COLOR);
+            mPaint.setColor(mRightColor);
             canvas.drawRect(mRect, mPaint);
         }
     }

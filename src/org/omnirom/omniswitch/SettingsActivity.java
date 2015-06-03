@@ -67,7 +67,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_HANDLE_HEIGHT = "handle_height";
     public static final String PREF_BUTTON_CONFIG = "button_config";
     public static final String PREF_BUTTONS_NEW = "buttons_new";
-    public static final String PREF_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1,5:1,6:1,7:1";
+    public static final String PREF_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1";
     public static final String PREF_AUTO_HIDE_HANDLE = "auto_hide_handle";
     public static final String PREF_DRAG_HANDLE_ENABLE = "drag_handle_enable";
     public static final String PREF_ENABLE = "enable";
@@ -86,6 +86,9 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_BUTTON_POS = "button_pos";
     public static final String PREF_BG_STYLE = "bg_style";
     public static final String PREF_APP_FILTER_BOOT = "app_filter_boot";
+    public static final String PREF_LAYOUT_STYLE = "layout_style";
+    public static final String PREF_APP_FILTER_TIME = "app_filter_time";
+    public static final String PREF_THUMB_SIZE = "thumb_size";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -95,6 +98,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static int BUTTON_ALLAPPS = 5;
     public static int BUTTON_BACK = 6;
     public static int BUTTON_LOCK_APP = 7;
+    public static int BUTTON_CLOSE = 8;
 
     public static int BUTTON_SPEED_SWITCH_HOME = 0;
     public static int BUTTON_SPEED_SWITCH_BACK = 1;
@@ -125,6 +129,9 @@ public class SettingsActivity extends PreferenceActivity implements
     private NumberPickerPreference mSpeedSwitchItems;
     private ListPreference mButtonPos;
     private ListPreference mBgStyle;
+    private ListPreference mLayoutStyle;
+    private ListPreference mAppFilterTime;
+    private ListPreference mThumbSize;
 
     @Override
     public void onPause() {
@@ -199,6 +206,27 @@ public class SettingsActivity extends PreferenceActivity implements
                 mBgStyle.getEntryValues()[0].toString()));
         mBgStyle.setValueIndex(idx);
         mBgStyle.setSummary(mBgStyle.getEntries()[idx]);
+
+        mLayoutStyle = (ListPreference) findPreference(PREF_LAYOUT_STYLE);
+        mLayoutStyle.setOnPreferenceChangeListener(this);
+        idx = mLayoutStyle.findIndexOfValue(mPrefs.getString(PREF_LAYOUT_STYLE,
+                mLayoutStyle.getEntryValues()[0].toString()));
+        mLayoutStyle.setValueIndex(idx);
+        mLayoutStyle.setSummary(mLayoutStyle.getEntries()[idx]);
+
+        mAppFilterTime = (ListPreference) findPreference(PREF_APP_FILTER_TIME);
+        mAppFilterTime.setOnPreferenceChangeListener(this);
+        idx = mAppFilterTime.findIndexOfValue(mPrefs.getString(PREF_APP_FILTER_TIME,
+                mAppFilterTime.getEntryValues()[0].toString()));
+        mAppFilterTime.setValueIndex(idx);
+        mAppFilterTime.setSummary(mAppFilterTime.getEntries()[idx]);
+
+        mThumbSize = (ListPreference) findPreference(PREF_THUMB_SIZE);
+        mThumbSize.setOnPreferenceChangeListener(this);
+        idx = mThumbSize.findIndexOfValue(mPrefs.getString(PREF_THUMB_SIZE,
+                mThumbSize.getEntryValues()[2].toString()));
+        mThumbSize.setValueIndex(idx);
+        mThumbSize.setSummary(mThumbSize.getEntries()[idx]);
 
         mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
@@ -297,8 +325,25 @@ public class SettingsActivity extends PreferenceActivity implements
             mBgStyle.setSummary(mBgStyle.getEntries()[idx]);
             mBgStyle.setValueIndex(idx);
             return true;
+        } else if (preference == mLayoutStyle) {
+            String value = (String) newValue;
+            int idx = mLayoutStyle.findIndexOfValue(value);
+            mLayoutStyle.setSummary(mLayoutStyle.getEntries()[idx]);
+            mLayoutStyle.setValueIndex(idx);
+            return true;
+        } else if (preference == mAppFilterTime) {
+            String value = (String) newValue;
+            int idx = mAppFilterTime.findIndexOfValue(value);
+            mAppFilterTime.setSummary(mAppFilterTime.getEntries()[idx]);
+            mAppFilterTime.setValueIndex(idx);
+            return true;
+        } else if (preference == mThumbSize) {
+            String value = (String) newValue;
+            int idx = mThumbSize.findIndexOfValue(value);
+            mThumbSize.setSummary(mThumbSize.getEntries()[idx]);
+            mThumbSize.setValueIndex(idx);
+            return true;
         }
-
         return false;
     }
 
@@ -320,6 +365,7 @@ public class SettingsActivity extends PreferenceActivity implements
         mButtonImages[5]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_allapps));
         mButtonImages[6]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_sysbar_back));
         mButtonImages[7]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lock_app_pin));
+        mButtonImages[8]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_close));
 
         mSpeedSwitchButtonEntries = getResources().getStringArray(R.array.speed_switch_button_entries);
         mSpeedSwitchButtonImages = new Drawable[mSpeedSwitchButtonEntries.length];

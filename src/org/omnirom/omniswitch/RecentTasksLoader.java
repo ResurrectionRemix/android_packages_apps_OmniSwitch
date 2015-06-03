@@ -17,12 +17,12 @@
  */
 package org.omnirom.omniswitch;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.IOException;
 
+import org.omnirom.omniswitch.ui.BitmapCache;
 import org.omnirom.omniswitch.ui.BitmapUtils;
-import org.omnirom.omniswitch.ui.ColorDrawableWithDimensions;
 import org.omnirom.omniswitch.ui.IconPackHelper;
 
 import android.app.ActivityManager;
@@ -35,13 +35,11 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.os.Process;
 import android.os.ParcelFileDescriptor;
+import android.os.Process;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -56,7 +54,7 @@ public class RecentTasksLoader {
     private boolean mPreloaded;
     private SwitchManager mSwitchManager;
     private ActivityManager mActivityManager;
-    private Drawable mDefaultThumbnailBackground;
+    private Bitmap mDefaultThumbnail;
     private PreloadTaskRunnable mPreloadTasksRunnable;
     private boolean mHasThumbPermissions;
     private SwitchConfiguration mConfiguration;
@@ -94,13 +92,9 @@ public class RecentTasksLoader {
         mActivityManager = (ActivityManager)
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
-        // Render the default thumbnail background
-        int thumbnailWidth = (int) context.getResources().getDimensionPixelSize(
-                R.dimen.thumbnail_width);
-        int thumbnailHeight = (int) context.getResources()
-                .getDimensionPixelSize(R.dimen.thumbnail_height);
-        mDefaultThumbnailBackground = new ColorDrawableWithDimensions(
-                Color.BLACK, thumbnailWidth, thumbnailHeight);
+        mDefaultThumbnail = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+        mDefaultThumbnail.setHasAlpha(false);
+        mDefaultThumbnail.eraseColor(0xFFffffff);
         mHasThumbPermissions = hasSystemPermission(context);
         mConfiguration = SwitchConfiguration.getInstance(mContext);
     }
@@ -128,7 +122,7 @@ public class RecentTasksLoader {
     // Create an TaskDescription, returning null if the title or icon is null
     TaskDescription createTaskDescription(int taskId, int persistentTaskId,
             Intent baseIntent, ComponentName origActivity,
-            CharSequence description) {
+            CharSequence description, boolean activeTask) {
         // clear source bounds to find matching package intent
         baseIntent.setSourceBounds(null);
         Intent intent = new Intent(baseIntent);
@@ -148,12 +142,12 @@ public class RecentTasksLoader {
                     Log.v(TAG, "creating activity desc for id="
                             + persistentTaskId + ", label=" + title);
 
-                TaskDescription item = new TaskDescription(taskId,
+                TaskDescription ad = new TaskDescription(taskId,
                         persistentTaskId, resolveInfo, baseIntent,
-                        info.packageName, description);
-                item.setLabel(title);
+                        info.packageName, description, activeTask);
+                ad.setLabel(title);
 
-                return item;
+                return ad;
             } else {
                 if (DEBUG)
                     Log.v(TAG, "SKIPPING item " + persistentTaskId);
@@ -221,6 +215,7 @@ public class RecentTasksLoader {
         mPreloaded = true;
         mState = State.LOADING;
         mLoadedTasks.clear();
+        BitmapCache.getInstance(mContext).clearThumbs();
 
         final long currentTime = System.currentTimeMillis();
         final long bootTimeMillis = currentTime - SystemClock.elapsedRealtime();
@@ -251,13 +246,16 @@ public class RecentTasksLoader {
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
                         .getRecentTasks(ActivityManager.getMaxRecentTasksStatic(),
+                                ActivityManager.RECENT_IGNORE_HOME_STACK_TASKS |
                                 ActivityManager.RECENT_IGNORE_UNAVAILABLE |
-                                ActivityManager.RECENT_INCLUDE_PROFILES) ;
+                                ActivityManager.RECENT_INCLUDE_PROFILES |
+                                ActivityManager.RECENT_WITH_EXCLUDED) ;
 
                 int numTasks = recentTasks.size();
                 ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN)
                         .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(
                                 pm, 0);
+                boolean isFirstValidTask = true;
 
                 for (int i = 0; i < numTasks; ++i) {
                     if (isCancelled()) {
@@ -265,6 +263,18 @@ public class RecentTasksLoader {
                     }
                     final ActivityManager.RecentTaskInfo recentInfo = recentTasks
                             .get(i);
+
+                    // Check the first non-recents task, include this task even if it is marked as excluded
+                    // from recents if we are currently in the app.  In other words, only remove excluded
+                    // tasks if it is not the first active task.
+                    boolean isExcluded = (recentInfo.baseIntent.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                            == Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+
+                    if (isExcluded && !isFirstValidTask) {
+                        continue;
+                    }
+
+                    isFirstValidTask = false;
 
                     Intent intent = new Intent(recentInfo.baseIntent);
                     if (recentInfo.origActivity != null) {
@@ -287,6 +297,7 @@ public class RecentTasksLoader {
                         continue;
                     }
 
+                    boolean activeTask = true;
                     if (mConfiguration.mFilterActive) {
                         long lastActiveTime = recentInfo.lastActiveTime;
                         long firstActiveTime = recentInfo.firstActiveTime;
@@ -295,34 +306,28 @@ public class RecentTasksLoader {
                         }
                         // only show active since boot
                         if (mConfiguration.mFilterBoot && lastActiveTime < bootTimeMillis) {
-                            continue;
+                            activeTask = false;
                         }
-                        // filter older then time
-                        if (mConfiguration.mFilterTime != 0 && lastActiveTime < currentTime - mConfiguration.mFilterTime) {
-                            continue;
+                        if (activeTask) {
+                            // filter older then time
+                            if (DEBUG) {
+                                Log.d(TAG, "filter all apps not active since " + mConfiguration.mFilterTime);
+                            }
+                            if (mConfiguration.mFilterTime != 0 && lastActiveTime < currentTime - mConfiguration.mFilterTime) {
+                                activeTask = false;
+                            }
                         }
                     }
 
                     TaskDescription item = createTaskDescription(recentInfo.id,
                             recentInfo.persistentId, recentInfo.baseIntent,
-                            recentInfo.origActivity, recentInfo.description);
+                            recentInfo.origActivity, recentInfo.description,
+                            activeTask);
 
                     if (item != null) {
-                        item.setInitThumb(true);
-                        item.setThumb(mDefaultThumbnailBackground);
                         mLoadedTasks.add(item);
-                        loadTaskIcon(item);
-
-                        if (mHasThumbPermissions && i < 3){
-                            if (DEBUG){
-                                Log.d(TAG, "load thumb " + item);
-                            }
-
-                            item.setInitThumb(false);
-                            Bitmap b = getThumbnail(item.persistentTaskId);
-                            if (b != null) {
-                                item.setThumb(new BitmapDrawable(mContext.getResources(), b));
-                            }
+                        if (activeTask) {
+                            loadTaskIcon(item);
                         }
                     }
                 }
@@ -371,7 +376,6 @@ public class RecentTasksLoader {
                 icon = BitmapUtils.getDefaultActivityIcon(mContext);
             }
             td.setIcon(icon);
-            td.setLoaded(true);
         }
     }
 
@@ -415,43 +419,46 @@ public class RecentTasksLoader {
 
     public void loadThumbnail(final TaskDescription td) {
         if (!mHasThumbPermissions) {
-            td.setInitThumb(false);
             return;
         }
-        Drawable d = td.getThumb();
-        if (d == null || td.isInitThumb()){
-            AsyncTask<Void, TaskDescription, Void> thumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
-                @Override
-                protected void onProgressUpdate(TaskDescription... values) {
-                }
-                @Override
-                protected Void doInBackground(Void... params) {
-                    final int origPri = Process.getThreadPriority(Process.myTid());
-                    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-
-                    if (DEBUG){
-                        Log.d(TAG, "load thumb " + td);
-                    }
-
-                    td.setInitThumb(false);
-                    if (mHasThumbPermissions){
-                        Bitmap b = getThumbnail(td.persistentTaskId);
-                        if (b != null) {
-                            td.setThumb(new BitmapDrawable(mContext.getResources(), b));
-                        }
-                    }
-
-                    Process.setThreadPriority(origPri);
-                    return null;
-                }
-            };
-            thumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (!td.isActive()) {
+            return;
         }
+        if (td.isThumbLoading()) {
+            return;
+        }
+        AsyncTask<Void, TaskDescription, Void> thumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
+            @Override
+            protected void onProgressUpdate(TaskDescription... values) {
+            }
+            @Override
+            protected Void doInBackground(Void... params) {
+                final int origPri = Process.getThreadPriority(Process.myTid());
+                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+
+                if (DEBUG){
+                    Log.d(TAG, "late load thumb " + td + " " + td.persistentTaskId);
+                }
+                td.setThumbLoading(true);
+                Bitmap b = getThumbnail(td.persistentTaskId);
+                if (b != null) {
+                    td.setThumb(b);
+                }
+
+                Process.setThreadPriority(origPri);
+                return null;
+            }
+        };
+        thumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private boolean hasSystemPermission(Context context) {
         int result = context
                 .checkCallingOrSelfPermission(android.Manifest.permission.READ_FRAME_BUFFER);
         return result == android.content.pm.PackageManager.PERMISSION_GRANTED;
+    }
+
+    public Bitmap getDefaultThumb() {
+        return mDefaultThumbnail;
     }
 }

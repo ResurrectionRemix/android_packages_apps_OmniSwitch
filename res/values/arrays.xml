@@ -99,9 +99,9 @@
 		<item>168</item>
 	</string-array>
 	<string-array name="thumb_size_entries" translatable="false">
-		<item>@string/size_small</item>
-		<item>@string/size_medium</item>
-		<item>@string/size_normal</item>
+		<item>@string/thumb_size_small</item>
+		<item>@string/thumb_size_medium</item>
+		<item>@string/thumb_size_normal</item>
 	</string-array>
 	<string-array name="thumb_size_values" translatable="false">
 		<item>0.5</item>

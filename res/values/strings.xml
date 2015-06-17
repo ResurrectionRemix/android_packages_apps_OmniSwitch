@@ -33,10 +33,9 @@
 	<string name="sc_drag_handle_body">\nSwipe horizontally to open\n\nPress button or outside to close\n\nLong press to open quick switcher</string>
 	<string name="sc_favorite_title">Favorite apps</string>
 	<string name="sc_favorite_body">\nOpen favorite apps view.</string>
-	<string name="size_normal">Normal</string>
-	<string name="size_small">Small</string>
-	<string name="size_medium">Medium</string>
-	<string name="size_large">Large</string>
+        <string name="icon_size_normal">Normal</string>
+        <string name="icon_size_small">Small</string>
+        <string name="icon_size_large">Large</string>
 	<string name="icon_size_title">Icon size</string>
 	<string name="ok">OK</string>
 	<string name="cancel">Cancel</string>
@@ -137,5 +136,7 @@
 	<string name="close_help">Close overlay</string>
 	<string name="close">Close</string>
 	<string name="thumb_size_title">Thumbnail size</string>
-
+        <string name="thumb_size_normal">Normal</string>
+        <string name="thumb_size_small">Small</string>
+        <string name="thumb_size_medium">Medium</string>
 </resources>

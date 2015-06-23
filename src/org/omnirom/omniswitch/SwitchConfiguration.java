@@ -42,6 +42,8 @@ public class SwitchConfiguration {
     public int mActionIconSizePx = 60; // in px
     public int mOverlayIconSizeDp = 30;
     public int mOverlayIconSizePx = 30;
+    public int mOverlayIconBorderDp = 2;
+    public int mOverlayIconBorderPx = 2;
     public int mIconBorder = 8; // in dp
     public float mDensity;
     public int mMaxWidth;
@@ -113,7 +115,8 @@ public class SwitchConfiguration {
         mSmallIconSizePx = Math.round(mSmallIconSizePx * mDensity);
         mActionIconSizePx = Math.round(mActionIconSize * mDensity);
         mLevelChangeWidthX = Math.round(60 * mDensity);
-        mOverlayIconSizePx = Math.round(mOverlayIconSizePx * mDensity);
+        mOverlayIconSizePx = Math.round(mOverlayIconSizeDp * mDensity);
+        mOverlayIconBorderPx =  Math.round(mOverlayIconBorderDp * mDensity);
         mHorizontalDividerWidth = 0;
         // Render the default thumbnail background
         mThumbnailWidth = (int) context.getResources().getDimensionPixelSize(
@@ -281,5 +284,9 @@ public class SwitchConfiguration {
 
     public int getItemMaxHeight() {
         return mShowLabels ? mMaxHeight + mLabelFontSizePx :  mMaxHeight;
+    }
+
+    public int getOverlayHeaderWidth() {
+        return mOverlayIconSizePx + 2 * mOverlayIconBorderPx;
     }
 }

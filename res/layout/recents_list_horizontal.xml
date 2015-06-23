@@ -45,7 +45,7 @@
 
 	<include layout="@layout/recents_rambar" />
 
-	<RelativeLayout
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" >
 
@@ -95,7 +95,7 @@
 			android:smoothScrollbar="true"
 			android:stretchMode="spacingWidthUniform"
 			android:visibility="gone" />
-	</RelativeLayout>
+	</LinearLayout>
 
 	<LinearLayout
 		android:id="@+id/button_list_container_bottom"

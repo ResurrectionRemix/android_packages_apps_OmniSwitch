@@ -54,7 +54,6 @@ import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,7 +79,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TaskDescription ad = mRecentsManager.getTasks().get(position);
+            TaskDescription ad = getItem(position);
 
             PackageTextView item = null;
             if (convertView == null) {
@@ -458,17 +457,28 @@ public class SwitchLayout extends AbstractSwitchLayout {
     // TODO dont use real icon size values in code
     private int getAppDrawerLines() {
         if (mConfiguration.mIconSize == 40) {
-            return 5;
+            if (mConfiguration.isLandscape()) {
+                return 4;
+            } else {
+                return 5;
+            }
         }
         if (mConfiguration.mIconSize == 60) {
-            return 4;
+            if (mConfiguration.isLandscape()) {
+                return 3;
+            } else {
+                return 4;
+            }
+        }
+        if (mConfiguration.isLandscape()) {
+            return 2;
         }
         return 3;
     }
 
-    private RelativeLayout.LayoutParams getAppDrawerParams() {
-        return new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT, getAppDrawerLines()
+    private LinearLayout.LayoutParams getAppDrawerParams() {
+        return new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, getAppDrawerLines()
                         * mConfiguration.getItemMaxHeight());
     }
 
@@ -494,7 +504,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
         params.y = mConfiguration.getCurrentOffsetStart()
                 + mConfiguration.mDragHandleHeight / 2
                 - mConfiguration.getItemMaxHeight() / 2
-                - (mButtonsVisible ? mConfiguration.getItemMaxHeight() : 0);
+                - (mButtonsVisible ? mConfiguration.mActionIconSizePx : 0);
 
         return params;
     }
@@ -556,9 +566,11 @@ public class SwitchLayout extends AbstractSwitchLayout {
                 mRecentListAdapter.notifyDataSetChanged();
                 mRecentListHorizontal.setAdapter(mRecentListAdapter);
 
+                mAppDrawer.setLayoutParams(getAppDrawerParams());
+                mAppDrawer.requestLayout();
+
                 mWindowManager.updateViewLayout(mPopupView,
                         getParams(mConfiguration.mBackgroundOpacity));
-                mAppDrawer.requestLayout();
             }
         } catch (Exception e) {
             // ignored

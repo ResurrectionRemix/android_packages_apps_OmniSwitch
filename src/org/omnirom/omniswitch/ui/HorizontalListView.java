@@ -874,7 +874,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
     private void fillListLeft(int leftEdge, final int dx) {
         // Loop adding views to the left until the screen is filled
-        while (leftEdge + dx - mDividerWidth > 0 && mLeftViewAdapterIndex >= 1) {
+        while (leftEdge + dx - mDividerWidth > 0 && mLeftViewAdapterIndex >= 1 &&
+                mLeftViewAdapterIndex <= mAdapter.getCount()) {
             mLeftViewAdapterIndex--;
             View child = mAdapter.getView(mLeftViewAdapterIndex,
                     getRecycledView(mLeftViewAdapterIndex), this);

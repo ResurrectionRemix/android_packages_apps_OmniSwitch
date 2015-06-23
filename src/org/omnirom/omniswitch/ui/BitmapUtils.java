@@ -231,19 +231,20 @@ public class BitmapUtils {
 
     public static Drawable overlay(Resources resources, Bitmap b,
             Drawable icon, int width, int height, String label, float density,
-            int iconSize, boolean bgStyle, boolean showLabel, boolean sideHeader) {
+            int iconSize, boolean bgStyle, boolean showLabel, boolean sideHeader,
+            int iconBorderSizePx) {
         final Canvas canvas = new Canvas();
         final int iconSizePx = Math.round(iconSize * density);
-        final int borderPx = Math.round(5 * density);
+        final int textInsetPx = Math.round(5 * density);
 
         canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.ANTI_ALIAS_FLAG,
                 Paint.FILTER_BITMAP_FLAG));
-        final Bitmap bmp = Bitmap.createBitmap(sideHeader ? width + iconSizePx : width,
-                sideHeader ? height : height + iconSizePx,
+        final Bitmap bmp = Bitmap.createBitmap(sideHeader ? width + iconBorderSizePx : width,
+                sideHeader ? height : height + iconBorderSizePx,
                 Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bmp);
         final Bitmap bitmapResized = Bitmap.createScaledBitmap(b, width, height, true);
-        canvas.drawBitmap(bitmapResized, sideHeader ? iconSizePx : 0, sideHeader ? 0 : iconSizePx, null);
+        canvas.drawBitmap(bitmapResized, sideHeader ? iconBorderSizePx : 0, sideHeader ? 0 : iconBorderSizePx, null);
         final Drawable iconResized = resize(resources, icon,  iconSize, density);
 
         final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -251,34 +252,35 @@ public class BitmapUtils {
         textPaint.setTypeface(font);
         textPaint.setColor(Color.WHITE);
         textPaint.setTextAlign(Paint.Align.LEFT);
-        final int startTextPx = iconSizePx + borderPx;
+        final int startTextPx = iconBorderSizePx + textInsetPx;
         final int textSize = Math.round(14 * density);
         textPaint.setTextSize(textSize);
-        label = TextUtils.ellipsize(label, textPaint, width - startTextPx - borderPx, TextUtils.TruncateAt.END).toString();
+        label = TextUtils.ellipsize(label, textPaint, width - startTextPx - textInsetPx, TextUtils.TruncateAt.END).toString();
 
         if (bgStyle) {
             final Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             bgPaint.setStyle(Paint.Style.FILL);
             bgPaint.setColor(resources.getColor(R.color.button_bg_flat_color));
             if (sideHeader)  {
-                canvas.drawRect(0, 0, iconSizePx, height, bgPaint);
+                canvas.drawRect(0, 0, iconBorderSizePx, height, bgPaint);
             } else {
-                canvas.drawRect(0, 0, width, iconSizePx, bgPaint);
+                canvas.drawRect(0, 0, width, iconBorderSizePx, bgPaint);
             }
         } else {
             textPaint.setShadowLayer(5, 0, 0, Color.BLACK);
         }
-        canvas.drawBitmap(((BitmapDrawable) iconResized).getBitmap(), 0, 0, null);
+        final float iconInset = (iconBorderSizePx - iconSizePx) / 2;
+        canvas.drawBitmap(((BitmapDrawable) iconResized).getBitmap(), iconInset, iconInset, null);
         if (showLabel) {
             if (sideHeader) {
                 canvas.save();
-                int xPos = (int) ((iconSizePx / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ; 
-                int yPos = height - borderPx;
+                int xPos = (int) ((iconBorderSizePx / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ; 
+                int yPos = height - textInsetPx;
                 canvas.rotate(270, xPos, yPos);
                 canvas.drawText(label, xPos, yPos, textPaint);
                 canvas.restore();
             } else {
-                int yPos = (int) ((iconSizePx / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ; 
+                int yPos = (int) ((iconBorderSizePx / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ; 
                 int xPos = startTextPx;
                 canvas.drawText(label, xPos, yPos, textPaint);
             }

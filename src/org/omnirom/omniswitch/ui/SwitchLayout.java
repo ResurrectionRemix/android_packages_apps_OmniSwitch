@@ -54,6 +54,7 @@ import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,7 +80,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TaskDescription ad = getItem(position);
+            TaskDescription ad = mRecentsManager.getTasks().get(position);
 
             PackageTextView item = null;
             if (convertView == null) {
@@ -465,9 +466,9 @@ public class SwitchLayout extends AbstractSwitchLayout {
         return 3;
     }
 
-    private LinearLayout.LayoutParams getAppDrawerParams() {
-        return new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, getAppDrawerLines()
+    private RelativeLayout.LayoutParams getAppDrawerParams() {
+        return new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT, getAppDrawerLines()
                         * mConfiguration.getItemMaxHeight());
     }
 

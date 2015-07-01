@@ -25,8 +25,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
 		android:elevation="@dimen/button_elevation"
-		android:visibility="gone"
-		android:layout_marginEnd="3dp" >
+		android:visibility="gone" >
 
 		<ScrollView
 			android:id="@+id/button_list_top"
@@ -43,6 +42,8 @@
 		</ScrollView>
 	</LinearLayout>
 
+	<!-- <include layout="@layout/recents_rambar" /> -->
+
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent" >
@@ -51,13 +52,15 @@
 			android:id="@+id/recents"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
+			android:layout_marginEnd="3dp"
+			android:layout_marginStart="3dp"
 			android:orientation="horizontal" >
 
 			<ListView
-				android:id="@+id/recent_list"
+				android:id="@+id/recent_list_horizontal"
 				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:divider="@null" />
+				android:layout_height="match_parent" />
+
 			<TextView
 				android:id="@+id/no_recent_apps"
 				android:layout_width="wrap_content"
@@ -67,11 +70,11 @@
 				android:text="@string/no_recent_apps_title"
 				android:textSize="20sp"
 				android:visibility="gone" />
+
 			<ListView
-				android:id="@+id/favorite_list"
+				android:id="@+id/favorite_list_horizontal"
 				android:layout_width="wrap_content"
-				android:layout_height="match_parent"
-				android:divider="@null" />
+				android:layout_height="match_parent" />
 		</LinearLayout>
 
 		<GridView
@@ -90,8 +93,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="match_parent"
 		android:elevation="@dimen/button_elevation"
-		android:visibility="gone"
-		android:layout_marginStart="3dp" >
+		android:visibility="gone" >
 
 		<ScrollView
 			android:id="@+id/button_list_bottom"

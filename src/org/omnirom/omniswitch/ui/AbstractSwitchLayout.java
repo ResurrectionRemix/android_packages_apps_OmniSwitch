@@ -294,8 +294,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
             } else {
                 item = (PackageTextView) convertView;
             }
-            PackageManager.PackageItem packageItem = getItem(position);
-
+            PackageManager.PackageItem packageItem = PackageManager
+                    .getInstance(mContext).getPackageList().get(position);
             item.setIntent(packageItem.getIntent());
             if (mConfiguration.mShowLabels) {
                 item.setText(packageItem.getTitle());
@@ -325,7 +325,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
             } else {
                 item = (PackageTextView) convertView;
             }
-            String intent = getItem(position);
+            String intent = mFavoriteList.get(position);
 
             PackageManager.PackageItem packageItem = PackageManager
                     .getInstance(mContext).getPackageItem(intent);

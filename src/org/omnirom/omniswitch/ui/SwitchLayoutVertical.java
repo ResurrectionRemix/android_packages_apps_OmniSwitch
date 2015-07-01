@@ -74,7 +74,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TaskDescription ad = getItem(position);
+            TaskDescription ad = mRecentsManager.getTasks().get(position);
 
             PackageTextView item = null;
             if (convertView == null) {
@@ -143,7 +143,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mRecents = (LinearLayout) mView.findViewById(R.id.recents);
 
         mRecentList = (ListView) mView
-                .findViewById(R.id.recent_list);
+                .findViewById(R.id.recent_list_horizontal);
         mRecentList.setVerticalScrollBarEnabled(false);
         final int listMargin = Math.round(2 * mConfiguration.mDensity);
         mRecentList.setDividerHeight(listMargin);
@@ -198,7 +198,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mRecentList.setAdapter(mRecentListAdapter);
 
         mFavoriteListView = (ListView) mView
-                .findViewById(R.id.favorite_list);
+                .findViewById(R.id.favorite_list_horizontal);
         mFavoriteListView.setVerticalScrollBarEnabled(false);
         mFavoriteListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -628,12 +628,12 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
     private int getCurrentThumbWidth() {
         return (int)(mConfiguration.mThumbnailWidth * mConfiguration.mThumbRatio) +
-               ( mConfiguration.mSideHeader ? mConfiguration.getOverlayHeaderWidth() : 0);
+               ( mConfiguration.mSideHeader ? mConfiguration.mOverlayIconSizePx : 0);
     }
 
     private int getCurrentThumbHeight() {
         return (int)(mConfiguration.mThumbnailHeight * mConfiguration.mThumbRatio) +
-                (mConfiguration.mSideHeader ? 0 : mConfiguration.getOverlayHeaderWidth());
+                (mConfiguration.mSideHeader ? 0 : mConfiguration.mOverlayIconSizePx);
     }
 
     @Override

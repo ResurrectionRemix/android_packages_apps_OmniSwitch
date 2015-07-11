@@ -79,6 +79,7 @@ public class SwitchConfiguration {
     public boolean mSpeedSwitcher = true;
     public boolean mFilterActive = true;
     public boolean mFilterBoot = true;
+    public boolean mFilterRunning = false;
     public long mFilterTime = 0;
     public boolean mSideHeader = true;
     public static SwitchConfiguration mInstance;
@@ -202,6 +203,7 @@ public class SwitchConfiguration {
         mLayoutStyle = Integer.valueOf(layoutStyle);
         String thumbSize = prefs.getString(SettingsActivity.PREF_THUMB_SIZE, "1.0");
         mThumbRatio = Float.valueOf(thumbSize);
+        mFilterRunning = prefs.getBoolean(SettingsActivity.PREF_APP_FILTER_RUNNING, false);
     }
 
     public void resetDefaults(Context context) {

@@ -537,7 +537,15 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
                     .getDrawable(R.drawable.lock_app_pin));
             mLockToAppButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    Utils.toggleLockModeOnCurrent(mContext);
+                    if (!Utils.isLockToAppEnabled(mContext)) {
+                        Toast.makeText(
+                                mContext,
+                                mContext.getResources().getString(
+                                        R.string.lock_app_not_enabled),
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    mRecentsManager.toggleLockToApp(mAutoClose);
                 }
             });
             mLockToAppButton
@@ -799,6 +807,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
                 popup.getMenu());
         popup.getMenu().findItem(R.id.package_add_favorite)
                 .setEnabled(!mFavoriteList.contains(ad.getIntent().toUri(0)));
+        popup.getMenu().findItem(R.id.package_lock_task)
+                .setEnabled(Utils.isLockToAppEnabled(mContext));
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.package_stop_task) {
@@ -824,6 +834,12 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
                         intentStr = packageItem.getIntent();
                     }
                     Utils.addToFavorites(mContext, intentStr, mFavoriteList);
+                } else if (item.getItemId() == R.id.package_lock_task) {
+                    if (!Utils.isLockToAppEnabled(mContext)) {
+                        return false;
+                    }
+                    mRecentsManager.stopLockToApp(false);
+                    mRecentsManager.lockToApp(ad, mAutoClose);
                 } else {
                     return false;
                 }

@@ -62,6 +62,7 @@ import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class SwitchGestureView implements OnShowcaseEventListener {
     private final static String TAG = "SwitchGestureView";
@@ -1277,7 +1278,15 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             item.setAction(new Runnable(){
                 @Override
                 public void run() {
-                    Utils.toggleLockModeOnCurrent(mContext);
+                    if (!Utils.isLockToAppEnabled(mContext)) {
+                        Toast.makeText(
+                                mContext,
+                                mContext.getResources().getString(
+                                        R.string.lock_app_not_enabled),
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    mRecentsManager.toggleLockToApp(false);
                 }});
             return item;
         }

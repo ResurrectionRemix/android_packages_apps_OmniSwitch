@@ -118,7 +118,7 @@
 	<string name="bg_style_transparent">Transparent</string>
 	<string name="bg_style_title">Background style</string>
 	<string name="lock_to_app">Pin app</string>
-	<string name="lock_app_help">Pin app</string>
+	<string name="lock_app_help">Pin current app</string>
 	<string name="app_filter_category_title">App filter</string>
 	<string name="app_filter_boot_title">Active since boot</string>
 	<string name="layout_style_title">Style</string>
@@ -136,7 +136,10 @@
 	<string name="close_help">Close overlay</string>
 	<string name="close">Close</string>
 	<string name="thumb_size_title">Thumbnail size</string>
-        <string name="thumb_size_normal">Normal</string>
-        <string name="thumb_size_small">Small</string>
-        <string name="thumb_size_medium">Medium</string>
+	<string name="thumb_size_normal">Normal</string>
+	<string name="thumb_size_small">Small</string>
+	<string name="thumb_size_medium">Medium</string>
+	<string name="package_lock_task_title">Pin app</string>
+	<string name="lock_app_not_enabled">Screen pinning is not enabled in security settings</string>
+	<string name="app_filter_running_title">Running only</string>
 </resources>

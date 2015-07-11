@@ -89,6 +89,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_LAYOUT_STYLE = "layout_style";
     public static final String PREF_APP_FILTER_TIME = "app_filter_time";
     public static final String PREF_THUMB_SIZE = "thumb_size";
+    public static final String PREF_APP_FILTER_RUNNING = "app_filter_running";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;

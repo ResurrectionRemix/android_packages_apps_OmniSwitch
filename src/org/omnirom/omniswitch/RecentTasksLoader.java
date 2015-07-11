@@ -302,18 +302,29 @@ public class RecentTasksLoader {
                         long lastActiveTime = recentInfo.lastActiveTime;
                         long firstActiveTime = recentInfo.firstActiveTime;
                         if (DEBUG) {
-                            Log.d(TAG, intent.getComponent().getPackageName() + ":" + firstActiveTime + ":" + lastActiveTime + ":" + bootTimeMillis);
+                            Log.d(TAG, intent.getComponent().getPackageName() + ": " + firstActiveTime + ":" + lastActiveTime + ":" + bootTimeMillis);
                         }
                         // only show active since boot
                         if (mConfiguration.mFilterBoot && lastActiveTime < bootTimeMillis) {
+                            if (DEBUG) {
+                                Log.d(TAG, intent.getComponent().getPackageName() + ": filter app not active since boot");
+                            }
                             activeTask = false;
                         }
                         if (activeTask) {
                             // filter older then time
                             if (DEBUG) {
-                                Log.d(TAG, "filter all apps not active since " + mConfiguration.mFilterTime);
+                                Log.d(TAG, intent.getComponent().getPackageName() + ": filter app not active since " + mConfiguration.mFilterTime);
                             }
                             if (mConfiguration.mFilterTime != 0 && lastActiveTime < currentTime - mConfiguration.mFilterTime) {
+                                activeTask = false;
+                            }
+                        }
+                        if (activeTask) {
+                            if (mConfiguration.mFilterRunning && recentInfo.id < 0) {
+                                if (DEBUG) {
+                                    Log.d(TAG, intent.getComponent().getPackageName() + ": filter app not running");
+                                }
                                 activeTask = false;
                             }
                         }

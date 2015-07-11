@@ -28,6 +28,7 @@ import org.omnirom.omniswitch.ui.SwitchLayout;
 import org.omnirom.omniswitch.ui.SwitchLayoutVertical;
 
 import android.app.ActivityManager;
+import android.app.ActivityManagerNative;
 import android.app.ActivityOptions;
 import android.app.TaskStackBuilder;
 import android.content.ActivityNotFoundException;
@@ -35,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -423,6 +425,72 @@ public class SwitchManager {
             if (ad.isActive()) {
                 mActiveTasks.add(ad);
             }
+        }
+    }
+
+    public void lockToCurrentApp(boolean close) {
+        try {
+            if (!ActivityManagerNative.getDefault().isInLockTaskMode()) {
+                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
+                if(DEBUG){
+                    Log.d(TAG, "lock current app");
+                }
+            }
+        } catch(RemoteException e) {
+        }
+        if(close){
+            hide(true);
+        }
+    }
+
+    public void lockToApp(TaskDescription ad, boolean close) {
+        try {
+            if (!ActivityManagerNative.getDefault().isInLockTaskMode()) {
+                switchTask(ad, false, false);
+                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
+                if(DEBUG){
+                    Log.d(TAG, "lock app " + ad.getPackageName());
+                }
+            }
+        } catch(RemoteException e) {
+        }
+        if(close){
+            hide(true);
+        }
+    }
+
+    public void stopLockToApp(boolean close) {
+        try {
+            if (ActivityManagerNative.getDefault().isInLockTaskMode()) {
+                ActivityManagerNative.getDefault().stopLockTaskModeOnCurrent();
+                if(DEBUG){
+                    Log.d(TAG, "stop lock app");
+                }
+            }
+        } catch(RemoteException e) {
+        }
+        if(close){
+            hide(true);
+        }
+    }
+
+    public void toggleLockToApp(boolean close) {
+        try {
+            if (ActivityManagerNative.getDefault().isInLockTaskMode()) {
+                ActivityManagerNative.getDefault().stopLockTaskModeOnCurrent();
+                if(DEBUG){
+                    Log.d(TAG, "stop lock app");
+                }
+            } else {
+                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
+                if(DEBUG){
+                    Log.d(TAG, "lock current app");
+                }
+            }
+        } catch(RemoteException e) {
+        }
+        if(close){
+            hide(true);
         }
     }
 }

@@ -180,18 +180,4 @@ public class Utils {
             return false;
         }
     }
-
-    public static void toggleLockModeOnCurrent(Context context) {
-        if (!isLockToAppEnabled(context)) {
-            return;
-        }
-        try {
-            if (ActivityManagerNative.getDefault().isInLockTaskMode()) {
-                ActivityManagerNative.getDefault().stopLockTaskModeOnCurrent();
-            } else {
-                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
-            }
-        } catch (RemoteException e) {
-        }
-    }
 }

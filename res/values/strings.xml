@@ -33,9 +33,9 @@
 	<string name="sc_drag_handle_body">\nSwipe horizontally to open\n\nPress button or outside to close\n\nLong press to open quick switcher</string>
 	<string name="sc_favorite_title">Favorite apps</string>
 	<string name="sc_favorite_body">\nOpen favorite apps view.</string>
-        <string name="icon_size_normal">Normal</string>
-        <string name="icon_size_small">Small</string>
-        <string name="icon_size_large">Large</string>
+	<string name="icon_size_normal">Normal</string>
+	<string name="icon_size_small">Small</string>
+	<string name="icon_size_large">Large</string>
 	<string name="icon_size_title">Icon size</string>
 	<string name="ok">OK</string>
 	<string name="cancel">Cancel</string>
@@ -142,4 +142,7 @@
 	<string name="package_lock_task_title">Pin app</string>
 	<string name="lock_app_not_enabled">Screen pinning is not enabled in security settings</string>
 	<string name="app_filter_running_title">Running only</string>
+	<string name="menu">Menu</string>
+	<string name="menu_help">Menu</string>
+
 </resources>

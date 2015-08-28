@@ -67,7 +67,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_HANDLE_HEIGHT = "handle_height";
     public static final String PREF_BUTTON_CONFIG = "button_config";
     public static final String PREF_BUTTONS_NEW = "buttons_new";
-    public static final String PREF_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1";
+    public static final String PREF_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:0,4:1,5:1,6:0,7:1,8:1,9:0";
     public static final String PREF_AUTO_HIDE_HANDLE = "auto_hide_handle";
     public static final String PREF_DRAG_HANDLE_ENABLE = "drag_handle_enable";
     public static final String PREF_ENABLE = "enable";
@@ -80,7 +80,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_SPEED_SWITCHER_LIMIT = "speed_switch_limit";
     public static final String PREF_SPEED_SWITCHER_BUTTON_CONFIG = "speed_switch_button_config";
     public static final String PREF_SPEED_SWITCHER_BUTTON_NEW = "speed_switch_button_new";
-    public static final String PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW = "0:1,1:1,2:1,3:1,4:1,5:1";
+    public static final String PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW = "0:0,1:0,2:1,3:1,4:1,5:1,6:1,7:0";
     public static final String PREF_SPEED_SWITCHER_ITEMS = "speed_switch_items";
     public static final String PREF_FLAT_STYLE = "flat_style";
     public static final String PREF_BUTTON_POS = "button_pos";
@@ -100,6 +100,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static int BUTTON_BACK = 6;
     public static int BUTTON_LOCK_APP = 7;
     public static int BUTTON_CLOSE = 8;
+    public static int BUTTON_MENU = 9;
 
     public static int BUTTON_SPEED_SWITCH_HOME = 0;
     public static int BUTTON_SPEED_SWITCH_BACK = 1;
@@ -107,6 +108,8 @@ public class SettingsActivity extends PreferenceActivity implements
     public static int BUTTON_SPEED_SWITCH_KILL_ALL = 3;
     public static int BUTTON_SPEED_SWITCH_KILL_OTHER = 4;
     public static int BUTTON_SPEED_SWITCH_LOCK_APP = 5;
+    public static int BUTTON_SPEED_SWITCH_TOGGLE_APP = 6;
+    public static int BUTTON_SPEED_SWITCH_MENU = 7;
 
     private ListPreference mIconSize;
     private SeekBarPreference mOpacity;
@@ -367,6 +370,7 @@ public class SettingsActivity extends PreferenceActivity implements
         mButtonImages[6]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_sysbar_back));
         mButtonImages[7]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lock_app_pin));
         mButtonImages[8]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_close));
+        mButtonImages[9]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_menus));
 
         mSpeedSwitchButtonEntries = getResources().getStringArray(R.array.speed_switch_button_entries);
         mSpeedSwitchButtonImages = new Drawable[mSpeedSwitchButtonEntries.length];
@@ -376,6 +380,8 @@ public class SettingsActivity extends PreferenceActivity implements
         mSpeedSwitchButtonImages[3]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.kill_all));
         mSpeedSwitchButtonImages[4]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.kill_other));
         mSpeedSwitchButtonImages[5]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lock_app_pin));
+        mSpeedSwitchButtonImages[6]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lastapp));
+        mSpeedSwitchButtonImages[7]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_menus));
     }
 
     @Override

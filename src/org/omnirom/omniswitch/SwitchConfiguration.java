@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.omnirom.omniswitch.ui.BitmapCache;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -36,10 +34,8 @@ public class SwitchConfiguration {
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
     public int mIconSizeSettings = 60; // in dip
-    public int mBigIconSizePx = 100; // in px
-    public int mSmallIconSizePx = 60; // in px
-    public int mActionIconSize = 60; // in dp
-    public int mActionIconSizePx = 60; // in px
+    public int mQSActionSize = 60; // in dp
+    public int mActionSizePx = 48; // in px
     public int mOverlayIconSizeDp = 30;
     public int mOverlayIconSizePx = 30;
     public int mOverlayIconBorderDp = 2;
@@ -66,7 +62,6 @@ public class SwitchConfiguration {
     public int mThumbnailWidth; // in px
     public int mThumbnailHeight; // in px
     public Map<Integer, Boolean> mButtons;
-    public int mLevelChangeWidthX; // in px
     public boolean mLevelBackgroundColor = true;
     public boolean mLimitLevelChangeX = true;
     public Map<Integer, Boolean> mSpeedSwitchButtons;
@@ -112,10 +107,7 @@ public class SwitchConfiguration {
         mRestrictedMode = !hasSystemPermission(context);
         mLevelHeight = Math.round(80 * mDensity);
         mItemChangeWidthX = Math.round(40 * mDensity);
-        mBigIconSizePx = Math.round(mBigIconSizePx * mDensity);
-        mSmallIconSizePx = Math.round(mSmallIconSizePx * mDensity);
-        mActionIconSizePx = Math.round(mActionIconSize * mDensity);
-        mLevelChangeWidthX = Math.round(60 * mDensity);
+        mActionSizePx = Math.round(48 * mDensity);
         mOverlayIconSizePx = Math.round(mOverlayIconSizeDp * mDensity);
         mOverlayIconBorderPx =  Math.round(mOverlayIconBorderDp * mDensity);
         mHorizontalDividerWidth = 0;

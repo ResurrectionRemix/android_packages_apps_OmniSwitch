@@ -100,8 +100,10 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     protected ImageView mBackButton;
     protected ImageView mLockToAppButton;
     protected ImageView mCloseButton;
+    protected ImageView mMenuButton;
     protected boolean mAutoClose = true;
     protected boolean mVirtualBackKey;
+    protected boolean mVirtualMenuKey;
     protected TimeInterpolator mAccelerateInterpolator = new AccelerateInterpolator(1.5f);
     protected TimeInterpolator mDecelerateInterpolator = new DecelerateInterpolator(1.5f);
     protected LinearInterpolator mLinearInterpolator = new LinearInterpolator();
@@ -362,6 +364,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
         mFavoriteListAdapter = new FavoriteListAdapter(mContext,
                 android.R.layout.simple_list_item_single_choice, mFavoriteList);
         mGestureDetector = new GestureDetector(context, mGestureListener);
+        mGestureDetector.setIsLongpressEnabled(false);
     }
 
     @Override
@@ -585,6 +588,29 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
                     });
             return mCloseButton;
         }
+        if (buttonId == SettingsActivity.BUTTON_MENU) {
+            mMenuButton = getActionButtonTemplate(mContext.getResources()
+                    .getDrawable(R.drawable.ic_menus));
+            mMenuButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    mVirtualMenuKey = true;
+                    hide(false);
+                }
+            });
+            mMenuButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(
+                            mContext,
+                            mContext.getResources().getString(
+                                    R.string.menu_help), Toast.LENGTH_SHORT)
+                            .show();
+                    return true;
+                }
+            });
+            return mMenuButton;
+        }
+
         return null;
     }
 
@@ -1068,6 +1094,11 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
         if (mVirtualBackKey && !mConfiguration.mRestrictedMode) {
             Utils.triggerVirtualKeypress(mHandler, KeyEvent.KEYCODE_BACK);
         }
+        mVirtualBackKey = false;
+        if (mVirtualMenuKey && !mConfiguration.mRestrictedMode) {
+            Utils.triggerVirtualKeypress(mHandler, KeyEvent.KEYCODE_MENU);
+        }
+        mVirtualMenuKey = false;
     }
 
     public synchronized void preHide() {

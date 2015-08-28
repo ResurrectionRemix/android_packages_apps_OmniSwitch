@@ -37,6 +37,7 @@
 		<item>@string/back</item>
 		<item>@string/lock_to_app</item>
 		<item>@string/close</item>
+		<item>@string/menu</item>
 	</string-array>
 	<string-array name="gravity_entries" translatable="false">
 		<item>@string/gravity_center</item>
@@ -53,6 +54,8 @@
 		<item>@string/kill_all_apps</item>
 		<item>@string/kill_other_apps</item>
 		<item>@string/lock_to_app</item>
+		<item>@string/toggle_last_app</item>
+		<item>@string/menu</item>
 	</string-array>
 	<string-array name="button_pos_entries" translatable="false">
 		<item>@string/button_pos_top</item>

@@ -504,7 +504,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
         params.y = mConfiguration.getCurrentOffsetStart()
                 + mConfiguration.mDragHandleHeight / 2
                 - mConfiguration.getItemMaxHeight() / 2
-                - (mButtonsVisible ? mConfiguration.mActionIconSizePx : 0);
+                - (mButtonsVisible ? mConfiguration.mActionSizePx : 0);
 
         return params;
     }

@@ -623,7 +623,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     protected int getCurrentOverlayWidth() {
         return getCurrentThumbWidth()
                 + (mShowFavorites ? mConfiguration.mMaxWidth : 0)
-                + (isButtonVisible() ? mConfiguration.mActionIconSizePx : 0);
+                + (isButtonVisible() ? mConfiguration.mActionSizePx : 0);
     }
 
     private int getCurrentThumbWidth() {

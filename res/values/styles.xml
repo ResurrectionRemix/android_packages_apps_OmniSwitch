@@ -16,6 +16,8 @@
  -->
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+<style name="Theme.Material.Settings" parent="@android:style/Theme.Material.Settings"/>
+
     <!-- Showcase/cling -->
     <style name="ShowcaseButton">
         <item name="android:layout_width">wrap_content</item>

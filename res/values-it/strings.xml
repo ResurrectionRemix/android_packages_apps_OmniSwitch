@@ -51,7 +51,7 @@
     <string name="favorite_apps_config_title">Gestisci preferiti</string>
     <string name="favorite_apps_config_summary">Definisci le applicazioni visibili nella vista preferiti</string>
     <string name="favorite_apps_add_dialog_title">Aggiungi applicazioni</string>
-    <string name="favorite_add">Add\u2026</string>
+    <string name="favorite_add">Aggiungi\u2026</string>
     <string name="reset">Predefinito</string>
     <string name="toggle_last_app_help">Switch all\'ultima applicazione</string>
     <string name="kill_all_apps_help">Chiudi tutte le applicazioni</string>

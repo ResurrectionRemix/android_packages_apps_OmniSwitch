@@ -69,7 +69,7 @@ public class SwitchService extends Service {
 
             mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-            String layoutStyle = mPrefs.getString(SettingsActivity.PREF_LAYOUT_STYLE, "0");
+            String layoutStyle = mPrefs.getString(SettingsActivity.PREF_LAYOUT_STYLE, "1");
             mManager = new SwitchManager(this, Integer.valueOf(layoutStyle));
 
             mReceiver = new RecentsReceiver();

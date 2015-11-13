@@ -25,7 +25,7 @@
 	<color name="button_bg_flat_color">#424242</color>
 	<color name="ripple_material_light">#40000000</color>
 	<color name="ripple_material_dark">#40ffffff</color>
-	<color name="material_green">#009587</color>
+	<color name="material_green">#ff009587</color>
 	<color name="fake_window_shade_color">#40424242</color>
 	<color name="rambar_left_color">#ff2196f3</color>
 	<color name="rambar_middle_color">#ff2196f3</color>

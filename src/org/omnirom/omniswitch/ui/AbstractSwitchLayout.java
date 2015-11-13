@@ -827,12 +827,13 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     protected void handleLongPressRecent(final TaskDescription ad, View view) {
         final Context wrapper = new ContextThemeWrapper(mContext,
                 R.style.PopupMenu);
+        final String intentStr = getRecentsItemIntent(ad);
         final PopupMenu popup = new PopupMenu(wrapper, view);
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.recent_popup_menu,
                 popup.getMenu());
         popup.getMenu().findItem(R.id.package_add_favorite)
-                .setEnabled(!mFavoriteList.contains(ad.getIntent().toUri(0)));
+                .setEnabled(intentStr != null && !mFavoriteList.contains(intentStr));
         popup.getMenu().findItem(R.id.package_lock_task)
                 .setEnabled(Utils.isLockToAppEnabled(mContext));
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -843,21 +844,9 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
                     mRecentsManager.startApplicationDetailsActivity(ad
                             .getPackageName());
                 } else if (item.getItemId() == R.id.package_add_favorite) {
-                    Intent intent = ad.getIntent();
-                    String intentStr = intent.toUri(0);
-                    PackageManager.PackageItem packageItem = PackageManager
-                            .getInstance(mContext).getPackageItem(intentStr);
-                    if (packageItem == null) {
-                        // find a matching available package by matching thing
-                        // like
-                        // package name
-                        packageItem = PackageManager.getInstance(mContext)
-                                .getPackageItemByComponent(intent);
-                        if (packageItem == null) {
-                            Log.d(TAG, "failed to add " + intentStr);
-                            return false;
-                        }
-                        intentStr = packageItem.getIntent();
+                    if (intentStr == null) {
+                        Log.d(TAG, "failed to add " + ad.getIntent().toUri(0));
+                        return false;
                     }
                     Utils.addToFavorites(mContext, intentStr, mFavoriteList);
                 } else if (item.getItemId() == R.id.package_lock_task) {
@@ -878,6 +867,25 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
             }
         });
         popup.show();
+    }
+
+    private String getRecentsItemIntent(final TaskDescription ad) {
+        Intent intent = ad.getIntent();
+        String intentStr = intent.toUri(0);
+        PackageManager.PackageItem packageItem = PackageManager
+                .getInstance(mContext).getPackageItem(intentStr);
+        if (packageItem == null) {
+            // find a matching available package by matching thing
+            // like
+            // package name
+            packageItem = PackageManager.getInstance(mContext)
+                    .getPackageItemByComponent(intent);
+            if (packageItem == null) {
+                return null;
+            }
+            intentStr = packageItem.getIntent();
+        }
+        return intentStr;
     }
 
     protected void handleLongPressFavorite(

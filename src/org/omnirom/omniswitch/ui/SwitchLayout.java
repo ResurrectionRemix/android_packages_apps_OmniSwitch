@@ -271,6 +271,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
         mBackgroundProcessText.setTextColor(Color.WHITE);
 
         mAppDrawer = (GridView) mView.findViewById(R.id.app_drawer);
+        mAppDrawer.setVerticalScrollBarEnabled(false);
         mAppDrawer.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,

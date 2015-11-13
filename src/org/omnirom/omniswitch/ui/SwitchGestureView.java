@@ -494,8 +494,8 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         if (mConfiguration.mLocation == 1) {
             mCurrentDragHandleImage = BitmapUtils.rotate(mContext.getResources(), mCurrentDragHandleImage, 180);
         }
-        mCurrentDragHandleImage=BitmapUtils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor, mCurrentDragHandleImage);
-        mCurrentDragHandleImage.setAlpha((int) (255 * mConfiguration.mDragHandleOpacity));
+        mCurrentDragHandleImage=BitmapUtils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor & 0x00FFFFFF, mCurrentDragHandleImage);
+        mCurrentDragHandleImage.setAlpha((mConfiguration.mDragHandleColor >> 24) & 0x000000FF);
 
         toggleDragHandle(shown);
     }

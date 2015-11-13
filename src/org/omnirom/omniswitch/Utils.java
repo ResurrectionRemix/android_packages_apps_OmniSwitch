@@ -31,6 +31,7 @@ import android.hardware.input.InputManager;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
@@ -179,5 +180,9 @@ public class Utils {
         } catch (SettingNotFoundException e) {
             return false;
         }
+    }
+
+    public static boolean isMultiStackEnabled(Context context) {
+        return "true".equals(SystemProperties.get("persist.sys.debug.multi_window"));
     }
 }

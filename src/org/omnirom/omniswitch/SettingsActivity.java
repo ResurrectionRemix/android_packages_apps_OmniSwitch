@@ -57,8 +57,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_ICON_SIZE = "icon_size";
     public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location_new";
     private static final String PREF_ADJUST_HANDLE = "adjust_handle";
-    public static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
-    public static final String PREF_DRAG_HANDLE_OPACITY = "drag_handle_opacity";
+    public static final String PREF_DRAG_HANDLE_COLOR_NEW = "drag_handle_color_new";
     public static final String PREF_SHOW_RAMBAR = "show_rambar";
     public static final String PREF_SHOW_LABELS = "show_labels";
     public static final String PREF_FAVORITE_APPS_CONFIG = "favorite_apps_config";
@@ -121,7 +120,6 @@ public class SettingsActivity extends PreferenceActivity implements
     private String[] mButtonEntries;
     private Drawable[] mButtonImages;
     private String mButtons;
-    private SeekBarPreference mDragHandleOpacity;
     private ListPreference mGravity;
     private Preference mIconpack;
     private Switch mToggleServiceSwitch;
@@ -175,9 +173,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mOpacity = (SeekBarPreference) findPreference(PREF_OPACITY);
         mOpacity.setInitValue(mPrefs.getInt(PREF_OPACITY, 70));
         mOpacity.setOnPreferenceChangeListener(this);
-        mDragHandleOpacity = (SeekBarPreference) findPreference(PREF_DRAG_HANDLE_OPACITY);
-        mDragHandleOpacity.setInitValue(mPrefs.getInt(PREF_DRAG_HANDLE_OPACITY, 100));
-        mDragHandleOpacity.setOnPreferenceChangeListener(this);
         mAdjustHandle = (Preference) findPreference(PREF_ADJUST_HANDLE);
         mButtonConfig = (Preference) findPreference(PREF_BUTTON_CONFIG);
         mButtons = mPrefs.getString(PREF_BUTTONS_NEW, PREF_BUTTON_DEFAULT_NEW);
@@ -307,10 +302,6 @@ public class SettingsActivity extends PreferenceActivity implements
             float val = Float.parseFloat((String) newValue);
             mPrefs.edit().putInt(PREF_OPACITY, (int) val).commit();
             return true;
-        } else if (preference == mDragHandleOpacity) {
-            float val = Float.parseFloat((String) newValue);
-            mPrefs.edit().putInt(PREF_DRAG_HANDLE_OPACITY, (int) val).commit();
-            return true;
         } else if (preference == mGravity) {
             String value = (String) newValue;
             int idx = mGravity.findIndexOfValue(value);
@@ -397,7 +388,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.settings_menu, menu);
-        boolean startOnBoot = mPrefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, false);
+        boolean startOnBoot = mPrefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, true);
         mToggleServiceSwitch = (Switch) menu.findItem(R.id.toggle_service).getActionView().findViewById(R.id.switch_item);
         mToggleServiceSwitch.setChecked(SwitchService.isRunning() && mPrefs.getBoolean(SettingsActivity.PREF_ENABLE, startOnBoot));
         mToggleServiceSwitch.setOnClickListener(new OnClickListener(){

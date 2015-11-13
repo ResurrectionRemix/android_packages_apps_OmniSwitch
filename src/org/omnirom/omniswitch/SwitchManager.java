@@ -314,7 +314,7 @@ public class SwitchManager {
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         if (key != null && key.equals(SettingsActivity.PREF_LAYOUT_STYLE)) {
-            String layoutStyle = prefs.getString(SettingsActivity.PREF_LAYOUT_STYLE, "0");
+            String layoutStyle = prefs.getString(SettingsActivity.PREF_LAYOUT_STYLE, "1");
             mLayoutStyle = Integer.valueOf(layoutStyle);
             switchLayout();
         }

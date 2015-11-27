@@ -388,9 +388,8 @@ public class SettingsActivity extends PreferenceActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.settings_menu, menu);
-        boolean startOnBoot = mPrefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, true);
         mToggleServiceSwitch = (Switch) menu.findItem(R.id.toggle_service).getActionView().findViewById(R.id.switch_item);
-        mToggleServiceSwitch.setChecked(SwitchService.isRunning() && mPrefs.getBoolean(SettingsActivity.PREF_ENABLE, startOnBoot));
+        mToggleServiceSwitch.setChecked(SwitchService.isRunning() && mPrefs.getBoolean(SettingsActivity.PREF_ENABLE, false));
         mToggleServiceSwitch.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View v) {

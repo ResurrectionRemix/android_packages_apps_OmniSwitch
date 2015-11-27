@@ -32,7 +32,7 @@ public class BootReceiver extends BroadcastReceiver {
         try {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             boolean startOnBoot = prefs.getBoolean(SettingsActivity.PREF_START_ON_BOOT, true);
-            if (startOnBoot && prefs.getBoolean(SettingsActivity.PREF_ENABLE, startOnBoot)) {
+            if (startOnBoot && prefs.getBoolean(SettingsActivity.PREF_ENABLE, false)) {
                 Intent startIntent = new Intent(context, SwitchService.class);
                 context.startService(startIntent);
             }

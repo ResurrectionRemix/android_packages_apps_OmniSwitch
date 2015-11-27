@@ -114,7 +114,8 @@
 	<string name="button_pos_title">Button position</string>
 	<string name="button_pos_top">Top/Left</string>
 	<string name="button_pos_bottom">Bottom/Right</string>
-	<string name="bg_style_solid">Solid</string>
+	<string name="bg_style_solid_light">Light</string>
+	<string name="bg_style_solid_dark">Dark</string>
 	<string name="bg_style_transparent">Transparent</string>
 	<string name="bg_style_title">Background style</string>
 	<string name="lock_to_app">Pin app</string>
@@ -144,5 +145,5 @@
 	<string name="app_filter_running_title">Running only</string>
 	<string name="menu">Menu</string>
 	<string name="menu_help">Menu</string>
-
+	<string name="enable_title">Enable</string>
 </resources>

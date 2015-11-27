@@ -251,6 +251,7 @@ public class BitmapUtils {
         Typeface font = Typeface.create("sans-serif", Typeface.NORMAL);
         textPaint.setTypeface(font);
         textPaint.setColor(Color.WHITE);
+        textPaint.setShadowLayer(5.0f, 0.0f, 0.0f, Color.BLACK);
         textPaint.setTextAlign(Paint.Align.LEFT);
         final int startTextPx = iconBorderSizePx + textInsetPx;
         final int textSize = Math.round(14 * density);
@@ -266,8 +267,6 @@ public class BitmapUtils {
             } else {
                 canvas.drawRect(0, 0, width, iconBorderSizePx, bgPaint);
             }
-        } else {
-            textPaint.setShadowLayer(5, 0, 0, Color.BLACK);
         }
         final float iconInset = (iconBorderSizePx - iconSizePx) / 2;
         canvas.drawBitmap(((BitmapDrawable) iconResized).getBitmap(), iconInset, iconInset, null);
@@ -289,7 +288,7 @@ public class BitmapUtils {
     }
 
     public static Drawable memImage(Resources resources, int size,
-            float density, boolean horizontal, boolean bgStyle, String line1, String line2) {
+            float density, boolean horizontal, String line1, String line2) {
         final Canvas canvas = new Canvas();
         final int borderPx = Math.round(5 * density);
         final int width = size;
@@ -306,9 +305,8 @@ public class BitmapUtils {
         textPaint.setTextAlign(Paint.Align.LEFT);
         final int textSize = Math.round(14 * density);
         textPaint.setTextSize(textSize);
-        if (!bgStyle) {
-            textPaint.setShadowLayer(5.0f, 0.0f, 0.0f, Color.BLACK);
-        }
+        textPaint.setShadowLayer(5.0f, 0.0f, 0.0f, Color.BLACK);
+
         line1 = TextUtils.ellipsize(line1, textPaint, height, TextUtils.TruncateAt.END).toString();
         line2 = TextUtils.ellipsize(line2, textPaint, height, TextUtils.TruncateAt.END).toString();
 

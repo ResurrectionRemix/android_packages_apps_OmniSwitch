@@ -36,7 +36,7 @@
             android:name="org.omnirom.omniswitch.SettingsActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Material.Settings" >
+            android:theme="@style/SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

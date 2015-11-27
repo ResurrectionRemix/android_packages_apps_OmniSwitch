@@ -29,8 +29,6 @@ import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchManager;
 import org.omnirom.omniswitch.TaskDescription;
 import org.omnirom.omniswitch.Utils;
-import org.omnirom.omniswitch.showcase.ShowcaseView;
-import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
@@ -64,12 +62,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class SwitchGestureView implements OnShowcaseEventListener {
+public class SwitchGestureView {
     private final static String TAG = "SwitchGestureView";
     private static final boolean DEBUG = false;
 
-    private final static String KEY_SHOWCASE_HANDLE = "showcase_handle_done";
-    private final static String KEY_SHOWCASE_QUICK = "showcase_quick_done";
     private static final int FLIP_DURATION_DEFAULT = 200;
 
     private Context mContext;
@@ -83,10 +79,7 @@ public class SwitchGestureView implements OnShowcaseEventListener {
     private Drawable mDragHandleImage;
     private Drawable mDragHandleHiddenImage;
     private Drawable mCurrentDragHandleImage;
-    private ShowcaseView mShowcaseView;
     private SharedPreferences mPrefs;
-    private boolean mShowcaseHandleDone;
-    private boolean mShowcaseQuickDone;
     private SwitchConfiguration mConfiguration;
     private boolean mHidden = true;
     private Handler mHandler;
@@ -109,17 +102,9 @@ public class SwitchGestureView implements OnShowcaseEventListener {
                 Log.d(TAG, "mLongPressRunnable");
             }
             mRecentsManager.hideHidden();
-            if(!mShowcaseQuickDone){
-                mView.post(new Runnable(){
-                    @Override
-                    public void run() {
-                        startShowcaseQuickSwitcher();
-                    }});
-            } else {
-                mLongPress = true;
-                mHandleRecentsUpdate = true;
-                RecentTasksLoader.getInstance(mContext).loadTasksInBackground();
-            }
+            mLongPress = true;
+            mHandleRecentsUpdate = true;
+            RecentTasksLoader.getInstance(mContext).loadTasksInBackground();
         }};
     private PackageTextView[] mCurrentItemEnv= new PackageTextView[3];
 
@@ -508,8 +493,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
 
         buildFavoriteItems(mConfiguration.mFavoriteList);
         buildActionList();
-        mShowcaseQuickDone = prefs.getBoolean(KEY_SHOWCASE_QUICK, false);
-        mShowcaseHandleDone = prefs.getBoolean(KEY_SHOWCASE_HANDLE, false);
 
         if(key == null || key.equals(SettingsActivity.PREF_DRAG_HANDLE_ENABLE)){
             if(mConfiguration.mDragHandleShow){
@@ -529,13 +512,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
         }
         mDragButton.setLayoutParams(getDragHandleLayoutParamsSmall());
         mWindowManager.addView(mView, getParamsSmall());
-        if(!mShowcaseHandleDone){
-            mView.post(new Runnable(){
-                @Override
-                public void run() {
-                    startShowcaseDragHandle();
-                }});
-        }
         mShowing = true;
         mEnabled = true;
     }
@@ -573,46 +549,6 @@ public class SwitchGestureView implements OnShowcaseEventListener {
             updateDragHandleImage(true);
         }
         mEnabled = true;
-    }
-
-    private void startShowcaseDragHandle() {
-        mPrefs.edit().putBoolean(KEY_SHOWCASE_HANDLE, true).commit();
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        co.hideOnClickOutside = true;
-
-        Point size = new Point();
-        mWindowManager.getDefaultDisplay().getSize(size);
-
-        mShowcaseView = ShowcaseView.insertShowcaseView(mConfiguration.mLocation == 1 ? 0 : size.x, 
-                mConfiguration.getCurrentOffsetStart() + (mConfiguration.getCurrentOffsetEnd() - mConfiguration.getCurrentOffsetStart())/2, mWindowManager, mContext,
-                R.string.sc_drag_handle_title, R.string.sc_drag_handle_body, co);
-
-        mShowcaseView.setOnShowcaseEventListener(this);
-        mShowcaseHandleDone = true;
-    }
-
-    private void startShowcaseQuickSwitcher() {
-        mPrefs.edit().putBoolean(KEY_SHOWCASE_QUICK, true).commit();
-        ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-        co.hideOnClickOutside = true;
-
-        Point size = new Point();
-        mWindowManager.getDefaultDisplay().getSize(size);
-
-        mShowcaseView = ShowcaseView.insertShowcaseView(mConfiguration.mLocation == 1 ? 0 : size.x,
-                mConfiguration.getCurrentOffsetStart() + (mConfiguration.getCurrentOffsetEnd() - mConfiguration.getCurrentOffsetStart())/2, mWindowManager, mContext,
-                R.string.sc_quick_switcher_title, R.string.sc_quick_switcher_body, co);
-
-        mShowcaseView.setOnShowcaseEventListener(this);
-        mShowcaseQuickDone = true;
-    }
-
-    @Override
-    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-    }
-
-    @Override
-    public void onShowcaseViewShow(ShowcaseView showcaseView) {
     }
 
     public boolean isShowing() {

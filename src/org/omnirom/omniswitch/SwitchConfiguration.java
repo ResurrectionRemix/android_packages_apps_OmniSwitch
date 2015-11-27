@@ -67,8 +67,7 @@ public class SwitchConfiguration {
     public int mLimitItemsX = 10;
     public int mHorizontalDividerWidth;
     public float mLabelFontSize;
-    public int mButtonPos = 0; // 0 = top 1 = bottom
-    public int mBgStyle = 0; // 0 = solid 1 = transparent
+    public int mButtonPos = 1; // 0 = top 1 = bottom
     public List<String> mFavoriteList = new ArrayList<String>();
     public boolean mSpeedSwitcher = true;
     public boolean mFilterActive = true;
@@ -86,14 +85,23 @@ public class SwitchConfiguration {
     public float mThumbRatio = 1.0f;
     public IconSize mIconSizeDesc = IconSize.NORMAL;
     public int mIconBorderHorizontal = 8; // in dp
+    public BgStyle mBgStyle = BgStyle.SOLID_LIGHT;
 
+    // old pref slots
     private static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
     private static final String PREF_DRAG_HANDLE_OPACITY = "drag_handle_opacity";
+    private static final String PREF_FLAT_STYLE = "flat_style";
 
     public enum IconSize {
         SMALL,
         NORMAL,
         LARGE
+    }
+
+    public enum BgStyle {
+        TRANSPARENT,
+        SOLID_LIGHT,
+        SOLID_DARK
     }
 
     public static SwitchConfiguration getInstance(Context context) {
@@ -112,7 +120,7 @@ public class SwitchConfiguration {
         Point size = new Point();
         mWindowManager.getDefaultDisplay().getSize(size);
         mDefaultColor = context.getResources()
-                .getColor(R.color.material_green);
+                .getColor(R.color.default_drag_handle_color);
         mDefaultHandleHeight = Math.round(100 * mDensity);
         mRestrictedMode = !hasSystemPermission(context);
         mLevelHeight = Math.round(80 * mDensity);
@@ -135,11 +143,12 @@ public class SwitchConfiguration {
     public void initDefaults(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (!prefs.contains(SettingsActivity.PREF_BG_STYLE) &&
-                prefs.contains(SettingsActivity.PREF_FLAT_STYLE)) {
-            boolean flatStyle = prefs.getBoolean(SettingsActivity.PREF_FLAT_STYLE, true);
+                prefs.contains(PREF_FLAT_STYLE)) {
+            boolean flatStyle = prefs.getBoolean(PREF_FLAT_STYLE, true);
             prefs.edit().putString(SettingsActivity.PREF_BG_STYLE, flatStyle ? "0" : "1").commit();
         }
-        if (!prefs.contains(SettingsActivity.PREF_DRAG_HANDLE_COLOR_NEW)) {
+        if (!prefs.contains(SettingsActivity.PREF_DRAG_HANDLE_COLOR_NEW) &&
+                prefs.contains(PREF_DRAG_HANDLE_COLOR)) {
             int dragHandleColor = prefs.getInt(PREF_DRAG_HANDLE_COLOR, mDefaultColor);
             int opacity = prefs.getInt(PREF_DRAG_HANDLE_OPACITY, 100);
             dragHandleColor = (dragHandleColor & 0x00FFFFFF) + (opacity << 24);
@@ -198,10 +207,18 @@ public class SwitchConfiguration {
         mSpeedSwitchButtons = Utils.buttonStringToMap(prefs.getString(SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_NEW,
                 SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW), SettingsActivity.PREF_SPEED_SWITCHER_BUTTON_DEFAULT_NEW);
         mLimitItemsX = prefs.getInt(SettingsActivity.PREF_SPEED_SWITCHER_ITEMS, 10);
-        String buttonPos = prefs.getString(SettingsActivity.PREF_BUTTON_POS, "0");
+        String buttonPos = prefs.getString(SettingsActivity.PREF_BUTTON_POS, "1");
         mButtonPos = Integer.valueOf(buttonPos);
+
         String bgStyle = prefs.getString(SettingsActivity.PREF_BG_STYLE, "0");
-        mBgStyle = Integer.valueOf(bgStyle);
+        int bgStyleInt = Integer.valueOf(bgStyle);
+        if (bgStyleInt == 0) {
+            mBgStyle = BgStyle.SOLID_LIGHT;
+        } else if(bgStyleInt == 1) {
+            mBgStyle = BgStyle.TRANSPARENT;
+        } else {
+            mBgStyle = BgStyle.SOLID_DARK;
+        }
 
         mFavoriteList.clear();
         String favoriteListString = prefs.getString(SettingsActivity.PREF_FAVORITE_APPS, "");

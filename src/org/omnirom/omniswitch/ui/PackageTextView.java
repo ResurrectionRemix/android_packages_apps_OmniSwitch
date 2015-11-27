@@ -135,7 +135,7 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
                         getLabel().toString(),
                         configuration.mDensity,
                         configuration.mOverlayIconSizeDp,
-                        configuration.mBgStyle == 0,
+                        configuration.mBgStyle != SwitchConfiguration.BgStyle.TRANSPARENT,
                         configuration.mShowLabels,
                         mCanSideHeader ? configuration.mSideHeader : false,
                         configuration.getOverlayHeaderWidth());

@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.omnirom.omniswitch.PackageManager;
-import org.omnirom.omniswitch.showcase.ShowcaseView;
-import org.omnirom.omniswitch.showcase.ShowcaseView.OnShowcaseEventListener;
 import org.omnirom.omniswitch.TaskDescription;
 import org.omnirom.omniswitch.Utils;
 import org.omnirom.omniswitch.SwitchConfiguration;
@@ -32,6 +30,7 @@ import org.omnirom.omniswitch.R;
 import org.omnirom.omniswitch.SettingsActivity;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -69,8 +68,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public abstract class AbstractSwitchLayout implements ISwitchLayout,
-        OnShowcaseEventListener {
+public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected static final int FAVORITE_DURATION = 200;
     protected static final int FLIP_DURATION = 500;
     protected static final int SHOW_DURATION = 350;
@@ -78,12 +76,13 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     protected static final int HIDE_DURATION = 350;
     protected static final int HIDE_DURATION_FAST = 200;
 
-    protected static final int ROTATE_90_DEGREE = 90;
-    protected static final int ROTATE_180_DEGREE = 180;
-    protected static final int ROTATE_270_DEGREE = 270;
+    protected static final float ROTATE_0_DEGREE = 0f;
+    protected static final float ROTATE_90_DEGREE = 90f;
+    protected static final float ROTATE_180_DEGREE = 180f;
+    protected static final float ROTATE_270_DEGREE = 270f;
+    protected static final float ROTATE_360_DEGREE = 360f;
     protected static final String TAG = "SwitchLayout";
     protected static final boolean DEBUG = false;
-    protected static final String KEY_SHOWCASE_FAVORITE = "showcase_favorite_done";
 
     protected WindowManager mWindowManager;
     protected LayoutInflater mInflater;
@@ -118,10 +117,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     protected FavoriteListAdapter mFavoriteListAdapter;
     protected FrameLayout mPopupView;
     protected View mView;
-    protected ShowcaseView mShowcaseView;
-    protected boolean mShowcaseDone;
-    protected float mOpenFavoriteX;
-    protected float mOpenFavoriteY;
     protected Animator mToggleOverlayAnim;
     protected float mCurrentSlideWidth;
     protected float mCurrentDistance;
@@ -143,7 +138,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     protected LinearLayout mButtonListContainer;
     protected LinearLayout mRecents;
     protected ImageView mOpenFavorite;
-    protected Animator mShowFavAnim;
+    protected AnimatorSet mShowFavAnim;
 
     protected GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
         @Override
@@ -675,7 +670,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
 
     protected PackageTextView getPackageItemTemplate() {
         PackageTextView item = new PackageTextView(mContext);
-        if (mConfiguration.mBgStyle == 0) {
+        if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
             item.setTextColor(Color.BLACK);
             item.setShadowLayer(0, 0, 0, Color.BLACK);
         } else {
@@ -687,7 +682,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
         item.setGravity(Gravity.CENTER);
         item.setLayoutParams(getListItemParams());
         item.setMaxLines(1);
-        item.setBackgroundResource(mConfiguration.mBgStyle == 0 ? R.drawable.ripple_dark
+        item.setBackgroundResource(mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT ? R.drawable.ripple_dark
                 : R.drawable.ripple_light);
         return item;
     }
@@ -826,7 +821,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
 
     protected void handleLongPressRecent(final TaskDescription ad, View view) {
         final Context wrapper = new ContextThemeWrapper(mContext,
-                R.style.PopupMenu);
+                mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT
+                ? R.style.PopupMenuLight : R.style.PopupMenuDark);
         final String intentStr = getRecentsItemIntent(ad);
         final PopupMenu popup = new PopupMenu(wrapper, view);
         mPopup = popup;
@@ -896,7 +892,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     protected void handleLongPressFavorite(
             final PackageManager.PackageItem packageItem, View view) {
         final Context wrapper = new ContextThemeWrapper(mContext,
-                R.style.PopupMenu);
+                mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT
+                ? R.style.PopupMenuLight : R.style.PopupMenuDark);
         final PopupMenu popup = new PopupMenu(wrapper, view);
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.favorite_popup_menu,
@@ -926,7 +923,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     protected void handleLongPressAppDrawer(
             final PackageManager.PackageItem packageItem, View view) {
         final Context wrapper = new ContextThemeWrapper(mContext,
-                R.style.PopupMenu);
+                mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT
+                ? R.style.PopupMenuLight : R.style.PopupMenuDark);
         final PopupMenu popup = new PopupMenu(wrapper, view);
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.package_popup_menu,
@@ -954,35 +952,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
             }
         });
         popup.show();
-    }
-
-    protected boolean startShowcaseFavorite() {
-        if (!mPrefs.getBoolean(KEY_SHOWCASE_FAVORITE, false)) {
-            mPrefs.edit().putBoolean(KEY_SHOWCASE_FAVORITE, true).commit();
-            ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-            co.hideOnClickOutside = true;
-
-            Point size = new Point();
-            mWindowManager.getDefaultDisplay().getSize(size);
-
-            mShowcaseView = ShowcaseView.insertShowcaseView(mOpenFavoriteX,
-                    mOpenFavoriteY, mWindowManager, mContext,
-                    R.string.sc_favorite_title, R.string.sc_favorite_body, co);
-
-            mShowcaseView.setOnShowcaseEventListener(this);
-            mShowcaseDone = true;
-            return true;
-        }
-        mShowcaseDone = true;
-        return false;
-    }
-
-    @Override
-    public void onShowcaseViewHide(ShowcaseView showcaseView) {
-    }
-
-    @Override
-    public void onShowcaseViewShow(ShowcaseView showcaseView) {
     }
 
     @Override
@@ -1221,15 +1190,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
         mCurrentSlideWidth = 0;
         mEnabled = true;
         afterShowDone();
-
-        if (mHasFavorites && !mShowcaseDone) {
-            mPopupView.post(new Runnable() {
-                @Override
-                public void run() {
-                    startShowcaseFavorite();
-                }
-            });
-        }
     }
 
     @Override
@@ -1258,6 +1218,10 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     @Override
     public void shutdownService() {
         // remember on reboot
+        storeExpandedFavoritesState();
+    }
+
+    protected void storeExpandedFavoritesState() {
         mPrefs.edit()
                 .putBoolean(SettingsActivity.PREF_SHOW_FAVORITE, mShowFavorites)
                 .commit();

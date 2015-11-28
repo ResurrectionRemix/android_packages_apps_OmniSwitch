@@ -870,22 +870,27 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout,
     }
 
     private String getRecentsItemIntent(final TaskDescription ad) {
-        Intent intent = ad.getIntent();
-        String intentStr = intent.toUri(0);
-        PackageManager.PackageItem packageItem = PackageManager
-                .getInstance(mContext).getPackageItem(intentStr);
-        if (packageItem == null) {
-            // find a matching available package by matching thing
-            // like
-            // package name
-            packageItem = PackageManager.getInstance(mContext)
-                    .getPackageItemByComponent(intent);
+        try {
+            Intent intent = ad.getIntent();
+            String intentStr = intent.toUri(0);
+            PackageManager.PackageItem packageItem = PackageManager
+                    .getInstance(mContext).getPackageItem(intentStr);
             if (packageItem == null) {
-                return null;
+                // find a matching available package by matching thing
+                // like
+                // package name
+                packageItem = PackageManager.getInstance(mContext)
+                        .getPackageItemByComponent(intent);
+                if (packageItem == null) {
+                    return null;
+                }
+                intentStr = packageItem.getIntent();
             }
-            intentStr = packageItem.getIntent();
+            return intentStr;
+        } catch (Exception e) {
+            // toUri can throw an exception
+            return null;
         }
-        return intentStr;
     }
 
     protected void handleLongPressFavorite(

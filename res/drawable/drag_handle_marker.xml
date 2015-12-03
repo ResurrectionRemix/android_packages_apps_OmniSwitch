@@ -17,5 +17,5 @@
 -->
 <bitmap xmlns:android="http://schemas.android.com/apk/res/android"
     android:src="@drawable/drag_handle_marker_alpha"
-    android:tint="#4caf50" />
+    android:tint="@color/colorPrimary" />
 

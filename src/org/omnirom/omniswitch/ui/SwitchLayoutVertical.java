@@ -257,6 +257,19 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mView.setOnTouchListener(mDragHandleListener);
         mPopupView.setOnTouchListener(mDragHandleListener);
         mPopupView.setOnKeyListener(new PopupKeyListener());
+
+        mButtonList = (ScrollView) mView
+                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_top
+                        : R.id.button_list_bottom);
+        mButtonList.setVerticalScrollBarEnabled(false);
+        mButtonListItems = (LinearLayout) mView
+                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_items_top
+                        : R.id.button_list_items_bottom);
+        mButtonListContainer = (LinearLayout) mView
+                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_container_top
+                        : R.id.button_list_container_bottom);
+
+        updateStyle();
     }
 
     @Override
@@ -301,40 +314,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
     @Override
     protected synchronized void initView() {
-        if (mButtonListContainer != null) {
-            mButtonListContainer.setVisibility(View.GONE);
-        }
-        mButtonList = (ScrollView) mView
-                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_top
-                        : R.id.button_list_bottom);
-        mButtonList.setVerticalScrollBarEnabled(false);
-        mButtonListItems = (LinearLayout) mView
-                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_items_top
-                        : R.id.button_list_items_bottom);
-        mButtonListContainer = (LinearLayout) mView
-                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_container_top
-                        : R.id.button_list_container_bottom);
-        mButtonListContainer.setVisibility(View.VISIBLE);
-
-        updateStyle();
-
-        if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
-            mView.setBackground(mContext.getResources().getDrawable(
-                    R.drawable.overlay_bg_flat));
-        } else if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_DARK) {
-            mView.setBackground(mContext.getResources().getDrawable(
-                    R.drawable.overlay_bg_flat_dark));
-        } else {
-            mView.setBackground(mContext.getResources().getDrawable(
-                    R.drawable.overlay_bg));
-            if (!mConfiguration.mDimBehind) {
-                mView.getBackground().setAlpha(
-                        (int) (255 * mConfiguration.mBackgroundOpacity));
-            } else {
-                mView.getBackground().setAlpha(0);
-            }
-        }
-
         mFavoriteListView.setLayoutParams(getListParams());
         mFavoriteListView.setSelection(0);
 
@@ -352,22 +331,10 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mAppDrawer.setVisibility(View.GONE);
         mAppDrawer.setSelection(0);
         mView.setTranslationX(0);
-
-        if (!mHasFavorites) {
-            mShowFavorites = false;
-        }
-
-        mFavoriteListView.setVisibility(mShowFavorites ? View.VISIBLE
-                : View.GONE);
-        enableOpenFavoriteButton();
-        mOpenFavorite.setRotation(getExpandRotation());
-
-        buildButtons();
-
-        mButtonsVisible = isButtonVisible();
-
         mVirtualBackKey = false;
         mShowThumbs = false;
+        enableOpenFavoriteButton(true);
+        mOpenFavorite.setRotation(getExpandRotation());
     }
 
     protected LinearLayout.LayoutParams getListParams() {
@@ -448,39 +415,39 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         if (DEBUG) {
             Log.d(TAG, "updatePrefs");
         }
-        mFavoriteListAdapter.notifyDataSetChanged();
-        if (mFavoriteListView != null) {
-            mFavoriteListView.setAdapter(mFavoriteListAdapter);
+        if (key != null && isPrefKeyForForceUpdate(key)) {
+            if (mFavoriteListView != null) {
+                mFavoriteListView.setAdapter(mFavoriteListAdapter);
+            }
+            if (mRecentList != null) {
+                mRecentList.setAdapter(mRecentListAdapter);
+            }
+            if (mAppDrawer != null) {
+                mAppDrawer.setAdapter(mAppDrawerListAdapter);
+            }
         }
-        mRecentListAdapter.notifyDataSetChanged();
-        if (mRecentList != null) {
-            mRecentList.setAdapter(mRecentListAdapter);
-        }
-        mAppDrawerListAdapter.notifyDataSetChanged();
-        if (mAppDrawer != null) {
-            mAppDrawer.setAdapter(mAppDrawerListAdapter);
-        }
-        createOpenFavoriteButton();
         buildButtonList();
         if (mConfiguration.mShowRambar) {
             addMemoryDisplay();
         }
+        if (mOpenFavorite == null) {
+            createOpenFavoriteButton();
+        }
         addOpenFavoriteButton();
+        if (mView != null) {
+            updateStyle();
+        }
     }
 
     @Override
     public void updateLayout() {
         try {
             if (mShowing) {
-                mFavoriteListAdapter.notifyDataSetChanged();
-                mFavoriteListView.setAdapter(mFavoriteListAdapter);
-
-                mRecentListAdapter.notifyDataSetChanged();
-                mRecentList.setAdapter(mRecentListAdapter);
+                mAppDrawer.setLayoutParams(getAppDrawerParams());
+                mAppDrawer.requestLayout();
 
                 mWindowManager.updateViewLayout(mPopupView,
                         getParams(mConfiguration.mBackgroundOpacity));
-                mAppDrawer.requestLayout();
             }
         } catch (Exception e) {
             // ignored
@@ -512,14 +479,14 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     protected void flipToAppDrawerNew() {
         mRecents.setVisibility(View.GONE);
         mAppDrawer.setVisibility(View.VISIBLE);
-        enableOpenFavoriteButton();
+        enableOpenFavoriteButton(false);
     }
 
     @Override
     protected void flipToRecentsNew() {
         mAppDrawer.setVisibility(View.GONE);
         mRecents.setVisibility(View.VISIBLE);
-        enableOpenFavoriteButton();
+        enableOpenFavoriteButton(true);
     }
 
     @Override
@@ -590,11 +557,9 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
     @Override
     protected LinearLayout.LayoutParams getButtonListItemParams() {
-        int buttonMargin = Math.round(2 * mConfiguration.mDensity);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, buttonMargin, 0, buttonMargin);
         return params;
     }
 
@@ -620,6 +585,29 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             mButtonListContainer.setBackground(null);
             mButtonListContainer.setOutlineProvider(null);
         }
+        if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
+            mView.setBackground(mContext.getResources().getDrawable(
+                    R.drawable.overlay_bg_flat));
+        } else if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_DARK) {
+            mView.setBackground(mContext.getResources().getDrawable(
+                    R.drawable.overlay_bg_flat_dark));
+        } else {
+            mView.setBackground(mContext.getResources().getDrawable(
+                    R.drawable.overlay_bg));
+            if (!mConfiguration.mDimBehind) {
+                mView.getBackground().setAlpha(
+                        (int) (255 * mConfiguration.mBackgroundOpacity));
+            } else {
+                mView.getBackground().setAlpha(0);
+            }
+        }
+        if (!mHasFavorites) {
+            mShowFavorites = false;
+        }
+        mFavoriteListView.setVisibility(mShowFavorites ? View.VISIBLE
+                : View.GONE);
+        buildButtons();
+        mButtonsVisible = isButtonVisible();
     }
 
     private float getExpandRotation() {

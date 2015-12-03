@@ -162,8 +162,6 @@ public class FavoriteDialog extends AlertDialog implements
         super.onCreate(savedInstanceState);
 
         mConfiguration = SwitchConfiguration.getInstance(mContext);
-        //mIconSize = (int)(context.getResources().getDimension(com.android.internal.R.dimen.app_icon_size) /
-        //        context.getResources().getDisplayMetrics().density);
 
         mIconSize = mConfiguration.mIconSizeSettings;
         mFavoriteConfigList = (DragSortListView) view

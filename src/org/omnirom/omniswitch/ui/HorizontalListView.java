@@ -405,6 +405,15 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         invalidate();
     }
 
+    /**
+     * Causes all the views to be rebuilt and redrawn.
+     */
+    public void invalidateViews() {
+        mDataChanged = true;
+        requestLayout();
+        invalidate();
+    }
+
     private void initView() {
         mLeftViewAdapterIndex = -1;
         mRightViewAdapterIndex = -1;

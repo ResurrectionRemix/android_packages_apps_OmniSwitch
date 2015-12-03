@@ -20,8 +20,8 @@
     <style name="PopupMenuDark" parent="@android:style/Theme.Material">
     </style>
     <style name="SettingsTheme" parent="@android:style/Theme.Material.Settings">
-        <item name="android:colorAccent">#4caf50</item>
-        <item name="android:colorPrimary">#4caf50</item>
-        <item name="android:colorPrimaryDark">#388e3c</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
     </style>
 </resources>

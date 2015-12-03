@@ -30,7 +30,7 @@ public class PackageReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         if (DEBUG) Log.d("PackageReceiver", "onReceive " + intent.getAction());
         if (SwitchService.isRunning()){
-            PackageManager.getInstance(context).updatePackageList();
+            PackageManager.getInstance(context).reloadPackageList();
         }
     }
 }

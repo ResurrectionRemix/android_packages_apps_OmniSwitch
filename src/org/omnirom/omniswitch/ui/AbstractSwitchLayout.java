@@ -637,22 +637,15 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
 
     @Override
     public void updatePrefs(SharedPreferences prefs, String key) {
-        mFavoriteList.clear();
-        mFavoriteList.addAll(mConfiguration.mFavoriteList);
-
-        List<String> favoriteList = new ArrayList<String>();
-        favoriteList.addAll(mFavoriteList);
-        Iterator<String> nextFavorite = favoriteList.iterator();
-        while (nextFavorite.hasNext()) {
-            String intent = nextFavorite.next();
-            PackageManager.PackageItem packageItem = PackageManager
-                    .getInstance(mContext).getPackageItem(intent);
-            if (packageItem == null) {
-                Log.d(TAG, "failed to add " + intent);
-                mFavoriteList.remove(intent);
-            }
+        if (DEBUG) {
+            Log.d(TAG, "updatePrefs " + key);
         }
-        mHasFavorites = mFavoriteList.size() != 0;
+
+        updateFavoritesList();
+
+        if (key != null && key.equals(PackageManager.PACKAGES_UPDATED_TAG)) {
+            mAppDrawerListAdapter.notifyDataSetChanged();
+        }
     }
 
     protected abstract void flipToAppDrawerNew();
@@ -1236,6 +1229,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
             ImageView item = nextButton.next();
             mButtonListItems.addView(item, getButtonListItemParams());
         }
+        mButtonListContainer.setVisibility(mActionList.size() == 0 ? View.GONE : View.VISIBLE);
     }
 
     protected void buildButtonList() {
@@ -1278,8 +1272,41 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         });
     }
 
-    protected void enableOpenFavoriteButton() {
-        mOpenFavorite.setVisibility((mHasFavorites && mAppDrawer
-                .getVisibility() == View.GONE) ? View.VISIBLE : View.GONE);
+    protected void enableOpenFavoriteButton(boolean visible) {
+        mOpenFavorite.setVisibility(mHasFavorites && visible ? View.VISIBLE : View.GONE);
+    }
+
+    public void updateFavoritesList() {
+        mFavoriteList.clear();
+        mFavoriteList.addAll(mConfiguration.mFavoriteList);
+
+        List<String> favoriteList = new ArrayList<String>();
+        favoriteList.addAll(mFavoriteList);
+        Iterator<String> nextFavorite = favoriteList.iterator();
+        while (nextFavorite.hasNext()) {
+            String intent = nextFavorite.next();
+            PackageManager.PackageItem packageItem = PackageManager
+                    .getInstance(mContext).getPackageItem(intent);
+            if (packageItem == null) {
+                Log.d(TAG, "failed to add " + intent);
+                mFavoriteList.remove(intent);
+            }
+        }
+        mFavoriteListAdapter.notifyDataSetChanged();
+        mHasFavorites = mFavoriteList.size() != 0;
+    }
+
+    /**
+     * changing one of those keys requires full update of contents
+     * TODO I have not found a better seolution then calling setAdapter again
+     */
+    protected boolean isPrefKeyForForceUpdate(String key) {
+        if (key.equals(SettingsActivity.PREF_BG_STYLE) ||
+                key.equals(SettingsActivity.PREF_SHOW_LABELS) ||
+                key.equals(SettingsActivity.PREF_ICON_SIZE) ||
+                key.equals(SettingsActivity.PREF_ICONPACK)) {
+            return true;
+        }
+        return false;
     }
 }

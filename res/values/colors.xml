@@ -23,10 +23,10 @@
 	<color name="ripple_material_light">#40000000</color>
 	<color name="ripple_material_dark">#40ffffff</color>
 	<color name="fake_window_shade_color">#40424242</color>
-	<color name="rambar_left_color">#ff2196f3</color>
-	<color name="rambar_middle_color">#ff2196f3</color>
+	<color name="rambar_left_color">@color/colorPrimary</color>
+	<color name="rambar_middle_color">@color/colorPrimary</color>
 	<color name="rambar_right_color">#ff888888</color>
-	<color name="default_drag_handle_color">#4caf50</color>
+	<color name="default_drag_handle_color">@color/colorPrimary</color>
 	<color name="material_blue_grey_900">#ff263238</color>
 	<color name="material_grey_50">#fffafafa</color>
 	<color name="material_grey_100">#fff5f5f5</color>
@@ -34,4 +34,7 @@
     <color name="material_grey_600">#ff757575</color>
 	<color name="material_grey_800">#ff424242</color>
 	<color name="material_grey_850">#ff303030</color>
+	<color name="colorAccent">#ff4caf50</color>
+	<color name="colorPrimary">#ff4caf50</color>
+	<color name="colorPrimaryDark">#ff388e3c</color>
 </resources>

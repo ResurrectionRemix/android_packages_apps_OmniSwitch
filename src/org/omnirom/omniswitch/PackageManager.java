@@ -52,6 +52,8 @@ public class PackageManager {
     private boolean mInitDone;
     private static PackageManager sInstance;
 
+    public static final String PACKAGES_UPDATED_TAG = "PACKAGES_UPDATED";
+
     public static class PackageItem implements Comparable<PackageItem> {
         private CharSequence title;
         private String packageName;
@@ -136,6 +138,13 @@ public class PackageManager {
             icon = BitmapUtils.getDefaultActivityIcon(mContext);
         }
         return icon;
+    }
+
+    public synchronized void reloadPackageList() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean old = prefs.getBoolean(PackageManager.PACKAGES_UPDATED_TAG, false);
+        updatePackageList();
+        prefs.edit().putBoolean(PackageManager.PACKAGES_UPDATED_TAG, !old).commit();
     }
 
     public synchronized void updatePackageList() {

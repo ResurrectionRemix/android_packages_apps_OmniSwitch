@@ -33,7 +33,7 @@ public class SwitchConfiguration {
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
-    public int mIconSizeSettings = 60; // in dip
+    public int mIconSizeSettings = 48; // in dip
     public int mQSActionSize = 60; // in dp
     public int mActionSizePx = 48; // in px
     public int mOverlayIconSizeDp = 30;

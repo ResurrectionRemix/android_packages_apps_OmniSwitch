@@ -428,6 +428,9 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         }
         buildButtonList();
         if (mConfiguration.mShowRambar) {
+            if (mRamDisplay == null) {
+                createMemoryDisplay();
+            }
             addMemoryDisplay();
         }
         if (mOpenFavorite == null) {
@@ -644,7 +647,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mRecentListAdapter.notifyDataSetChanged();
     }
 
-    private void addMemoryDisplay() {
+    private void createMemoryDisplay() {
         mRamDisplay = new ImageView(mContext);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -654,6 +657,9 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mRamDisplay.setImageDrawable(BitmapUtils.memImage(mContext.getResources(),
                 mConfiguration.mMemDisplaySize, mConfiguration.mDensity,
                 mConfiguration.mLayoutStyle == 0, "", ""));
+    }
+
+    private void addMemoryDisplay() {
         mActionList.add(mRamDisplay);
     }
 

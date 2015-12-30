@@ -299,7 +299,7 @@ public class BitmapUtils {
         canvas.setBitmap(bmp);
 
         final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        Typeface font = Typeface.create("sans-serif", Typeface.NORMAL);
+        Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
         textPaint.setTypeface(font);
         textPaint.setColor(Color.WHITE);
         textPaint.setTextAlign(Paint.Align.LEFT);
@@ -310,9 +310,9 @@ public class BitmapUtils {
         line1 = TextUtils.ellipsize(line1, textPaint, height, TextUtils.TruncateAt.END).toString();
         line2 = TextUtils.ellipsize(line2, textPaint, height, TextUtils.TruncateAt.END).toString();
 
-        int xPos1 = width / 2 - borderPx;
-        int xPos2 = width - borderPx;
-        int yPos = height;
+        int xPos1 = width / 2 - borderPx / 2;
+        int xPos2 = width - borderPx / 2;
+        int yPos = height - borderPx;
 
         canvas.save();
         canvas.rotate(270, xPos1, yPos);

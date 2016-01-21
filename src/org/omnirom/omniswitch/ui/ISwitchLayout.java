@@ -52,4 +52,6 @@ public interface ISwitchLayout {
     void canceSlideLayout();
 
     void shutdownService();
+
+    void resetRecentsState();
 }

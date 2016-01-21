@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2013-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -304,15 +304,16 @@ public class SwitchLayout extends AbstractSwitchLayout {
         mPopupView.setOnKeyListener(new PopupKeyListener());
 
         mButtonList = (HorizontalScrollView) mView
-                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_top
-                        : R.id.button_list_bottom);
+                .findViewById(R.id.button_list_top);
         mButtonList.setHorizontalScrollBarEnabled(false);
         mButtonListItems = (LinearLayout) mView
-                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_items_top
-                        : R.id.button_list_items_bottom);
-        mButtonListContainer = (LinearLayout) mView
-                .findViewById(mConfiguration.mButtonPos == 0 ? R.id.button_list_container_top
-                        : R.id.button_list_container_bottom);
+                .findViewById(R.id.button_list_items_top);
+
+        mButtonListContainerTop = (LinearLayout) mView
+                .findViewById(R.id.button_list_container_top);
+        mButtonListContainerBottom = (LinearLayout) mView
+                .findViewById(R.id.button_list_container_bottom);
+        selectButtonContainer();
         updateStyle();
     }
 
@@ -489,6 +490,9 @@ public class SwitchLayout extends AbstractSwitchLayout {
         }
         buildButtonList();
         if (mView != null) {
+            if (key.equals(SettingsActivity.PREF_BUTTON_POS)) {
+                selectButtonContainer();
+            }
             updateStyle();
         }
     }
@@ -567,7 +571,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
                     mFavoriteListHorizontal, View.GONE);
             Animator rotateAnimator = interpolator(
                     mLinearInterpolator,
-                    ObjectAnimator.ofFloat(mOpenFavorite, View.ROTATION, ROTATE_180_DEGREE, ROTATE_360_DEGREE));
+                    ObjectAnimator.ofFloat(mOpenFavorite, View.ROTATION, ROTATE_180_DEGREE, ROTATE_0_DEGREE));
             mShowFavAnim = new AnimatorSet();
             mShowFavAnim.playTogether(collapseAnimator, rotateAnimator);
             mShowFavAnim.setDuration(FAVORITE_DURATION);
@@ -686,5 +690,10 @@ public class SwitchLayout extends AbstractSwitchLayout {
 
     private float getExpandRotation() {
         return mShowFavorites ? ROTATE_180_DEGREE : ROTATE_0_DEGREE;
+    }
+
+    @Override
+    protected View getButtonList() {
+        return mButtonList;
     }
 }

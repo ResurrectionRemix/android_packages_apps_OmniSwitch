@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2013-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public class SwitchConfiguration {
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
-    public int mIconSizeSettings = 48; // in dip
+    public int mIconSizeSettings = 52; // in dip
     public int mQSActionSize = 60; // in dp
     public int mActionSizePx = 48; // in px
     public int mOverlayIconSizeDp = 30;
@@ -47,6 +47,7 @@ public class SwitchConfiguration {
     public int mStartYRelative;
     public int mDragHandleHeight;
     public int mDragHandleWidth;
+    public int mDefaultDragHandleWidth;
     public boolean mShowLabels = true;
     public int mDragHandleColor;
     public int mDefaultColor;
@@ -166,10 +167,10 @@ public class SwitchConfiguration {
         mIconSize = Integer.valueOf(iconSize);
         if (mIconSize == 60) {
             mIconSizeDesc = IconSize.NORMAL;
-            mIconSize = 55;
+            mIconSize = 52;
         } else if (mIconSize == 80) {
             mIconSizeDesc = IconSize.LARGE;
-            mIconSize = 75;
+            mIconSize = 70;
         } else {
             mIconSizeDesc = IconSize.SMALL;
         }
@@ -186,7 +187,7 @@ public class SwitchConfiguration {
 
         mMaxWidth = Math.round((mIconSize + mIconBorder) * mDensity);
         mMaxHeight = Math.round((mIconSize + mIconBorder) * mDensity);
-        mLabelFontSize = 15f;
+        mLabelFontSize = 14f;
         // add a small gap
         mLabelFontSizePx = Math.round((mLabelFontSize + mIconBorder) * mDensity);
 
@@ -199,7 +200,9 @@ public class SwitchConfiguration {
         mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, true);
         String gravity = prefs.getString(SettingsActivity.PREF_GRAVITY, "0");
         mGravity = Integer.valueOf(gravity);
-        mDragHandleWidth = Math.round(20 * mDensity);
+        mDefaultDragHandleWidth = Math.round(20 * mDensity);
+        mDragHandleWidth = prefs.getInt(
+                    SettingsActivity.PREF_HANDLE_WIDTH, mDefaultDragHandleWidth);
         mButtons = Utils.buttonStringToMap(prefs.getString(SettingsActivity.PREF_BUTTONS_NEW,
                 SettingsActivity.PREF_BUTTON_DEFAULT_NEW), SettingsActivity.PREF_BUTTON_DEFAULT_NEW);
         mLevelBackgroundColor = prefs.getBoolean(SettingsActivity.PREF_SPEED_SWITCHER_COLOR, true);

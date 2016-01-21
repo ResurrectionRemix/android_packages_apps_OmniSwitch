@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2013-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,23 +39,6 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 
 public class BitmapUtils {
-    public static Drawable rotate(Resources resources, Drawable image, int deg) {
-        if (!(image instanceof BitmapDrawable)) {
-            return image;
-        }
-        final Canvas canvas = new Canvas();
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.ANTI_ALIAS_FLAG,
-                Paint.FILTER_BITMAP_FLAG));
-
-        Bitmap b = ((BitmapDrawable) image).getBitmap();
-        Bitmap bmResult = Bitmap.createBitmap(b.getWidth(), b.getHeight(),
-                Bitmap.Config.ARGB_8888);
-        canvas.setBitmap(bmResult);
-        canvas.rotate(deg, b.getWidth() / 2, b.getHeight() / 2);
-        canvas.drawBitmap(b, 0, 0, null);
-        return new BitmapDrawable(resources, bmResult);
-    }
-
     public static Drawable resize(Resources resources, Drawable image,
             int iconSize, int borderSize, float density) {
         int size = Math.round(iconSize * density);
@@ -171,7 +154,7 @@ public class BitmapUtils {
     }
 
     public static Drawable getDefaultActivityIcon(Context context) {
-        return context.getResources().getDrawable(R.drawable.ic_default);
+        return context.getResources().getDrawable(android.R.drawable.sym_def_app_icon);
     }
 
     public static Drawable compose(Resources resources, Drawable icon, Context context, Drawable iconBack,
@@ -248,7 +231,7 @@ public class BitmapUtils {
         final Drawable iconResized = resize(resources, icon,  iconSize, density);
 
         final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        Typeface font = Typeface.create("sans-serif", Typeface.NORMAL);
+        Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
         textPaint.setTypeface(font);
         textPaint.setColor(Color.WHITE);
         textPaint.setShadowLayer(5.0f, 0.0f, 0.0f, Color.BLACK);

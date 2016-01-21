@@ -73,9 +73,8 @@ public class FavoriteDialog extends AlertDialog implements
 
     public class FavoriteListAdapter extends ArrayAdapter<String> {
 
-        public FavoriteListAdapter(Context context, int resource,
-                List<String> values) {
-            super(context, R.layout.favorite_app_item, resource, values);
+        public FavoriteListAdapter(Context context, List<String> values) {
+            super(context, R.layout.favorite_app_item, values);
         }
 
         @Override
@@ -98,7 +97,7 @@ public class FavoriteDialog extends AlertDialog implements
             PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
             holder.item.setText(packageItem.getTitle());
             holder.image.setImageDrawable(BitmapCache.getInstance(mContext)
-                        .getPackageIcon(mContext.getResources(), packageItem,
+                        .getResized(mContext.getResources(), packageItem,
                         mConfiguration, mIconSize));
             return convertView;
         }
@@ -166,8 +165,7 @@ public class FavoriteDialog extends AlertDialog implements
         mIconSize = mConfiguration.mIconSizeSettings;
         mFavoriteConfigList = (DragSortListView) view
                 .findViewById(R.id.favorite_apps);
-        mFavoriteAdapter = new FavoriteListAdapter(mContext,
-                android.R.layout.simple_list_item_single_choice, mFavoriteList);
+        mFavoriteAdapter = new FavoriteListAdapter(mContext, mFavoriteList);
         mFavoriteConfigList.setAdapter(mFavoriteAdapter);
 
         final DragSortController dragSortController = new FavoriteDragSortController();
@@ -309,7 +307,7 @@ public class FavoriteDialog extends AlertDialog implements
                 PackageItem applicationInfo = getItem(position);
                 holder.item.setText(applicationInfo.getTitle());
                 holder.image.setImageDrawable(BitmapCache.getInstance(mContext)
-                        .getPackageIcon(mContext.getResources(), applicationInfo,
+                        .getResized(mContext.getResources(), applicationInfo,
                         mConfiguration, mIconSize));
                 holder.check.setChecked(mChangedFavoriteListSet
                         .contains(applicationInfo.getIntent()));

@@ -65,8 +65,8 @@ public class CheckboxListDialog extends AlertDialog implements
     };
     private class CheckboxListAdapter extends ArrayAdapter<String> {
 
-        public CheckboxListAdapter(Context context, int resource, List<String> values) {
-            super(context, R.layout.checkbox_item, resource, values);
+        public CheckboxListAdapter(Context context, List<String> values) {
+            super(context, R.layout.checkbox_item, values);
         }
 
         @Override
@@ -199,8 +199,7 @@ public class CheckboxListDialog extends AlertDialog implements
 
         mCheckboxListView = (DragSortListView) view.findViewById(R.id.item_list);
 
-        mListAdapter = new CheckboxListAdapter(getContext(),
-                android.R.layout.simple_list_item_multiple_choice, Arrays.asList(mListItems));
+        mListAdapter = new CheckboxListAdapter(getContext(), Arrays.asList(mListItems));
         mCheckboxListView.setAdapter(mListAdapter);
         mCheckboxListView.setOnItemClickListener(new OnItemClickListener() {
             @Override

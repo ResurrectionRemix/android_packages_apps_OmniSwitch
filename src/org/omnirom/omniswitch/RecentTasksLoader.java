@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2013-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ import android.util.Log;
 public class RecentTasksLoader {
     private static final String TAG = "RecentTasksLoader";
     private static final boolean DEBUG = false;
+    private static final int MAX_TASKS = 50;
 
     private Context mContext;
     private AsyncTask<Void, List<TaskDescription>, Void> mTaskLoader;
@@ -257,7 +258,7 @@ public class RecentTasksLoader {
                                 pm, 0);
                 boolean isFirstValidTask = true;
 
-                for (int i = 0; i < numTasks; ++i) {
+                for (int i = 0; i < numTasks && i < MAX_TASKS; ++i) {
                     if (isCancelled()) {
                         break;
                     }

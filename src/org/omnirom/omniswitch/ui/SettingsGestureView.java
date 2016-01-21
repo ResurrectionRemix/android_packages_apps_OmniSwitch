@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2013-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 
 public class SettingsGestureView {
     private WindowManager mWindowManager;
     private ImageView mDragButton;
     private ImageView mDragButtonStart;
     private ImageView mDragButtonEnd;
-
     private Button mOkButton;
     private Button mCancelButton;
     private Button mLocationButton;
@@ -56,7 +56,6 @@ public class SettingsGestureView {
     private LinearLayout mDragHandleViewLeft;
     private LinearLayout mDragHandleViewRight;
     private Context mContext;
-
     private int mLocation = 0; // 0 = right 1 = left
     private boolean mShowing;
     private float mDensity;
@@ -75,6 +74,8 @@ public class SettingsGestureView {
     private int mDragHandleMinHeight;
     private int mDragHandleLimiterHeight;
     private SwitchConfiguration mConfiguration;
+    private SeekBar mDragHandleWidthBar;
+    private int mDragHandleWidth;
 
     public SettingsGestureView(Context context) {
         mContext = context;
@@ -89,6 +90,7 @@ public class SettingsGestureView {
 
         mDragHandleLimiterHeight = Math.round(20 * mDensity);
         mDragHandleMinHeight = Math.round(60 * mDensity);
+        mDragHandleWidth = mConfiguration.mDefaultDragHandleWidth;
 
         mDragHandle = mContext.getResources().getDrawable(
                 R.drawable.drag_handle);
@@ -225,6 +227,33 @@ public class SettingsGestureView {
             }
         });
 
+        mDragHandleWidthBar = (SeekBar) mView.findViewById(R.id.drag_handle_width);
+        double min = mConfiguration.mDefaultDragHandleWidth * 0.5f;
+        double max = mConfiguration.mDefaultDragHandleWidth * 1.5f;
+        double value = mConfiguration.mDragHandleWidth;
+        double progressValue = scaleValue(value, min, max, 1f, 100f);
+        mDragHandleWidthBar.setProgress((int) progressValue);
+        mDragHandleWidthBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                double progressValue = seekBar.getProgress();
+                // 50 = mConfiguration.mDefaultDragHandleWidth
+                // max = 1.5 * mConfiguration.mDefaultDragHandleWidth
+                // min = mConfiguration.mDefaultDragHandleWidth / 2
+                // 1-100 -> 0.5-1.5
+                double scaleFactor= scaleValue(progressValue, 1f, 100f, 0.5f, 1.5f);
+                mDragHandleWidth = (int) (mConfiguration.mDefaultDragHandleWidth * scaleFactor);
+                updateDragHandleLayoutParams();
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                    boolean fromUser) {
+            }
+        });
+
         mOkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Editor edit = mPrefs.edit();
@@ -232,6 +261,7 @@ public class SettingsGestureView {
                 int relHeight = (int)(mStartY / (mConfiguration.getCurrentDisplayHeight() /100));
                 edit.putInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeight);
                 edit.putInt(SettingsActivity.PREF_HANDLE_HEIGHT, mEndY - mStartY);
+                edit.putInt(SettingsActivity.PREF_HANDLE_WIDTH, mDragHandleWidth);
                 edit.commit();
                 hide();
             }
@@ -308,7 +338,8 @@ public class SettingsGestureView {
     }
     private void updateDragHandleLayoutParams() {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                (int) (20 * mDensity + 0.5), (int) (mEndY - mStartY));
+                mDragHandleWidth,
+                (int) (mEndY - mStartY));
         params.gravity = mLocation == 1 ? Gravity.LEFT : Gravity.RIGHT;
         mDragButton.setLayoutParams(params);
 
@@ -348,20 +379,19 @@ public class SettingsGestureView {
         mDragButtonEnd.setRotation(mLocation == 1 ? 180 : 0);
     }
 
-    // cannot use SwitchConfiguration since service must not
-    // be running at this point
     private void updateFromPrefs() {
-        mStartY = SwitchConfiguration.getInstance(mContext).getCurrentOffsetStart();
-        mEndY = SwitchConfiguration.getInstance(mContext).getCurrentOffsetEnd();
+        mStartY = mConfiguration.getCurrentOffsetStart();
+        mEndY = mConfiguration.getCurrentOffsetEnd();
+        mDragHandleWidth = mConfiguration.mDragHandleWidth;
 
-        mLocation = SwitchConfiguration.getInstance(mContext).mLocation;
+        mLocation = mConfiguration.mLocation;
         if (mLocation == 1){
             mLocationButton.setText(mContext.getResources().getString(R.string.location_right));
         } else {
             mLocationButton.setText(mContext.getResources().getString(R.string.location_left));
         }
         // discard alpha
-        mColor = SwitchConfiguration.getInstance(mContext).mDragHandleColor | 0xFF000000;
+        mColor = mConfiguration.mDragHandleColor | 0xFF000000;
     }
 
     public void show() {
@@ -393,8 +423,10 @@ public class SettingsGestureView {
     }
 
     public void resetPosition() {
-        mStartY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetStart();
-        mEndY = SwitchConfiguration.getInstance(mContext).getDefaultOffsetEnd();
+        mStartY = mConfiguration.getDefaultOffsetStart();
+        mEndY = mConfiguration.getDefaultOffsetEnd();
+        mDragHandleWidth = mConfiguration.mDefaultDragHandleWidth;
+        mDragHandleWidthBar.setProgress(50);
         updateLayout();
     }
 
@@ -403,8 +435,8 @@ public class SettingsGestureView {
     }
 
     public void handleRotation(){
-        mStartY = SwitchConfiguration.getInstance(mContext).getCustomOffsetStart(mStartYRelative);
-        mEndY = SwitchConfiguration.getInstance(mContext).getCustomOffsetEnd(mStartYRelative, mHandleHeight);
+        mStartY = mConfiguration.getCustomOffsetStart(mStartYRelative);
+        mEndY = mConfiguration.getCustomOffsetEnd(mStartYRelative, mHandleHeight);
         updateLayout();
     }
 
@@ -414,5 +446,9 @@ public class SettingsGestureView {
 
     private int getUpperHandleLimit() {
         return mConfiguration.mLevelHeight / 2;
+    }
+
+    private double scaleValue(double value, double oldMin, double oldMax, double newMin, double newMax) {
+        return ( (value - oldMin) / (oldMax - oldMin) ) * (newMax - newMin) + newMin;
     }
 }

@@ -28,11 +28,7 @@
 	<string name="animate_title">Animate</string>
 	<string name="animate_title_summary">Animate show and hide of overlay view</string>
 	<string name="adjust_handle_title">Position and size</string>
-	<string name="adjust_handle_help">Move and resize drag handle.\nPress button to switch between left and right side of the display.</string>
-	<string name="sc_drag_handle_title">Drag handle</string>
-	<string name="sc_drag_handle_body">\nSwipe horizontally to open\n\nPress button or outside to close\n\nLong press to open quick switcher</string>
-	<string name="sc_favorite_title">Favorite apps</string>
-	<string name="sc_favorite_body">\nOpen favorite apps view.</string>
+	<string name="adjust_handle_help">Move and resize drag handle</string>
 	<string name="icon_size_normal">Normal</string>
 	<string name="icon_size_small">Small</string>
 	<string name="icon_size_large">Large</string>
@@ -103,9 +99,6 @@
 	<string name="speed_switch_button_summary">Configure action buttons in quick switcher view</string>
 	<string name="speed_switch_items_summary">Maximum number of level items</string>
 	<string name="speed_switch_item">Level item limit</string>
-	<string name="sc_quick_switcher_title">Quick switcher</string>
-	<string name="sc_quick_switcher_body">\nMoving up and down to switch between levels.\n\nMoving left and right to switch between level items.</string>
-	<string name="sc_quick_switcher_empty_body">\nNo recent apps or favorites.\n\nMoving up and down to switch between levels.\n\nMoving left and right to switch between level items.</string>
 	<string name="immersive_mode">Immersive mode</string>
 	<string name="immersive_mode_help">Toggle immersive mode</string>
 	<string name="package_add_favorite_title">Add to favorites</string>
@@ -146,4 +139,6 @@
 	<string name="menu">Menu</string>
 	<string name="menu_help">Menu</string>
 	<string name="enable_title">Enable</string>
+	<string name="adjust_handle_width">Width</string>
+	<string name="adjust_handle_position">Position</string>
 </resources>

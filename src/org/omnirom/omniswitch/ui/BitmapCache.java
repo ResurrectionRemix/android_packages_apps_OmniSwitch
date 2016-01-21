@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 The OmniROM Project
+ *  Copyright (C) 2014-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,16 @@ import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
+import android.util.Log;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BitmapCache {
     private static BitmapCache sInstance;
     private Context mContext;
     private LruCache<String, Drawable> mMemoryCache;
-    private LruCache<String, Drawable> mThumbnailCache;
+    private HashMap<String, Drawable> mThumbnailMap;
 
     public static BitmapCache getInstance(Context context) {
         if (sInstance == null){
@@ -45,8 +49,8 @@ public class BitmapCache {
         final long maxMemory = Runtime.getRuntime().maxMemory();
 
         // Use 1/3rd of the available memory for this memory cache.
-        final long cacheSize = maxMemory / 3;
-        //Log.d("CACHE", "cacheSize = " + cacheSize);
+        long cacheSize = maxMemory / 4;
+        //Log.d("BitmapCache", "maxMemory = " + maxMemory +" cacheSize = " + cacheSize);
 
         mMemoryCache = new LruCache<String, Drawable>((int)cacheSize) {
             @Override
@@ -60,19 +64,7 @@ public class BitmapCache {
                 }
             }
         };
-
-        mThumbnailCache = new LruCache<String, Drawable>((int)cacheSize) {
-            @Override
-            protected int sizeOf(String key, Drawable bitmap) {
-                // The cache size will be measured in kilobytes rather than
-                // number of items.
-                if (bitmap instanceof BitmapDrawable){
-                    return ((BitmapDrawable)bitmap).getBitmap().getAllocationByteCount();
-                } else {
-                    return 1;
-                }
-            }
-        };
+        mThumbnailMap = new HashMap<String, Drawable>(25);
     }
 
     private void setContext(Context context) {
@@ -84,7 +76,7 @@ public class BitmapCache {
     }
 
     public void clearThumbs() {
-        mThumbnailCache.evictAll();
+        mThumbnailMap.clear();
     }
 
     private String bitmapHash(String intent, int iconSize) {
@@ -103,43 +95,26 @@ public class BitmapCache {
         String key = bitmapHash(packageItem.getIntent(), iconSize);
         Drawable d = getBitmapFromMemCache(key);
         if (d == null){
-            Drawable icon = PackageManager.getInstance(mContext).getPackageIcon(packageItem);
-            if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
-                    .getResourceIdForActivityIcon(packageItem.getActivityInfo()) == 0)) {
-                icon = BitmapUtils.compose(resources,
-                        icon, mContext, getIconPackHelper().getIconBackFor(packageItem.getTitle()),
-                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
-                        getIconPackHelper().getIconScale(), iconSize, configuration.mDensity);
-            }
-            d = BitmapUtils.resize(resources,
-                    icon,
-                    iconSize,
-                    configuration.mIconBorder,
-                    configuration.mDensity);
+            d = getResizedUncached(resources, packageItem, configuration, iconSize);
             addBitmapToMemoryCache(key, d);
         }
         return d;
     }
 
-    public Drawable getPackageIcon(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int iconSize) {
-        String key = bitmapHash(packageItem.getIntent(), iconSize);
-        Drawable d = getBitmapFromMemCache(key);
-        if (d == null){
-            Drawable icon = PackageManager.getInstance(mContext).getPackageIcon(packageItem);
-            if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
-                    .getResourceIdForActivityIcon(packageItem.getActivityInfo()) == 0)) {
-                icon = BitmapUtils.compose(resources,
-                        icon, mContext, getIconPackHelper().getIconBackFor(packageItem.getTitle()),
-                        getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
-                        getIconPackHelper().getIconScale(), iconSize, configuration.mDensity);
-            }
-            d = BitmapUtils.resize(resources,
-                    icon,
-                    iconSize,
-                    configuration.mIconBorder,
-                    configuration.mDensity);
-            addBitmapToMemoryCache(key, d);
+    public Drawable getResizedUncached(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int iconSize) {
+        Drawable icon = PackageManager.getInstance(mContext).getPackageIcon(packageItem);
+        if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
+                .getResourceIdForActivityIcon(packageItem.getActivityInfo()) == 0)) {
+            icon = BitmapUtils.compose(resources,
+                    icon, mContext, getIconPackHelper().getIconBackFor(packageItem.getTitle()),
+                    getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
+                    getIconPackHelper().getIconScale(), iconSize, configuration.mDensity);
         }
+        Drawable d = BitmapUtils.resize(resources,
+                icon,
+                iconSize,
+                configuration.mIconBorder,
+                configuration.mDensity);
         return d;
     }
 
@@ -176,11 +151,11 @@ public class BitmapCache {
 
     public Drawable getSharedThumbnail(TaskDescription ad) {
         String key = String.valueOf(ad.getPersistentTaskId());
-        return mThumbnailCache.get(key);
+        return mThumbnailMap.get(key);
     }
 
     public void putSharedThumbnail(Resources resources, TaskDescription ad, Drawable thumb) {
         String key = String.valueOf(ad.getPersistentTaskId());
-        mThumbnailCache.put(key, thumb);
+        mThumbnailMap.put(key, thumb);
     }
 }

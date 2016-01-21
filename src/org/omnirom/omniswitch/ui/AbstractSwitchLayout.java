@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2015 The OmniROM Project
+ *  Copyright (C) 2015-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -136,6 +137,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected TextView mNoRecentApps;
     protected LinearLayout mButtonListItems;
     protected LinearLayout mButtonListContainer;
+    protected LinearLayout mButtonListContainerTop;
+    protected LinearLayout mButtonListContainerBottom;
     protected LinearLayout mRecents;
     protected ImageView mOpenFavorite;
     protected AnimatorSet mShowFavAnim;
@@ -675,6 +678,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         item.setGravity(Gravity.CENTER);
         item.setLayoutParams(getListItemParams());
         item.setMaxLines(1);
+        Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
+        item.setTypeface(font);
         item.setBackgroundResource(mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT ? R.drawable.ripple_dark
                 : R.drawable.ripple_light);
         return item;
@@ -1304,9 +1309,37 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         if (key.equals(SettingsActivity.PREF_BG_STYLE) ||
                 key.equals(SettingsActivity.PREF_SHOW_LABELS) ||
                 key.equals(SettingsActivity.PREF_ICON_SIZE) ||
-                key.equals(SettingsActivity.PREF_ICONPACK)) {
+                key.equals(SettingsActivity.PREF_ICONPACK) ||
+                key.equals(SettingsActivity.PREF_THUMB_SIZE)) {
             return true;
         }
         return false;
+    }
+
+    protected abstract View getButtonList();
+
+    protected void selectButtonContainer() {
+        if (mConfiguration.mButtonPos == 0) {
+            mButtonListContainerTop.removeAllViews();
+            mButtonListContainerBottom.removeAllViews();
+            mButtonListContainerBottom.setVisibility(View.GONE);
+            mButtonListContainerTop.addView(getButtonList());
+            mButtonListContainerTop.setVisibility(View.VISIBLE);
+            mButtonListContainer = mButtonListContainerTop;
+       } else {
+            mButtonListContainerTop.removeAllViews();
+            mButtonListContainerBottom.removeAllViews();
+            mButtonListContainerTop.setVisibility(View.GONE);
+            mButtonListContainerBottom.addView(getButtonList());
+            mButtonListContainerBottom.setVisibility(View.VISIBLE);
+            mButtonListContainer = mButtonListContainerBottom;
+        }
+    }
+
+    /* if quick switcher was triggerd update() will be called
+    but the values never reset since hideDone() is not called */
+    public void resetRecentsState() {
+        mTaskLoadDone = false;
+        mUpdateNoRecentsTasksDone = false;
     }
 }

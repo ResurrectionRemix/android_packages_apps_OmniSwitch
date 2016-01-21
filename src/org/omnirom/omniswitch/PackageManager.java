@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 The OmniROM Project
+ *  Copyright (C) 2014-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +78,11 @@ public class PackageManager {
                     another.title.toString());
             return result != 0 ? result : packageName
                     .compareTo(another.packageName);
+        }
+
+        @Override
+        public String toString() {
+            return getTitle().toString();
         }
     }
 

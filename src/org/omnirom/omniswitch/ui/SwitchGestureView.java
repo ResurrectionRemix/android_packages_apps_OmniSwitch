@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013 The OmniROM Project
+ *  Copyright (C) 2013-2016 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -43,6 +44,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -76,9 +78,8 @@ public class SwitchGestureView {
     private float[] mInitDownPoint = new float[2];
     private boolean mShowing;
     private boolean mEnabled = true;
-    private Drawable mDragHandleImage;
-    private Drawable mDragHandleHiddenImage;
-    private Drawable mCurrentDragHandleImage;
+    private RippleDrawable mDragHandleImage;
+    private Drawable mDragHandleHiddenImage; // transparent image to detect touches for auto hide trigger
     private SharedPreferences mPrefs;
     private SwitchConfiguration mConfiguration;
     private boolean mHidden = true;
@@ -202,8 +203,10 @@ public class SwitchGestureView {
         list.addView(listLayout);
         mAllLists[2] = list;
 
-        mDragHandleImage = mContext.getResources().getDrawable(
-                R.drawable.drag_handle);
+        ColorStateList rippleColor =
+                ColorStateList.valueOf(mContext.getResources().getColor(android.R.color.white));
+        mDragHandleImage = new RippleDrawable(rippleColor, mContext.getResources().getDrawable(
+                R.drawable.drag_handle), null);
         mDragHandleHiddenImage = mContext.getResources().getDrawable(
                 R.drawable.drag_handle_overlay);
 
@@ -310,6 +313,7 @@ public class SwitchGestureView {
                 }
                 switch (action) {
                 case MotionEvent.ACTION_DOWN:
+                    v.setPressed(true);
                     mShowingSpeedSwitcher = false;
                     mHandleRecentsUpdate = false;
                     mLongPress = false;
@@ -330,6 +334,7 @@ public class SwitchGestureView {
                     }
                     break;
                 case MotionEvent.ACTION_CANCEL:
+                    v.setPressed(false);
                     mHandler.removeCallbacks(mLongPressRunnable);
                     mEnabled = true;
                     mFlingEnable = false;
@@ -338,6 +343,7 @@ public class SwitchGestureView {
                     if (mHidden) {
                         return true;
                     }
+                    v.setPressed(false);
                     mFlingEnable = false;
                     if (Math.abs(distanceX) > mSlop) {
                         mRecentsManager.showHidden();
@@ -358,6 +364,7 @@ public class SwitchGestureView {
                     mLastX = xRaw;
                     break;
                 case MotionEvent.ACTION_UP:
+                    v.setPressed(false);
                     mFlingEnable = false;
                     mHandler.removeCallbacks(mLongPressRunnable);
                     if(mHidden && mConfiguration.mAutoHide){
@@ -455,6 +462,13 @@ public class SwitchGestureView {
         }
     }
 
+    private void colorizeDragHandleImage() {
+        Drawable inner = ((RippleDrawable) mDragHandleImage).getDrawable(0);
+        inner=BitmapUtils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor & 0x00FFFFFF, inner);
+        inner.setAlpha((mConfiguration.mDragHandleColor >> 24) & 0x000000FF);
+        ((RippleDrawable) mDragHandleImage).setDrawable(0, inner);
+    }
+
     private void updateDragHandleImage(boolean shown){
         if ((mHidden && !shown) || (!mHidden && shown)) {
             return;
@@ -462,37 +476,37 @@ public class SwitchGestureView {
         if (DEBUG) {
             Log.d(TAG, "updateDragHandleImage " + shown);
         }
-        mCurrentDragHandleImage = mDragHandleImage;
+
+        Drawable current = mDragHandleImage;
 
         mHidden = !shown;
 
         if(mConfiguration.mAutoHide){
             if(mHidden){
-                mCurrentDragHandleImage = mDragHandleHiddenImage;
+                current = mDragHandleHiddenImage;
             }
         } else {
             if(!shown){
-                mCurrentDragHandleImage = mDragHandleHiddenImage;
+                current = mDragHandleHiddenImage;
             }
         }
-
-        if (mConfiguration.mLocation == 1) {
-            mCurrentDragHandleImage = BitmapUtils.rotate(mContext.getResources(), mCurrentDragHandleImage, 180);
-        }
-        mCurrentDragHandleImage=BitmapUtils.colorize(mContext.getResources(), mConfiguration.mDragHandleColor & 0x00FFFFFF, mCurrentDragHandleImage);
-        mCurrentDragHandleImage.setAlpha((mConfiguration.mDragHandleColor >> 24) & 0x000000FF);
-
-        toggleDragHandle(shown);
+        toggleDragHandle(shown, current);
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {
         if(DEBUG){
             Log.d(TAG, "updatePrefs");
         }
-        updateButton(true);
 
-        buildFavoriteItems(mConfiguration.mFavoriteList);
-        buildActionList();
+        if (mConfiguration.mDragHandleShow) {
+            colorizeDragHandleImage();
+            updateButton(true);
+        }
+
+        if (mConfiguration.mSpeedSwitcher) {
+            buildFavoriteItems(mConfiguration.mFavoriteList);
+            buildActionList();
+        }
 
         if(key == null || key.equals(SettingsActivity.PREF_DRAG_HANDLE_ENABLE)){
             if(mConfiguration.mDragHandleShow){
@@ -571,27 +585,28 @@ public class SwitchGestureView {
         return a;
     }
 
-    private void toggleDragHandle(final boolean show) {
+    private void toggleDragHandle(final boolean show, final Drawable current) {
         if (mToggleDragHandleAnim != null){
             mToggleDragHandleAnim.cancel();
         }
 
-        if (mConfiguration.mLocation == 0) {
-            mDragButton.setPivotX(mConfiguration.mDragHandleWidth);
-        } else {
-            mDragButton.setPivotX(0f);
-        }
+        mDragButton.setRotation(mConfiguration.mLocation == 0 ? 0f : 180f);
 
         if (show){
-            mDragButton.setScaleX(0f);
-            mDragButton.setImageDrawable(mCurrentDragHandleImage);
+            mDragButton.setTranslationX(mConfiguration.mLocation == 0 ? mConfiguration.mDragHandleWidth : -mConfiguration.mDragHandleWidth);
+            mDragButton.setImageDrawable(current);
             mToggleDragHandleAnim = start(interpolator(mLinearInterpolator,
-                            ObjectAnimator.ofFloat(mDragButton, View.SCALE_X, 0f, 1f))
+                            ObjectAnimator.ofFloat(mDragButton, View.TRANSLATION_X,
+                            mConfiguration.mLocation == 0 ? mConfiguration.mDragHandleWidth :
+                                    -mConfiguration.mDragHandleWidth,
+                            0f))
                             .setDuration(FLIP_DURATION_DEFAULT));
         } else {
-            mDragButton.setScaleX(1f);
+            mDragButton.setTranslationX(0f);
             mToggleDragHandleAnim = start(interpolator(mLinearInterpolator,
-                            ObjectAnimator.ofFloat(mDragButton, View.SCALE_X, 1f, 0f))
+                            ObjectAnimator.ofFloat(mDragButton, View.TRANSLATION_X, 1f,
+                            mConfiguration.mLocation == 0 ? mConfiguration.mDragHandleWidth :
+                                    -mConfiguration.mDragHandleWidth))
                             .setDuration(FLIP_DURATION_DEFAULT));
         }
 
@@ -599,8 +614,8 @@ public class SwitchGestureView {
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (!show){
-                    mDragButton.setImageDrawable(mCurrentDragHandleImage);
-                    mDragButton.setScaleX(1f);
+                    mDragButton.setImageDrawable(current);
+                    mDragButton.setTranslationX(0f);
                 }
             }
             @Override
@@ -627,16 +642,14 @@ public class SwitchGestureView {
             resetEnvItems();
             clearViewBackground();
 
-            mDragButton.setScaleX(0f);
+            mDragButton.setImageDrawable(mDragHandleHiddenImage);
             mView.addView(mDragButton, getDragHandleLayoutParamsSmall());
             mWindowManager.addView(mView, getParamsSmall());
-            updateDragHandleImage(true);
 
-            // restart hide delay
-            if(mConfiguration.mAutoHide){
-                mHandler.postDelayed(mAutoHideRunnable, SwitchConfiguration.AUTO_HIDE_DEFAULT);
+            if(!mConfiguration.mAutoHide){
+                updateDragHandleImage(true);
             }
-
+            mRecentsManager.getLayout().resetRecentsState();
             // run back trigger if required
             if(mVirtualBackKey && !mConfiguration.mRestrictedMode){
                 Utils.triggerVirtualKeypress(mHandler, KeyEvent.KEYCODE_BACK);
@@ -776,7 +789,8 @@ public class SwitchGestureView {
             }
             item.setIntent(packageItem.getIntent());
             item.setLabel(packageItem.getTitle());
-            Drawable d = BitmapCache.getInstance(mContext).getResized(mContext.getResources(), packageItem, mConfiguration, 100);
+            Drawable d = BitmapCache.getInstance(mContext).getResizedUncached(mContext.getResources(),
+                    packageItem, mConfiguration, 100);
             item.setOriginalImage(d);
             item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
             if (mConfiguration.mShowLabels) {

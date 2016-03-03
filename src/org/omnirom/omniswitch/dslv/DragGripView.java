@@ -22,8 +22,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 
@@ -33,10 +35,10 @@ public class DragGripView extends View {
             android.R.attr.color,
     };
 
-    private static final int HORIZ_RIDGES = 4;
+    private static final int HORIZ_RIDGES = 3;
 
     private int mGravity = Gravity.START;
-    private int mColor = 0x33333333;
+    private int mColor = Color.BLACK;
 
     private Paint mRidgePaint;
 
@@ -61,6 +63,10 @@ public class DragGripView extends View {
         mGravity = a.getInteger(0, mGravity);
         mColor = a.getColor(1, mColor);
         a.recycle();
+
+        TypedValue value = new TypedValue();
+        getContext().getTheme().resolveAttribute(android.R.attr.colorControlNormal, value, true);
+        mColor = getContext().getColor(value.resourceId);
 
         final Resources res = getResources();
         mRidgeSize = res.getDimensionPixelSize(R.dimen.drag_grip_ridge_size);

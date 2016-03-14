@@ -121,7 +121,7 @@ public class RecentTasksLoader {
     }
 
     // Create an TaskDescription, returning null if the title or icon is null
-    TaskDescription createTaskDescription(int taskId, int persistentTaskId,
+    TaskDescription createTaskDescription(int taskId, int persistentTaskId, int stackId,
             Intent baseIntent, ComponentName origActivity,
             CharSequence description, boolean activeTask) {
         // clear source bounds to find matching package intent
@@ -145,7 +145,8 @@ public class RecentTasksLoader {
 
                 TaskDescription ad = new TaskDescription(taskId,
                         persistentTaskId, resolveInfo, baseIntent,
-                        info.packageName, description, activeTask);
+                        info.packageName, description, activeTask,
+                        stackId);
                 ad.setLabel(title);
 
                 return ad;
@@ -332,9 +333,9 @@ public class RecentTasksLoader {
                     }
 
                     TaskDescription item = createTaskDescription(recentInfo.id,
-                            recentInfo.persistentId, recentInfo.baseIntent,
-                            recentInfo.origActivity, recentInfo.description,
-                            activeTask);
+                            recentInfo.persistentId, recentInfo.stackId,
+                            recentInfo.baseIntent, recentInfo.origActivity,
+                            recentInfo.description, activeTask);
 
                     if (item != null) {
                         mLoadedTasks.add(item);

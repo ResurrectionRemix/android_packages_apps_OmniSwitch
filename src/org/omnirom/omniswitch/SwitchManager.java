@@ -35,6 +35,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.Settings;
@@ -192,6 +193,8 @@ public class SwitchManager {
             } catch (SecurityException e) {
                 Log.e(TAG, "Recents does not have the permission to launch "
                         + intent, e);
+            } catch (Exception e) {
+                Log.e(TAG, "Something went terrible wrong in switchTask ", e);
             }
         }
     }
@@ -492,5 +495,88 @@ public class SwitchManager {
         if(close){
             hide(true);
         }
+    }
+
+    private void resizeTask(int taskId, Rect bounds) {
+        if (DEBUG) {
+            Log.d(TAG, "resize " + taskId + " -> " + bounds);
+        }
+        try {
+            ActivityManagerNative.getDefault().resizeTask(taskId, bounds);
+        } catch (RemoteException e) {
+        }
+    }
+
+    public void placeTask(TaskDescription ad, int arrangement) {
+        final Rect fullSize = new Rect(0, 0, mConfiguration.getCurrentDisplayWidth(), mConfiguration.getCurrentDisplayHeight());
+        final boolean isLandscape = mConfiguration.isLandscape();
+        final Rect taskSize = fullSize;
+        final int taskId = ad.getPersistentTaskId();
+        switch (arrangement) {
+            case 0:
+                if (isLandscape) {
+                    taskSize.right = fullSize.centerX();
+                    taskSize.left = 0;
+                } else {
+                    taskSize.bottom = fullSize.centerY();
+                    taskSize.top = 0;
+                }
+                resizeTask(taskId, taskSize);
+                switchTask(ad, false, false);
+                break;
+            case 1:
+                if (isLandscape) {
+                    taskSize.right = fullSize.width();
+                    taskSize.left = fullSize.centerX();
+                } else {
+                    taskSize.bottom = fullSize.height();
+                    taskSize.top = fullSize.centerY();
+                }
+                resizeTask(taskId, taskSize);
+                switchTask(ad, false, false);
+                break;
+            case 2:
+                resizeTask(taskId, fullSize);
+                switchTask(ad, true, false);
+                break;
+        }
+    }
+
+    public int getTaskPlace(TaskDescription ad) {
+        try {
+            Rect fullSize = new Rect(0, 0, mConfiguration.getCurrentDisplayWidth(), mConfiguration.getCurrentDisplayHeight());
+            int stackId = ad.getStackId();
+            boolean isLandscape = mConfiguration.isLandscape();
+            List<ActivityManager.StackInfo> infos = ActivityManagerNative.getDefault().getAllStackInfos();
+            int stackCount = infos.size();
+            for (int i = 0; i < stackCount; i++) {
+                ActivityManager.StackInfo info = infos.get(i);
+                if (info.stackId == stackId) {
+                    Rect taskSize = info.bounds;
+                    if (!taskSize.equals(fullSize)) {
+                        // 0 = left/top
+                        // 1 = right/bottom
+                        if (isLandscape) {
+                            if (taskSize.right == fullSize.centerX()) {
+                                return 0;
+                            } else if (taskSize.left == fullSize.centerX()) {
+                                return 1;
+                            }
+                        } else {
+                            if (taskSize.bottom == fullSize.centerY()) {
+                                return 0;
+                            } else if (taskSize.top == fullSize.centerY()) {
+                                return 1;
+                            }
+                        }
+                        return -1;
+                    }
+                    // full size
+                    return 2;
+                }
+            }
+        } catch (RemoteException e) {
+        }
+        return 2;
     }
 }

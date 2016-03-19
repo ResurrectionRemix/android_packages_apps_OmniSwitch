@@ -34,6 +34,7 @@ public final class TaskDescription {
     final Intent intent; // launch intent for application
     final String packageName; // used to override animations (see onClick())
     final CharSequence description;
+    final int stackId;
     private Drawable mIcon; // application package icon
     private CharSequence mLabel; // application package label
     private boolean mIsActive;
@@ -49,11 +50,12 @@ public final class TaskDescription {
 
     public TaskDescription(int _taskId, int _persistentTaskId,
             ResolveInfo _resolveInfo, Intent _intent, String _packageName,
-            CharSequence _description, boolean activeTask) {
+            CharSequence _description, boolean activeTask, int _stackId) {
         resolveInfo = _resolveInfo;
         intent = _intent;
         taskId = _taskId;
         persistentTaskId = _persistentTaskId;
+        stackId = _stackId;
 
         description = _description;
         packageName = _packageName;
@@ -66,6 +68,7 @@ public final class TaskDescription {
         intent = null;
         taskId = -1;
         persistentTaskId = -1;
+        stackId = -1;
 
         description = null;
         packageName = null;
@@ -106,6 +109,10 @@ public final class TaskDescription {
 
     public int getPersistentTaskId() {
         return persistentTaskId;
+    }
+
+    public int getStackId() {
+        return stackId;
     }
 
     public String getPackageName() {

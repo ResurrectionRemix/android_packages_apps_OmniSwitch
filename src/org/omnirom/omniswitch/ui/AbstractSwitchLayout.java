@@ -826,10 +826,39 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.recent_popup_menu,
                 popup.getMenu());
-        popup.getMenu().findItem(R.id.package_add_favorite)
-                .setEnabled(intentStr != null && !mFavoriteList.contains(intentStr));
-        popup.getMenu().findItem(R.id.package_lock_task)
-                .setEnabled(Utils.isLockToAppEnabled(mContext));
+        boolean addFavEnabled = intentStr != null && !mFavoriteList.contains(intentStr);
+        if (!addFavEnabled) {
+            popup.getMenu().removeItem(R.id.package_add_favorite);
+        }
+        if (!Utils.isLockToAppEnabled(mContext)) {
+            popup.getMenu().removeItem(R.id.package_lock_task);
+        }
+        if (Utils.isMultiStackEnabled(mContext)) {
+            if (mConfiguration.isLandscape()) {
+                popup.getMenu().findItem(R.id.package_top_task).setTitle(R.string.package_left_task_title);
+                popup.getMenu().findItem(R.id.package_bottom_task).setTitle(R.string.package_right_task_title);
+            }
+            if (ad.getTaskId() < 0) {
+                popup.getMenu().findItem(R.id.package_top_task).setEnabled(false);
+                popup.getMenu().findItem(R.id.package_bottom_task).setEnabled(false);
+                popup.getMenu().removeItem(R.id.package_full_task);
+            } else {
+                int taskPlace = mRecentsManager.getTaskPlace(ad);
+                if (taskPlace == 2) {
+                    popup.getMenu().removeItem(R.id.package_full_task);
+                }
+                if (taskPlace == 0) {
+                    popup.getMenu().removeItem(R.id.package_top_task);
+                }
+                if (taskPlace == 1) {
+                    popup.getMenu().removeItem(R.id.package_bottom_task);
+                }
+            }
+        } else {
+            popup.getMenu().removeItem(R.id.package_top_task);
+            popup.getMenu().removeItem(R.id.package_bottom_task);
+            popup.getMenu().removeItem(R.id.package_full_task);
+        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.package_stop_task) {
@@ -849,6 +878,12 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                     }
                     mRecentsManager.stopLockToApp(false);
                     mRecentsManager.lockToApp(ad, mAutoClose);
+                } else if (item.getItemId() == R.id.package_top_task) {
+                    mRecentsManager.placeTask(ad, 0);
+                } else if (item.getItemId() == R.id.package_bottom_task) {
+                    mRecentsManager.placeTask(ad, 1);
+                } else if (item.getItemId() == R.id.package_full_task) {
+                    mRecentsManager.placeTask(ad, 2);
                 } else {
                     return false;
                 }
@@ -927,8 +962,10 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.package_popup_menu,
                 popup.getMenu());
-        popup.getMenu().findItem(R.id.package_add_favorite)
-                .setEnabled(!mFavoriteList.contains(packageItem.getIntent()));
+        boolean addFavEnabled = !mFavoriteList.contains(packageItem.getIntent());
+        if (!addFavEnabled) {
+            popup.getMenu().removeItem(R.id.package_add_favorite);
+        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.package_inspect_item) {

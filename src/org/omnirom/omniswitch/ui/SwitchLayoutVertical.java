@@ -130,7 +130,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
                 String availMemStr = mContext.getResources()
                         .getString(R.string.service_background_processes,
                                 sizeStr);
-                Log.d(TAG, usedMemStr + " " + availMemStr);
                 mRamDisplay.setImageDrawable(BitmapUtils.memImage(mContext.getResources(),
                         mConfiguration.mMemDisplaySize, mConfiguration.mDensity,
                         mConfiguration.mLayoutStyle == 0, usedMemStr, availMemStr));

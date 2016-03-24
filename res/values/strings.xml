@@ -146,4 +146,5 @@
 	<string name="package_bottom_task_title">Bottom</string>
 	<string name="package_right_task_title">Right</string>
 	<string name="package_full_task_title">Full size</string>
+	<string name="shortcut_label_toggle_overlay">Toggle overlay</string>
 </resources>

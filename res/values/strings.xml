@@ -27,7 +27,6 @@
 	<string name="opacity_summary">Background opacity of overlay view</string>
 	<string name="animate_title">Animate</string>
 	<string name="animate_title_summary">Animate show and hide of overlay view</string>
-	<string name="adjust_handle_title">Position and size</string>
 	<string name="adjust_handle_help">Move and resize drag handle</string>
 	<string name="icon_size_normal">Normal</string>
 	<string name="icon_size_small">Small</string>
@@ -147,4 +146,6 @@
 	<string name="package_right_task_title">Right</string>
 	<string name="package_full_task_title">Full size</string>
 	<string name="shortcut_label_toggle_overlay">Toggle overlay</string>
+	<string name="adjust_handle_title_new">Configure drag handle</string>
+	<string name="adjust_handle_summary">Configure position size and color</string>
 </resources>

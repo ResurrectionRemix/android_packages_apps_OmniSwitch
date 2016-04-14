@@ -240,7 +240,6 @@ public class SwitchService extends Service {
 
     private void commitSuicide() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean(SettingsActivity.PREF_START_ON_BOOT, false).commit();
         prefs.edit().putBoolean(SettingsActivity.PREF_ENABLE, false).commit();
         mCommitSuicide = true;
         Intent stopIntent = new Intent(this, SwitchService.class);

@@ -54,7 +54,6 @@ public class SettingsActivity extends PreferenceActivity implements
 
     public static final String PREF_OPACITY = "opacity";
     public static final String PREF_ANIMATE = "animate";
-    public static final String PREF_START_ON_BOOT = "start_on_boot";
     public static final String PREF_ICON_SIZE = "icon_size";
     public static final String PREF_DRAG_HANDLE_LOCATION = "drag_handle_location_new";
     private static final String PREF_ADJUST_HANDLE = "adjust_handle";

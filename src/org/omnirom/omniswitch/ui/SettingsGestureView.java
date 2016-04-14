@@ -18,11 +18,15 @@
 package org.omnirom.omniswitch.ui;
 
 import org.omnirom.omniswitch.R;
+import org.omnirom.omniswitch.colorpicker.ColorPickerDialog;
 import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchService;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -30,6 +34,8 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -43,7 +49,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-public class SettingsGestureView {
+public class SettingsGestureView implements DialogInterface.OnDismissListener {
     private WindowManager mWindowManager;
     private ImageView mDragButton;
     private ImageView mDragButtonStart;
@@ -76,6 +82,9 @@ public class SettingsGestureView {
     private SwitchConfiguration mConfiguration;
     private SeekBar mDragHandleWidthBar;
     private int mDragHandleWidth;
+    private ImageView mDragHandleColorView;
+    private View mDragHandleColorContainer;
+    private Dialog mDialog;
 
     public SettingsGestureView(Context context) {
         mContext = context;
@@ -256,12 +265,16 @@ public class SettingsGestureView {
 
         mOkButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if (mDialog != null) {
+                    mDialog.dismiss();
+                }
                 Editor edit = mPrefs.edit();
                 edit.putInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, mLocation);
                 int relHeight = (int)(mStartY / (mConfiguration.getCurrentDisplayHeight() /100));
                 edit.putInt(SettingsActivity.PREF_HANDLE_POS_START_RELATIVE, relHeight);
                 edit.putInt(SettingsActivity.PREF_HANDLE_HEIGHT, mEndY - mStartY);
                 edit.putInt(SettingsActivity.PREF_HANDLE_WIDTH, mDragHandleWidth);
+                edit.putInt(SettingsActivity.PREF_DRAG_HANDLE_COLOR_NEW, mColor);
                 edit.commit();
                 hide();
             }
@@ -269,6 +282,9 @@ public class SettingsGestureView {
 
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if (mDialog != null) {
+                    mDialog.dismiss();
+                }
                 hide();
             }
         });
@@ -303,13 +319,24 @@ public class SettingsGestureView {
                 return false;
             }
         });
+
+        mDragHandleColorView = (ImageView) mView.findViewById(R.id.drag_handle_color);
+        mDragHandleColorContainer = mView.findViewById(R.id.drag_handle_color_view);
+        mDragHandleColorContainer.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (mDialog != null && mDialog.isShowing()) return;
+                mDialog = getColorDialog();
+                mDialog.setOnDismissListener(SettingsGestureView.this);
+                mDialog.show();
+            }
+        });
     }
 
     public WindowManager.LayoutParams getGesturePanelLayoutParams() {
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.TYPE_APPLICATION,
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND,
                 PixelFormat.TRANSLUCENT);
         lp.gravity = Gravity.CENTER;
@@ -390,8 +417,8 @@ public class SettingsGestureView {
         } else {
             mLocationButton.setText(mContext.getResources().getString(R.string.location_left));
         }
-        // discard alpha
-        mColor = mConfiguration.mDragHandleColor | 0xFF000000;
+        mColor = mConfiguration.mDragHandleColor;
+        updateColorRect();
     }
 
     public void show() {
@@ -427,6 +454,8 @@ public class SettingsGestureView {
         mEndY = mConfiguration.getDefaultOffsetEnd();
         mDragHandleWidth = mConfiguration.mDefaultDragHandleWidth;
         mDragHandleWidthBar.setProgress(50);
+        mColor = mConfiguration.mDefaultColor;
+        updateColorRect();
         updateLayout();
     }
 
@@ -450,5 +479,53 @@ public class SettingsGestureView {
 
     private double scaleValue(double value, double oldMin, double oldMax, double newMin, double newMax) {
         return ( (value - oldMin) / (oldMax - oldMin) ) * (newMax - newMin) + newMin;
+    }
+
+    private static ShapeDrawable createRectShape(int width, int height, int color) {
+        ShapeDrawable shape = new ShapeDrawable(new RectShape());
+        shape.setIntrinsicHeight(height);
+        shape.setIntrinsicWidth(width);
+        shape.getPaint().setColor(color);
+        return shape;
+    }
+
+    private void updateColorRect() {
+        final int width = (int) mContext.getResources().getDimension(R.dimen.color_button_width);
+        final int height = (int) mContext.getResources().getDimension(R.dimen.color_button_height);
+        mDragHandleColorView.setImageDrawable(createRectShape(width, height, mColor));
+    }
+
+    private Dialog getColorDialog() {
+        final ColorPickerDialog d = new ColorPickerDialog(mContext, mColor, true);
+        d.setButton(AlertDialog.BUTTON_POSITIVE,
+                mContext.getResources().getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mColor = d.getColor();
+                        updateColorRect();
+                        updateDragHandleImage();
+                    }
+                });
+        d.setButton(AlertDialog.BUTTON_NEUTRAL,
+                mContext.getResources().getString(R.string.reset),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mColor = mConfiguration.mDefaultColor;
+                        updateColorRect();
+                        updateDragHandleImage();
+                        d.dismiss();
+                    }
+                });
+        d.setButton(AlertDialog.BUTTON_NEGATIVE,
+                mContext.getResources().getString(R.string.cancel),
+                (DialogInterface.OnClickListener) null);
+        return d;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        mDialog = null;
     }
 }

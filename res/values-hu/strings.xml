@@ -25,7 +25,6 @@
   <string name="opacity_summary">Háttér áttetszősége</string>
   <string name="animate_title">Animáció</string>
   <string name="animate_title_summary">Animáció megjelenéskor és elrejtéskor</string>
-  <string name="adjust_handle_title">Helyzet</string>
   <string name="adjust_handle_help">Fogópont áthelyezése és átméretezése</string>
   <string name="icon_size_normal">Normál</string>
   <string name="icon_size_small">Kicsi</string>
@@ -139,4 +138,12 @@
   <string name="enable_title">Engedélyezés</string>
   <string name="adjust_handle_width">Szélesség</string>
   <string name="adjust_handle_position">Pozíció</string>
+  <string name="package_top_task_title">Fent</string>
+  <string name="package_left_task_title">Balra</string>
+  <string name="package_bottom_task_title">Alul</string>
+  <string name="package_right_task_title">Jobbra</string>
+  <string name="package_full_task_title">Teljes méret</string>
+  <string name="shortcut_label_toggle_overlay">Felület ki-be kapcsolása</string>
+  <string name="adjust_handle_title_new">Fogópont beállítása</string>
+  <string name="adjust_handle_summary">Állítsa be a pozíció méretét és a színét</string>
 </resources>

@@ -25,7 +25,6 @@
   <string name="opacity_summary">Sichtbarkeit des Hintergrundes</string>
   <string name="animate_title">Animieren</string>
   <string name="animate_title_summary">Animation beim Anzeigen / Verstecken</string>
-  <string name="adjust_handle_title">Position und Größe</string>
   <string name="adjust_handle_help">Ziehpunkt verschieben und Grösse anpassen</string>
   <string name="icon_size_normal">Normal</string>
   <string name="icon_size_small">Klein</string>
@@ -139,4 +138,11 @@
   <string name="enable_title">Aktivieren</string>
   <string name="adjust_handle_width">Breite</string>
   <string name="adjust_handle_position">Position</string>
+  <string name="package_top_task_title">Oben</string>
+  <string name="package_left_task_title">Links</string>
+  <string name="package_bottom_task_title">Unten</string>
+  <string name="package_right_task_title">Rechts</string>
+  <string name="package_full_task_title">Volle Größe</string>
+  <string name="shortcut_label_toggle_overlay">Überlagerung ein-/ausblenden</string>
+  <string name="adjust_handle_title_new">Ziehpunkt konfigurieren</string>
 </resources>

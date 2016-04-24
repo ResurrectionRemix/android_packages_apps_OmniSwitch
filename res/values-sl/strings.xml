@@ -25,7 +25,6 @@
   <string name="opacity_summary">Motnost ozadja prekrivnega pogleda</string>
   <string name="animate_title">Animiraj</string>
   <string name="animate_title_summary">Animiraj prikaz in skritje prekrivnega pogleda</string>
-  <string name="adjust_handle_title">Položaj in velikost</string>
   <string name="adjust_handle_help">Ročnik za premikanje in spreminjanje velikosti</string>
   <string name="icon_size_normal">Običajna</string>
   <string name="icon_size_small">Majhna</string>
@@ -139,4 +138,12 @@
   <string name="enable_title">Omogoči</string>
   <string name="adjust_handle_width">Širina</string>
   <string name="adjust_handle_position">Položaj</string>
+  <string name="package_top_task_title">Zgoraj</string>
+  <string name="package_left_task_title">Levo</string>
+  <string name="package_bottom_task_title">Spodaj</string>
+  <string name="package_right_task_title">Desno</string>
+  <string name="package_full_task_title">Polna velikost</string>
+  <string name="shortcut_label_toggle_overlay">Preklopi prekrivnost</string>
+  <string name="adjust_handle_title_new">Nastavi ročnik za vlečenje</string>
+  <string name="adjust_handle_summary">Nastavi velikost in barvo položaja</string>
 </resources>

@@ -25,7 +25,6 @@
   <string name="opacity_summary">Уровень непрозрачности панели</string>
   <string name="animate_title">Анимация</string>
   <string name="animate_title_summary">Анимированное появление и исчезание панели</string>
-  <string name="adjust_handle_title">Положение и размер</string>
   <string name="adjust_handle_help">Перемещение и изменение рамера области вызова.\nНажмите кнопку для переключения между левой и правой стороной дисплея.</string>
   <string name="icon_size_normal">Нормальный</string>
   <string name="icon_size_small">Маленький</string>

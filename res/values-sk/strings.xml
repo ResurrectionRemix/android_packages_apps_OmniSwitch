@@ -25,7 +25,6 @@
   <string name="opacity_summary">Priehľadnosť pozadia pri prekrytí</string>
   <string name="animate_title">Animácia</string>
   <string name="animate_title_summary">Animácia pri zobrazení a skrytí</string>
-  <string name="adjust_handle_title">Poloha a veľkosť</string>
   <string name="adjust_handle_help">Presúnút a zmeniť veľkosť tiahla</string>
   <string name="icon_size_normal">Normálna</string>
   <string name="icon_size_small">Malá</string>
@@ -139,4 +138,12 @@
   <string name="enable_title">Povoliť</string>
   <string name="adjust_handle_width">Šírka</string>
   <string name="adjust_handle_position">Pozícia</string>
+  <string name="package_top_task_title">Hore</string>
+  <string name="package_left_task_title">Vľavo</string>
+  <string name="package_bottom_task_title">Dolu</string>
+  <string name="package_right_task_title">Vpravo</string>
+  <string name="package_full_task_title">Plná veľkosť</string>
+  <string name="shortcut_label_toggle_overlay">Prekrytie vyp/zap</string>
+  <string name="adjust_handle_title_new">Nastaviť tiahlo</string>
+  <string name="adjust_handle_summary">Nastaviť umiestnenie a farbu</string>
 </resources>

@@ -25,7 +25,6 @@
   <string name="opacity_summary">Nieprzezroczystość tła nakładki widoku</string>
   <string name="animate_title">Animacja</string>
   <string name="animate_title_summary">Animuj pokazywanie i ukrywanie nakładki widoku</string>
-  <string name="adjust_handle_title">Pozycja</string>
   <string name="icon_size_normal">Normalne</string>
   <string name="icon_size_small">Małe</string>
   <string name="icon_size_large">Duże</string>

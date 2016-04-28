@@ -25,7 +25,6 @@
   <string name="opacity_summary">Opacità dello sfondo</string>
   <string name="animate_title">Animazione</string>
   <string name="animate_title_summary">Animazione dell\'avvio e della chiusura</string>
-  <string name="adjust_handle_title">Posizione</string>
   <string name="icon_size_normal">Normale</string>
   <string name="icon_size_small">Piccole</string>
   <string name="icon_size_large">Grandi</string>

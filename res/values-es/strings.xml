@@ -25,7 +25,6 @@
   <string name="opacity_summary">Opacidad del fondo de la superposición</string>
   <string name="animate_title">Animar</string>
   <string name="animate_title_summary">Reproducir animaciones al mostrar y ocultar la superposición</string>
-  <string name="adjust_handle_title">Posición y tamaño</string>
   <string name="icon_size_normal">Normal</string>
   <string name="icon_size_small">Pequeño</string>
   <string name="icon_size_large">Grande</string>

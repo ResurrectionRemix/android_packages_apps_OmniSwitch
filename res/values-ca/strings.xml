@@ -25,7 +25,6 @@
   <string name="opacity_summary">Opacitat del fons a la vista de superposició</string>
   <string name="animate_title">Animació</string>
   <string name="animate_title_summary">Animació en mostrar i ocultar la vista de superposició</string>
-  <string name="adjust_handle_title">Posició</string>
   <string name="adjust_handle_help">Mou i redimensiona la nansa de desplaçament</string>
   <string name="icon_size_normal">Normal</string>
   <string name="icon_size_small">Petita</string>
@@ -139,4 +138,10 @@
   <string name="enable_title">Habilita</string>
   <string name="adjust_handle_width">Amplada</string>
   <string name="adjust_handle_position">Posició</string>
+  <string name="package_top_task_title">Superior</string>
+  <string name="package_left_task_title">Esquerra</string>
+  <string name="package_bottom_task_title">Inferior</string>
+  <string name="package_right_task_title">Dreta</string>
+  <string name="package_full_task_title">Mida completa</string>
+  <string name="shortcut_label_toggle_overlay">Activa/desactiva la superposició</string>
 </resources>

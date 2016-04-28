@@ -66,6 +66,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     private boolean mShowThumbs;
     private Runnable mUpdateRamBarTask;
     private ImageView mRamDisplay;
+    private LinearLayout mRecentsOrAppDrawer;
 
     private class RecentListAdapter extends ArrayAdapter<TaskDescription> {
 
@@ -250,6 +251,8 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             }
         });
 
+        mRecentsOrAppDrawer = (LinearLayout) mView.findViewById(R.id.recents_or_appdrawer);
+
         mPopupView = new FrameLayout(mContext);
         mPopupView.addView(mView);
 
@@ -313,6 +316,8 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
     @Override
     protected synchronized void initView() {
+        mRecentsOrAppDrawer.removeView(mAppDrawer);
+
         mFavoriteListView.setLayoutParams(getListParams());
         mFavoriteListView.setSelection(0);
 
@@ -320,15 +325,9 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mRecentList.setSelection(0);
 
         mNoRecentApps.setLayoutParams(getRecentListParams());
-        mAppDrawer.setColumnWidth(mConfiguration.mMaxWidth);
-        mAppDrawer.setNumColumns(getAppDrawerColumns());
-        mAppDrawer.setLayoutParams(getAppDrawerParams());
-        mAppDrawer.requestLayout();
-        mAppDrawer.scrollTo(0, 0);
         mRecents.setVisibility(View.VISIBLE);
         mShowAppDrawer = false;
         mAppDrawer.setVisibility(View.GONE);
-        mAppDrawer.setSelection(0);
         mView.setTranslationX(0);
         mVirtualBackKey = false;
         mShowThumbs = false;
@@ -480,6 +479,14 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
     @Override
     protected void flipToAppDrawerNew() {
+        mRecentsOrAppDrawer.addView(mAppDrawer);
+        mAppDrawer.setColumnWidth(mConfiguration.mMaxWidth);
+        mAppDrawer.setNumColumns(getAppDrawerColumns());
+        mAppDrawer.setLayoutParams(getAppDrawerParams());
+        mAppDrawer.requestLayout();
+        mAppDrawer.scrollTo(0, 0);
+        mAppDrawer.setSelection(0);
+
         mRecents.setVisibility(View.GONE);
         mAppDrawer.setVisibility(View.VISIBLE);
         enableOpenFavoriteButton(false);
@@ -487,6 +494,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
     @Override
     protected void flipToRecentsNew() {
+        mRecentsOrAppDrawer.removeView(mAppDrawer);
         mAppDrawer.setVisibility(View.GONE);
         mRecents.setVisibility(View.VISIBLE);
         enableOpenFavoriteButton(true);

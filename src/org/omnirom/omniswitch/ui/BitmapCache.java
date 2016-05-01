@@ -21,17 +21,22 @@ import org.omnirom.omniswitch.PackageManager;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.TaskDescription;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.LruCache;
 import android.util.Log;
 
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
 
 public class BitmapCache {
+    private static final String TAG = "OmniSwitch:BitmapCache";
+    private static final boolean DEBUG = false;
     private static BitmapCache sInstance;
     private Context mContext;
     private LruCache<String, Drawable> mMemoryCache;
@@ -46,22 +51,25 @@ public class BitmapCache {
     }
 
     private BitmapCache() {
-        final long maxMemory = Runtime.getRuntime().maxMemory();
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
 
-        // Use 1/3rd of the available memory for this memory cache.
-        long cacheSize = maxMemory / 4;
-        //Log.d("BitmapCache", "maxMemory = " + maxMemory +" cacheSize = " + cacheSize);
+        // Use 1/4rd of the available memory for this memory cache.
+        int cacheSize = maxMemory / 4;
+        if (DEBUG) Log.d(TAG, "maxMemory = " + maxMemory +" cacheSize = " + cacheSize);
 
-        mMemoryCache = new LruCache<String, Drawable>((int)cacheSize) {
+        mMemoryCache = new LruCache<String, Drawable>(cacheSize) {
             @Override
             protected int sizeOf(String key, Drawable bitmap) {
                 // The cache size will be measured in kilobytes rather than
                 // number of items.
                 if (bitmap instanceof BitmapDrawable){
-                    return ((BitmapDrawable)bitmap).getBitmap().getAllocationByteCount();
+                    return ((BitmapDrawable)bitmap).getBitmap().getByteCount() / 1024;
                 } else {
                     return 1;
                 }
+            }
+            @Override
+            protected void entryRemoved(boolean evicted, String key, Drawable oldValue, Drawable newValue){
             }
         };
         mThumbnailMap = new HashMap<String, Drawable>(25);
@@ -72,6 +80,7 @@ public class BitmapCache {
     }
 
     public void clear() {
+        if (DEBUG) Log.d(TAG, "clear");
         mMemoryCache.evictAll();
     }
 
@@ -79,12 +88,10 @@ public class BitmapCache {
         mThumbnailMap.clear();
     }
 
-    private String bitmapHash(String intent, int iconSize) {
-        return intent + iconSize;
-    }
-
-    private String bitmapHash(String intent) {
-        return intent;
+    private String bitmapHash(Intent intent, int iconSize) {
+        // unique identifier
+        String key = intent.getComponent().flattenToString();
+        return key + "_" + iconSize;
     }
 
     private IconPackHelper getIconPackHelper() {
@@ -92,9 +99,10 @@ public class BitmapCache {
     }
 
     public Drawable getResized(Resources resources, PackageManager.PackageItem packageItem, SwitchConfiguration configuration, int iconSize) {
-        String key = bitmapHash(packageItem.getIntent(), iconSize);
+        String key = bitmapHash(packageItem.getIntentRaw(), iconSize);
         Drawable d = getBitmapFromMemCache(key);
         if (d == null){
+            if (DEBUG) Log.d(TAG, "addToCache = " + key);
             d = getResizedUncached(resources, packageItem, configuration, iconSize);
             addBitmapToMemoryCache(key, d);
         }
@@ -119,9 +127,10 @@ public class BitmapCache {
     }
 
     public Drawable getResized(Resources resources, TaskDescription ad, Drawable icon, SwitchConfiguration configuration, int iconSize) {
-        String key = bitmapHash(ad.getIntent().toString(), iconSize);
+        String key = bitmapHash(ad.getIntent(), iconSize);
         Drawable d = getBitmapFromMemCache(key);
         if (d == null){
+            if (DEBUG) Log.d(TAG, "addToCache = " + key);
             if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
                     .getResourceIdForActivityIcon(ad.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
@@ -140,8 +149,24 @@ public class BitmapCache {
     }
 
     public void addBitmapToMemoryCache(String key, Drawable bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCache.put(key, bitmap);
+        mMemoryCache.put(key, bitmap);
+    }
+
+    public Iterator<String> keyIterator() {
+        return mMemoryCache.snapshot().keySet().iterator();
+    }
+
+    // remove all entries with this package name
+    public void removeBitmapToMemoryCache(String packageName) {
+        Iterator<String> nextKey = keyIterator();
+        while (nextKey.hasNext()) {
+            String key = nextKey.next();
+            if (key.startsWith(packageName)) {
+                Drawable removed = mMemoryCache.remove(key);
+                if (removed != null) {
+                    if (DEBUG) Log.d(TAG, "removedFromCache = " + key);
+                }
+            }
         }
     }
 

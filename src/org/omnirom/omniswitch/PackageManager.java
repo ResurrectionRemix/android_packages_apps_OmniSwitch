@@ -60,6 +60,10 @@ public class PackageManager {
         private Intent intent;
         private ActivityInfo activity;
 
+        public Intent getIntentRaw() {
+            return intent;
+        }
+
         public String getIntent() {
             return intent.toUri(0);
         }
@@ -155,7 +159,6 @@ public class PackageManager {
     public synchronized void updatePackageList() {
         if (DEBUG) Log.d(TAG, "updatePackageList");
         final android.content.pm.PackageManager pm = mContext.getPackageManager();
-        BitmapCache.getInstance(mContext).clear();
 
         mInstalledPackages.clear();
         mInstalledPackagesList.clear();
@@ -209,23 +212,13 @@ public class PackageManager {
     }
 
     public synchronized PackageManager.PackageItem getPackageItemByComponent(Intent intent) {
-        ComponentName name = intent.getComponent();
-        String pkgName = name.getPackageName();
-        //String className = name.getClassName();
+        String pkgName = intent.getComponent().getPackageName();
 
         Iterator<PackageItem> nextPackage = mInstalledPackagesList.iterator();
         while(nextPackage.hasNext()){
             PackageItem item = nextPackage.next();
-            String intentString = item.getIntent();
-            try {
-                intent = Intent.parseUri(intentString, 0);
-            } catch (URISyntaxException e) {
-                return null;
-            }
-            name = intent.getComponent();
+            ComponentName name = item.getIntentRaw().getComponent();
             String pPkgName = name.getPackageName();
-            //String pClassName = name.getClassName();
-            // TODO: match more then just the package name
             if (pkgName.equals(pPkgName)){
                 return item;
             }
@@ -235,6 +228,10 @@ public class PackageManager {
 
     public synchronized boolean contains(String intent) {
         return getPackageMap().containsKey(intent);
+    }
+
+    public void removePackageIconCache(String packageName) {
+        BitmapCache.getInstance(mContext).removeBitmapToMemoryCache(packageName);
     }
 
     private synchronized void updateFavorites() {

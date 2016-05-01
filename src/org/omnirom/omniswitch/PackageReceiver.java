@@ -28,8 +28,13 @@ public class PackageReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        if (DEBUG) Log.d("PackageReceiver", "onReceive " + intent.getAction());
         if (SwitchService.isRunning()){
+            Uri data = intent.getData();
+            String packageName = data.getEncodedSchemeSpecificPart();
+            if (DEBUG) Log.d("OmniSwitch:PackageReceiver", "onReceive " + intent.getAction() + " " + packageName);
+            if (Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())) {
+                PackageManager.getInstance(context).removePackageIconCache(packageName);
+            }
             PackageManager.getInstance(context).reloadPackageList();
         }
     }

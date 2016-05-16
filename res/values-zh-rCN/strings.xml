@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2013 The OmniROM Project
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 2 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="package_stop_task_title">停止</string>
+    <string name="package_inspect_item_title">应用信息</string>
+    <string name="recents_settings_title">边栏菜单</string>
+    <string name="start_on_boot_title">开机启动</string>
+    <string name="start_on_boot_summary">在设备开机后自动启动</string>
+    <string name="opacity_title">不透明度</string>
+    <string name="opacity_summary">面板背景的不透明度</string>
+    <string name="animate_title">动画效果</string>
+    <string name="animate_title_summary">面板显示和隐藏是使用动画</string>
+    <string name="adjust_handle_help">按住移动和调整大小，点击按钮切换左右。</string>
+    <string name="icon_size_normal">普通</string>
+    <string name="icon_size_small">小</string>
+    <string name="icon_size_large">大</string>
+    <string name="icon_size_title">图标大小</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
+    <string name="drag_handle_color_title">颜色</string>
+    <string name="drag_handle_color_dialog_title">颜色</string>
+    <string name="service_background_processes">%1$s 空闲</string>
+    <string name="service_foreground_processes">%1$s 已用</string>
+    <string name="show_rambar_title">内存用量</string>
+    <string name="show_rambar_summary">显示空闲内存和已用内存的大小</string>
+    <string name="show_app_labels">显示应用名称</string>
+    <string name="show_app_labels_summary">在图标旁显示应用名称</string>
+    <string name="category_overlay_title">覆盖</string>
+    <string name="category_drag_handle_title">拖动手柄</string>
+    <string name="category_favorite_title">收藏夹</string>
+    <string name="favorite_apps_config_title">管理收藏夹</string>
+    <string name="favorite_apps_config_summary">管理收藏夹中的应用</string>
+    <string name="favorite_apps_add_dialog_title">添加应用</string>
+    <string name="favorite_add">添加…</string>
+    <string name="location_left">左边</string>
+    <string name="location_right">右边</string>
+    <string name="reset">默认</string>
+    <string name="toggle_last_app">最近应用</string>
+    <string name="toggle_last_app_help">切换到最近应用</string>
+    <string name="kill_all_apps_help">关闭全部应用</string>
+    <string name="kill_other_apps_help">关闭其他应用</string>
+    <string name="settings_help">设置</string>
+    <string name="home_help">主页</string>
+    <string name="kill_all_apps">关闭全部应用</string>
+    <string name="kill_other_apps">关闭其他应用</string>
+    <string name="settings">设置</string>
+    <string name="home">主页</string>
+    <string name="buttons_title">按钮</string>
+    <string name="buttons_summary">配置面板上的按钮</string>
+    <string name="auto_hide_handle">自动隐藏</string>
+    <string name="auto_hide_handle_summary">滑动两次显示面板</string>
+    <string name="no_recent_apps_title">没有最近应用</string>
+    <string name="drag_handle_opacity_title">不透明度</string>
+    <string name="drag_handle_enable_title">启用</string>
+    <string name="drag_handle_enable_summary">只在你有其他激活方式时禁用</string>
+    <string name="allapps_help">应用抽屉</string>
+    <string name="allapps">应用</string>
+    <string name="dim_behind_title">暗淡背景</string>
+    <string name="dim_behind_summary">全屏增加不透明度</string>
+    <string name="gravity_title">水平重力</string>
+    <string name="gravity_center">中心</string>
+    <string name="gravity_drag">拖动手柄方向</string>
+    <string name="dialog_pick_iconpack_title">选择图标包</string>
+    <string name="default_iconpack_title">默认图标</string>
+    <string name="icon_packs_title">图标包</string>
+    <string name="no_iconpacks_summary">未安装图标包</string>
+    <string name="icon_pack_title">图标包</string>
+    <string name="icon_pack_summary">为应用使用第三方图标包</string>
+    <string name="category_speed_switcher_title">快速切换</string>
+    <string name="speed_switcher_enable_summary">长按并拖动激活</string>
+    <string name="speed_switcher_enable_title">启用</string>
+    <string name="back">后退</string>
+    <string name="back_help">后退</string>
+    <string name="kill_current">关闭当前</string>
+    <string name="kill_current_help">关闭当前应用</string>
+    <string name="speed_switch_color_summary">蓝色 -最近应用. 绿色 -收藏应用. 红色 -功能</string>
+    <string name="speed_switch_color">区分背景颜色</string>
+    <string name="speed_switch_limit_summary">限制模式切换的区域</string>
+    <string name="speed_switch_limit">模式切换区域</string>
+    <string name="speed_switch_button_title">按钮</string>
+    <string name="speed_switch_button_summary">配置快速切换中的按钮</string>
+    <string name="speed_switch_items_summary">快速切换中的最大数量</string>
+    <string name="speed_switch_item">限制数量</string>
+    <string name="immersive_mode">Immersive mode</string>
+    <string name="immersive_mode_help">Toggle immersive mode</string>
+    <string name="package_add_favorite_title">添加到收藏夹</string>
+    <string name="package_remove_favorite_title">从收藏夹中删除</string>
+    <string name="open_favorite_help">打开/关闭收藏夹</string>
+    <string name="button_pos_title">按钮位置</string>
+    <string name="button_pos_top">顶部/左侧</string>
+    <string name="button_pos_bottom">底部/右侧</string>
+    <string name="bg_style_solid_light">亮色</string>
+    <string name="bg_style_solid_dark">暗色</string>
+    <string name="bg_style_transparent">透明</string>
+    <string name="bg_style_title">背景风格</string>
+    <string name="lock_to_app">固定应用</string>
+    <string name="lock_app_help">固定当前应用</string>
+    <string name="app_filter_category_title">应用过滤</string>
+    <string name="app_filter_boot_title">启动时激活</string>
+    <string name="layout_style_title">风格</string>
+    <string name="layout_style_1">水平</string>
+    <string name="layout_style_2">竖直</string>
+    <string name="no_limit">不限制</string>
+    <string name="one_hour">1 小时</string>
+    <string name="three_hours">3 小时</string>
+    <string name="six_hours">6 小时</string>
+    <string name="twelve_hours">12 小时</string>
+    <string name="one_day">1 天</string>
+    <string name="two_days">2 天</string>
+    <string name="one_week">1 周</string>
+    <string name="app_filter_time_title">激活时间</string>
+    <string name="close_help">关闭</string>
+    <string name="close">关闭</string>
+    <string name="thumb_size_title">缩略图大小</string>
+    <string name="thumb_size_normal">普通</string>
+    <string name="thumb_size_small">小</string>
+    <string name="thumb_size_medium">中</string>
+    <string name="package_lock_task_title">固定应用</string>
+    <string name="lock_app_not_enabled">系统屏幕固定没有启用</string>
+    <string name="app_filter_running_title">仅运行中</string>
+    <string name="menu">菜单</string>
+    <string name="menu_help">菜单</string>
+    <string name="enable_title">启用</string>
+    <string name="adjust_handle_width">宽度</string>
+    <string name="adjust_handle_position">位置</string>
+    <string name="package_top_task_title">顶部</string>
+    <string name="package_left_task_title">左边</string>
+    <string name="package_bottom_task_title">底部</string>
+    <string name="package_right_task_title">右边</string>
+    <string name="package_full_task_title">完整尺寸</string>
+    <string name="shortcut_label_toggle_overlay">覆盖</string>
+    <string name="adjust_handle_title_new">设置侧边栏位置</string>
+    <string name="adjust_handle_summary">配置位置、大小、颜色</string>
+</resources>

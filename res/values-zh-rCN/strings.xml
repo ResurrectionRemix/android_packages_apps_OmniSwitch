@@ -17,10 +17,10 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="package_stop_task_title">Stop</string>
-  <string name="package_inspect_item_title">App info</string>
-  <string name="start_on_boot_title">Start on boot</string>
-  <string name="start_on_boot_summary">Start and enable on device boot</string>
+  <string name="package_stop_task_title">停止</string>
+  <string name="package_inspect_item_title">应用信息</string>
+  <string name="start_on_boot_title">开机时启动</string>
+  <string name="start_on_boot_summary">开机时应用</string>
   <string name="opacity_title">Opacity</string>
   <string name="opacity_summary">Background opacity of overlay view</string>
   <string name="animate_title">Animate</string>

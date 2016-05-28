@@ -86,7 +86,7 @@
   <string name="speed_switcher_enable_title">Ativado</string>
   <string name="back">Voltar</string>
   <string name="back_help">Voltar</string>
-  <string name="kill_current">Fechar o que está ativo</string>
+  <string name="kill_current">Fechar atual</string>
   <string name="kill_current_help">Fechar app atual</string>
   <string name="speed_switch_color_summary">Azul - apps recentes. Verde - favoritos. Vermelho - ações</string>
   <string name="speed_switch_color">Nível das cores de fundo</string>

@@ -68,7 +68,7 @@
   <string name="drag_handle_opacity_title">Átlátszóság</string>
   <string name="drag_handle_enable_title">Engedélyezés</string>
   <string name="drag_handle_enable_summary">Csak akkor tiltsa le, ha egy másik aktiválási módszert használ</string>
-  <string name="allapps_help">Alkalmazás fiók</string>
+  <string name="allapps_help">Alkalmazások fül</string>
   <string name="allapps">Alkalmazások</string>
   <string name="dim_behind_title">Háttér elhalványítása</string>
   <string name="dim_behind_summary">Átlátszóság alkalmazása a teljes képernyőre</string>

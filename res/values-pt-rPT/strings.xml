@@ -64,7 +64,7 @@
   <string name="buttons_summary">Configurar os botões de acção no modo de sobreposição</string>
   <string name="auto_hide_handle">Ocultar automaticamente</string>
   <string name="auto_hide_handle_summary">Dois deslizes para mostrar sobreposição</string>
-  <string name="no_recent_apps_title">Não existem aplicações recentes</string>
+  <string name="no_recent_apps_title">Sem aplicações recentes</string>
   <string name="drag_handle_opacity_title">Opacidade</string>
   <string name="drag_handle_enable_title">Ativar</string>
   <string name="drag_handle_enable_summary">Desativo apenas se usares outro método de ativação</string>
@@ -131,7 +131,7 @@
   <string name="thumb_size_small">Pequeno</string>
   <string name="thumb_size_medium">Médio</string>
   <string name="package_lock_task_title">Fixar aplicação</string>
-  <string name="lock_app_not_enabled">Fixação de tela não está ativado nas configurações de segurança</string>
+  <string name="lock_app_not_enabled">Fixação do ecrã não está ativo nas configurações de segurança</string>
   <string name="app_filter_running_title">Só executar</string>
   <string name="menu">Menu</string>
   <string name="menu_help">Menu</string>
@@ -145,5 +145,5 @@
   <string name="package_full_task_title">Tamanho Inteiro</string>
   <string name="shortcut_label_toggle_overlay">Comutador de Sobreposição</string>
   <string name="adjust_handle_title_new">Configurar o identificador de arrastar</string>
-  <string name="adjust_handle_summary">Configurar a posição de tamanho e cor</string>
+  <string name="adjust_handle_summary">Configurar tamanho da posição e cor</string>
 </resources>

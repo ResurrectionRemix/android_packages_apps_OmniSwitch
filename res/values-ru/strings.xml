@@ -131,7 +131,7 @@
   <string name="thumb_size_small">Маленький</string>
   <string name="thumb_size_medium">Средний</string>
   <string name="package_lock_task_title">Закрепить приложение</string>
-  <string name="lock_app_not_enabled">Screen pinning is not enabled in security settings</string>
+  <string name="lock_app_not_enabled">Закрепление позиции не включено в настройках безопасности</string>
   <string name="app_filter_running_title">Только запущенные</string>
   <string name="menu">Меню</string>
   <string name="menu_help">Меню</string>

@@ -178,7 +178,7 @@ public class SwitchGestureView {
         mRecentList = new ArrayList<PackageTextView>();
         mActionList = new ArrayList<PackageTextView>();
         ViewConfiguration vc = ViewConfiguration.get(context);
-        mSlop = vc.getScaledTouchSlop();
+        mSlop = vc.getScaledTouchSlop() / 2;
 
         mGestureDetector = new GestureDetector(context, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(false);
@@ -1061,18 +1061,6 @@ public class SwitchGestureView {
             Log.d(TAG, "updateCurrentItemEnv:" + mCurrentItemEnv[0] + ":" + mCurrentItemEnv[1] + ":" + mCurrentItemEnv[2]);
         }
     }
-
-//    private void layoutEnvItems(){
-//        PackageTextView left = mCurrentItemEnv[0];
-//        PackageTextView right = mCurrentItemEnv[2];
-//
-//        if (left != null){
-//            left.loadTaskThumb();
-//        }
-//        if (right != null){
-//            right.loadTaskThumb();
-//        }
-//    }
 
     private void resetEnvItems(){
         mCurrentItemEnv[0] = null;

@@ -42,6 +42,8 @@ public final class TaskDescription {
     private ActivityInfo mActivityInfo;
     private ThumbChangeListener mListener;
     private boolean mThumbLoading;
+    private boolean mThumbPreloaded;
+    private Bitmap mThumb;
 
     public static interface ThumbChangeListener {
         public void thumbChanged(int pesistentTaskId, Bitmap thumb);
@@ -157,7 +159,20 @@ public final class TaskDescription {
         return mThumbLoading;
     }
 
-    public void setThumbLoading(boolean mThumbLoading) {
-        this.mThumbLoading = mThumbLoading;
+    public void setThumbLoading(boolean thumbLoading) {
+        this.mThumbLoading = thumbLoading;
+    }
+
+    public void setThumbPreloaded(Bitmap thumb) {
+        mThumbPreloaded = true;
+        mThumb = thumb;
+    }
+
+    public Bitmap getThumbPreloaded() {
+        return mThumb;
+    }
+
+    public boolean isThumbPreloaded() {
+        return mThumbPreloaded;
     }
 }

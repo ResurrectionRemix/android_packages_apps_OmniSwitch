@@ -119,7 +119,7 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
         return getLabel().toString();
     }
 
-    private void updateThumb(final Bitmap thumb, boolean cache, boolean defaultThumb) {
+    private void updateThumb(final Bitmap thumb, boolean cache) {
         if (getTask() != null){
             // called because the thumb has changed from the default
             if (thumb != null){
@@ -154,7 +154,7 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
             if (setDefaultThumb == null) {
                 setDefaultThumb = RecentTasksLoader.getInstance(mContext).getDefaultThumb();
             }
-            updateThumb(setDefaultThumb, false, true);
+            updateThumb(setDefaultThumb, false);
         }
     }
 
@@ -165,7 +165,7 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
                 mHandler.post(new Runnable(){
                     @Override
                     public void run() {
-                        updateThumb(thumb, true, false);
+                        updateThumb(thumb, true);
                     }});
             }
         }

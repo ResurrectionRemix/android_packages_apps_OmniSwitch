@@ -72,9 +72,9 @@ public class SwitchConfiguration {
     public List<String> mFavoriteList = new ArrayList<String>();
     public boolean mSpeedSwitcher = true;
     public boolean mFilterActive = true;
-    public boolean mFilterBoot = true;
-    public boolean mFilterRunning = false;
-    public long mFilterTime = 0;
+    public boolean mFilterBoot;
+    public boolean mFilterRunning;
+    public long mFilterTime;
     public boolean mSideHeader = true;
     public static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;

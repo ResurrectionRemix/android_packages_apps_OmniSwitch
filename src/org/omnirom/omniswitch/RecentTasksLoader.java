@@ -47,6 +47,7 @@ public class RecentTasksLoader {
     private static final String TAG = "RecentTasksLoader";
     private static final boolean DEBUG = false;
     private static final int MAX_TASKS = 50;
+    private static final int THUMB_INIT_LOAD = 5;
 
     private Context mContext;
     private AsyncTask<Void, List<TaskDescription>, Void> mTaskLoader;
@@ -94,8 +95,8 @@ public class RecentTasksLoader {
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
         mDefaultThumbnail = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-        mDefaultThumbnail.setHasAlpha(false);
-        mDefaultThumbnail.eraseColor(0xFFffffff);
+        mDefaultThumbnail.setHasAlpha(true);
+        mDefaultThumbnail.eraseColor(0x00ffffff);
         mHasThumbPermissions = hasSystemPermission(context);
         mConfiguration = SwitchConfiguration.getInstance(mContext);
     }
@@ -258,6 +259,7 @@ public class RecentTasksLoader {
                         .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(
                                 pm, 0);
                 boolean isFirstValidTask = true;
+                int preloadedThumbNum = 0;
 
                 for (int i = 0; i < numTasks && i < MAX_TASKS; ++i) {
                     if (isCancelled()) {
@@ -332,6 +334,9 @@ public class RecentTasksLoader {
                         }
                     }
 
+                    if (!activeTask) {
+                        continue;
+                    }
                     TaskDescription item = createTaskDescription(recentInfo.id,
                             recentInfo.persistentId, recentInfo.stackId,
                             recentInfo.baseIntent, recentInfo.origActivity,
@@ -341,6 +346,13 @@ public class RecentTasksLoader {
                         mLoadedTasks.add(item);
                         if (activeTask) {
                             loadTaskIcon(item);
+                            if (mHasThumbPermissions && preloadedThumbNum < THUMB_INIT_LOAD) {
+                                Bitmap b = getThumbnail(item.persistentTaskId);
+                                if (b != null) {
+                                    item.setThumbPreloaded(b);
+                                }
+                                preloadedThumbNum++;
+                            }
                         }
                     }
                 }
@@ -435,6 +447,16 @@ public class RecentTasksLoader {
             return;
         }
         if (!td.isActive()) {
+            return;
+        }
+        if (td.isThumbPreloaded()) {
+            Bitmap b = td.getThumbPreloaded();
+            if (b != null) {
+                if (DEBUG){
+                    Log.d(TAG, "use preloaded thumb " + td + " " + td.persistentTaskId);
+                }
+                td.setThumb(b);
+            }
             return;
         }
         if (td.isThumbLoading()) {

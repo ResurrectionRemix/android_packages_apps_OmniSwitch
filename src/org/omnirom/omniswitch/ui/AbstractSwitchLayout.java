@@ -72,10 +72,10 @@ import android.widget.Toast;
 public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected static final int FAVORITE_DURATION = 200;
     protected static final int FLIP_DURATION = 500;
-    protected static final int SHOW_DURATION = 350;
-    protected static final int SHOW_DURATION_FAST = 200;
-    protected static final int HIDE_DURATION = 350;
-    protected static final int HIDE_DURATION_FAST = 200;
+    protected static final int SHOW_DURATION = 300;
+    protected static final int SHOW_DURATION_FAST = 150;
+    protected static final int HIDE_DURATION = 300;
+    protected static final int HIDE_DURATION_FAST = 150;
 
     protected static final float ROTATE_0_DEGREE = 0f;
     protected static final float ROTATE_90_DEGREE = 90f;
@@ -1077,9 +1077,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
             Log.d(TAG, "preShowDone " + System.currentTimeMillis());
         }
         mPopupView.setFocusableInTouchMode(true);
-        if (mConfiguration.mShowRambar) {
-            updateRamDisplay();
-        }
         updateRecentsAppsList(false);
 
         mShowing = true;
@@ -1224,6 +1221,9 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         mCurrentDistance = 0;
         mCurrentSlideWidth = 0;
         mEnabled = true;
+        if (mConfiguration.mShowRambar) {
+            updateRamDisplay();
+        }
         afterShowDone();
     }
 

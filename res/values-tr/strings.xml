@@ -22,7 +22,7 @@
   <string name="start_on_boot_title">Açılışta başlat</string>
   <string name="start_on_boot_summary">Cihaz açılışında başlat ve aktif et</string>
   <string name="opacity_title">Saydamlık</string>
-  <string name="opacity_summary">Background opacity of overlay view</string>
+  <string name="opacity_summary">Bindirme görünümü arka plan saydamlığı</string>
   <string name="animate_title">Animasyon</string>
   <string name="animate_title_summary">Görünüm yüklerken animasyon göster ve gizle</string>
   <string name="adjust_handle_help">Move and resize drag handle</string>
@@ -39,8 +39,8 @@
   <string name="show_rambar_title">Bellek kullanımını göster</string>
   <string name="show_rambar_summary">Boş ve kullanılan hafıza miktarını görüntüle</string>
   <string name="show_app_labels">Uygulama adını göster</string>
-  <string name="show_app_labels_summary">Application name will be displayed with the icon</string>
-  <string name="category_overlay_title">Overlay</string>
+  <string name="show_app_labels_summary">Uygulama adı simgesi ile gösterilecektir</string>
+  <string name="category_overlay_title">Bindirme</string>
   <string name="category_drag_handle_title">Drag handle</string>
   <string name="category_favorite_title">Favoriler</string>
   <string name="favorite_apps_config_title">Favorileri yönet</string>
@@ -51,7 +51,7 @@
   <string name="location_right">Sağ</string>
   <string name="reset">Sıfırla</string>
   <string name="toggle_last_app">Son uygulama</string>
-  <string name="toggle_last_app_help">Switch to last app</string>
+  <string name="toggle_last_app_help">Son uygulamaya geçiş yap</string>
   <string name="kill_all_apps_help">Tüm uygulamaları sonlandır</string>
   <string name="kill_other_apps_help">Diğer uygulamaları sonlandır</string>
   <string name="settings_help">Ayarlar</string>
@@ -63,7 +63,7 @@
   <string name="buttons_title">Tuşlar</string>
   <string name="buttons_summary">Eylem düğmeleri yer paylaşımı yapılandır</string>
   <string name="auto_hide_handle">Otomatik gizle</string>
-  <string name="auto_hide_handle_summary">Two swipes to show overlay view</string>
+  <string name="auto_hide_handle_summary">Bindirme görünümü göstermek için çift kaydırma</string>
   <string name="no_recent_apps_title">Son kullanılan uygulama yok</string>
   <string name="drag_handle_opacity_title">Saydamlık</string>
   <string name="drag_handle_enable_title">Etkinleştir</string>
@@ -71,8 +71,8 @@
   <string name="allapps_help">Uygulama çekmecesi</string>
   <string name="allapps">Uygulamalar</string>
   <string name="dim_behind_title">Arkaplanı karart</string>
-  <string name="dim_behind_summary">Apply opacity to complete screen</string>
-  <string name="gravity_title">Horizontal gravity</string>
+  <string name="dim_behind_summary">Tam ekran için saydamlığı uygulayın</string>
+  <string name="gravity_title">Yatay yerçekimi</string>
   <string name="gravity_center">Orta</string>
   <string name="gravity_drag">Drag handle side</string>
   <string name="dialog_pick_iconpack_title">Simge paketi seç</string>
@@ -86,7 +86,7 @@
   <string name="speed_switcher_enable_title">Etkinleştir</string>
   <string name="back">Geri</string>
   <string name="back_help">Geri</string>
-  <string name="kill_current">Kill current</string>
+  <string name="kill_current">Geçerli olanı sonlandır</string>
   <string name="kill_current_help">Geçerli uygulamayı sonlandır</string>
   <string name="speed_switch_color_summary">Mavi - son kullanılan uygulamalar. Yeşil - favoriler. Kırmızı - eylemler</string>
   <string name="speed_switch_color">Arka plan rengi seviyesi</string>
@@ -124,7 +124,7 @@
   <string name="two_days">2 gün</string>
   <string name="one_week">1 hafta</string>
   <string name="app_filter_time_title">Açılıştan beri etkin</string>
-  <string name="close_help">Close overlay</string>
+  <string name="close_help">Bindirmeyi kapat</string>
   <string name="close">Kapat</string>
   <string name="thumb_size_title">Küçük resim boyutu</string>
   <string name="thumb_size_normal">Normal</string>
@@ -143,7 +143,7 @@
   <string name="package_bottom_task_title">Alt</string>
   <string name="package_right_task_title">Sağ</string>
   <string name="package_full_task_title">Tam boyut</string>
-  <string name="shortcut_label_toggle_overlay">Toggle overlay</string>
+  <string name="shortcut_label_toggle_overlay">Bindirme geçişi</string>
   <string name="adjust_handle_title_new">Configure drag handle</string>
-  <string name="adjust_handle_summary">Configure position size and color</string>
+  <string name="adjust_handle_summary">Pozisyon boyutunu ve rengini yapılandır</string>
 </resources>

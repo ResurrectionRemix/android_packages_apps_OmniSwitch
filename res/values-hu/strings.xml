@@ -37,7 +37,7 @@
   <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> szabad</string>
   <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> foglalt</string>
   <string name="show_rambar_title">Memóriahasználat megjelenítése</string>
-  <string name="show_rambar_summary">Szabad és használt memória mennyiségnek megjelenítése</string>
+  <string name="show_rambar_summary">Szabad és használt memória mennyiség megjelenítése</string>
   <string name="show_app_labels">Alkalmazásnév mutatása</string>
   <string name="show_app_labels_summary">Megjelenik az alkalmazás neve az ikonnal együtt</string>
   <string name="category_overlay_title">Átfedés</string>

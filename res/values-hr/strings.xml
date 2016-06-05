@@ -17,36 +17,36 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="package_stop_task_title">Stop</string>
-  <string name="package_inspect_item_title">App info</string>
-  <string name="start_on_boot_title">Start on boot</string>
-  <string name="start_on_boot_summary">Start and enable on device boot</string>
-  <string name="opacity_title">Opacity</string>
-  <string name="opacity_summary">Background opacity of overlay view</string>
-  <string name="animate_title">Animate</string>
-  <string name="animate_title_summary">Animate show and hide of overlay view</string>
-  <string name="adjust_handle_help">Move and resize drag handle</string>
-  <string name="icon_size_normal">Normal</string>
-  <string name="icon_size_small">Small</string>
-  <string name="icon_size_large">Large</string>
-  <string name="icon_size_title">Icon size</string>
-  <string name="ok">OK</string>
-  <string name="cancel">Cancel</string>
-  <string name="drag_handle_color_title">Color</string>
-  <string name="drag_handle_color_dialog_title">Color</string>
-  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> free</string>
-  <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> used</string>
-  <string name="show_rambar_title">Show memory usage</string>
-  <string name="show_rambar_summary">Display amount of free and used memory</string>
-  <string name="show_app_labels">Show app name</string>
-  <string name="show_app_labels_summary">Application name will be displayed with the icon</string>
-  <string name="category_overlay_title">Overlay</string>
-  <string name="category_drag_handle_title">Drag handle</string>
-  <string name="category_favorite_title">Favorites</string>
-  <string name="favorite_apps_config_title">Manage favorites</string>
-  <string name="favorite_apps_config_summary">Define apps shown in favorites view</string>
-  <string name="favorite_apps_add_dialog_title">Add apps</string>
-  <string name="favorite_add">Add\u2026</string>
+  <string name="package_stop_task_title">Zaustavi</string>
+  <string name="package_inspect_item_title">O aplikaciji</string>
+  <string name="start_on_boot_title">Pokreni pri paljenju telefona</string>
+  <string name="start_on_boot_summary">Pokreni i omogući pri paljenju telefona.</string>
+  <string name="opacity_title">Neprozirnost</string>
+  <string name="opacity_summary">Pozadinska neprozirnost prekrivajućeg pregleda.</string>
+  <string name="animate_title">Animacija</string>
+  <string name="animate_title_summary">Animiraj prikaz i skrivanje prekrivajućeg pregleda.</string>
+  <string name="adjust_handle_help">Pomaknite i promijenite veličinu ručke za povlačenje.</string>
+  <string name="icon_size_normal">Normalna</string>
+  <string name="icon_size_small">Mala</string>
+  <string name="icon_size_large">Velika</string>
+  <string name="icon_size_title">Veličina ikone</string>
+  <string name="ok">U redu</string>
+  <string name="cancel">Odustani</string>
+  <string name="drag_handle_color_title">Boja</string>
+  <string name="drag_handle_color_dialog_title">Boja</string>
+  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> slobodno</string>
+  <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> iskorišteno</string>
+  <string name="show_rambar_title">Prikaži upotrebu memorije</string>
+  <string name="show_rambar_summary">Prikaz količine slobodne i iskorištene memorije.</string>
+  <string name="show_app_labels">Prikaži naziv aplikacije</string>
+  <string name="show_app_labels_summary">Naziv aplikacije bit će prikazan pokraj ikone.</string>
+  <string name="category_overlay_title">Prekrivanje</string>
+  <string name="category_drag_handle_title">Ručka za povlačenje</string>
+  <string name="category_favorite_title">Omiljene aplikacije</string>
+  <string name="favorite_apps_config_title">Upravljanje omiljenim</string>
+  <string name="favorite_apps_config_summary">Odredite koje će se aplikacije prikazivati u pregledu omiljenih apl.</string>
+  <string name="favorite_apps_add_dialog_title">Dodaj aplikacije</string>
+  <string name="favorite_add">Dodaj\u2026</string>
   <string name="location_left">Lijevo</string>
   <string name="location_right">Desno</string>
   <string name="reset">Zadano</string>

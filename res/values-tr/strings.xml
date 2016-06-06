@@ -25,7 +25,7 @@
   <string name="opacity_summary">Bindirme görünümü arka plan saydamlığı</string>
   <string name="animate_title">Animasyon</string>
   <string name="animate_title_summary">Görünüm yüklerken animasyon göster ve gizle</string>
-  <string name="adjust_handle_help">Move and resize drag handle</string>
+  <string name="adjust_handle_help">Kaydırma işlemini taşı ve yeniden boyutlandır</string>
   <string name="icon_size_normal">Normal</string>
   <string name="icon_size_small">Küçük</string>
   <string name="icon_size_large">Orta</string>
@@ -41,7 +41,7 @@
   <string name="show_app_labels">Uygulama adını göster</string>
   <string name="show_app_labels_summary">Uygulama adı simgesi ile gösterilecektir</string>
   <string name="category_overlay_title">Bindirme</string>
-  <string name="category_drag_handle_title">Drag handle</string>
+  <string name="category_drag_handle_title">Kaydırma işlemi</string>
   <string name="category_favorite_title">Favoriler</string>
   <string name="favorite_apps_config_title">Favorileri yönet</string>
   <string name="favorite_apps_config_summary">Favorilerde gösterilmek üzere uygulama tanımla</string>
@@ -74,7 +74,7 @@
   <string name="dim_behind_summary">Tam ekran için saydamlığı uygulayın</string>
   <string name="gravity_title">Yatay yerçekimi</string>
   <string name="gravity_center">Orta</string>
-  <string name="gravity_drag">Drag handle side</string>
+  <string name="gravity_drag">Kaydırma işlemi tarafı</string>
   <string name="dialog_pick_iconpack_title">Simge paketi seç</string>
   <string name="default_iconpack_title">Varsayılan simgeler</string>
   <string name="icon_packs_title">Simge paketleri</string>
@@ -82,7 +82,7 @@
   <string name="icon_pack_title">Simge paketi</string>
   <string name="icon_pack_summary">Uygulama simgeleri için simge paketi kullan</string>
   <string name="category_speed_switcher_title">Hızlı Geçiş</string>
-  <string name="speed_switcher_enable_summary">Long press drag handle to activate</string>
+  <string name="speed_switcher_enable_summary">Kaydırma işlemini aktifleşmek için uzun basın</string>
   <string name="speed_switcher_enable_title">Etkinleştir</string>
   <string name="back">Geri</string>
   <string name="back_help">Geri</string>
@@ -144,6 +144,6 @@
   <string name="package_right_task_title">Sağ</string>
   <string name="package_full_task_title">Tam boyut</string>
   <string name="shortcut_label_toggle_overlay">Bindirme geçişi</string>
-  <string name="adjust_handle_title_new">Configure drag handle</string>
+  <string name="adjust_handle_title_new">Kaydırma işlemini yapılandır</string>
   <string name="adjust_handle_summary">Pozisyon boyutunu ve rengini yapılandır</string>
 </resources>

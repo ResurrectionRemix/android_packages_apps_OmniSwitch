@@ -108,10 +108,10 @@
   <string name="bg_style_solid_dark">Dark</string>
   <string name="bg_style_transparent">Transparent</string>
   <string name="bg_style_title">Background style</string>
-  <string name="lock_to_app">Pin app</string>
-  <string name="lock_app_help">Pin current app</string>
-  <string name="app_filter_category_title">App filter</string>
-  <string name="app_filter_boot_title">Active since boot</string>
+  <string name="lock_to_app">固定应用</string>
+  <string name="lock_app_help">固定当前的应用</string>
+  <string name="app_filter_category_title">筛选应用</string>
+  <string name="app_filter_boot_title">自启动以来的活跃</string>
   <string name="layout_style_title">Style</string>
   <string name="layout_style_1">Horizontal</string>
   <string name="layout_style_2">Vertical</string>

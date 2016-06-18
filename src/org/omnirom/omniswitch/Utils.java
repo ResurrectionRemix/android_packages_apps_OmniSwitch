@@ -22,11 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import android.app.ActivityManagerNative;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.hardware.input.InputManager;
 import android.os.Handler;
 import android.os.RemoteException;
@@ -38,6 +38,12 @@ import android.provider.Settings.SettingNotFoundException;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.omnirom.omniswitch.launcher.Launcher;
 
 public class Utils {
 
@@ -70,9 +76,9 @@ public class Utils {
         return buffer.toString();
     }
 
-    public static String getActivityLabel(PackageManager pm, Intent intent) {
+    public static String getActivityLabel(android.content.pm.PackageManager pm, Intent intent) {
         ActivityInfo ai = intent.resolveActivityInfo(pm,
-                PackageManager.GET_ACTIVITIES);
+                android.content.pm.PackageManager.GET_ACTIVITIES);
         String label = null;
 
         if (ai != null) {
@@ -184,5 +190,52 @@ public class Utils {
 
     public static boolean isMultiStackEnabled(Context context) {
         return "true".equals(SystemProperties.get("persist.sys.debug.multi_window"));
+    }
+
+    public static void updateFavoritesList(Context context, SwitchConfiguration config, List<String> favoriteList) {
+        favoriteList.clear();
+        favoriteList.addAll(config.mFavoriteList);
+
+        List<String> fList = new ArrayList<String>();
+        fList.addAll(favoriteList);
+        Iterator<String> nextFavorite = fList.iterator();
+        while (nextFavorite.hasNext()) {
+            String intent = nextFavorite.next();
+            PackageManager.PackageItem packageItem = PackageManager
+                    .getInstance(context).getPackageItem(intent);
+            if (packageItem == null) {
+                favoriteList.remove(intent);
+            }
+        }
+    }
+
+    public static boolean isPrefKeyForForceUpdate(String key) {
+        if (key.equals(SettingsActivity.PREF_BG_STYLE) ||
+                key.equals(SettingsActivity.PREF_SHOW_LABELS) ||
+                key.equals(SettingsActivity.PREF_ICON_SIZE) ||
+                key.equals(SettingsActivity.PREF_ICONPACK) ||
+                key.equals(SettingsActivity.PREF_THUMB_SIZE)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void enableLauncherMode(Context context, boolean value) {
+        final android.content.pm.PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(context, Launcher.class),
+                value ? android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED :
+                android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+    }
+
+    public static List<String> getFavoriteListFromStats(Context context, int count) {
+        List<String> favoriteList = new ArrayList<String>();
+        List<String> topLaunchList = SwitchStatistics.getInstance(context).getTopmostLaunches(count);
+        for (String pkgName : topLaunchList) {
+            List<String> pkgList = PackageManager.getInstance(context).getPackageListForPackageName(pkgName);
+            if (pkgList.size() != 0) {
+                favoriteList.addAll(pkgList);
+            }
+        }
+        return favoriteList;
     }
 }

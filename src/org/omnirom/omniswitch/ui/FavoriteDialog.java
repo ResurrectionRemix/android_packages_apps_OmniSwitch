@@ -26,7 +26,7 @@ import java.util.HashSet;
 import org.omnirom.omniswitch.PackageManager;
 import org.omnirom.omniswitch.PackageManager.PackageItem;
 import org.omnirom.omniswitch.R;
-import org.omnirom.omniswitch.SettingsActivity;
+import org.omnirom.omniswitch.IEditFavoriteActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.dslv.DragSortController;
 import org.omnirom.omniswitch.dslv.DragSortListView;
@@ -54,12 +54,12 @@ public class FavoriteDialog extends AlertDialog implements
         DialogInterface.OnClickListener, DialogInterface.OnDismissListener {
     private LayoutInflater mInflater;
     private List<String> mFavoriteList;
-    private SettingsActivity mContext;
     private FavoriteListAdapter mFavoriteAdapter;
     private DragSortListView mFavoriteConfigList;
     private AlertDialog mAddFavoriteDialog;
     private int mIconSize;
     private SwitchConfiguration mConfiguration;
+    private IEditFavoriteActivity mEditor;
 
     ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -94,10 +94,10 @@ public class FavoriteDialog extends AlertDialog implements
                             .findViewById(R.id.app_icon);
             }
             String intent = mFavoriteList.get(position);
-            PackageManager.PackageItem packageItem = PackageManager.getInstance(mContext).getPackageItem(intent);
+            PackageManager.PackageItem packageItem = PackageManager.getInstance(getContext()).getPackageItem(intent);
             holder.item.setText(packageItem.getTitle());
-            holder.image.setImageDrawable(BitmapCache.getInstance(mContext)
-                        .getResized(mContext.getResources(), packageItem,
+            holder.image.setImageDrawable(BitmapCache.getInstance(getContext())
+                        .getResized(getContext().getResources(), packageItem,
                         mConfiguration, mIconSize));
             return convertView;
         }
@@ -134,9 +134,9 @@ public class FavoriteDialog extends AlertDialog implements
         }
     }
 
-    public FavoriteDialog(SettingsActivity context, List<String> favoriteList) {
+    public FavoriteDialog(Context context, IEditFavoriteActivity editor, List<String> favoriteList) {
         super(context);
-        mContext = context;
+        mEditor = editor;
         mFavoriteList = favoriteList;
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -160,12 +160,12 @@ public class FavoriteDialog extends AlertDialog implements
 
         super.onCreate(savedInstanceState);
 
-        mConfiguration = SwitchConfiguration.getInstance(mContext);
+        mConfiguration = SwitchConfiguration.getInstance(context);
 
         mIconSize = mConfiguration.mIconSizeSettings;
         mFavoriteConfigList = (DragSortListView) view
                 .findViewById(R.id.favorite_apps);
-        mFavoriteAdapter = new FavoriteListAdapter(mContext, mFavoriteList);
+        mFavoriteAdapter = new FavoriteListAdapter(context, mFavoriteList);
         mFavoriteConfigList.setAdapter(mFavoriteAdapter);
 
         final DragSortController dragSortController = new FavoriteDragSortController();
@@ -227,7 +227,7 @@ public class FavoriteDialog extends AlertDialog implements
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            mContext.applyChanges(mFavoriteList);
+            mEditor.applyChanges(mFavoriteList);
         } else if (which == DialogInterface.BUTTON_NEGATIVE) {
             cancel();
         }
@@ -262,7 +262,7 @@ public class FavoriteDialog extends AlertDialog implements
 
             private void reloadList() {
                 mInstalledPackages = new ArrayList<PackageItem>();
-                mInstalledPackages.addAll(PackageManager.getInstance(mContext).getPackageList());
+                mInstalledPackages.addAll(PackageManager.getInstance(getContext()).getPackageList());
                 Collections.sort(mInstalledPackages);
             }
 
@@ -306,8 +306,8 @@ public class FavoriteDialog extends AlertDialog implements
                 }
                 PackageItem applicationInfo = getItem(position);
                 holder.item.setText(applicationInfo.getTitle());
-                holder.image.setImageDrawable(BitmapCache.getInstance(mContext)
-                        .getResized(mContext.getResources(), applicationInfo,
+                holder.image.setImageDrawable(BitmapCache.getInstance(getContext())
+                        .getResized(getContext().getResources(), applicationInfo,
                         mConfiguration, mIconSize));
                 holder.check.setChecked(mChangedFavoriteListSet
                         .contains(applicationInfo.getIntent()));

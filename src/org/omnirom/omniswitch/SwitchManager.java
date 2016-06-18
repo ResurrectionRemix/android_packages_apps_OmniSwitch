@@ -178,6 +178,7 @@ public class SwitchManager {
             } else {
                 am.moveTaskToFront(ad.getTaskId(), ActivityManager.MOVE_TASK_NO_USER_ACTION);
             }
+            SwitchStatistics.getInstance(mContext).traceStartIntent(ad.getIntent());
         } else {
             Intent intent = ad.getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
@@ -186,6 +187,7 @@ public class SwitchManager {
             if (DEBUG)
                 Log.v(TAG, "Starting activity " + intent);
             try {
+                SwitchStatistics.getInstance(mContext).traceStartIntent(intent);
                 mContext.startActivity(intent);
             } catch (SecurityException e) {
                 Log.e(TAG, "Recents does not have the permission to launch "
@@ -337,10 +339,14 @@ public class SwitchManager {
         if(close){
             hide(true);
         }
+        startIntentFromtString(mContext, intent);
+    }
 
+    public static void startIntentFromtString(Context context, String intent) {
         try {
             Intent intentapp = Intent.parseUri(intent, 0);
-            mContext.startActivity(intentapp);
+            SwitchStatistics.getInstance(context).traceStartIntent(intentapp);
+            context.startActivity(intentapp);
         } catch (URISyntaxException e) {
             Log.e(TAG, "URISyntaxException: [" + intent + "]");
         } catch (ActivityNotFoundException e){
@@ -359,32 +365,41 @@ public class SwitchManager {
 
     public void startApplicationDetailsActivity(String packageName) {
         hide(true);
+        startApplicationDetailsActivity(mContext, packageName);
+    }
 
+    public static void startApplicationDetailsActivity(Context context, String packageName) {
         Intent intent = new Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts(
-                        "package", packageName, null));
-        intent.setComponent(intent.resolveActivity(mContext.getPackageManager()));
-        TaskStackBuilder.create(mContext)
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", packageName, null));
+        intent.setComponent(intent.resolveActivity(context.getPackageManager()));
+        TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(intent).startActivities();
     }
 
-    public void startSettingssActivity() {
+    public void startSettingsActivity() {
         hide(true);
+        startSettingsActivity(mContext);
+    }
 
+    public static void startSettingsActivity(Context context) {
         Intent intent = new Intent(Settings.ACTION_SETTINGS, null);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        mContext.startActivity(intent);
+        context.startActivity(intent);
     }
 
     public void startOmniSwitchSettingsActivity() {
         hide(true);
+        startOmniSwitchSettingsActivity(mContext);
+    }
 
-        Intent mainActivity = new Intent(mContext,
+    public static void startOmniSwitchSettingsActivity(Context context) {
+        Intent mainActivity = new Intent(context,
                 SettingsActivity.class);
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
                 | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        mContext.startActivity(mainActivity);
+        context.startActivity(mainActivity);
     }
 
     public void shutdownService() {

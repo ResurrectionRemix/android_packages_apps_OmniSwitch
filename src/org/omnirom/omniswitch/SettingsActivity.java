@@ -47,9 +47,10 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Switch;
+import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements
-        OnPreferenceChangeListener  {
+        OnPreferenceChangeListener, IEditFavoriteActivity  {
     private static final String TAG = "SettingsActivity";
 
     public static final String PREF_OPACITY = "opacity";
@@ -89,6 +90,10 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_THUMB_SIZE = "thumb_size";
     public static final String PREF_APP_FILTER_RUNNING = "app_filter_running";
     public static final String PREF_HANDLE_WIDTH = "handle_width";
+    public static final String PREF_LAUNCHER_MODE = "launcher_mode";
+    public static final String PREF_LAUNCH_STATS = "launch_stats";
+    public static final String PREF_LAUNCH_STATS_DELETE = "launch_stats_delete";
+    public static final String PREF_FAVORITE_APPS_CONFIG_STAT = "favorite_apps_config_stat";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -135,6 +140,10 @@ public class SettingsActivity extends PreferenceActivity implements
     private ListPreference mAppFilterTime;
     private ListPreference mThumbSize;
     private SwitchPreference mEnable;
+    private SwitchPreference mLauncherMode;
+    private Preference mLaunchStatsDelete;
+    private SwitchPreference mLaunchStats;
+    private Preference mFavoriteAppsConfigStat;
 
     @Override
     public void onPause() {
@@ -149,6 +158,7 @@ public class SettingsActivity extends PreferenceActivity implements
     @Override
     public void onResume() {
         mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
+        mEnable.setChecked(SwitchService.isRunning() && mPrefs.getBoolean(SettingsActivity.PREF_ENABLE, false));
         super.onResume();
     }
 
@@ -230,6 +240,10 @@ public class SettingsActivity extends PreferenceActivity implements
                 mThumbSize.getEntryValues()[2].toString()));
         mThumbSize.setValueIndex(idx);
         mThumbSize.setSummary(mThumbSize.getEntries()[idx]);
+        mLauncherMode = (SwitchPreference) findPreference(PREF_LAUNCHER_MODE);
+        mLaunchStats = (SwitchPreference) findPreference(PREF_LAUNCH_STATS);
+        mLaunchStatsDelete = (Preference) findPreference(PREF_LAUNCH_STATS_DELETE);
+        mFavoriteAppsConfigStat = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG_STAT);
 
         mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
@@ -287,8 +301,24 @@ public class SettingsActivity extends PreferenceActivity implements
             String favoriteListString = mPrefs.getString(PREF_FAVORITE_APPS, "");
             List<String> favoriteList = new ArrayList<String>();
             Utils.parseFavorites(favoriteListString, favoriteList);
-            FavoriteDialog dialog = new FavoriteDialog(this, favoriteList);
+            FavoriteDialog dialog = new FavoriteDialog(this, this, favoriteList);
             dialog.show();
+            return true;
+        } else if (preference == mFavoriteAppsConfigStat) {
+            List<String> favoriteList = Utils.getFavoriteListFromStats(this, 10);
+            FavoriteDialog dialog = new FavoriteDialog(this, this, favoriteList);
+            dialog.show();
+            return true;
+        } else if (preference == mLauncherMode){
+            Utils.enableLauncherMode(this, mLauncherMode.isChecked());
+            return true;
+        } else if (preference == mLaunchStats) {
+            if (!mLaunchStats.isChecked()) {
+                SwitchStatistics.getInstance(this).clear();
+            }
+            return true;
+        } else if (preference == mLaunchStatsDelete) {
+            SwitchStatistics.getInstance(this).clear();
             return true;
         }
         return false;
@@ -345,11 +375,15 @@ public class SettingsActivity extends PreferenceActivity implements
         } else if (preference == mEnable) {
             boolean value = ((Boolean) newValue).booleanValue();
             startOmniSwitch(value);
+            if (!value && mLauncherMode.isChecked()) {
+                Toast.makeText(SettingsActivity.this, R.string.launcher_mode_enable_check, Toast.LENGTH_LONG).show();
+            }
             return true;
         }
         return false;
     }
 
+    @Override
     public void applyChanges(List<String> favoriteList){
         mPrefs.edit()
                 .putString(PREF_FAVORITE_APPS,
@@ -365,7 +399,7 @@ public class SettingsActivity extends PreferenceActivity implements
         mButtonImages[2]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lastapp));
         mButtonImages[3]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_sysbar_home));
         mButtonImages[4]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.settings));
-        mButtonImages[5]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_allapps));
+        mButtonImages[5]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_apps_white_48dp));
         mButtonImages[6]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_sysbar_back));
         mButtonImages[7]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.lock_app_pin));
         mButtonImages[8]=BitmapUtils.colorize(getResources(), Color.GRAY, getResources().getDrawable(R.drawable.ic_close));

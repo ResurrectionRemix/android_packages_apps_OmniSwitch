@@ -189,6 +189,32 @@
 			android:key="favorite_apps_config"
 			android:summary="@string/favorite_apps_config_summary"
 			android:title="@string/favorite_apps_config_title" />
+
+		<SwitchPreference
+			android:key="launch_stats"
+			android:summary="@string/launch_stats_summary"
+			android:title="@string/launch_stats_title" />
+
+		<Preference
+			android:key="launch_stats_delete"
+			android:dependency="launch_stats"
+			android:summary="@string/launch_stats_delete_summary"
+			android:title="@string/launch_stats_delete_title" />
+
+		<Preference
+			android:key="favorite_apps_config_stat"
+			android:dependency="launch_stats"
+			android:summary="@string/favorite_apps_config_stat_summary"
+			android:title="@string/favorite_apps_config_stat_title" />
 	</PreferenceCategory>
 
+        <PreferenceCategory
+		android:key="category_launcher"
+		android:title="@string/category_launcher_title" >
+		<SwitchPreference
+			android:key="launcher_mode"
+			android:summary="@string/launcher_mode_summary"
+			android:title="@string/launcher_mode_title" />
+
+	</PreferenceCategory>
 </PreferenceScreen>

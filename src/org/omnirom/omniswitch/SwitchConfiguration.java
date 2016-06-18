@@ -23,6 +23,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Point;
 import android.preference.PreferenceManager;
 import android.view.WindowManager;
@@ -66,7 +67,6 @@ public class SwitchConfiguration {
     public boolean mLimitLevelChangeX = true;
     public Map<Integer, Boolean> mSpeedSwitchButtons;
     public int mLimitItemsX = 10;
-    public int mHorizontalDividerWidth;
     public float mLabelFontSize;
     public int mButtonPos = 1; // 0 = top 1 = bottom
     public List<String> mFavoriteList = new ArrayList<String>();
@@ -76,7 +76,7 @@ public class SwitchConfiguration {
     public boolean mFilterRunning;
     public long mFilterTime;
     public boolean mSideHeader = true;
-    public static SwitchConfiguration mInstance;
+    private static SwitchConfiguration mInstance;
     private WindowManager mWindowManager;
     private int mDefaultHandleHeight;
     private int mLabelFontSizePx;
@@ -87,11 +87,14 @@ public class SwitchConfiguration {
     public IconSize mIconSizeDesc = IconSize.NORMAL;
     public int mIconBorderHorizontal = 8; // in dp
     public BgStyle mBgStyle = BgStyle.SOLID_LIGHT;
+    public boolean mLaunchStatsEnabled;
 
     // old pref slots
     private static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
     private static final String PREF_DRAG_HANDLE_OPACITY = "drag_handle_opacity";
     private static final String PREF_FLAT_STYLE = "flat_style";
+
+    private List<OnSharedPreferenceChangeListener> mPrefsListeners = new ArrayList<OnSharedPreferenceChangeListener>();
 
     public enum IconSize {
         SMALL,
@@ -129,7 +132,6 @@ public class SwitchConfiguration {
         mActionSizePx = Math.round(48 * mDensity);
         mOverlayIconSizePx = Math.round(mOverlayIconSizeDp * mDensity);
         mOverlayIconBorderPx =  Math.round(mOverlayIconBorderDp * mDensity);
-        mHorizontalDividerWidth = 0;
         mIconBorderHorizontal = Math.round(mIconBorderHorizontal * mDensity);
         // Render the default thumbnail background
         mThumbnailWidth = (int) context.getResources().getDimensionPixelSize(
@@ -239,6 +241,11 @@ public class SwitchConfiguration {
         String thumbSize = prefs.getString(SettingsActivity.PREF_THUMB_SIZE, "1.0");
         mThumbRatio = Float.valueOf(thumbSize);
         mFilterRunning = prefs.getBoolean(SettingsActivity.PREF_APP_FILTER_RUNNING, false);
+        mLaunchStatsEnabled = prefs.getBoolean(SettingsActivity.PREF_LAUNCH_STATS, false);
+
+        for(OnSharedPreferenceChangeListener listener : mPrefsListeners) {
+            listener.onSharedPreferenceChanged(prefs, key);
+        }
     }
 
     public void resetDefaults(Context context) {
@@ -249,14 +256,14 @@ public class SwitchConfiguration {
     // includes rotation
     public int getCurrentDisplayHeight() {
         Point size = new Point();
-        mWindowManager.getDefaultDisplay().getRealSize(size);
+        mWindowManager.getDefaultDisplay().getSize(size);
         int height = size.y;
         return height;
     }
 
     public int getCurrentDisplayWidth() {
         Point size = new Point();
-        mWindowManager.getDefaultDisplay().getRealSize(size);
+        mWindowManager.getDefaultDisplay().getSize(size);
         int width = size.x;
         return width;
     }
@@ -308,15 +315,29 @@ public class SwitchConfiguration {
         return result == android.content.pm.PackageManager.PERMISSION_GRANTED;
     }
 
-    public void calcHorizontalDivider() {
-        mHorizontalDividerWidth = 0;
-        int numColumns = getCurrentOverlayWidth() / mMaxWidth;
+    public int calcHorizontalDivider(boolean fullscreen) {
+        int horizontalDividerWidth = 0;
+        int width = fullscreen ? getCurrentDisplayWidth() : getCurrentOverlayWidth();
+        int numColumns = width / mMaxWidth;
         if (numColumns > 1) {
-            int equalWidth = getCurrentOverlayWidth() / numColumns;
+            int equalWidth = width / numColumns;
             if (equalWidth > mMaxWidth) {
-                mHorizontalDividerWidth = equalWidth - mMaxWidth;
+                horizontalDividerWidth = equalWidth - mMaxWidth;
             }
         }
+        return horizontalDividerWidth;
+    }
+
+    public int calcVerticalDivider(int height) {
+        int verticalDividerHeight = 0;
+        int numRows = height / getItemMaxHeight();
+        if (numRows > 1) {
+            int equalHeight = height / numRows;
+            if (equalHeight > getItemMaxHeight()) {
+                verticalDividerHeight = equalHeight - getItemMaxHeight();
+            }
+        }
+        return verticalDividerHeight;
     }
 
     public int getItemMaxHeight() {
@@ -325,5 +346,20 @@ public class SwitchConfiguration {
 
     public int getOverlayHeaderWidth() {
         return mOverlayIconSizePx + 2 * mOverlayIconBorderPx;
+    }
+
+    public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener prefsListener) {
+        mPrefsListeners.add(prefsListener);
+    }
+
+    public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener prefsListener) {
+        mPrefsListeners.remove(prefsListener);
+    }
+
+    public int getLauncherViewWidth() {
+        if (isLandscape()) {
+            return (int) (getCurrentDisplayWidth() * 0.75f);
+        }
+        return getCurrentDisplayWidth();
     }
 }

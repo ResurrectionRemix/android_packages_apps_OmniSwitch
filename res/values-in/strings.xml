@@ -18,10 +18,10 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="package_stop_task_title">Stop</string>
-  <string name="package_inspect_item_title">Programinligting</string>
-  <string name="start_on_boot_title">Begin op boot</string>
-  <string name="start_on_boot_summary">Begin en skakel aan op toestel boot</string>
-  <string name="opacity_title">Ondeursigtigheid</string>
+  <string name="package_inspect_item_title">App info</string>
+  <string name="start_on_boot_title">Start on boot</string>
+  <string name="start_on_boot_summary">Start and enable on device boot</string>
+  <string name="opacity_title">Opacity</string>
   <string name="opacity_summary">Background opacity of overlay view</string>
   <string name="animate_title">Animate</string>
   <string name="animate_title_summary">Animate show and hide of overlay view</string>

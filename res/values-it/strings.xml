@@ -34,10 +34,10 @@
   <string name="cancel">Annulla</string>
   <string name="drag_handle_color_title">Colore</string>
   <string name="drag_handle_color_dialog_title">Colore</string>
-  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> libera</string>
+  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> liberi</string>
   <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> in uso</string>
-  <string name="show_rambar_title">Visualizza l\'utilizzo della memoria</string>
-  <string name="show_rambar_summary">Visualizza la memoria libera e quella usata dalla RAM</string>
+  <string name="show_rambar_title">Mostra utilizzo memoria</string>
+  <string name="show_rambar_summary">Visualizza la quantità di memoria libera e utilizzata della RAM</string>
   <string name="show_app_labels">Mostra il nome dell\'app</string>
   <string name="show_app_labels_summary">Il nome dell\'applicazione sarà visualizzato con l\'icona</string>
   <string name="category_overlay_title">Overlay</string>
@@ -67,7 +67,7 @@
   <string name="no_recent_apps_title">Nessuna applicazione recente</string>
   <string name="drag_handle_opacity_title">Opacità</string>
   <string name="drag_handle_enable_title">Abilita</string>
-  <string name="drag_handle_enable_summary">Disabilitare solo se si utilizza un\' altro metodo di attivazione</string>
+  <string name="drag_handle_enable_summary">Disabilita solo se utilizzi un altro metodo di attivazione</string>
   <string name="allapps_help">App drawer</string>
   <string name="allapps">Applicazioni</string>
   <string name="dim_behind_title">Oscura sfondo</string>
@@ -80,9 +80,9 @@
   <string name="icon_packs_title">Pacchetti icone</string>
   <string name="no_iconpacks_summary">Nessun pacchetto icone installato</string>
   <string name="icon_pack_title">Pacchetto icone</string>
-  <string name="icon_pack_summary">Utilizza il pacchetto icone per le icone delle app</string>
+  <string name="icon_pack_summary">Usa il pacchetto icone per le icone delle app</string>
   <string name="category_speed_switcher_title">Interruttore rapido</string>
-  <string name="speed_switcher_enable_summary">Pressione prolungata e trascinare per attivare</string>
+  <string name="speed_switcher_enable_summary">Premi a lungo la zona di apertura per attivare</string>
   <string name="speed_switcher_enable_title">Abilita</string>
   <string name="back">Indietro</string>
   <string name="back_help">Indietro</string>
@@ -90,8 +90,8 @@
   <string name="kill_current_help">Chiudi applicazione corrente</string>
   <string name="speed_switch_color_summary">Blu - app recenti. Verde - preferiti. Rosso - azioni</string>
   <string name="speed_switch_color">Livello colori di sfondo</string>
-  <string name="speed_switch_limit_summary">Limite  zona per i cambiamenti di livello</string>
-  <string name="speed_switch_limit">Cambio di livello zona</string>
+  <string name="speed_switch_limit_summary">Zona limite per i cambiamenti di livello</string>
+  <string name="speed_switch_limit">Modifica livello zona</string>
   <string name="speed_switch_button_title">Pulsanti</string>
   <string name="speed_switch_button_summary">Configura l\'azione dei pulsanti nella visualizzazione rapida</string>
   <string name="speed_switch_items_summary">Numero massimo di voci</string>

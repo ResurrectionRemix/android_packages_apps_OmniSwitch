@@ -131,7 +131,7 @@
   <string name="thumb_size_small">Kicsi</string>
   <string name="thumb_size_medium">Közepes</string>
   <string name="package_lock_task_title">Alkalmazás rögzítése</string>
-  <string name="lock_app_not_enabled">Képernyő rögzítése a biztonsági beállításokban nincs engedélyezve</string>
+  <string name="lock_app_not_enabled">Képernyő rögzítése nincs engedélyezve a biztonsági beállításokban</string>
   <string name="app_filter_running_title">Csak futó</string>
   <string name="menu">Menü</string>
   <string name="menu_help">Menü</string>

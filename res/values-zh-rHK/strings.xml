@@ -54,11 +54,11 @@
   <string name="toggle_last_app_help">切換到最後一個應用程式</string>
   <string name="kill_all_apps_help">終止所有應用程式</string>
   <string name="kill_other_apps_help">終止其他應用程式</string>
-  <string name="settings_help">設置</string>
+  <string name="settings_help">設定</string>
   <string name="home_help">首頁</string>
   <string name="kill_all_apps">終止所有</string>
   <string name="kill_other_apps">終止其他</string>
-  <string name="settings">設置</string>
+  <string name="settings">設定</string>
   <string name="home">首頁</string>
   <string name="buttons_title">按鍵</string>
   <string name="buttons_summary">在重疊視圖中配置動作按鈕</string>
@@ -145,5 +145,5 @@
   <string name="package_full_task_title">完整大小</string>
   <string name="shortcut_label_toggle_overlay">切換重疊視圖</string>
   <string name="adjust_handle_title_new">配置拖曳控制柄</string>
-  <string name="adjust_handle_summary">配置位置、 大小和顏色</string>
+  <string name="adjust_handle_summary">設定位置、 大小和顏色</string>
 </resources>

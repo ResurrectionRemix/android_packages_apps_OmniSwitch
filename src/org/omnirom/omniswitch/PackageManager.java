@@ -207,11 +207,11 @@ public class PackageManager {
         return getPackageMap().get(intent).getTitle();
     }
 
-    public synchronized PackageManager.PackageItem getPackageItem(String intent) {
+    public synchronized PackageItem getPackageItem(String intent) {
         return getPackageMap().get(intent);
     }
 
-    public synchronized PackageManager.PackageItem getPackageItemByComponent(Intent intent) {
+    public synchronized PackageItem getPackageItemByComponent(Intent intent) {
         String pkgName = intent.getComponent().getPackageName();
 
         Iterator<PackageItem> nextPackage = mInstalledPackagesList.iterator();
@@ -224,6 +224,20 @@ public class PackageManager {
             }
         }
         return null;
+    }
+
+    public synchronized List<String> getPackageListForPackageName(String pkgName) {
+        List<String> pkgList = new ArrayList<String>();
+        Iterator<PackageItem> nextPackage = mInstalledPackagesList.iterator();
+        while(nextPackage.hasNext()){
+            PackageItem item = nextPackage.next();
+            ComponentName name = item.getIntentRaw().getComponent();
+            String pPkgName = name.getPackageName();
+            if (pkgName.equals(pPkgName)){
+                pkgList.add(item.getIntent());
+            }
+        }
+        return pkgList;
     }
 
     public synchronized boolean contains(String intent) {
@@ -245,6 +259,7 @@ public class PackageManager {
         Iterator<String> nextFavorite = favoriteList.iterator();
         while (nextFavorite.hasNext()) {
             String favorite = nextFavorite.next();
+            // DONT USE getPackageMap() here!
             if (!mInstalledPackages.containsKey(favorite)){
                 changed = true;
                 continue;

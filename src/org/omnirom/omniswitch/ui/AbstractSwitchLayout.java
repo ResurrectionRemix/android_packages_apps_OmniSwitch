@@ -114,7 +114,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected boolean mHasFavorites;
     protected boolean mButtonsVisible = true;
     protected boolean mShowAppDrawer;
-    protected AppDrawerListAdapter mAppDrawerListAdapter;
     protected FavoriteListAdapter mFavoriteListAdapter;
     protected FrameLayout mPopupView;
     protected View mView;
@@ -125,10 +124,9 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected boolean mEnabled;
     private boolean mFlingEnable = true;
     private float mLastX;
-    private boolean mDragThreshold;
+    private boolean mMoveStarted;
     protected GestureDetector mGestureDetector;
-    protected GridView mAppDrawer;
-    protected PopupMenu mPopup;
+    protected AppDrawerView mAppDrawer;
     private boolean mHandleRecentsUpdate;
     protected boolean mShowing;
     protected boolean mShowFavorites;
@@ -204,50 +202,53 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 mEnabled = true;
                 mFlingEnable = false;
                 mLastX = xRaw;
-                mDragThreshold = false;
+                mMoveStarted = false;
                 break;
             case MotionEvent.ACTION_CANCEL:
                 mEnabled = true;
                 mFlingEnable = false;
-                mDragThreshold = false;
+                mMoveStarted = false;
                 break;
             case MotionEvent.ACTION_MOVE:
                 mFlingEnable = false;
                 if (Math.abs(distanceX) > mSlop) {
-                    mDragThreshold = true;
                     if (mLastX > xRaw) {
                         // move left
                         if (mConfiguration.mLocation != 0) {
                             mFlingEnable = true;
+                            mMoveStarted = true;
                         }
                     } else {
                         // move right
                         if (mConfiguration.mLocation == 0) {
                             mFlingEnable = true;
+                            mMoveStarted = true;
                         }
                     }
                 }
-                if (distanceX > 0) {
-                    // move left
-                    if (mConfiguration.mLocation != 0) {
-                        slideLayoutHide(-distanceX);
-                    }
-                } else {
-                    // move right
-                    if (mConfiguration.mLocation == 0) {
-                        slideLayoutHide(-distanceX);
+                if (mMoveStarted) {
+                    if (distanceX > 0) {
+                        // move left
+                        if (mConfiguration.mLocation != 0) {
+                            slideLayoutHide(-distanceX);
+                        }
+                    } else {
+                        // move right
+                        if (mConfiguration.mLocation == 0) {
+                            slideLayoutHide(-distanceX);
+                        }
                     }
                 }
                 mLastX = xRaw;
                 break;
             case MotionEvent.ACTION_UP:
                 mFlingEnable = false;
-                if (Math.abs(distanceX) > mSlop || mDragThreshold) {
+                if (mMoveStarted) {
                     finishSlideLayoutHide();
                 } else {
                     hide(false);
                 }
-                mDragThreshold = false;
+                mMoveStarted = false;
                 break;
             }
             return true;
@@ -275,38 +276,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 }
             }
             return false;
-        }
-    }
-
-    public class AppDrawerListAdapter extends
-            ArrayAdapter<PackageManager.PackageItem> {
-
-        public AppDrawerListAdapter(Context context, int resource,
-                List<PackageManager.PackageItem> values) {
-            super(context, R.layout.package_item, resource, values);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            PackageTextView item = null;
-            if (convertView == null) {
-                item = getPackageItemTemplate();
-            } else {
-                item = (PackageTextView) convertView;
-            }
-            PackageManager.PackageItem packageItem = getItem(position);
-
-            item.setIntent(packageItem.getIntent());
-            if (mConfiguration.mShowLabels) {
-                item.setText(packageItem.getTitle());
-            } else {
-                item.setText("");
-            }
-            Drawable d = BitmapCache.getInstance(mContext).getResized(
-                    mContext.getResources(), packageItem, mConfiguration,
-                    mConfiguration.mIconSize);
-            item.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
-            return item;
         }
     }
 
@@ -356,17 +325,26 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         mSlop = vc.getScaledTouchSlop();
         mFavoriteList = new ArrayList<String>();
         mActionList = new ArrayList<ImageView>();
-        mAppDrawerListAdapter = new AppDrawerListAdapter(mContext,
-                android.R.layout.simple_list_item_single_choice, PackageManager
-                        .getInstance(mContext).getPackageList());
         mFavoriteListAdapter = new FavoriteListAdapter(mContext,
                 android.R.layout.simple_list_item_single_choice, mFavoriteList);
         mGestureDetector = new GestureDetector(context, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(false);
+        updateFavoritesList();
     }
 
     @Override
-    public abstract void updateLayout();
+    public void updateLayout() {
+        try {
+            if (mShowing) {
+                mAppDrawer.setLayoutParams(getAppDrawerParams());
+
+                mWindowManager.updateViewLayout(mPopupView,
+                        getParams(mConfiguration.mBackgroundOpacity));
+            }
+        } catch (Exception e) {
+            // ignored
+        }
+    }
 
     protected ImageView getActionButtonTemplate(Drawable image) {
         ImageView item = (ImageView) mInflater.inflate(R.layout.action_button,
@@ -473,7 +451,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                     .getDrawable(R.drawable.settings));
             mSettingsButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    mRecentsManager.startSettingssActivity();
+                    mRecentsManager.startSettingsActivity();
                 }
             });
             mSettingsButton
@@ -489,7 +467,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
 
         if (buttonId == SettingsActivity.BUTTON_ALLAPPS) {
             mAllappsButton = getActionButtonTemplate(mContext.getResources()
-                    .getDrawable(R.drawable.ic_allapps));
+                    .getDrawable(R.drawable.ic_apps_white_48dp));
             mAllappsButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     toggleAppdrawer();
@@ -644,10 +622,12 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
             Log.d(TAG, "updatePrefs " + key);
         }
 
-        updateFavoritesList();
+        if (key != null && key.equals(SettingsActivity.PREF_FAVORITE_APPS)) {
+            updateFavoritesList();
+        }
 
-        if (key != null && key.equals(PackageManager.PACKAGES_UPDATED_TAG)) {
-            mAppDrawerListAdapter.notifyDataSetChanged();
+        if (mAppDrawer != null) {
+            mAppDrawer.updatePrefs(prefs, key);
         }
     }
 
@@ -823,7 +803,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 ? R.style.PopupMenuLight : R.style.PopupMenuDark);
         final String intentStr = getRecentsItemIntent(ad);
         final PopupMenu popup = new PopupMenu(wrapper, view);
-        mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.recent_popup_menu,
                 popup.getMenu());
         boolean addFavEnabled = intentStr != null && !mFavoriteList.contains(intentStr);
@@ -892,7 +871,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         });
         popup.setOnDismissListener(new PopupMenu.OnDismissListener() {
             public void onDismiss(PopupMenu menu) {
-                mPopup = null;
             }
         });
         popup.show();
@@ -928,7 +906,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT
                 ? R.style.PopupMenuLight : R.style.PopupMenuDark);
         final PopupMenu popup = new PopupMenu(wrapper, view);
-        mPopup = popup;
         popup.getMenuInflater().inflate(R.menu.favorite_popup_menu,
                 popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -937,6 +914,9 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                     mRecentsManager.startApplicationDetailsActivity(packageItem
                             .getActivityInfo().packageName);
                 } else if (item.getItemId() == R.id.package_remove_favorite) {
+                    if (DEBUG) {
+                        Log.d(TAG, "remove " + packageItem.getIntent());
+                    }
                     Utils.removeFromFavorites(mContext,
                             packageItem.getIntent(), mFavoriteList);
                 } else {
@@ -947,43 +927,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         });
         popup.setOnDismissListener(new PopupMenu.OnDismissListener() {
             public void onDismiss(PopupMenu menu) {
-                mPopup = null;
-            }
-        });
-        popup.show();
-    }
-
-    protected void handleLongPressAppDrawer(
-            final PackageManager.PackageItem packageItem, View view) {
-        final Context wrapper = new ContextThemeWrapper(mContext,
-                mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT
-                ? R.style.PopupMenuLight : R.style.PopupMenuDark);
-        final PopupMenu popup = new PopupMenu(wrapper, view);
-        mPopup = popup;
-        popup.getMenuInflater().inflate(R.menu.package_popup_menu,
-                popup.getMenu());
-        boolean addFavEnabled = !mFavoriteList.contains(packageItem.getIntent());
-        if (!addFavEnabled) {
-            popup.getMenu().removeItem(R.id.package_add_favorite);
-        }
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.package_inspect_item) {
-                    mRecentsManager.startApplicationDetailsActivity(packageItem
-                            .getActivityInfo().packageName);
-                } else if (item.getItemId() == R.id.package_add_favorite) {
-                    Log.d(TAG, "add " + packageItem.getIntent());
-                    Utils.addToFavorites(mContext, packageItem.getIntent(),
-                            mFavoriteList);
-                } else {
-                    return false;
-                }
-                return true;
-            }
-        });
-        popup.setOnDismissListener(new PopupMenu.OnDismissListener() {
-            public void onDismiss(PopupMenu menu) {
-                mPopup = null;
             }
         });
         popup.show();
@@ -1119,9 +1062,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         // to prevent any reentering
         mShowing = false;
 
-        if (mPopup != null) {
-            mPopup.dismiss();
-        }
         try {
             if (mConfiguration.mDimBehind) {
                 // TODO workaround for flicker on launcher screen
@@ -1318,21 +1258,10 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         mOpenFavorite.setVisibility(mHasFavorites && visible ? View.VISIBLE : View.GONE);
     }
 
-    public void updateFavoritesList() {
-        mFavoriteList.clear();
-        mFavoriteList.addAll(mConfiguration.mFavoriteList);
-
-        List<String> favoriteList = new ArrayList<String>();
-        favoriteList.addAll(mFavoriteList);
-        Iterator<String> nextFavorite = favoriteList.iterator();
-        while (nextFavorite.hasNext()) {
-            String intent = nextFavorite.next();
-            PackageManager.PackageItem packageItem = PackageManager
-                    .getInstance(mContext).getPackageItem(intent);
-            if (packageItem == null) {
-                Log.d(TAG, "failed to add " + intent);
-                mFavoriteList.remove(intent);
-            }
+    private void updateFavoritesList() {
+        Utils.updateFavoritesList(mContext, mConfiguration, mFavoriteList);
+        if (DEBUG) {
+            Log.d(TAG, "updateFavoritesList " + mFavoriteList);
         }
         mFavoriteListAdapter.notifyDataSetChanged();
         mHasFavorites = mFavoriteList.size() != 0;
@@ -1343,14 +1272,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
      * TODO I have not found a better seolution then calling setAdapter again
      */
     protected boolean isPrefKeyForForceUpdate(String key) {
-        if (key.equals(SettingsActivity.PREF_BG_STYLE) ||
-                key.equals(SettingsActivity.PREF_SHOW_LABELS) ||
-                key.equals(SettingsActivity.PREF_ICON_SIZE) ||
-                key.equals(SettingsActivity.PREF_ICONPACK) ||
-                key.equals(SettingsActivity.PREF_THUMB_SIZE)) {
-            return true;
-        }
-        return false;
+        return Utils.isPrefKeyForForceUpdate(key);
     }
 
     protected abstract View getButtonList();
@@ -1379,4 +1301,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         mTaskLoadDone = false;
         mUpdateNoRecentsTasksDone = false;
     }
+
+    protected abstract LinearLayout.LayoutParams getAppDrawerParams();
 }

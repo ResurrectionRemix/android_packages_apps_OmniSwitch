@@ -61,7 +61,7 @@ import android.widget.Toast;
 
 public class SwitchLayout extends AbstractSwitchLayout {
     private HorizontalListView mRecentListHorizontal;
-    private HorizontalListView mFavoriteListHorizontal;
+    private FavoriteViewHorizontal mFavoriteListHorizontal;
     private RecentListAdapter mRecentListAdapter;
     private LinearColorBar mRamUsageBar;
     private TextView mBackgroundProcessText;
@@ -234,32 +234,10 @@ public class SwitchLayout extends AbstractSwitchLayout {
             }
         });
 
-        mFavoriteListHorizontal = (HorizontalListView) mView
+        mFavoriteListHorizontal = (FavoriteViewHorizontal) mView
                 .findViewById(R.id.favorite_list_horizontal);
-
-        mFavoriteListHorizontal
-                .setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
-                        String intent = mFavoriteList.get(position);
-                        mRecentsManager.startIntentFromtString(intent, true);
-                    }
-                });
-        mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
-
-        mFavoriteListHorizontal
-                .setOnItemLongClickListener(new OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> parent,
-                            View view, int position, long id) {
-                        String intent = mFavoriteList.get(position);
-                        PackageManager.PackageItem packageItem = PackageManager
-                                .getInstance(mContext).getPackageItem(intent);
-                        handleLongPressFavorite(packageItem, view);
-                        return true;
-                    }
-                });
+        mFavoriteListHorizontal.setRecentsManager(mRecentsManager);
+        mFavoriteListHorizontal.init();
 
         mRamUsageBarContainer = (LinearLayout) mView
                 .findViewById(R.id.ram_usage_bar_container);
@@ -271,31 +249,8 @@ public class SwitchLayout extends AbstractSwitchLayout {
         mForegroundProcessText.setTextColor(Color.WHITE);
         mBackgroundProcessText.setTextColor(Color.WHITE);
 
-        mAppDrawer = (GridView) mView.findViewById(R.id.app_drawer);
-        mAppDrawer.setVerticalScrollBarEnabled(false);
-        mAppDrawer.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                PackageManager.PackageItem packageItem = PackageManager
-                        .getInstance(mContext).getPackageList().get(position);
-                mRecentsManager.startIntentFromtString(packageItem.getIntent(),
-                        true);
-            }
-        });
-
-        mAppDrawer.setAdapter(mAppDrawerListAdapter);
-
-        mAppDrawer.setOnItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                PackageManager.PackageItem packageItem = PackageManager
-                        .getInstance(mContext).getPackageList().get(position);
-                handleLongPressAppDrawer(packageItem, view);
-                return true;
-            }
-        });
+        mAppDrawer = (AppDrawerView) mView.findViewById(R.id.app_drawer);
+        mAppDrawer.setRecentsManager(mRecentsManager);
 
         mRecentsOrAppDrawer = (LinearLayout) mView.findViewById(R.id.recents_or_appdrawer);
 
@@ -363,23 +318,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
     @Override
     protected synchronized void initView() {
         mRecentsOrAppDrawer.removeView(mAppDrawer);
-        mConfiguration.calcHorizontalDivider();
-
-        mFavoriteListHorizontal.setLayoutParams(getListParams());
-        mFavoriteListHorizontal.scrollTo(0);
-        mFavoriteListHorizontal
-                .setDividerWidth(mConfiguration.mHorizontalDividerWidth);
-        mFavoriteListHorizontal.setPadding(
-                mConfiguration.mHorizontalDividerWidth / 2, 0,
-                mConfiguration.mHorizontalDividerWidth / 2, 0);
-
-        mRecentListHorizontal.setLayoutParams(getListParams());
-        mRecentListHorizontal.scrollTo(0);
-        mRecentListHorizontal
-                .setDividerWidth(mConfiguration.mHorizontalDividerWidth);
-        mRecentListHorizontal.setPadding(
-                mConfiguration.mHorizontalDividerWidth / 2, 0,
-                mConfiguration.mHorizontalDividerWidth / 2, 0);
+        updateListLayout();
 
         mNoRecentApps.setLayoutParams(getListParams());
         mRecents.setVisibility(View.VISIBLE);
@@ -389,6 +328,22 @@ public class SwitchLayout extends AbstractSwitchLayout {
         mVirtualBackKey = false;
         enableOpenFavoriteButton(true);
         mOpenFavorite.setRotation(getExpandRotation());
+    }
+
+    private void updateListLayout() {
+        int dividerWith = mConfiguration.calcHorizontalDivider(false);
+
+        mFavoriteListHorizontal.setLayoutParams(getListParams());
+        mFavoriteListHorizontal.scrollTo(0);
+        mFavoriteListHorizontal.setDividerWidth(dividerWith);
+        mFavoriteListHorizontal.setPadding(dividerWith / 2, 0,
+                dividerWith / 2, 0);
+
+        mRecentListHorizontal.setLayoutParams(getListParams());
+        mRecentListHorizontal.scrollTo(0);
+        mRecentListHorizontal.setDividerWidth(dividerWith);
+        mRecentListHorizontal.setPadding(dividerWith / 2, 0,
+                dividerWith / 2, 0);
     }
 
     private LinearLayout.LayoutParams getListParams() {
@@ -424,7 +379,8 @@ public class SwitchLayout extends AbstractSwitchLayout {
         return 3;
     }
 
-    private LinearLayout.LayoutParams getAppDrawerParams() {
+    @Override
+    protected LinearLayout.LayoutParams getAppDrawerParams() {
         return new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, getAppDrawerLines()
                         * mConfiguration.getItemMaxHeight());
@@ -475,16 +431,12 @@ public class SwitchLayout extends AbstractSwitchLayout {
         if (DEBUG) {
             Log.d(TAG, "updatePrefs");
         }
-
+        if (mFavoriteListHorizontal != null) {
+            mFavoriteListHorizontal.updatePrefs(prefs, key);
+        }
         if (key != null && isPrefKeyForForceUpdate(key)) {
-            if (mFavoriteListHorizontal != null) {
-                mFavoriteListHorizontal.setAdapter(mFavoriteListAdapter);
-            }
             if (mRecentListHorizontal != null) {
                 mRecentListHorizontal.setAdapter(mRecentListAdapter);
-            }
-            if (mAppDrawer != null) {
-                mAppDrawer.setAdapter(mAppDrawerListAdapter);
             }
         }
         buildButtonList();
@@ -500,35 +452,17 @@ public class SwitchLayout extends AbstractSwitchLayout {
     public void updateLayout() {
         try {
             if (mShowing) {
-                mConfiguration.calcHorizontalDivider();
-
-                mFavoriteListHorizontal
-                        .setDividerWidth(mConfiguration.mHorizontalDividerWidth);
-                mFavoriteListHorizontal.setPadding(
-                        mConfiguration.mHorizontalDividerWidth / 2, 0,
-                        mConfiguration.mHorizontalDividerWidth / 2, 0);
-
-                mRecentListHorizontal
-                        .setDividerWidth(mConfiguration.mHorizontalDividerWidth);
-                mRecentListHorizontal.setPadding(
-                        mConfiguration.mHorizontalDividerWidth / 2, 0,
-                        mConfiguration.mHorizontalDividerWidth / 2, 0);
-
-                mAppDrawer.setLayoutParams(getAppDrawerParams());
-                mAppDrawer.requestLayout();
-
-                mWindowManager.updateViewLayout(mPopupView,
-                        getParams(mConfiguration.mBackgroundOpacity));
+                updateListLayout();
             }
         } catch (Exception e) {
             // ignored
         }
+        super.updateLayout();
     }
 
     @Override
     protected void flipToAppDrawerNew() {
         mRecentsOrAppDrawer.addView(mAppDrawer);
-        mAppDrawer.setColumnWidth(mConfiguration.mMaxWidth);
         mAppDrawer.setLayoutParams(getAppDrawerParams());
         mAppDrawer.requestLayout();
         mAppDrawer.scrollTo(0, 0);

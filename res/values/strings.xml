@@ -148,4 +148,19 @@
 	<string name="shortcut_label_toggle_overlay">Toggle overlay</string>
 	<string name="adjust_handle_title_new">Configure drag handle</string>
 	<string name="adjust_handle_summary">Configure position size and color</string>
+	<string name="settings_button_text">Settings</string>
+	<string name="wallpaper_button_text">Wallpaper</string>
+	<string name="category_launcher_title">Launcher mode</string>
+	<string name="launcher_mode_summary">Run OmniSwitch also as your launcher. After enabling press home and select OmniSwitch</string>
+	<string name="launcher_mode_title">Enable</string>
+	<string name="launcher_mode_enable_check">Disable is not possible if launcher mode is active. Will be enabled again when launcher mode gets active</string>
+	<string name="welcome_cling_header">Welcome to OmniSwitch launcher mode</string>
+	<string name="welcome_cling_description">Have fun using a minimalistic launcher that focuses on app launching and switching. Swipe anywhere to open OmniSwitch.</string>
+	<string name="welcome_cling_dismiss">Got it</string>
+	<string name="launch_stats_title">Launch statistics</string>
+	<string name="launch_stats_summary">Collect statistics about launched apps. Data will not be shared and only stored locally</string>
+	<string name="launch_stats_delete_title">Clean statistics</string>
+	<string name="launch_stats_delete_summary">Delete current collected statistics</string>
+	<string name="favorite_apps_config_stat_title">Statistic favorites</string>
+	<string name="favorite_apps_config_stat_summary">Create a favorite list based on the collected launch statistics</string>
 </resources>

@@ -130,6 +130,7 @@ public class SwitchGestureView {
     private boolean mFlingEnable = true;
     private float mLastX;
     private float mThumbRatio = 1.2f;
+    private boolean mMoveStarted;
 
     private GestureDetector mGestureDetector;
     private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
@@ -303,8 +304,9 @@ public class SwitchGestureView {
                 float distanceX = mInitDownPoint[0] - xRaw;
 
                 if(DEBUG){
-                    Log.d(TAG, "mDragButton onTouch " + action + ":" + (int)xRaw + ":" + (int)yRaw + " " + mEnabled + " " + mFlingEnable);
-                }
+                    Log.d(TAG, "mDragButton onTouch " + action + ":" + (int)xRaw + ":" + (int)yRaw + " mEnabled=" + mEnabled +
+                            " mFlingEnable=" + mFlingEnable +  " mMoveStarted=" + mMoveStarted + " mLongPress=" + mLongPress);
+                    }
                 if (mFlingEnable && !mHidden) {
                     mGestureDetector.onTouchEvent(event);
                 }
@@ -318,6 +320,7 @@ public class SwitchGestureView {
                     mHandleRecentsUpdate = false;
                     mLongPress = false;
                     mFlingEnable = false;
+                    mMoveStarted = false;
 
                     mRecentsManager.clearTasks();
                     RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
@@ -338,6 +341,7 @@ public class SwitchGestureView {
                     mHandler.removeCallbacks(mLongPressRunnable);
                     mEnabled = true;
                     mFlingEnable = false;
+                    mMoveStarted = false;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (mHidden) {
@@ -346,20 +350,25 @@ public class SwitchGestureView {
                     v.setPressed(false);
                     mFlingEnable = false;
                     if (Math.abs(distanceX) > mSlop) {
-                        mRecentsManager.showHidden();
                         mHandler.removeCallbacks(mLongPressRunnable);
                         if (mLastX > xRaw) {
                             // move left
                             if (mConfiguration.mLocation == 0) {
                                 mFlingEnable = true;
+                                mMoveStarted = true;
+                                mRecentsManager.showHidden();
                             }
                         } else {
                             // move right
                             if (mConfiguration.mLocation != 0) {
                                 mFlingEnable = true;
+                                mMoveStarted = true;
+                                mRecentsManager.showHidden();
                             }
                         }
-                        mRecentsManager.slideLayout(Math.abs(distanceX));
+                        if (mMoveStarted) {
+                            mRecentsManager.slideLayout(distanceX);
+                        }
                     }
                     mLastX = xRaw;
                     break;
@@ -373,11 +382,12 @@ public class SwitchGestureView {
                         return true;
                     }
 
-                    if (Math.abs(distanceX) > mSlop) {
+                    if (mMoveStarted) {
                         mRecentsManager.finishSlideLayout();
                     } else {
                         mRecentsManager.hideHidden();
                     }
+                    mMoveStarted = false;
                     break;
                 }
                 return true;

@@ -41,7 +41,7 @@ public class SwitchService extends Service {
     private static final int START_SERVICE_ERROR_ID = 0;
 
     private RecentsReceiver mReceiver;
-    private SwitchManager mManager;
+    private static SwitchManager mManager;
     private SharedPreferences mPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
     private SwitchConfiguration mConfiguration;
@@ -90,6 +90,9 @@ public class SwitchService extends Service {
             mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs,
                         String key) {
+                    if (DEBUG) {
+                        Log.d(TAG, "updatePrefs " + key);
+                    }
                     try {
                         updatePrefs(prefs, key);
                     } catch(Exception e) {
@@ -99,7 +102,9 @@ public class SwitchService extends Service {
             };
 
             mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
-
+            if (mConfiguration.mLaunchStatsEnabled) {
+                SwitchStatistics.getInstance(this).loadStatistics();
+            }
             mIsRunning = true;
         } catch(Exception e) {
             Log.e(TAG, "onCreate", e);
@@ -123,6 +128,9 @@ public class SwitchService extends Service {
             mManager.shutdownService();
         }
 
+        if (mConfiguration.mLaunchStatsEnabled) {
+            SwitchStatistics.getInstance(this).saveStatistics();
+        }
         mIsRunning = false;
         BitmapCache.getInstance(this).clear();
 
@@ -244,5 +252,12 @@ public class SwitchService extends Service {
         mCommitSuicide = true;
         Intent stopIntent = new Intent(this, SwitchService.class);
         stopService(stopIntent);
+    }
+
+    /**
+     * fugly but save since the service is actually a singleton
+     */
+    public static SwitchManager getRecentsManager() {
+        return mManager;
     }
 }

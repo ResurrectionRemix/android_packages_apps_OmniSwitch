@@ -60,7 +60,7 @@ import android.widget.TextView;
 
 public class SwitchLayoutVertical extends AbstractSwitchLayout {
     private ListView mRecentList;
-    private ListView mFavoriteListView;
+    private FavoriteViewVertical mFavoriteListView;
     private RecentListAdapter mRecentListAdapter;
     private ScrollView mButtonList;
     private boolean mShowThumbs;
@@ -199,7 +199,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mRecentList.setOnScrollListener(touchListener.makeScrollListener());
         mRecentList.setAdapter(mRecentListAdapter);
 
-        mFavoriteListView = (ListView) mView
+        mFavoriteListView = (FavoriteViewVertical) mView
                 .findViewById(R.id.favorite_list);
         mFavoriteListView.setVerticalScrollBarEnabled(false);
         mFavoriteListView.setOnItemClickListener(new OnItemClickListener() {
@@ -225,31 +225,8 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
                     }
                 });
 
-        mAppDrawer = (GridView) mView.findViewById(R.id.app_drawer);
-        mAppDrawer.setVerticalScrollBarEnabled(false);
-        mAppDrawer.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                PackageManager.PackageItem packageItem = PackageManager
-                        .getInstance(mContext).getPackageList().get(position);
-                mRecentsManager.startIntentFromtString(packageItem.getIntent(),
-                        true);
-            }
-        });
-
-        mAppDrawer.setAdapter(mAppDrawerListAdapter);
-
-        mAppDrawer.setOnItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,
-                    int position, long id) {
-                PackageManager.PackageItem packageItem = PackageManager
-                        .getInstance(mContext).getPackageList().get(position);
-                handleLongPressAppDrawer(packageItem, view);
-                return true;
-            }
-        });
+        mAppDrawer = (AppDrawerView) mView.findViewById(R.id.app_drawer);
+        mAppDrawer.setRecentsManager(mRecentsManager);
 
         mRecentsOrAppDrawer = (LinearLayout) mView.findViewById(R.id.recents_or_appdrawer);
 
@@ -368,7 +345,8 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         return 2;
     }
 
-    private LinearLayout.LayoutParams getAppDrawerParams() {
+    @Override
+    protected LinearLayout.LayoutParams getAppDrawerParams() {
         return new LinearLayout.LayoutParams(getAppDrawerColumns()
                 * (mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal),
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -418,9 +396,9 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             if (mRecentList != null) {
                 mRecentList.setAdapter(mRecentListAdapter);
             }
-            if (mAppDrawer != null) {
-                mAppDrawer.setAdapter(mAppDrawerListAdapter);
-            }
+        }
+        if (mFavoriteListView != null) {
+            mFavoriteListView.updatePrefs(prefs, key);
         }
         buildButtonList();
         if (mConfiguration.mShowRambar) {
@@ -438,21 +416,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
                 selectButtonContainer();
             }
             updateStyle();
-        }
-    }
-
-    @Override
-    public void updateLayout() {
-        try {
-            if (mShowing) {
-                mAppDrawer.setLayoutParams(getAppDrawerParams());
-                mAppDrawer.requestLayout();
-
-                mWindowManager.updateViewLayout(mPopupView,
-                        getParams(mConfiguration.mBackgroundOpacity));
-            }
-        } catch (Exception e) {
-            // ignored
         }
     }
 
@@ -480,8 +443,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     @Override
     protected void flipToAppDrawerNew() {
         mRecentsOrAppDrawer.addView(mAppDrawer);
-        mAppDrawer.setColumnWidth(mConfiguration.mMaxWidth);
-        mAppDrawer.setNumColumns(getAppDrawerColumns());
         mAppDrawer.setLayoutParams(getAppDrawerParams());
         mAppDrawer.requestLayout();
         mAppDrawer.scrollTo(0, 0);

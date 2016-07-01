@@ -144,4 +144,6 @@
   <string name="package_right_task_title">Vpravo</string>
   <string name="package_full_task_title">Plná velikost</string>
   <string name="shortcut_label_toggle_overlay">Přepnout překrytí</string>
+  <string name="adjust_handle_title_new">Konfigurovat úchyt pro přetažení</string>
+  <string name="adjust_handle_summary">Nastavit pozici velikosti a barvy</string>
 </resources>

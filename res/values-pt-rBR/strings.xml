@@ -144,4 +144,6 @@
   <string name="package_right_task_title">Direita</string>
   <string name="package_full_task_title">Tamanho máximo</string>
   <string name="shortcut_label_toggle_overlay">Ligar/desligar sobreposição</string>
+  <string name="adjust_handle_title_new">Configurar alça de arrastar</string>
+  <string name="adjust_handle_summary">Configurar a posição do tamanho e cor</string>
 </resources>

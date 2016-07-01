@@ -25,6 +25,7 @@
   <string name="opacity_summary">Opacità dello sfondo</string>
   <string name="animate_title">Animazione</string>
   <string name="animate_title_summary">Animazione dell\'avvio e della chiusura</string>
+  <string name="adjust_handle_help">Sposta e ridimensiona maniglia trascinamento</string>
   <string name="icon_size_normal">Normale</string>
   <string name="icon_size_small">Piccole</string>
   <string name="icon_size_large">Grandi</string>
@@ -46,6 +47,8 @@
   <string name="favorite_apps_config_summary">Definisci le applicazioni visibili nella vista preferiti</string>
   <string name="favorite_apps_add_dialog_title">Aggiungi applicazioni</string>
   <string name="favorite_add">Aggiungi\u2026</string>
+  <string name="location_left">Sinistra</string>
+  <string name="location_right">Destra</string>
   <string name="reset">Predefinito</string>
   <string name="toggle_last_app">Switch all\'ultima applicazione</string>
   <string name="toggle_last_app_help">Switch all\'ultima applicazione</string>
@@ -72,4 +75,9 @@
   <string name="gravity_title">Gravità orizzontale</string>
   <string name="gravity_center">Centro</string>
   <string name="gravity_drag">Prendi e trascina lateralmente</string>
+  <string name="dialog_pick_iconpack_title">Scegli pacchetto icone</string>
+  <string name="default_iconpack_title">Icone predefinite</string>
+  <string name="icon_packs_title">Pacchetti icone</string>
+  <string name="no_iconpacks_summary">Nessun pacchetto icone installato</string>
+  <string name="icon_pack_title">Pacchetto icone</string>
 </resources>

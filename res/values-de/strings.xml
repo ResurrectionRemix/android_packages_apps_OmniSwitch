@@ -145,4 +145,5 @@
   <string name="package_full_task_title">Volle Größe</string>
   <string name="shortcut_label_toggle_overlay">Überlagerung ein-/ausblenden</string>
   <string name="adjust_handle_title_new">Ziehpunkt konfigurieren</string>
+  <string name="adjust_handle_summary">Position, Größe und Farbe konfigurieren</string>
 </resources>

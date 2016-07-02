@@ -26,6 +26,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Point;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.WindowManager;
 
 public class SwitchConfiguration {
@@ -318,11 +319,12 @@ public class SwitchConfiguration {
     public int calcHorizontalDivider(boolean fullscreen) {
         int horizontalDividerWidth = 0;
         int width = fullscreen ? getCurrentDisplayWidth() : getCurrentOverlayWidth();
-        int numColumns = width / mMaxWidth;
+        int columnWidth = mMaxWidth + mIconBorderHorizontal;
+        int numColumns = width / columnWidth;
         if (numColumns > 1) {
             int equalWidth = width / numColumns;
-            if (equalWidth > mMaxWidth) {
-                horizontalDividerWidth = equalWidth - mMaxWidth;
+            if (equalWidth > columnWidth) {
+                horizontalDividerWidth = equalWidth - columnWidth;
             }
         }
         return horizontalDividerWidth;

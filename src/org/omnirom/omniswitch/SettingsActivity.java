@@ -29,6 +29,8 @@ import org.omnirom.omniswitch.ui.SeekBarPreference;
 import org.omnirom.omniswitch.ui.SettingsGestureView;
 import org.omnirom.omniswitch.ui.FavoriteDialog;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -45,7 +47,6 @@ import android.preference.SwitchPreference;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -301,13 +302,26 @@ public class SettingsActivity extends PreferenceActivity implements
             String favoriteListString = mPrefs.getString(PREF_FAVORITE_APPS, "");
             List<String> favoriteList = new ArrayList<String>();
             Utils.parseFavorites(favoriteListString, favoriteList);
-            FavoriteDialog dialog = new FavoriteDialog(this, this, favoriteList);
-            dialog.show();
+            doShowFavoritesList(favoriteList);
             return true;
         } else if (preference == mFavoriteAppsConfigStat) {
-            List<String> favoriteList = Utils.getFavoriteListFromStats(this, 10);
-            FavoriteDialog dialog = new FavoriteDialog(this, this, favoriteList);
-            dialog.show();
+            final List<String> favoriteList = Utils.getFavoriteListFromStats(this, 10);
+            if (favoriteList.size() < 5) {
+                new AlertDialog.Builder(this)
+                    .setTitle(R.string.launch_stats_low_title)
+                    .setMessage(R.string.launch_stats_low_notice)
+                    .setCancelable(true)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    doShowFavoritesList(favoriteList);
+                                }
+                            }).show();
+            } else {
+                doShowFavoritesList(favoriteList);
+            }
             return true;
         } else if (preference == mLauncherMode){
             Utils.enableLauncherMode(this, mLauncherMode.isChecked());
@@ -319,6 +333,7 @@ public class SettingsActivity extends PreferenceActivity implements
             return true;
         } else if (preference == mLaunchStatsDelete) {
             SwitchStatistics.getInstance(this).clear();
+            Toast.makeText(SettingsActivity.this, R.string.launch_stats_delete_notice, Toast.LENGTH_LONG).show();
             return true;
         }
         return false;
@@ -426,22 +441,6 @@ public class SettingsActivity extends PreferenceActivity implements
         }
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(TAG, "onCreateOptionsMenu");
-        getMenuInflater().inflate(R.menu.settings_menu, menu);
-        mToggleServiceSwitch = (Switch) menu.findItem(R.id.toggle_service).getActionView().findViewById(R.id.switch_item);
-        mToggleServiceSwitch.setChecked(SwitchService.isRunning() && mPrefs.getBoolean(SettingsActivity.PREF_ENABLE, false));
-        mToggleServiceSwitch.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                boolean value = ((Switch)v).isChecked();
-                startOmniSwitch(value);
-                mPrefs.edit().putBoolean(PREF_ENABLE, value).commit();
-            }});
-        return true;
-    }*/
-
     public void updatePrefs(SharedPreferences prefs, String key) {
         if (!SwitchService.isRunning()){
             IconPackHelper.getInstance(SettingsActivity.this).updatePrefs(mPrefs, null);
@@ -461,5 +460,10 @@ public class SettingsActivity extends PreferenceActivity implements
                 stopService(svc);
             }
         }
+    }
+
+    private void doShowFavoritesList(List<String> favoriteList) {
+        FavoriteDialog dialog = new FavoriteDialog(this, this, favoriteList);
+        dialog.show();
     }
 }

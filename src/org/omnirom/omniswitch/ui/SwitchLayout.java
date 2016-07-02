@@ -354,7 +354,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
 
     @Override
     protected LinearLayout.LayoutParams getListItemParams() {
-        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth,
+        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal,
                 mConfiguration.getItemMaxHeight());
     }
 

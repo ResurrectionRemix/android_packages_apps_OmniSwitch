@@ -182,7 +182,7 @@ public class FavoriteViewHorizontal extends HorizontalListView {
     }
 
     private LinearLayout.LayoutParams getListItemParams() {
-        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth,
+        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal,
                 mConfiguration.getItemMaxHeight());
     }
 

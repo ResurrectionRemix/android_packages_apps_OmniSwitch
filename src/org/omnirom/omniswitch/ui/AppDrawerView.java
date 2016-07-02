@@ -180,7 +180,7 @@ public class AppDrawerView extends GridView {
     }
 
     private void updateLayout() {
-        setColumnWidth(mConfiguration.mMaxWidth);
+        setColumnWidth(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal);
         int dividerHeight = mConfiguration.calcVerticalDivider(getHeight());
         setVerticalSpacing(dividerHeight);
         requestLayout();

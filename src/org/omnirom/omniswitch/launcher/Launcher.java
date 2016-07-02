@@ -724,10 +724,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         super.onConfigurationChanged(newConfig);
         initView();
 
-        /*mRootView.setLayoutParams(new FrameLayout.LayoutParams(
-            mConfiguration.getLauncherViewWidth(),
-            FrameLayout.LayoutParams.MATCH_PARENT));*/
-
         restoreFavoritePanel();
         restoreAppDrawerPanel();
         restoreEssentialsPanel();

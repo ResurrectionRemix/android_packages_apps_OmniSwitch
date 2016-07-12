@@ -84,7 +84,12 @@ import java.util.List;
 public class Launcher extends Activity implements IEditFavoriteActivity {
     private static final String TAG = "Launcher";
     private static final boolean DEBUG = false;
-    private static final String WECLOME_SCREEN_DISMISSED = "weclome_screen_dismissed";
+    public static final String WECLOME_SCREEN_DISMISSED = "weclome_screen_dismissed";
+    // false= collapsed true = expanded
+    public static final String STATE_ESSENTIALS_EXPANDED = "state_essentials_expanded";
+    // 0 1=fav 2=app drawer
+    public static final String STATE_PANEL_SHOWN = "state_panel_shown";
+
     private static final Intent PHONE_INTENT = new Intent(Intent.ACTION_DIAL);
     private static final Intent CAMERA_INTENT = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
     private static final float ROTATE_0_DEGREE = 0f;
@@ -214,8 +219,17 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         mSlop = vc.getScaledTouchSlop() / 2;
         mGestureDetector = new GestureDetector(this, mGestureListener);
         mGestureDetector.setIsLongpressEnabled(false);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        mEssentialsPanelVisibile = isEssentialsExpanded();
+        final int activePanel = getActivePanel();
+        if (activePanel == 1) {
+            mFavoritePanelVisibile = true;
+        } else if (activePanel == 2) {
+            mAppDrawerPanelVisibile = true;
+        }
         initView();
+        restoreState();
 
         updateFavoritesList();
 
@@ -241,8 +255,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
 
         mEssentialsPanel= (ViewGroup) findViewById(R.id.essentials_panel);
         mEssentialsPanel.setAlpha(1f);
-
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         View wallpaperButton = findViewById(R.id.wallpaper_button);
         wallpaperButton.setOnClickListener(new View.OnClickListener() {
@@ -497,6 +509,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                     public void run() {
                         mAppDrawerPanel.setVisibility(View.GONE);
                         mAppDrawerPanelVisibile = false;
+                        setActivePanel(0);
                         if (withDim) {
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                         }
@@ -507,6 +520,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
             } else {
                 mAppDrawerPanel.setVisibility(View.GONE);
                 mAppDrawerPanelVisibile = false;
+                setActivePanel(0);
                 if (withDim) {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                 }
@@ -522,6 +536,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         }
         if (!mAppDrawerPanelVisibile) {
             mAppDrawerPanelVisibile = true;
+            setActivePanel(2);
             showWithFade(mAppDrawerPanel, new Runnable() {
                 @Override
                 public void run() {
@@ -539,6 +554,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                     public void run() {
                         mFavoritePanel.setVisibility(View.GONE);
                         mFavoritePanelVisibile = false;
+                        setActivePanel(0);
                         if (withDim) {
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                         }
@@ -557,6 +573,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
             } else {
                 mFavoritePanel.setVisibility(View.GONE);
                 mFavoritePanelVisibile = false;
+                setActivePanel(0);
                 if (withDim) {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                 }
@@ -580,6 +597,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         }
         if (!mFavoritePanelVisibile) {
             mFavoritePanelVisibile = true;
+            setActivePanel(1);
             showWithFade(mFavoritePanel, new Runnable() {
                 @Override
                 public void run() {
@@ -605,6 +623,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mEssentialsPanel.setVisibility(View.GONE);
+                    setEssentialsExpanded(false);
                     mEssentialsPanelVisibile = false;
                 }
 
@@ -632,6 +651,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         }
         if (!mEssentialsPanelVisibile) {
             mEssentialsPanelVisibile = true;
+            setEssentialsExpanded(true);
             mEssentialsPanel.setAlpha(0f);
             mEssentialsPanel.setVisibility(View.VISIBLE);
 
@@ -723,10 +743,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         initView();
-
-        restoreFavoritePanel();
-        restoreAppDrawerPanel();
-        restoreEssentialsPanel();
+        restoreState();
     }
 
     private void updateFavoritesList() {
@@ -821,6 +838,28 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
 
     private void launchCamera() {
         startActivity(CAMERA_INTENT);
+    }
+
+    private boolean isEssentialsExpanded() {
+        return mPrefs.getBoolean(STATE_ESSENTIALS_EXPANDED, false);
+    }
+
+    private void setEssentialsExpanded(boolean value) {
+        mPrefs.edit().putBoolean(STATE_ESSENTIALS_EXPANDED, value).commit();
+    }
+
+    private int getActivePanel() {
+        return mPrefs.getInt(STATE_PANEL_SHOWN, 0);
+    }
+
+    private void setActivePanel(int value) {
+        mPrefs.edit().putInt(STATE_PANEL_SHOWN, value).commit();
+    }
+
+    private void restoreState() {
+        restoreFavoritePanel();
+        restoreAppDrawerPanel();
+        restoreEssentialsPanel();
     }
 }
 

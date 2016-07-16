@@ -18,7 +18,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="package_stop_task_title">Zatrzymaj</string>
-  <string name="package_inspect_item_title">Informacje aplikacji</string>
+  <string name="package_inspect_item_title">Informacje o aplikacji</string>
   <string name="start_on_boot_title">Uruchom przy starcie</string>
   <string name="start_on_boot_summary">Uruchom i włącz podczas rozruchu urządzenia</string>
   <string name="opacity_title">Przezroczystość</string>
@@ -148,20 +148,20 @@
   <string name="adjust_handle_summary">Skonfiguruj położenie, rozmiar i kolor</string>
   <string name="settings_button_text">Ustawienia</string>
   <string name="wallpaper_button_text">Tapeta</string>
-  <string name="category_launcher_title">Launcher mode</string>
-  <string name="launcher_mode_summary">Run OmniSwitch also as your launcher. After enabling press home and select OmniSwitch</string>
+  <string name="category_launcher_title">Tryb Launchera</string>
+  <string name="launcher_mode_summary">Użyj OmniSwitch jako launchera. Po włączeniu naciśnij przycisk home i wybierz OmniSwitch</string>
   <string name="launcher_mode_title">Włącz</string>
-  <string name="launcher_mode_enable_check">Disable is not possible if launcher mode is active. Will be enabled again when launcher mode gets active</string>
-  <string name="welcome_cling_header">Welcome to OmniSwitch launcher mode</string>
-  <string name="welcome_cling_description">Have fun using a minimalistic launcher that focuses on app launching and switching. Swipe anywhere to open OmniSwitch.</string>
-  <string name="welcome_cling_dismiss">Got it</string>
+  <string name="launcher_mode_enable_check">Wyłączenie nie jest możliwe, jeśli aktywny jest tryb launchera. Zostanie włączone ponownie, gdy tryb launchera będzie aktywny</string>
+  <string name="welcome_cling_header">Witaj w trybie launchera OmniSwitch</string>
+  <string name="welcome_cling_description">Miłej zabawy przy używaniu minimalistycznego launchera, który skupia się na uruchamianiu i przełączaniu aplikacji. Przesuń palcem w dowolnym miejscu, aby otworzyć OmniSwitch.</string>
+  <string name="welcome_cling_dismiss">Zrozumiano</string>
   <string name="launch_stats_title">Uruchom statystyki</string>
   <string name="launch_stats_summary">Zbieraj statystyki dotyczące uruchomionych aplikacji. Dane nie będą udostępnione i przechowywane tylko lokalnie</string>
   <string name="launch_stats_delete_title">Wyczyść statystyki</string>
-  <string name="launch_stats_delete_summary">Clear current collected launch statistics</string>
+  <string name="launch_stats_delete_summary">Wyczyść zebrane statystyki uruchomień</string>
   <string name="favorite_apps_config_stat_title">Ulubione statystyki</string>
   <string name="favorite_apps_config_stat_summary">Utwórz listę ulubionych, w oparciu o zebrane statystyki</string>
-  <string name="launch_stats_delete_notice">Launch statistics cleared</string>
+  <string name="launch_stats_delete_notice">Statystyki uruchomień usunięte</string>
   <string name="launch_stats_low_title">Zarządzaj ulubionymi</string>
-  <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
+  <string name="launch_stats_low_notice">Brakuje danych do stworzenia listy ulubionych aplikacji. Na pewno chcesz kontynuować?</string>
 </resources>

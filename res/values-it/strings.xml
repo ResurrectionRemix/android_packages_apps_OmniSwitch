@@ -151,7 +151,7 @@
   <string name="category_launcher_title">Modalità Launcher</string>
   <string name="launcher_mode_summary">Eseguire OmniSwitch anche come launcher. Dopo l\'attivazione premere home e selezionare OmniSwitch</string>
   <string name="launcher_mode_title">Abilita</string>
-  <string name="launcher_mode_enable_check">Non è possibile disabilitare se è attiva la modalità launcher. Verrà attivato nuovamente quando modalità launcher sarà attiva</string>
+  <string name="launcher_mode_enable_check">Impossibile disabilitare se è stata attiva in modalità launcher. Verrà attivato nuovamente quando la modalità launcher sarà attiva</string>
   <string name="welcome_cling_header">Benvenuti nella modalità OmniSwitch launcher</string>
   <string name="welcome_cling_description">Buon divertimento con un launcher minimalista che si concentra sul lancio di app e commutazione. Scorri in un punto qualsiasi per aprire OmniSwitch.</string>
   <string name="welcome_cling_dismiss">Capito</string>

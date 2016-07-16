@@ -156,12 +156,12 @@
   <string name="welcome_cling_description">Diviértase usando un Launcher minimalístico centrado en lanzar y cambiar de aplicaciones. Deslize en cualquier sitio para abrir OmniSwitch.</string>
   <string name="welcome_cling_dismiss">Entiendo</string>
   <string name="launch_stats_title">Estadísticas de arranque</string>
-  <string name="launch_stats_summary">Collect statistics about launched apps. Data will not be shared and only stored locally</string>
+  <string name="launch_stats_summary">Recolectar estadísticas sobre aplicaciones lanzadas. Esta información no se comparte y solo es guardada localmente</string>
   <string name="launch_stats_delete_title">Limpiar estadísticas</string>
   <string name="launch_stats_delete_summary">Limpiar estadísticas de arranque recogidas</string>
   <string name="favorite_apps_config_stat_title">Estadística de Favoritos</string>
-  <string name="favorite_apps_config_stat_summary">Create a favorite list based on collected launch statistics</string>
-  <string name="launch_stats_delete_notice">Launch statistics cleared</string>
-  <string name="launch_stats_low_title">Manage Favorites</string>
-  <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
+  <string name="favorite_apps_config_stat_summary">Crear una lista de favoritos en base a los datos recolectados</string>
+  <string name="launch_stats_delete_notice">Estadísticas borradas</string>
+  <string name="launch_stats_low_title">Administrar Favoritos</string>
+  <string name="launch_stats_low_notice">Espacio insuficiente para crear lista de apps favoritas. ¿Estas seguro de continuar?</string>
 </resources>

@@ -464,6 +464,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     @Override
     protected void toggleFavorites() {
         mShowFavorites = !mShowFavorites;
+        storeExpandedFavoritesState();
 
         if (mShowFavAnim != null) {
             mShowFavAnim.cancel();

@@ -17,6 +17,7 @@
  */
 package org.omnirom.omniswitch;
 
+import org.omnirom.omniswitch.launcher.Launcher;
 import org.omnirom.omniswitch.ui.BitmapCache;
 import org.omnirom.omniswitch.ui.IconPackHelper;
 
@@ -34,6 +35,9 @@ import android.os.UserHandle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.Set;
+import java.util.HashSet;
+
 public class SwitchService extends Service {
     private final static String TAG = "SwitchService";
     private static boolean DEBUG = false;
@@ -46,6 +50,7 @@ public class SwitchService extends Service {
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
     private SwitchConfiguration mConfiguration;
     private int mUserId = -1;
+    private Set<String> mPrefKeyFilter = new HashSet<String>();
 
     private static boolean mIsRunning;
     private static boolean mCommitSuicide;
@@ -68,7 +73,13 @@ public class SwitchService extends Service {
             Log.d(TAG, "started SwitchService " + mUserId);
 
             mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
+            mPrefKeyFilter.add(SettingsActivity.PREF_SHOW_FAVORITE);
+            mPrefKeyFilter.add(Launcher.WECLOME_SCREEN_DISMISSED);
+            mPrefKeyFilter.add(Launcher.STATE_ESSENTIALS_EXPANDED);
+            mPrefKeyFilter.add(Launcher.STATE_PANEL_SHOWN);
+            if (DEBUG) {
+                Log.d(TAG, "mPrefKeyFilter " + mPrefKeyFilter);
+            }
             String layoutStyle = mPrefs.getString(SettingsActivity.PREF_LAYOUT_STYLE, "1");
             mManager = new SwitchManager(this, Integer.valueOf(layoutStyle));
 
@@ -90,9 +101,6 @@ public class SwitchService extends Service {
             mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                 public void onSharedPreferenceChanged(SharedPreferences prefs,
                         String key) {
-                    if (DEBUG) {
-                        Log.d(TAG, "updatePrefs " + key);
-                    }
                     try {
                         updatePrefs(prefs, key);
                     } catch(Exception e) {
@@ -218,7 +226,12 @@ public class SwitchService extends Service {
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {
-        // MUST be before the rest
+        if (isFilteredPrefsChange(key)) {
+            return;
+        }
+        if(DEBUG){
+            Log.d(TAG, "updatePrefs " + key);
+        }
         IconPackHelper.getInstance(this).updatePrefs(prefs, key);
         mConfiguration.updatePrefs(prefs, key);
         mManager.updatePrefs(prefs, key);
@@ -259,5 +272,9 @@ public class SwitchService extends Service {
      */
     public static SwitchManager getRecentsManager() {
         return mManager;
+    }
+
+    private boolean isFilteredPrefsChange(String key) {
+        return mPrefKeyFilter.contains(key);
     }
 }

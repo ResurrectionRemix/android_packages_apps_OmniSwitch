@@ -177,9 +177,11 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
                     @Override
                     public void onDismiss(ListView listView,
                             int[] reverseSortedPositions) {
-                        Log.d(TAG, "onDismiss: "
-                                + mRecentsManager.getTasks().size() + ":"
-                                + reverseSortedPositions[0]);
+                        if (DEBUG) {
+                            Log.d(TAG, "onDismiss: "
+                                    + mRecentsManager.getTasks().size() + ":"
+                                    + reverseSortedPositions[0]);
+                        }
                         try {
                             TaskDescription ad = mRecentsManager.getTasks()
                                     .get(reverseSortedPositions[0]);

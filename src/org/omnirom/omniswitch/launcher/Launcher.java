@@ -536,11 +536,11 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         }
         if (!mAppDrawerPanelVisibile) {
             mAppDrawerPanelVisibile = true;
-            setActivePanel(2);
             showWithFade(mAppDrawerPanel, new Runnable() {
                 @Override
                 public void run() {
                     hideFavoritePanel(false, false);
+                    setActivePanel(2);
                 }
             });
         }
@@ -597,7 +597,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         }
         if (!mFavoritePanelVisibile) {
             mFavoritePanelVisibile = true;
-            setActivePanel(1);
             showWithFade(mFavoritePanel, new Runnable() {
                 @Override
                 public void run() {
@@ -608,6 +607,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                     hideAppDrawerPanel(false, false);
                     mFavoriteEditButton.setVisibility(View.VISIBLE);
                     mFavoriteEditButtonSpace.setVisibility(View.VISIBLE);
+                    setActivePanel(1);
                 }
             });
         }

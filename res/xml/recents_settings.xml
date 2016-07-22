@@ -106,6 +106,11 @@
 			android:entryValues="@array/thumb_size_values"
 			android:key="thumb_size"
 			android:title="@string/thumb_size_title" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="revert_recents"
+			android:summary="@string/revert_recents_summary"
+			android:title="@string/revert_recents_title" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="app_filter_category"

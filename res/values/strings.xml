@@ -165,4 +165,6 @@
         <string name="launch_stats_delete_notice">Launch statistics cleared</string>
         <string name="launch_stats_low_title">Manage Favorites</string>
         <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
+        <string name="revert_recents_summary">Fill recent apps from bottom</string>
+        <string name="revert_recents_title">Revert recent apps list</string>
 </resources>

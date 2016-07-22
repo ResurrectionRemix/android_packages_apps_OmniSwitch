@@ -37,6 +37,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -95,6 +96,7 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_LAUNCH_STATS = "launch_stats";
     public static final String PREF_LAUNCH_STATS_DELETE = "launch_stats_delete";
     public static final String PREF_FAVORITE_APPS_CONFIG_STAT = "favorite_apps_config_stat";
+    public static final String PREF_REVERT_RECENTS ="revert_recents";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;
@@ -145,6 +147,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private Preference mLaunchStatsDelete;
     private SwitchPreference mLaunchStats;
     private Preference mFavoriteAppsConfigStat;
+    private CheckBoxPreference mRevertRecents;
 
     @Override
     public void onPause() {
@@ -245,6 +248,9 @@ public class SettingsActivity extends PreferenceActivity implements
         mLaunchStats = (SwitchPreference) findPreference(PREF_LAUNCH_STATS);
         mLaunchStatsDelete = (Preference) findPreference(PREF_LAUNCH_STATS_DELETE);
         mFavoriteAppsConfigStat = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG_STAT);
+        mRevertRecents = (CheckBoxPreference) findPreference(PREF_REVERT_RECENTS);
+        mRevertRecents.setEnabled(mLayoutStyle.getValue().equals("1"));
+        mThumbSize.setEnabled(mLayoutStyle.getValue().equals("1"));
 
         mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
@@ -374,6 +380,8 @@ public class SettingsActivity extends PreferenceActivity implements
             int idx = mLayoutStyle.findIndexOfValue(value);
             mLayoutStyle.setSummary(mLayoutStyle.getEntries()[idx]);
             mLayoutStyle.setValueIndex(idx);
+            mRevertRecents.setEnabled(mLayoutStyle.getValue().equals("1"));
+            mThumbSize.setEnabled(mLayoutStyle.getValue().equals("1"));
             return true;
         } else if (preference == mAppFilterTime) {
             String value = (String) newValue;

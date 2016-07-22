@@ -89,6 +89,7 @@ public class SwitchConfiguration {
     public int mIconBorderHorizontal = 8; // in dp
     public BgStyle mBgStyle = BgStyle.SOLID_LIGHT;
     public boolean mLaunchStatsEnabled;
+    public boolean mRevertRecents;
 
     // old pref slots
     private static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
@@ -243,6 +244,7 @@ public class SwitchConfiguration {
         mThumbRatio = Float.valueOf(thumbSize);
         mFilterRunning = prefs.getBoolean(SettingsActivity.PREF_APP_FILTER_RUNNING, false);
         mLaunchStatsEnabled = prefs.getBoolean(SettingsActivity.PREF_LAUNCH_STATS, false);
+        mRevertRecents = prefs.getBoolean(SettingsActivity.PREF_REVERT_RECENTS, false);
 
         for(OnSharedPreferenceChangeListener listener : mPrefsListeners) {
             listener.onSharedPreferenceChanged(prefs, key);

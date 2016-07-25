@@ -151,17 +151,17 @@
   <string name="category_launcher_title">启动器模式</string>
   <string name="launcher_mode_summary">将OmniSwitch作为您的启动器。启用后按主页键然后选择OmniSwitch</string>
   <string name="launcher_mode_title">启用</string>
-  <string name="launcher_mode_enable_check">Disable is not possible if launcher mode is active. Will be enabled again when launcher mode gets active</string>
+  <string name="launcher_mode_enable_check">如果发射器模式处于活动状态则无法禁用。当发射器模式激活时将再次启用</string>
   <string name="welcome_cling_header">欢迎来到OmniSwitch启动器模式</string>
-  <string name="welcome_cling_description">Have fun using a minimalistic launcher that focuses on app launching and switching. Swipe anywhere to open OmniSwitch.</string>
+  <string name="welcome_cling_description">祝您使用愉快地使用这个注重于启动和切换应用的启动器。在任何地方滑动来启用OmniSwitch</string>
   <string name="welcome_cling_dismiss">好</string>
   <string name="launch_stats_title">启动统计</string>
   <string name="launch_stats_summary">收集有关应用被启动的统计信息。数据不会共享而仅存储在本地</string>
   <string name="launch_stats_delete_title">清除统计数据</string>
   <string name="launch_stats_delete_summary">清除当前已收集的启动统计数据</string>
-  <string name="favorite_apps_config_stat_title">Statistic favorites</string>
-  <string name="favorite_apps_config_stat_summary">Create a favorite list based on collected launch statistics</string>
-  <string name="launch_stats_delete_notice">Launch statistics cleared</string>
+  <string name="favorite_apps_config_stat_title">统计最爱的</string>
+  <string name="favorite_apps_config_stat_summary">基于收集的启动数据创建最喜爱列表</string>
+  <string name="launch_stats_delete_notice">清除启动数据</string>
   <string name="launch_stats_low_title">管理收藏夹</string>
-  <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
+  <string name="launch_stats_low_notice">充足的数据可用来创建最爱的应用程序列表。确实要继续吗？</string>
 </resources>

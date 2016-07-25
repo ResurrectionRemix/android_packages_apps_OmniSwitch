@@ -156,12 +156,12 @@
   <string name="welcome_cling_description">享受使用以應用程式啟動和切換為重點的簡約啟動器。刷任何地方打開 OmniSwitch。</string>
   <string name="welcome_cling_dismiss">明白了</string>
   <string name="launch_stats_title">啟動統計</string>
-  <string name="launch_stats_summary">Collect statistics about launched apps. Data will not be shared and only stored locally</string>
-  <string name="launch_stats_delete_title">Clear statistics</string>
-  <string name="launch_stats_delete_summary">Clear current collected launch statistics</string>
+  <string name="launch_stats_summary">收集有關以開啟應用程式的統計資料。這些資料僅會儲存在本地，不會被分享。</string>
+  <string name="launch_stats_delete_title">清除統計資料</string>
+  <string name="launch_stats_delete_summary">清除目前已收集的統計資料</string>
   <string name="favorite_apps_config_stat_title">Statistic favorites</string>
   <string name="favorite_apps_config_stat_summary">Create a favorite list based on collected launch statistics</string>
   <string name="launch_stats_delete_notice">Launch statistics cleared</string>
-  <string name="launch_stats_low_title">Manage Favorites</string>
+  <string name="launch_stats_low_title">管理最愛</string>
   <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
 </resources>

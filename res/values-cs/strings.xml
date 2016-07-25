@@ -18,7 +18,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="package_stop_task_title">Ukočit</string>
-  <string name="package_inspect_item_title">Informace o aplikace</string>
+  <string name="package_inspect_item_title">Informace o aplikaci</string>
   <string name="start_on_boot_title">Spustit při startu</string>
   <string name="start_on_boot_summary">Start a spuštění zařízení</string>
   <string name="opacity_title">Neprůhlednost</string>
@@ -149,7 +149,7 @@
   <string name="settings_button_text">Nastavení</string>
   <string name="wallpaper_button_text">Tapeta</string>
   <string name="category_launcher_title">Launcher mode</string>
-  <string name="launcher_mode_summary">Run OmniSwitch also as your launcher. After enabling press home and select OmniSwitch</string>
+  <string name="launcher_mode_summary">Spusťte OmniSwitch jako váš launcher. Po povolení stiskněte tlačítko domů a vyberte OmniSwitch</string>
   <string name="launcher_mode_title">Povolit</string>
   <string name="launcher_mode_enable_check">Disable is not possible if launcher mode is active. Will be enabled again when launcher mode gets active</string>
   <string name="welcome_cling_header">Welcome to OmniSwitch launcher mode</string>
@@ -163,5 +163,5 @@
   <string name="favorite_apps_config_stat_summary">Create a favorite list based on collected launch statistics</string>
   <string name="launch_stats_delete_notice">Launch statistics cleared</string>
   <string name="launch_stats_low_title">Správa oblíbených</string>
-  <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
+  <string name="launch_stats_low_notice">Nedostačující data pro vytvoření seznamu oblíbených aplikací. Opravdu chcete pokračovat?</string>
 </resources>

@@ -155,13 +155,13 @@
   <string name="welcome_cling_header">OnmiSwitich 런처 모드에 오신 것을 환영합니다.</string>
   <string name="welcome_cling_description">Have fun using a minimalistic launcher that focuses on app launching and switching. Swipe anywhere to open OmniSwitch.</string>
   <string name="welcome_cling_dismiss">Got it</string>
-  <string name="launch_stats_title">Launch statistics</string>
+  <string name="launch_stats_title">실행 통계</string>
   <string name="launch_stats_summary">Collect statistics about launched apps. Data will not be shared and only stored locally</string>
-  <string name="launch_stats_delete_title">Clear statistics</string>
+  <string name="launch_stats_delete_title">명확한 통계</string>
   <string name="launch_stats_delete_summary">Clear current collected launch statistics</string>
   <string name="favorite_apps_config_stat_title">Statistic favorites</string>
   <string name="favorite_apps_config_stat_summary">Create a favorite list based on collected launch statistics</string>
   <string name="launch_stats_delete_notice">Launch statistics cleared</string>
-  <string name="launch_stats_low_title">Manage Favorites</string>
+  <string name="launch_stats_low_title">즐겨찾기 관리</string>
   <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
 </resources>

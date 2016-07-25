@@ -67,7 +67,7 @@
   <string name="no_recent_apps_title">Жодних останніх програм</string>
   <string name="drag_handle_opacity_title">Прозорість</string>
   <string name="drag_handle_enable_title">Активувати</string>
-  <string name="drag_handle_enable_summary">Відключити, тільки якщо буде використовуватись інший метод активізації</string>
+  <string name="drag_handle_enable_summary">Вимкнути, якщо ви виберете інший метод активації</string>
   <string name="allapps_help">Меню додатків</string>
   <string name="allapps">Застосунки</string>
   <string name="dim_behind_title">Темний фон</string>

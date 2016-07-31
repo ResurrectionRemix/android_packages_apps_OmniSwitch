@@ -457,7 +457,6 @@ public class SettingsActivity extends PreferenceActivity implements
 
     private void startOmniSwitch(boolean value) {
         Intent svc = new Intent(SettingsActivity.this, SwitchService.class);
-        Log.d(TAG, "toggle service " + value);
         if (value) {
             if (SwitchService.isRunning()){
                 stopService(svc);

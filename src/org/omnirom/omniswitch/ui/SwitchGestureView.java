@@ -45,8 +45,10 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
+import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -529,6 +531,10 @@ public class SwitchGestureView {
 
     public synchronized void show() {
         if (mShowing) {
+            return;
+        }
+        // should never happen but make sure were not triggering a crash here
+        if (!canDrawOverlayViews()) {
             return;
         }
         if(DEBUG){
@@ -1497,5 +1503,9 @@ public class SwitchGestureView {
             mView.removeView(mLevelBorderIndicator);
             mLevelBorderIndicator = null;
         }
+    }
+
+    private boolean canDrawOverlayViews() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(mContext);
     }
 }

@@ -167,4 +167,6 @@
         <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
         <string name="revert_recents_summary">Fill recent apps from bottom</string>
         <string name="revert_recents_title">Revert recent apps list</string>
+        <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
+        <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
 </resources>

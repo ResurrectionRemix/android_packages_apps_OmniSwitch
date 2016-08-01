@@ -261,7 +261,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
             @Override
             public void onClick(View v) {
                 Intent pickWallpaper = new Intent(Intent.ACTION_SET_WALLPAPER);
-                startActivity(Intent.createChooser(pickWallpaper, null));
+                startActivity(pickWallpaper);
             }
         });
 

@@ -91,7 +91,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
     public static final String STATE_PANEL_SHOWN = "state_panel_shown";
 
     private static final Intent PHONE_INTENT = new Intent(Intent.ACTION_DIAL);
-    private static final Intent CAMERA_INTENT = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
     private static final float ROTATE_0_DEGREE = 0f;
     private static final float ROTATE_180_DEGREE = 180f;
     private static final float DIM_AMOUNT = 0.2f;
@@ -832,12 +831,18 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 }
             });
         } else {
-            startActivity(PHONE_INTENT);
+            final Intent phoneIntent = new Intent(PHONE_INTENT);
+            phoneIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+            startActivity(phoneIntent);
         }
     }
 
     private void launchCamera() {
-        startActivity(CAMERA_INTENT);
+        final Intent cameraIntent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+        cameraIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        startActivity(cameraIntent);
     }
 
     private boolean isEssentialsExpanded() {

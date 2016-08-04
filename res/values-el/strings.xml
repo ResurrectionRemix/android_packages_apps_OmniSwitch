@@ -164,4 +164,8 @@
   <string name="launch_stats_delete_notice">Στατιστικά εκτοξευτή εκκαθαρίστηκαν</string>
   <string name="launch_stats_low_title">Διαχείριση αγαπημένων</string>
   <string name="launch_stats_low_notice">Ανεπαρκή δεδομένα για να δημιουργήσετε τις αγαπημένες εφαρμογές στη λίστα. Θέλετε πραγματικά να συνεχίσετε;</string>
+  <string name="revert_recents_summary">Fill recent apps from bottom</string>
+  <string name="revert_recents_title">Revert recent apps list</string>
+  <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
+  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
 </resources>

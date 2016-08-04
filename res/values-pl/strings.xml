@@ -164,4 +164,8 @@
   <string name="launch_stats_delete_notice">Statystyki uruchomień usunięte</string>
   <string name="launch_stats_low_title">Zarządzaj ulubionymi</string>
   <string name="launch_stats_low_notice">Brakuje danych do stworzenia listy ulubionych aplikacji. Na pewno chcesz kontynuować?</string>
+  <string name="revert_recents_summary">Fill recent apps from bottom</string>
+  <string name="revert_recents_title">Revert recent apps list</string>
+  <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
+  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
 </resources>

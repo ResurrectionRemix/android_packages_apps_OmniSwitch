@@ -164,4 +164,8 @@
   <string name="launch_stats_delete_notice">Статистика запущенных приложений очищена</string>
   <string name="launch_stats_low_title">Управление любимыми приложениями</string>
   <string name="launch_stats_low_notice">Недостаточно данных для создания списка любимых приложений. Вы действительно хотите продолжить?</string>
+  <string name="revert_recents_summary">Fill recent apps from bottom</string>
+  <string name="revert_recents_title">Revert recent apps list</string>
+  <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
+  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
 </resources>

@@ -263,6 +263,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 startActivity(pickWallpaper);
             }
         });
+        wallpaperButton.setBackgroundResource(R.drawable.ripple_dark);
 
         View settingsButton = findViewById(R.id.settings_button);
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -271,6 +272,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 SwitchManager.startSettingsActivity(Launcher.this);
             }
         });
+        settingsButton.setBackgroundResource(R.drawable.ripple_dark);
 
         View omniSettingsButton = findViewById(R.id.omni_settings_button);
         omniSettingsButton.setOnClickListener(new View.OnClickListener() {
@@ -279,6 +281,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 SwitchManager.startOmniSwitchSettingsActivity(Launcher.this);
             }
         });
+        omniSettingsButton.setBackgroundResource(R.drawable.ripple_dark);
 
         mFavoriteEditButton = (ImageView)findViewById(R.id.edit_favorite_button);
         mFavoriteEditButton.setOnClickListener(new View.OnClickListener() {
@@ -288,6 +291,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 dialog.show();
             }
         });
+        mFavoriteEditButton.setBackgroundResource(R.drawable.ripple_dark);
 
         mFavoriteEditButtonSpace = findViewById(R.id.edit_favorite_button_space);
 
@@ -302,6 +306,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 }
             }
         });
+        mAppDrawerButton.setBackgroundResource(R.drawable.ripple_dark);
 
         mFavoriteButton = (ImageView)findViewById(R.id.favorite_button);
         mFavoriteButton.setOnClickListener(new View.OnClickListener() {
@@ -314,6 +319,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 }
             }
         });
+        mFavoriteButton.setBackgroundResource(R.drawable.ripple_dark);
 
         mEssentialsButton = (ImageView)findViewById(R.id.essentials_button);
         mEssentialsButton.setOnClickListener(new View.OnClickListener() {
@@ -326,6 +332,8 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 }
             }
         });
+        mEssentialsButton.setBackgroundResource(R.drawable.ripple_dark);
+
         ImageView phoneButton = (ImageView)findViewById(R.id.phone_button);
         phoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -333,6 +341,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 launchPhone();
             }
         });
+        phoneButton.setBackgroundResource(R.drawable.ripple_dark);
 
         ImageView cameraButton = (ImageView)findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -341,6 +350,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 launchCamera();
             }
         });
+        cameraButton.setBackgroundResource(R.drawable.ripple_dark);
 
         if (isPhoneVisible()) {
             phoneButton.setVisibility(View.VISIBLE);

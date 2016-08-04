@@ -579,8 +579,4 @@ public class SwitchManager {
         }
         return 2;
     }
-
-    public void revertRecents() {
-        Collections.reverse(mLoadedTasks);
-    }
 }

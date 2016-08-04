@@ -77,7 +77,12 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TaskDescription ad = getItem(position);
+            TaskDescription ad = null;
+            if (mConfiguration.mRevertRecents) {
+                ad = getItem(getCount() - 1 - position);
+            } else {
+                ad = getItem(position);
+            }
 
             PackageTextView item = null;
             if (convertView == null) {
@@ -651,17 +656,5 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     @Override
     protected View getButtonList() {
         return mButtonList;
-    }
-
-    @Override
-    public synchronized void update() {
-        if (mConfiguration.mRevertRecents) {
-            mRecentsManager.revertRecents();
-            if (DEBUG) {
-                Log.d(TAG, "update " + System.currentTimeMillis() + " "
-                        + mRecentsManager.getTasks());
-            }
-        }
-        super.update();
     }
 }

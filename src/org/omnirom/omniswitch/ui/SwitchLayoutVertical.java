@@ -77,8 +77,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TaskDescription ad = getItem(position);
-
+            TaskDescription ad = getItem(getTaskPosition(position));
             PackageTextView item = null;
             if (convertView == null) {
                 item = getRecentItemTemplate();
@@ -157,7 +156,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
-                TaskDescription task = mRecentsManager.getTasks().get(position);
+                TaskDescription task = mRecentsManager.getTasks().get(getTaskPosition(position));
                 mRecentsManager.switchTask(task, mAutoClose, false);
             }
         });
@@ -166,7 +165,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view,
                     int position, long id) {
-                TaskDescription task = mRecentsManager.getTasks().get(position);
+                TaskDescription task = mRecentsManager.getTasks().get(getTaskPosition(position));
                 handleLongPressRecent(task, view);
                 return true;
             }
@@ -178,14 +177,14 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
                     @Override
                     public void onDismiss(ListView listView,
                             int[] reverseSortedPositions) {
+                        int position = getTaskPosition(reverseSortedPositions[0]);
                         if (DEBUG) {
                             Log.d(TAG, "onDismiss: "
                                     + mRecentsManager.getTasks().size() + ":"
-                                    + reverseSortedPositions[0]);
+                                    + position);
                         }
                         try {
-                            TaskDescription ad = mRecentsManager.getTasks()
-                                    .get(reverseSortedPositions[0]);
+                            TaskDescription ad = mRecentsManager.getTasks().get(position);
                             mRecentsManager.killTask(ad);
                         } catch (IndexOutOfBoundsException e) {
                             // ignored
@@ -653,15 +652,11 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         return mButtonList;
     }
 
-    @Override
-    public synchronized void update() {
+    private int getTaskPosition(int position) {
         if (mConfiguration.mRevertRecents) {
-            mRecentsManager.revertRecents();
-            if (DEBUG) {
-                Log.d(TAG, "update " + System.currentTimeMillis() + " "
-                        + mRecentsManager.getTasks());
-            }
+            return mRecentsManager.getTasks().size() - 1 - position;
+        } else {
+            return position;
         }
-        super.update();
     }
 }

@@ -164,8 +164,8 @@
   <string name="launch_stats_delete_notice">Estatísticas de lançamento apagadas</string>
   <string name="launch_stats_low_title">Gerenciar favoritos</string>
   <string name="launch_stats_low_notice">Dados insuficientes para criar lista de apps favoritas. Quer mesmo continuar?</string>
-  <string name="revert_recents_summary">Fill recent apps from bottom</string>
-  <string name="revert_recents_title">Revert recent apps list</string>
-  <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
-  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
+  <string name="revert_recents_summary">Encher recentes de apps do fundo</string>
+  <string name="revert_recents_title">Reverter a lista de apps recentes</string>
+  <string name="dialog_overlay_perms_title">Erro de permissão do OmniSwitch</string>
+  <string name="dialog_overlay_perms_msg">Ativar o desenho \u0022 sobre a permissão de outra apps \u0022</string>
 </resources>

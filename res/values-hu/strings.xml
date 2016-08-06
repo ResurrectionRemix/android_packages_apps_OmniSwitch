@@ -164,8 +164,8 @@
   <string name="launch_stats_delete_notice">Indítási statisztika törölve</string>
   <string name="launch_stats_low_title">Kedvencek kezelése</string>
   <string name="launch_stats_low_notice">Nincs elegendő adat a kedvenc alkalmazások listájának létrehozásához. Tényleg folytatni kívánja?</string>
-  <string name="revert_recents_summary">Fill recent apps from bottom</string>
-  <string name="revert_recents_title">Revert recent apps list</string>
+  <string name="revert_recents_summary">Előzmények feltöltése aulról</string>
+  <string name="revert_recents_title">Fordított előzmények lista</string>
   <string name="dialog_overlay_perms_title">OmniSwitch engedély hiba</string>
-  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
+  <string name="dialog_overlay_perms_msg">Engedélyezze a \u0022Megjelenítés más alkalmazások felett\u0022 engedélyt</string>
 </resources>

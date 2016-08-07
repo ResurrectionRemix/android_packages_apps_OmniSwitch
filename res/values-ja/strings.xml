@@ -18,9 +18,9 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="package_stop_task_title">Stop</string>
-  <string name="package_inspect_item_title">App info</string>
-  <string name="start_on_boot_title">Start on boot</string>
-  <string name="start_on_boot_summary">Start and enable on device boot</string>
+  <string name="package_inspect_item_title">アプリ情報</string>
+  <string name="start_on_boot_title">起動時に開始</string>
+  <string name="start_on_boot_summary">端末の起動時に自動で開始します</string>
   <string name="opacity_title">Opacity</string>
   <string name="opacity_summary">Background opacity of overlay view</string>
   <string name="animate_title">Animate</string>
@@ -31,12 +31,12 @@
   <string name="icon_size_large">Large</string>
   <string name="icon_size_title">Icon size</string>
   <string name="ok">OK</string>
-  <string name="cancel">Cancel</string>
+  <string name="cancel">キャンセル</string>
   <string name="drag_handle_color_title">Color</string>
   <string name="drag_handle_color_dialog_title">Color</string>
   <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> free</string>
   <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> used</string>
-  <string name="show_rambar_title">Show memory usage</string>
+  <string name="show_rambar_title">メモリ使用量を表示する</string>
   <string name="show_rambar_summary">Display amount of free and used memory</string>
   <string name="show_app_labels">Show app name</string>
   <string name="show_app_labels_summary">Application name will be displayed with the icon</string>

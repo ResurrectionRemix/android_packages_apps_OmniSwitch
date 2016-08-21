@@ -164,8 +164,8 @@
   <string name="launch_stats_delete_notice">Start-Statistik gelöscht</string>
   <string name="launch_stats_low_title">Favoriten verwalten</string>
   <string name="launch_stats_low_notice">Es gibt zu wenig Daten, um eine Liste der Lieblings-Apps zu erstellen. Möchten Sie wirklich fortfahren?</string>
-  <string name="revert_recents_summary">Fill recent apps from bottom</string>
-  <string name="revert_recents_title">Revert recent apps list</string>
-  <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
-  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
+  <string name="revert_recents_summary">Zuletzt verwendete Apps von unten auffüllen</string>
+  <string name="revert_recents_title">Liste der zuletzt verwendeten Apps wiederherstellen</string>
+  <string name="dialog_overlay_perms_title">OmniSwitch Berechtigungsfehler</string>
+  <string name="dialog_overlay_perms_msg">Erlaube die \"über-andere-Apps-einblenden-Berechtigung\"</string>
 </resources>

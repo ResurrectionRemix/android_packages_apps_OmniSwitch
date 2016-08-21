@@ -167,5 +167,5 @@
   <string name="revert_recents_summary">Son kullanılan uygulamaları alttan doldur</string>
   <string name="revert_recents_title">Son uygulamalar listesini geri döndür</string>
   <string name="dialog_overlay_perms_title">OmniSwitch izin hatası</string>
-  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
+  <string name="dialog_overlay_perms_msg">Etkin \u0022Diğer uygulamalar üzerinde\u0022 izin</string>
 </resources>

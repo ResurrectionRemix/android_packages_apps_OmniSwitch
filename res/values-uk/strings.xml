@@ -164,8 +164,8 @@
   <string name="launch_stats_delete_notice">Статистика запущених додатків очищена</string>
   <string name="launch_stats_low_title">Управління обраними додатками</string>
   <string name="launch_stats_low_notice">Недостатньо даних для створення списку обраних додатків. Ви дійсно хочете продовжити?</string>
-  <string name="revert_recents_summary">Fill recent apps from bottom</string>
-  <string name="revert_recents_title">Revert recent apps list</string>
-  <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
-  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
+  <string name="revert_recents_summary">Заповнити нещодавні додатки знизу</string>
+  <string name="revert_recents_title">Відновити перелік нещодавніх додатків</string>
+  <string name="dialog_overlay_perms_title">Помилка дозволу OmniSwitch</string>
+  <string name="dialog_overlay_perms_msg">Увімкнути \u0022Малювати поверх інших додатків\u0022 дозвіл</string>
 </resources>

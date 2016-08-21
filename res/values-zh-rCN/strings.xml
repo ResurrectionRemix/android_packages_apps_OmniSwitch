@@ -164,8 +164,8 @@
   <string name="launch_stats_delete_notice">清除启动数据</string>
   <string name="launch_stats_low_title">管理收藏夹</string>
   <string name="launch_stats_low_notice">充足的数据可用来创建最爱的应用程序列表。确实要继续吗？</string>
-  <string name="revert_recents_summary">Fill recent apps from bottom</string>
-  <string name="revert_recents_title">Revert recent apps list</string>
+  <string name="revert_recents_summary">从底部填充最近使用的应用</string>
+  <string name="revert_recents_title">撤销最近使用的应用</string>
   <string name="dialog_overlay_perms_title">OmniSwitch 权限错误</string>
-  <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
+  <string name="dialog_overlay_perms_msg">启用 \u0022在其它应用上层显示\u0022 权限</string>
 </resources>

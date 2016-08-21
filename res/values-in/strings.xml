@@ -21,8 +21,8 @@
   <string name="package_inspect_item_title">Info aplikasi</string>
   <string name="start_on_boot_title">Mulai pada boot</string>
   <string name="start_on_boot_summary">Memulai dan mengaktifkan saat perangkat boot</string>
-  <string name="opacity_title">Opacity</string>
-  <string name="opacity_summary">Background opacity of overlay view</string>
+  <string name="opacity_title">Kepekatan</string>
+  <string name="opacity_summary">Kepekatan latar belakang dari tampilan overlay</string>
   <string name="animate_title">Animate</string>
   <string name="animate_title_summary">Animate show and hide of overlay view</string>
   <string name="adjust_handle_help">Move and resize drag handle</string>

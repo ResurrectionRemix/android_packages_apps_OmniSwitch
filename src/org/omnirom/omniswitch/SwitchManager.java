@@ -431,10 +431,19 @@ public class SwitchManager {
         mLoadedTasks.clear();
     }
 
+    public int getCurrentTopTaskId() {
+        if (getTasks().size() >= 1) {
+            TaskDescription ad = getTasks().get(0);
+            return ad.getPersistentTaskId();
+        } else {
+            return -1;
+        }
+    }
+
     public void lockToCurrentApp(boolean close) {
         try {
             if (!ActivityManagerNative.getDefault().isInLockTaskMode()) {
-                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
+                ActivityManagerNative.getDefault().startLockTaskMode(getCurrentTopTaskId());
                 if(DEBUG){
                     Log.d(TAG, "lock current app");
                 }
@@ -450,7 +459,7 @@ public class SwitchManager {
         try {
             if (!ActivityManagerNative.getDefault().isInLockTaskMode()) {
                 switchTask(ad, false, false);
-                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
+                ActivityManagerNative.getDefault().startLockTaskMode(ad.getPersistentTaskId());
                 if(DEBUG){
                     Log.d(TAG, "lock app " + ad.getPackageName());
                 }
@@ -465,7 +474,7 @@ public class SwitchManager {
     public void stopLockToApp(boolean close) {
         try {
             if (ActivityManagerNative.getDefault().isInLockTaskMode()) {
-                ActivityManagerNative.getDefault().stopLockTaskModeOnCurrent();
+                ActivityManagerNative.getDefault().stopLockTaskMode();
                 if(DEBUG){
                     Log.d(TAG, "stop lock app");
                 }
@@ -480,12 +489,16 @@ public class SwitchManager {
     public void toggleLockToApp(boolean close) {
         try {
             if (ActivityManagerNative.getDefault().isInLockTaskMode()) {
-                ActivityManagerNative.getDefault().stopLockTaskModeOnCurrent();
+                ActivityManagerNative.getDefault().stopLockTaskMode();
                 if(DEBUG){
                     Log.d(TAG, "stop lock app");
                 }
             } else {
-                ActivityManagerNative.getDefault().startLockTaskModeOnCurrent();
+                int taskid = getCurrentTopTaskId();
+                if (taskid > -1) {
+                } else {
+                    ActivityManagerNative.getDefault().startLockTaskMode(getCurrentTopTaskId());
+                }
                 if(DEBUG){
                     Log.d(TAG, "lock current app");
                 }
@@ -501,10 +514,10 @@ public class SwitchManager {
         if (DEBUG) {
             Log.d(TAG, "resize " + taskId + " -> " + bounds);
         }
-        try {
-            ActivityManagerNative.getDefault().resizeTask(taskId, bounds);
-        } catch (RemoteException e) {
-        }
+//        try {
+//            ActivityManagerNative.getDefault().resizeTask(taskId, bounds);
+//        } catch (RemoteException e) {
+//        }
     }
 
     public void placeTask(TaskDescription ad, int arrangement) {

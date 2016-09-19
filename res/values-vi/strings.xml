@@ -17,26 +17,26 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="package_stop_task_title">Stop</string>
-  <string name="package_inspect_item_title">App info</string>
-  <string name="start_on_boot_title">Start on boot</string>
-  <string name="start_on_boot_summary">Start and enable on device boot</string>
-  <string name="opacity_title">Opacity</string>
-  <string name="opacity_summary">Background opacity of overlay view</string>
+  <string name="package_stop_task_title">Dừng lại</string>
+  <string name="package_inspect_item_title">Thông tin ứng dụng</string>
+  <string name="start_on_boot_title">Bắt đầu khi khởi động</string>
+  <string name="start_on_boot_summary">Bắt đầu và bật khi khởi động</string>
+  <string name="opacity_title">Độ trong suốt</string>
+  <string name="opacity_summary">Mờ nền của lớp phủ xem</string>
   <string name="animate_title">Animate</string>
-  <string name="animate_title_summary">Animate show and hide of overlay view</string>
-  <string name="adjust_handle_help">Move and resize drag handle</string>
-  <string name="icon_size_normal">Normal</string>
-  <string name="icon_size_small">Small</string>
+  <string name="animate_title_summary">Hiệu ứng động và ẩn xem lớp phủ</string>
+  <string name="adjust_handle_help">Di chuyển và thay đổi kéo chốt</string>
+  <string name="icon_size_normal">Bình thường</string>
+  <string name="icon_size_small">Nhỏ</string>
   <string name="icon_size_large">Large</string>
   <string name="icon_size_title">Icon size</string>
   <string name="ok">OK</string>
   <string name="cancel">Cancel</string>
-  <string name="drag_handle_color_title">Color</string>
-  <string name="drag_handle_color_dialog_title">Color</string>
-  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> free</string>
-  <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> used</string>
-  <string name="show_rambar_title">Show memory usage</string>
+  <string name="drag_handle_color_title">Màu</string>
+  <string name="drag_handle_color_dialog_title">Màu</string>
+  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> còn trống</string>
+  <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> đã dùng</string>
+  <string name="show_rambar_title">Hiển thị bộ nhớ sử dụng</string>
   <string name="show_rambar_summary">Display amount of free and used memory</string>
   <string name="show_app_labels">Show app name</string>
   <string name="show_app_labels_summary">Application name will be displayed with the icon</string>

@@ -70,7 +70,7 @@
   <string name="drag_handle_enable_summary">Digər aktivləşdirmə metodu istifadə edəndə deaktivləşdirin</string>
   <string name="allapps_help">Tətbiq siyirtməsi</string>
   <string name="allapps">Tətbiqlər</string>
-  <string name="dim_behind_title">Dim background</string>
+  <string name="dim_behind_title">Dim arxaplanı</string>
   <string name="dim_behind_summary">Apply opacity to complete screen</string>
   <string name="gravity_title">Horizontal gravity</string>
   <string name="gravity_center">Mərkəzdə</string>

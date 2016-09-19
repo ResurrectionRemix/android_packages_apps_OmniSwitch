@@ -17,7 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="package_stop_task_title">Ukočit</string>
+  <string name="package_stop_task_title">Ukončit</string>
   <string name="package_inspect_item_title">Informace o aplikaci</string>
   <string name="start_on_boot_title">Spustit při startu</string>
   <string name="start_on_boot_summary">Start a spuštění zařízení</string>
@@ -27,8 +27,8 @@
   <string name="animate_title_summary">Skrytí a zobrazení animace panelu</string>
   <string name="adjust_handle_help">Přesun a změna velikosti úchytu přetažení</string>
   <string name="icon_size_normal">Normalní</string>
-  <string name="icon_size_small">Malý</string>
-  <string name="icon_size_large">Velký</string>
+  <string name="icon_size_small">Malé</string>
+  <string name="icon_size_large">Velké</string>
   <string name="icon_size_title">Velikost ikony</string>
   <string name="ok">OK</string>
   <string name="cancel">Zrušit</string>
@@ -56,7 +56,7 @@
   <string name="kill_other_apps_help">Ukončit další aplikace</string>
   <string name="settings_help">Nastavení</string>
   <string name="home_help">Hlavní stránka</string>
-  <string name="kill_all_apps">Ukončit všechny</string>
+  <string name="kill_all_apps">Ukončit vše</string>
   <string name="kill_other_apps">Ukončit ostatní</string>
   <string name="settings">Nastavení</string>
   <string name="home">Domů</string>
@@ -74,12 +74,12 @@
   <string name="dim_behind_summary">Použít průhlednost pozadí</string>
   <string name="gravity_title">Horizontální gravitace</string>
   <string name="gravity_center">Vycentrovat</string>
-  <string name="gravity_drag">Úchyt na straně</string>
-  <string name="dialog_pick_iconpack_title">Zvolit balíček ikon</string>
+  <string name="gravity_drag">Přetáhněte boční úchyt</string>
+  <string name="dialog_pick_iconpack_title">Zvolit sadu ikon</string>
   <string name="default_iconpack_title">Výchozí ikony</string>
   <string name="icon_packs_title">Balíčky ikon</string>
   <string name="no_iconpacks_summary">Není nainstalován žádný balíček ikon</string>
-  <string name="icon_pack_title">Balíček ikon</string>
+  <string name="icon_pack_title">Sada ikon</string>
   <string name="icon_pack_summary">Použijte balíček ikon pro ikony aplikací</string>
   <string name="category_speed_switcher_title">Rychlý přepínač</string>
   <string name="speed_switcher_enable_summary">Aktivovat dlouhým stiskem</string>

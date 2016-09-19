@@ -23,13 +23,13 @@
   <string name="start_on_boot_summary">Покретање и укључивање при подизању система</string>
   <string name="opacity_title">Прозирност</string>
   <string name="opacity_summary">Background opacity of overlay view</string>
-  <string name="animate_title">Animate</string>
+  <string name="animate_title">Анимирај</string>
   <string name="animate_title_summary">Animate show and hide of overlay view</string>
   <string name="adjust_handle_help">Move and resize drag handle</string>
-  <string name="icon_size_normal">Normal</string>
-  <string name="icon_size_small">Small</string>
-  <string name="icon_size_large">Large</string>
-  <string name="icon_size_title">Icon size</string>
+  <string name="icon_size_normal">Нормална</string>
+  <string name="icon_size_small">Мала</string>
+  <string name="icon_size_large">Велика</string>
+  <string name="icon_size_title">Величина иконе</string>
   <string name="ok">У реду</string>
   <string name="cancel">Одустани</string>
   <string name="drag_handle_color_title">Боја</string>
@@ -37,7 +37,7 @@
   <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> слободно</string>
   <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> у употреби</string>
   <string name="show_rambar_title">Прикажи употребу меморије</string>
-  <string name="show_rambar_summary">Display amount of free and used memory</string>
+  <string name="show_rambar_summary">Приказ слободне и искоришћене меморије</string>
   <string name="show_app_labels">Прикажи назив апликације</string>
   <string name="show_app_labels_summary">Application name will be displayed with the icon</string>
   <string name="category_overlay_title">Overlay</string>
@@ -161,7 +161,7 @@
   <string name="launch_stats_delete_summary">Clear current collected launch statistics</string>
   <string name="favorite_apps_config_stat_title">Statistic favorites</string>
   <string name="favorite_apps_config_stat_summary">Create a favorite list based on collected launch statistics</string>
-  <string name="launch_stats_delete_notice">Launch statistics cleared</string>
+  <string name="launch_stats_delete_notice">Статистике покретања очишћене</string>
   <string name="launch_stats_low_title">Управљај омиљенима</string>
   <string name="launch_stats_low_notice">Insufficient data to create favorite apps list. You really want to continue?</string>
   <string name="revert_recents_summary">Fill recent apps from bottom</string>

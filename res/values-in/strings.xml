@@ -23,9 +23,9 @@
   <string name="start_on_boot_summary">Memulai dan mengaktifkan saat perangkat boot</string>
   <string name="opacity_title">Kepekatan</string>
   <string name="opacity_summary">Kepekatan latar belakang dari tampilan overlay</string>
-  <string name="animate_title">Animate</string>
-  <string name="animate_title_summary">Animate show and hide of overlay view</string>
-  <string name="adjust_handle_help">Move and resize drag handle</string>
+  <string name="animate_title">Animasi</string>
+  <string name="animate_title_summary">Animasi hilang timbul akan penampakan overlay</string>
+  <string name="adjust_handle_help">Atur ukuran dan letak drag handle</string>
   <string name="icon_size_normal">Normal</string>
   <string name="icon_size_small">Kecil</string>
   <string name="icon_size_large">Besar</string>
@@ -43,8 +43,8 @@
   <string name="category_overlay_title">Tampilan</string>
   <string name="category_drag_handle_title">Drag handle</string>
   <string name="category_favorite_title">Favorit</string>
-  <string name="favorite_apps_config_title">Manage favorites</string>
-  <string name="favorite_apps_config_summary">Define apps shown in favorites view</string>
+  <string name="favorite_apps_config_title">Kelola kesukaan</string>
+  <string name="favorite_apps_config_summary">Tentukan aplikasi yang terlihat pada tampilan kesukaan</string>
   <string name="favorite_apps_add_dialog_title">Tambah aplikasi</string>
   <string name="favorite_add">Tambah\u2026</string>
   <string name="location_left">Kiri</string>

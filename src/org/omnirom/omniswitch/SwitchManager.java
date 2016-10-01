@@ -431,27 +431,19 @@ public class SwitchManager {
         mLoadedTasks.clear();
     }
 
-    public int getCurrentTopTaskId() {
+    private TaskDescription getCurrentTopTask() {
         if (getTasks().size() >= 1) {
             TaskDescription ad = getTasks().get(0);
-            return ad.getPersistentTaskId();
+            return ad;
         } else {
-            return -1;
+            return null;
         }
     }
 
     public void lockToCurrentApp(boolean close) {
-        try {
-            if (!ActivityManagerNative.getDefault().isInLockTaskMode()) {
-                ActivityManagerNative.getDefault().startLockTaskMode(getCurrentTopTaskId());
-                if(DEBUG){
-                    Log.d(TAG, "lock current app");
-                }
-            }
-        } catch(RemoteException e) {
-        }
-        if(close){
-            hide(true);
+        TaskDescription ad = getCurrentTopTask();
+        if (ad != null) {
+            lockToApp(ad, close);
         }
     }
 
@@ -459,9 +451,9 @@ public class SwitchManager {
         try {
             if (!ActivityManagerNative.getDefault().isInLockTaskMode()) {
                 switchTask(ad, false, false);
-                ActivityManagerNative.getDefault().startLockTaskMode(ad.getPersistentTaskId());
+                ActivityManagerNative.getDefault().startSystemLockTaskMode(ad.getPersistentTaskId());
                 if(DEBUG){
-                    Log.d(TAG, "lock app " + ad.getPackageName());
+                    Log.d(TAG, "lock app " + ad.getPackageName() + " " + ad.getPersistentTaskId());
                 }
             }
         } catch(RemoteException e) {
@@ -489,19 +481,9 @@ public class SwitchManager {
     public void toggleLockToApp(boolean close) {
         try {
             if (ActivityManagerNative.getDefault().isInLockTaskMode()) {
-                ActivityManagerNative.getDefault().stopLockTaskMode();
-                if(DEBUG){
-                    Log.d(TAG, "stop lock app");
-                }
+                stopLockToApp(false);
             } else {
-                int taskid = getCurrentTopTaskId();
-                if (taskid > -1) {
-                } else {
-                    ActivityManagerNative.getDefault().startLockTaskMode(getCurrentTopTaskId());
-                }
-                if(DEBUG){
-                    Log.d(TAG, "lock current app");
-                }
+                lockToCurrentApp(false);
             }
         } catch(RemoteException e) {
         }

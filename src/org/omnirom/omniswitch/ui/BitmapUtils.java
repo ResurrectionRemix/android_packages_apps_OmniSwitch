@@ -226,8 +226,11 @@ public class BitmapUtils {
                 sideHeader ? height : height + iconBorderSizePx,
                 Bitmap.Config.ARGB_8888);
         canvas.setBitmap(bmp);
-        final Bitmap bitmapResized = Bitmap.createScaledBitmap(b, width, height, true);
-        canvas.drawBitmap(bitmapResized, sideHeader ? iconBorderSizePx : 0, sideHeader ? 0 : iconBorderSizePx, null);
+        int bSize = b.getWidth() > b.getHeight() ? b.getHeight() : b.getWidth();
+        Rect src = new Rect(0, 0, bSize, bSize);
+        Rect dest = new Rect(sideHeader ? iconBorderSizePx : 0, sideHeader ? 0 : iconBorderSizePx,
+                width + (sideHeader ? iconBorderSizePx : 0), height + (sideHeader ? 0 : iconBorderSizePx));
+        canvas.drawBitmap(b, src, dest, null);
         final Drawable iconResized = resize(resources, icon,  iconSize, density);
 
         final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);

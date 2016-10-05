@@ -434,7 +434,7 @@ public class RecentTasksLoader {
                         icon = defaultIcon;
                     }
                     return icon;
-                } catch(Resources.NotFoundException e){
+                } catch(Exception e){
                     // ignore and use default below
                 }
             }

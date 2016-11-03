@@ -25,6 +25,7 @@ import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchManager;
 import org.omnirom.omniswitch.TaskDescription;
+import org.omnirom.omniswitch.Utils;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -328,6 +329,9 @@ public class SwitchLayout extends AbstractSwitchLayout {
         mVirtualBackKey = false;
         enableOpenFavoriteButton(true);
         mOpenFavorite.setRotation(getExpandRotation());
+        if (Utils.isLockToAppEnabled(mContext)) {
+            updatePinAppButton();
+        }
     }
 
     private void updateListLayout() {
@@ -540,38 +544,28 @@ public class SwitchLayout extends AbstractSwitchLayout {
         });
     }
 
-    @Override
-    protected LinearLayout.LayoutParams getButtonListItemParams() {
-        int buttonMargin = Math.round(5 * mConfiguration.mDensity);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(buttonMargin, 0, buttonMargin, 0);
-        return params;
-    }
-
     private void updateStyle() {
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
             mForegroundProcessText.setShadowLayer(0, 0, 0, Color.BLACK);
             mBackgroundProcessText.setShadowLayer(0, 0, 0, Color.BLACK);
             mNoRecentApps.setTextColor(Color.BLACK);
             mNoRecentApps.setShadowLayer(0, 0, 0, Color.BLACK);
-            mOpenFavorite.setImageDrawable(BitmapUtils.colorize(
+            ((ImageView) mOpenFavorite).setImageDrawable(BitmapUtils.colorize(
                     mContext.getResources(),
                     mContext.getResources().getColor(
                             R.color.button_bg_flat_color),
                     mContext.getResources().getDrawable(
-                            R.drawable.ic_expand_down_small)));
+                            R.drawable.ic_expand)));
             mRamUsageBarContainer.setOutlineProvider(BAR_OUTLINE_PROVIDER);
         } else {
             mForegroundProcessText.setShadowLayer(5, 0, 0, Color.BLACK);
             mBackgroundProcessText.setShadowLayer(5, 0, 0, Color.BLACK);
             mNoRecentApps.setTextColor(Color.WHITE);
             mNoRecentApps.setShadowLayer(5, 0, 0, Color.BLACK);
-            mOpenFavorite.setImageDrawable(BitmapUtils.shadow(
+            ((ImageView) mOpenFavorite).setImageDrawable(BitmapUtils.shadow(
                     mContext.getResources(),
                     mContext.getResources().getDrawable(
-                            R.drawable.ic_expand_down_small)));
+                            R.drawable.ic_expand)));
             mRamUsageBarContainer.setOutlineProvider(null);
         }
         if (mConfiguration.mBgStyle != SwitchConfiguration.BgStyle.TRANSPARENT) {
@@ -637,5 +631,13 @@ public class SwitchLayout extends AbstractSwitchLayout {
     @Override
     protected View getButtonList() {
         return mButtonList;
+    }
+
+    @Override
+    protected View getActionButtonTemplate(Drawable image) {
+        View v = mInflater.inflate(R.layout.action_button_horizontal, null, false);
+        ImageView item = (ImageView) v.findViewById(R.id.action_button_image);
+        item.setImageDrawable(image);
+        return v;
     }
 }

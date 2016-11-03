@@ -133,6 +133,7 @@ public class SwitchGestureView {
     private float mLastX;
     private float mThumbRatio = 1.2f;
     private boolean mMoveStarted;
+    private PackageTextView mLockToAppButton;
 
     private GestureDetector mGestureDetector;
     private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
@@ -738,6 +739,9 @@ public class SwitchGestureView {
 
         resetEnvItems();
         calcVerticalBorders();
+        if (Utils.isLockToAppEnabled(mContext)) {
+            updatePinAppButton();
+        }
 
         fillList(0);
         fillList(1);
@@ -1234,17 +1238,17 @@ public class SwitchGestureView {
             return item;
         }
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_LOCK_APP){
-            item = getPackageItemTemplate();
-            d = mContext.getResources().getDrawable(R.drawable.lock_app_pin);
+            mLockToAppButton = getPackageItemTemplate();
+            d = mContext.getResources().getDrawable(R.drawable.ic_pin);
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorder,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            mLockToAppButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
-            item.setLabel(mContext.getResources().getString(R.string.lock_to_app));
-            item.setAction(new Runnable(){
+            mLockToAppButton.setLabel(mContext.getResources().getString(R.string.lock_to_app));
+            mLockToAppButton.setAction(new Runnable(){
                 @Override
                 public void run() {
                     if (!Utils.isLockToAppEnabled(mContext)) {
@@ -1257,11 +1261,11 @@ public class SwitchGestureView {
                     }
                     mRecentsManager.toggleLockToApp(false);
                 }});
-            return item;
+            return mLockToAppButton;
         }
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_TOGGLE_APP){
             item = getPackageItemTemplate();
-            d = mContext.getResources().getDrawable(R.drawable.lastapp);
+            d = mContext.getResources().getDrawable(R.drawable.ic_lastapp);
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
@@ -1279,7 +1283,7 @@ public class SwitchGestureView {
         }
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_MENU) {
             item = getPackageItemTemplate();
-            d = mContext.getResources().getDrawable(R.drawable.ic_menus);
+            d = mContext.getResources().getDrawable(R.drawable.ic_menu);
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
@@ -1507,5 +1511,22 @@ public class SwitchGestureView {
 
     private boolean canDrawOverlayViews() {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(mContext);
+    }
+
+    private void updatePinAppButton() {
+        if (mLockToAppButton != null) {
+            Drawable d = null;
+            if (Utils.isInLockTaskMode()) {
+                d = mContext.getResources().getDrawable(R.drawable.ic_pin_off);
+            } else {
+                d = mContext.getResources().getDrawable(R.drawable.ic_pin);
+            }
+            d = BitmapUtils.resize(mContext.getResources(),
+                    d,
+                    mConfiguration.mQSActionSize,
+                    mConfiguration.mIconBorder,
+                    mConfiguration.mDensity);
+            mLockToAppButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+        }
     }
 }

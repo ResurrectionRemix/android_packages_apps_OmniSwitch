@@ -20,6 +20,8 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center"
+    android:paddingStart="2dp"
+    android:paddingEnd="2dp"
     android:background="?android:attr/selectableItemBackgroundBorderless" >
     <ImageView
         android:id="@+id/action_button_image"

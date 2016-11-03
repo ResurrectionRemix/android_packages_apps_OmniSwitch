@@ -22,9 +22,9 @@
     android:gravity="center"
     android:background="?android:attr/selectableItemBackgroundBorderless" >
     <ImageView
-        android:id="@+id/action_button_image"
+        android:id="@+id/memory_image"
         android:layout_width="@dimen/action_button_size"
-        android:layout_height="@dimen/action_button_size"
+        android:layout_height="wrap_content"
         android:contentDescription="@null"
         android:scaleType="centerInside" />
 </LinearLayout>

@@ -25,6 +25,7 @@ import org.omnirom.omniswitch.SettingsActivity;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.SwitchManager;
 import org.omnirom.omniswitch.TaskDescription;
+import org.omnirom.omniswitch.Utils;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -36,6 +37,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.drawable.Drawable;
 import android.graphics.PixelFormat;
 import android.text.TextUtils;
 import android.text.format.Formatter;
@@ -57,6 +59,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SwitchLayoutVertical extends AbstractSwitchLayout {
     private ListView mRecentList;
@@ -66,6 +69,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     private boolean mShowThumbs;
     private Runnable mUpdateRamBarTask;
     private ImageView mRamDisplay;
+    private View mRamDisplayContainer;
     private LinearLayout mRecentsOrAppDrawer;
 
     private class RecentListAdapter extends ArrayAdapter<TaskDescription> {
@@ -312,10 +316,13 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mShowThumbs = false;
         enableOpenFavoriteButton(true);
         mOpenFavorite.setRotation(getExpandRotation());
+        if (Utils.isLockToAppEnabled(mContext)) {
+            updatePinAppButton();
+        }
     }
 
     protected LinearLayout.LayoutParams getListParams() {
-        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth,
+        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal,
                 LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
@@ -535,27 +542,19 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mActionList.add(mOpenFavorite);
     }
 
-    @Override
-    protected LinearLayout.LayoutParams getButtonListItemParams() {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        return params;
-    }
-
     private void updateStyle() {
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
             mNoRecentApps.setTextColor(Color.BLACK);
             mNoRecentApps.setShadowLayer(0, 0, 0, Color.BLACK);
-            mOpenFavorite.setImageDrawable(mContext.getResources().getDrawable(
-                    R.drawable.ic_expand_down));
+            updateOpenFavoriteButton(mContext.getResources().getDrawable(
+                    R.drawable.ic_expand));
         } else {
             mNoRecentApps.setTextColor(Color.WHITE);
             mNoRecentApps.setShadowLayer(5, 0, 0, Color.BLACK);
-            mOpenFavorite.setImageDrawable(BitmapUtils.shadow(
+            updateOpenFavoriteButton(BitmapUtils.shadow(
                     mContext.getResources(),
                     mContext.getResources().getDrawable(
-                            R.drawable.ic_expand_down)));
+                            R.drawable.ic_expand)));
         }
         if (mConfiguration.mBgStyle != SwitchConfiguration.BgStyle.TRANSPARENT) {
             mButtonListContainer.setBackground(mContext.getResources()
@@ -625,19 +624,15 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     }
 
     private void createMemoryDisplay() {
-        mRamDisplay = new ImageView(mContext);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        mRamDisplay.setLayoutParams(params);
+        mRamDisplayContainer = mInflater.inflate(R.layout.memory_display, null, false);
+        mRamDisplay = (ImageView) mRamDisplayContainer.findViewById(R.id.memory_image);
         mRamDisplay.setImageDrawable(BitmapUtils.memImage(mContext.getResources(),
                 mConfiguration.mMemDisplaySize, mConfiguration.mDensity,
                 mConfiguration.mLayoutStyle == 0, "", ""));
     }
 
     private void addMemoryDisplay() {
-        mActionList.add(mRamDisplay);
+        mActionList.add(mRamDisplayContainer);
     }
 
     @Override
@@ -657,6 +652,36 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             return mRecentsManager.getTasks().size() - 1 - position;
         } else {
             return position;
+        }
+    }
+
+    private void createOpenFavoriteButton() {
+        mOpenFavorite = getActionButtonTemplate(mContext.getResources()
+                .getDrawable(R.drawable.ic_expand));
+
+        mOpenFavorite.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                toggleFavorites();
+            }
+        });
+
+        mOpenFavorite.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(
+                        mContext,
+                        mContext.getResources().getString(
+                                R.string.open_favorite_help),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+    }
+
+    private void updateOpenFavoriteButton(Drawable d) {
+        if (mOpenFavorite != null) {
+            ImageView openFavoriteImage = (ImageView) mOpenFavorite.findViewById(R.id.action_button_image);
+            openFavoriteImage.setImageDrawable(d);
         }
     }
 }

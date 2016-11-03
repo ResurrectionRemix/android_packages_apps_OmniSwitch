@@ -35,6 +35,7 @@ import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
+import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -140,17 +141,18 @@ public class Utils {
         final KeyEvent upEvent = KeyEvent.changeAction(downEvent,
               KeyEvent.ACTION_UP);
 
-        handler.post(new Runnable(){
+        // add a small delay to make sure everything behind got focus
+        handler.postDelayed(new Runnable(){
             @Override
             public void run() {
                 im.injectInputEvent(downEvent,InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-            }});
+            }}, 100);
 
         handler.postDelayed(new Runnable(){
             @Override
             public void run() {
                 im.injectInputEvent(upEvent, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
-            }}, 20);
+            }}, 150);
     }
 
     public static void toggleImmersiveMode(Context context) {
@@ -186,6 +188,14 @@ public class Utils {
         } catch (SettingNotFoundException e) {
             return false;
         }
+    }
+
+     public static boolean isInLockTaskMode() {
+        try {
+            return ActivityManagerNative.getDefault().isInLockTaskMode();
+        } catch(RemoteException e) {
+        }
+        return false;
     }
 
     public static boolean isMultiStackEnabled(Context context) {

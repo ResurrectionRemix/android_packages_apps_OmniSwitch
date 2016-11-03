@@ -91,16 +91,16 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected SwitchConfiguration mConfiguration;
     protected SharedPreferences mPrefs;
     protected SwitchManager mRecentsManager;
-    protected ImageView mLastAppButton;
-    protected ImageView mKillAllButton;
-    protected ImageView mKillOtherButton;
-    protected ImageView mHomeButton;
-    protected ImageView mSettingsButton;
-    protected ImageView mAllappsButton;
-    protected ImageView mBackButton;
-    protected ImageView mLockToAppButton;
-    protected ImageView mCloseButton;
-    protected ImageView mMenuButton;
+    protected View mLastAppButton;
+    protected View mKillAllButton;
+    protected View mKillOtherButton;
+    protected View mHomeButton;
+    protected View mSettingsButton;
+    protected View mAllappsButton;
+    protected View mBackButton;
+    protected View mLockToAppButton;
+    protected View mCloseButton;
+    protected View mMenuButton;
     protected boolean mAutoClose = true;
     protected boolean mVirtualBackKey;
     protected boolean mVirtualMenuKey;
@@ -109,7 +109,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected LinearInterpolator mLinearInterpolator = new LinearInterpolator();
     protected Handler mHandler = new Handler();
     protected int mSlop;
-    protected List<ImageView> mActionList;
+    protected List<View> mActionList;
     protected List<String> mFavoriteList;
     protected boolean mHasFavorites;
     protected boolean mButtonsVisible = true;
@@ -138,7 +138,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected LinearLayout mButtonListContainerTop;
     protected LinearLayout mButtonListContainerBottom;
     protected LinearLayout mRecents;
-    protected ImageView mOpenFavorite;
+    protected View mOpenFavorite;
     protected AnimatorSet mShowFavAnim;
 
     protected GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
@@ -324,7 +324,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         ViewConfiguration vc = ViewConfiguration.get(context);
         mSlop = vc.getScaledTouchSlop();
         mFavoriteList = new ArrayList<String>();
-        mActionList = new ArrayList<ImageView>();
+        mActionList = new ArrayList<View>();
         mFavoriteListAdapter = new FavoriteListAdapter(mContext,
                 android.R.layout.simple_list_item_single_choice, mFavoriteList);
         mGestureDetector = new GestureDetector(context, mGestureListener);
@@ -346,14 +346,14 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         }
     }
 
-    protected ImageView getActionButtonTemplate(Drawable image) {
-        ImageView item = (ImageView) mInflater.inflate(R.layout.action_button,
-                null, false);
+    protected View getActionButtonTemplate(Drawable image) {
+        View v = mInflater.inflate(R.layout.action_button, null, false);
+        ImageView item = (ImageView) v.findViewById(R.id.action_button_image);
         item.setImageDrawable(image);
-        return item;
+        return v;
     }
 
-    protected ImageView getActionButton(int buttonId) {
+    protected View getActionButton(int buttonId) {
         if (buttonId == SettingsActivity.BUTTON_HOME) {
             mHomeButton = getActionButtonTemplate(mContext.getResources()
                     .getDrawable(R.drawable.ic_sysbar_home));
@@ -378,7 +378,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
 
         if (buttonId == SettingsActivity.BUTTON_TOGGLE_APP) {
             mLastAppButton = getActionButtonTemplate(mContext.getResources()
-                    .getDrawable(R.drawable.lastapp));
+                    .getDrawable(R.drawable.ic_lastapp));
             mLastAppButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mRecentsManager.toggleLastApp(mAutoClose);
@@ -448,7 +448,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
 
         if (buttonId == SettingsActivity.BUTTON_SETTINGS) {
             mSettingsButton = getActionButtonTemplate(mContext.getResources()
-                    .getDrawable(R.drawable.settings));
+                    .getDrawable(R.drawable.ic_settings_small));
             mSettingsButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mRecentsManager.startSettingsActivity();
@@ -467,7 +467,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
 
         if (buttonId == SettingsActivity.BUTTON_ALLAPPS) {
             mAllappsButton = getActionButtonTemplate(mContext.getResources()
-                    .getDrawable(R.drawable.ic_apps_white_48dp));
+                    .getDrawable(R.drawable.ic_apps));
             mAllappsButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     toggleAppdrawer();
@@ -513,7 +513,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
 
         if (buttonId == SettingsActivity.BUTTON_LOCK_APP) {
             mLockToAppButton = getActionButtonTemplate(mContext.getResources()
-                    .getDrawable(R.drawable.lock_app_pin));
+                    .getDrawable(R.drawable.ic_pin));
             mLockToAppButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (!Utils.isLockToAppEnabled(mContext)) {
@@ -566,7 +566,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         }
         if (buttonId == SettingsActivity.BUTTON_MENU) {
             mMenuButton = getActionButtonTemplate(mContext.getResources()
-                    .getDrawable(R.drawable.ic_menus));
+                    .getDrawable(R.drawable.ic_menu));
             mMenuButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     mVirtualMenuKey = true;
@@ -1200,14 +1200,12 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 .commit();
     }
 
-    protected abstract LinearLayout.LayoutParams getButtonListItemParams();
-
     protected void buildButtons() {
         mButtonListItems.removeAllViews();
-        Iterator<ImageView> nextButton = mActionList.iterator();
+        Iterator<View> nextButton = mActionList.iterator();
         while (nextButton.hasNext()) {
-            ImageView item = nextButton.next();
-            mButtonListItems.addView(item, getButtonListItemParams());
+            View item = nextButton.next();
+            mButtonListItems.addView(item);
         }
         mButtonListContainer.setVisibility(mActionList.size() == 0 ? View.GONE : View.VISIBLE);
     }
@@ -1219,7 +1217,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
             Integer key = nextKey.next();
             Boolean value = mConfiguration.mButtons.get(key);
             if (value) {
-                ImageView item = getActionButton(key);
+                View item = getActionButton(key);
                 if (item != null) {
                     mActionList.add(item);
                 }
@@ -1228,29 +1226,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     }
 
     protected abstract void toggleFavorites();
-
-    protected void createOpenFavoriteButton() {
-        mOpenFavorite = getActionButtonTemplate(mContext.getResources()
-                .getDrawable(R.drawable.ic_expand_down));
-
-        mOpenFavorite.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                toggleFavorites();
-            }
-        });
-
-        mOpenFavorite.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(
-                        mContext,
-                        mContext.getResources().getString(
-                                R.string.open_favorite_help),
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-    }
 
     protected void enableOpenFavoriteButton(boolean visible) {
         mOpenFavorite.setVisibility(mHasFavorites && visible ? View.VISIBLE : View.GONE);
@@ -1301,4 +1276,17 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     }
 
     protected abstract LinearLayout.LayoutParams getAppDrawerParams();
+
+    protected void updatePinAppButton() {
+        if (mLockToAppButton != null) {
+            ImageView lockAppButtonImage = (ImageView) mLockToAppButton.findViewById(R.id.action_button_image);
+            if (Utils.isInLockTaskMode()) {
+                lockAppButtonImage.setImageDrawable(mContext.getResources()
+                    .getDrawable(R.drawable.ic_pin_off));
+            } else {
+                lockAppButtonImage.setImageDrawable(mContext.getResources()
+                    .getDrawable(R.drawable.ic_pin));
+            }
+        }
+    }
 }

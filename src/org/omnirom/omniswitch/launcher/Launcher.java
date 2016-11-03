@@ -274,14 +274,23 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         });
         settingsButton.setBackgroundResource(R.drawable.ripple_dark);
 
-        View omniSettingsButton = findViewById(R.id.omni_settings_button);
-        omniSettingsButton.setOnClickListener(new View.OnClickListener() {
+        View assistButton = findViewById(R.id.assist_button);
+        assistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SwitchManager.startOmniSwitchSettingsActivity(Launcher.this);
+                launchAssist();
             }
         });
-        omniSettingsButton.setBackgroundResource(R.drawable.ripple_dark);
+        assistButton.setBackgroundResource(R.drawable.ripple_dark);
+
+        View voiceAssistButton = findViewById(R.id.voice_assist_button);
+        voiceAssistButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchVoiceAssist();
+            }
+        });
+        voiceAssistButton.setBackgroundResource(R.drawable.ripple_dark);
 
         mFavoriteEditButton = (ImageView)findViewById(R.id.edit_favorite_button);
         mFavoriteEditButton.setOnClickListener(new View.OnClickListener() {
@@ -334,14 +343,14 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         });
         mEssentialsButton.setBackgroundResource(R.drawable.ripple_dark);
 
-        ImageView phoneButton = (ImageView)findViewById(R.id.phone_button);
-        phoneButton.setOnClickListener(new View.OnClickListener() {
+        mPhoneButton = (ImageView)findViewById(R.id.phone_button);
+        mPhoneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchPhone();
             }
         });
-        phoneButton.setBackgroundResource(R.drawable.ripple_dark);
+        mPhoneButton.setBackgroundResource(R.drawable.ripple_dark);
 
         ImageView cameraButton = (ImageView)findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -353,9 +362,17 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         cameraButton.setBackgroundResource(R.drawable.ripple_dark);
 
         if (isPhoneVisible()) {
-            phoneButton.setVisibility(View.VISIBLE);
+            mPhoneButton.setVisibility(View.VISIBLE);
             View phoneSpace = findViewById(R.id.phone_button_space);
             phoneSpace.setVisibility(View.VISIBLE);
+        }
+        if (isDeviceProvisioned()) {
+            assistButton.setVisibility(View.VISIBLE);
+            View assistSpace = findViewById(R.id.assist_button_space);
+            assistSpace.setVisibility(View.VISIBLE);
+            voiceAssistButton.setVisibility(View.VISIBLE);
+            View voiceAssistSpace = findViewById(R.id.voice_assist_button_space);
+            voiceAssistSpace.setVisibility(View.VISIBLE);
         }
 
         mRootView.setOnTouchListener(new View.OnTouchListener() {
@@ -514,7 +531,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         if (mAppDrawerPanelVisibile) {
             if (withAlpha) {
                 mAppDrawerPanel.animate().alpha(0f).setDuration(500).withEndAction(new Runnable(){
-                    @Override
+//                     @Override
                     public void run() {
                         mAppDrawerPanel.setVisibility(View.GONE);
                         mAppDrawerPanelVisibile = false;
@@ -855,6 +872,22 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         startActivity(cameraIntent);
     }
 
+    private void launchVoiceAssist() {
+        final Intent assistIntent = new Intent(Intent.ACTION_VOICE_ASSIST);
+        assistIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                // that will always trigger the voice search page
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        startActivity(assistIntent);
+    }
+
+    private void launchAssist() {
+        final Intent assistIntent = new Intent(Intent.ACTION_ASSIST);
+        assistIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        startActivity(assistIntent);
+    }
+
     private boolean isEssentialsExpanded() {
         return mPrefs.getBoolean(STATE_ESSENTIALS_EXPANDED, false);
     }
@@ -875,6 +908,10 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         restoreFavoritePanel();
         restoreAppDrawerPanel();
         restoreEssentialsPanel();
+    }
+
+    private boolean isDeviceProvisioned() {
+        return (Settings.Global.getInt(getContentResolver(), Settings.Global.DEVICE_PROVISIONED, 0) != 0);
     }
 }
 

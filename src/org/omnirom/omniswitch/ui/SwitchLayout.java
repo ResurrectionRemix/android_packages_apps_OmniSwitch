@@ -264,7 +264,6 @@ public class SwitchLayout extends AbstractSwitchLayout {
 
         mButtonList = (HorizontalScrollView) mView
                 .findViewById(R.id.button_list_top);
-        mButtonList.setHorizontalScrollBarEnabled(false);
         mButtonListItems = (LinearLayout) mView
                 .findViewById(R.id.button_list_items_top);
 
@@ -325,6 +324,12 @@ public class SwitchLayout extends AbstractSwitchLayout {
         mRecents.setVisibility(View.VISIBLE);
         mShowAppDrawer = false;
         mAppDrawer.setVisibility(View.GONE);
+        mAppDrawer.post(new Runnable() {
+            @Override
+            public void run() {
+                mAppDrawer.setSelection(0);
+            }
+        });
         mView.setTranslationX(0);
         mVirtualBackKey = false;
         enableOpenFavoriteButton(true);
@@ -469,9 +474,6 @@ public class SwitchLayout extends AbstractSwitchLayout {
         mRecentsOrAppDrawer.addView(mAppDrawer);
         mAppDrawer.setLayoutParams(getAppDrawerParams());
         mAppDrawer.requestLayout();
-        mAppDrawer.scrollTo(0, 0);
-        mAppDrawer.setSelection(0);
-
         mRecents.setVisibility(View.GONE);
         mAppDrawer.setVisibility(View.VISIBLE);
         enableOpenFavoriteButton(false);

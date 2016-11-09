@@ -245,7 +245,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
         mButtonList = (ScrollView) mView
                 .findViewById(R.id.button_list_top);
-        mButtonList.setHorizontalScrollBarEnabled(false);
         mButtonListItems = (LinearLayout) mView
                 .findViewById(R.id.button_list_items_top);
 
@@ -289,6 +288,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
         if (mRecentsManager.getTasks().size() != 0) {
             mNoRecentApps.setVisibility(View.GONE);
+            resetRecentsPosition();
             mRecentList.setVisibility(View.VISIBLE);
         } else {
             mNoRecentApps.setVisibility(View.VISIBLE);
@@ -303,14 +303,17 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
         mFavoriteListView.setLayoutParams(getListParams());
         mFavoriteListView.setSelection(0);
-
         mRecentList.setLayoutParams(getRecentListParams());
-        mRecentList.setSelection(0);
-
         mNoRecentApps.setLayoutParams(getRecentListParams());
         mRecents.setVisibility(View.VISIBLE);
         mShowAppDrawer = false;
         mAppDrawer.setVisibility(View.GONE);
+        mAppDrawer.post(new Runnable() {
+            @Override
+            public void run() {
+                mAppDrawer.setSelection(0);
+            }
+        });
         mView.setTranslationX(0);
         mVirtualBackKey = false;
         mShowThumbs = false;
@@ -459,9 +462,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         mRecentsOrAppDrawer.addView(mAppDrawer);
         mAppDrawer.setLayoutParams(getAppDrawerParams());
         mAppDrawer.requestLayout();
-        mAppDrawer.scrollTo(0, 0);
-        mAppDrawer.setSelection(0);
-
         mRecents.setVisibility(View.GONE);
         mAppDrawer.setVisibility(View.VISIBLE);
         enableOpenFavoriteButton(false);
@@ -652,6 +652,14 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             return mRecentsManager.getTasks().size() - 1 - position;
         } else {
             return position;
+        }
+    }
+
+    private void resetRecentsPosition() {
+        if (mConfiguration.mRevertRecents) {
+            mRecentList.setSelection(mRecentsManager.getTasks().size() - 1);
+        } else {
+            mRecentList.setSelection(0);
         }
     }
 

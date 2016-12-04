@@ -276,7 +276,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
     }
 
     @Override
-    protected synchronized void updateRecentsAppsList(boolean force) {
+    protected synchronized void updateRecentsAppsList(boolean force,  boolean refresh) {
         if (DEBUG) {
             Log.d(TAG, "updateRecentsAppsList " + System.currentTimeMillis());
         }

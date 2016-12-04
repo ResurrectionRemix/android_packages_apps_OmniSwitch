@@ -257,7 +257,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     }
 
     @Override
-    protected synchronized void updateRecentsAppsList(boolean force) {
+    protected synchronized void updateRecentsAppsList(boolean force,  boolean refresh) {
         if (DEBUG) {
             Log.d(TAG, "updateRecentsAppsList " + System.currentTimeMillis());
         }
@@ -288,7 +288,9 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
         if (mRecentsManager.getTasks().size() != 0) {
             mNoRecentApps.setVisibility(View.GONE);
-            resetRecentsPosition();
+            if (!refresh) {
+                resetRecentsPosition();
+            }
             mRecentList.setVisibility(View.VISIBLE);
         } else {
             mNoRecentApps.setVisibility(View.VISIBLE);

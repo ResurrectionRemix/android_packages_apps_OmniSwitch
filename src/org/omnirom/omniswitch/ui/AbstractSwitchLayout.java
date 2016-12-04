@@ -1020,13 +1020,13 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
             Log.d(TAG, "preShowDone " + System.currentTimeMillis());
         }
         mPopupView.setFocusableInTouchMode(true);
-        updateRecentsAppsList(false);
+        updateRecentsAppsList(false, false);
 
         mShowing = true;
     }
 
     protected abstract void updateRamDisplay();
-    protected abstract void updateRecentsAppsList(boolean force);
+    protected abstract void updateRecentsAppsList(boolean force, boolean refresh);
 
     protected synchronized void hideDone() {
         if (DEBUG) {
@@ -1176,7 +1176,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
 
         mTaskLoadDone = true;
         if (isHandleRecentsUpdate()) {
-            updateRecentsAppsList(true);
+            updateRecentsAppsList(true, false);
         }
     }
 
@@ -1187,7 +1187,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         }
 
         mTaskLoadDone = true;
-        updateRecentsAppsList(true);
+        updateRecentsAppsList(true, true);
     }
 
     @Override

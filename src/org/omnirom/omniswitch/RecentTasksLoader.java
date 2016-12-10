@@ -429,7 +429,7 @@ public class RecentTasksLoader {
             iconId = info.activityInfo.getIconResource();
             if (iconId != 0) {
                 try {
-                    Drawable icon = resources.getDrawable(iconId);
+                    Drawable icon = resources.getDrawable(iconId, null);
                     if (icon == null) {
                         icon = defaultIcon;
                     }

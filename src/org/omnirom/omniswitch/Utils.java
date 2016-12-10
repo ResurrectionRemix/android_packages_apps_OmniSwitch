@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.hardware.input.InputManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.SystemClock;
@@ -247,5 +248,13 @@ public class Utils {
             }
         }
         return favoriteList;
+    }
+
+    public static boolean isNycMR1OrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
+    }
+
+    public static boolean isNycOrAbove() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
     }
 }

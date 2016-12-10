@@ -116,13 +116,11 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
     private ImageView mAppDrawerButton;
     private View mRootBottomView;
     private ImageView mFavoriteButton;
-    private FavoriteViewHorizontal mFavorite;
     private boolean mFavoritePanelVisibile;
     private ViewGroup mFavoritePanel;
     private ImageView mFavoriteEditButton;
     private View mFavoriteEditButtonSpace;
     private FavoriteView mFavoriteGrid;
-    private boolean mUseFavoritesGrid = true;
     private ImageView mPhoneButton;
     private ViewGroup mEssentialsPanel;
     private ImageView mEssentialsButton;
@@ -198,11 +196,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                     updateFavoritesList();
                 }
                 mAppDrawer.updatePrefs(prefs, key);
-                if (!mUseFavoritesGrid) {
-                    mFavorite.updatePrefs(prefs, key);
-                }
                 mFavoriteGrid.updatePrefs(prefs, key);
-                updateListLayout();
             } catch(Exception e) {
                 Log.e(TAG, "updatePrefs", e);
             }
@@ -496,29 +490,9 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         mAppDrawer.setTransparentMode(true);
         mAppDrawer.init();
 
-        mFavorite = (FavoriteViewHorizontal) findViewById(R.id.favorite);
-        if (!mUseFavoritesGrid) {
-            mFavorite.setTransparentMode(true);
-            updateListLayout();
-            mFavorite.init();
-        } else {
-            mFavorite.setVisibility(View.GONE);
-        }
         mFavoriteGrid = (FavoriteView) findViewById(R.id.favorite_grid);
-        if (mUseFavoritesGrid) {
-            mFavoriteGrid.setTransparentMode(true);
-            mFavoriteGrid.init();
-        } else {
-            mFavoriteGrid.setVisibility(View.GONE);
-        }
-    }
-
-    private void updateListLayout() {
-        int dividerWith = mConfiguration.calcHorizontalDivider(true);
-        mFavorite.setLayoutParams(getListParams());
-        mFavorite.setDividerWidth(dividerWith);
-        mFavorite.setPadding(dividerWith / 2, 0,
-                dividerWith / 2, 0);
+        mFavoriteGrid.setTransparentMode(true);
+        mFavoriteGrid.init();
     }
 
     private LinearLayout.LayoutParams getListParams() {
@@ -584,13 +558,8 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                         if (withDim) {
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                         }
-                        if (!mUseFavoritesGrid) {
-                            mFavorite.scrollTo(0);
-                            mFavorite.setSelection(0);
-                        } else {
-                            mFavoriteGrid.scrollTo(0, 0);
-                            mFavoriteGrid.setSelection(0);
-                        }
+                        mFavoriteGrid.scrollTo(0, 0);
+                        mFavoriteGrid.setSelection(0);
 
                         mFavoriteEditButton.setVisibility(View.GONE);
                         mFavoriteEditButtonSpace.setVisibility(View.GONE);
@@ -603,13 +572,8 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
                 if (withDim) {
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                 }
-                if (!mUseFavoritesGrid) {
-                    mFavorite.scrollTo(0);
-                    mFavorite.setSelection(0);
-                } else {
-                    mFavoriteGrid.scrollTo(0, 0);
-                    mFavoriteGrid.setSelection(0);
-                }
+                mFavoriteGrid.scrollTo(0, 0);
+                mFavoriteGrid.setSelection(0);
 
                 mFavoriteEditButton.setVisibility(View.GONE);
                 mFavoriteEditButtonSpace.setVisibility(View.GONE);
@@ -626,10 +590,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
             showWithFade(mFavoritePanel, new Runnable() {
                 @Override
                 public void run() {
-                    if (!mUseFavoritesGrid) {
-                        // I hate android :)
-                        mFavorite.requestLayout();
-                    }
                     hideAppDrawerPanel(false, false);
                     mFavoriteEditButton.setVisibility(View.VISIBLE);
                     mFavoriteEditButtonSpace.setVisibility(View.VISIBLE);

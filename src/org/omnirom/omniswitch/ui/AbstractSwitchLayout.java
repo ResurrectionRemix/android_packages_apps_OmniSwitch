@@ -900,36 +900,9 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         }
     }
 
-    protected void handleLongPressFavorite(
-            final PackageManager.PackageItem packageItem, View view) {
-        final Context wrapper = new ContextThemeWrapper(mContext,
-                mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT
-                ? R.style.PopupMenuLight : R.style.PopupMenuDark);
-        final PopupMenu popup = new PopupMenu(wrapper, view);
-        popup.getMenuInflater().inflate(R.menu.favorite_popup_menu,
-                popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.package_inspect_item) {
-                    mRecentsManager.startApplicationDetailsActivity(packageItem
-                            .getActivityInfo().packageName);
-                } else if (item.getItemId() == R.id.package_remove_favorite) {
-                    if (DEBUG) {
-                        Log.d(TAG, "remove " + packageItem.getIntent());
-                    }
-                    Utils.removeFromFavorites(mContext,
-                            packageItem.getIntent(), mFavoriteList);
-                } else {
-                    return false;
-                }
-                return true;
-            }
-        });
-        popup.setOnDismissListener(new PopupMenu.OnDismissListener() {
-            public void onDismiss(PopupMenu menu) {
-            }
-        });
-        popup.show();
+    protected void handleLongPressFavorite(final PackageManager.PackageItem packageItem, View view) {
+        ContextMenuUtils.handleLongPressFavorite(mContext, packageItem, view,
+                mRecentsManager, mFavoriteList);
     }
 
     @Override

@@ -52,8 +52,8 @@ public class SwitchService extends Service {
     private static SwitchManager mManager;
     private SharedPreferences mPrefs;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
-    private SwitchConfiguration mConfiguration;
-    private int mUserId = -1;
+    private static SwitchConfiguration mConfiguration;
+    private static int mUserId = -1;
     private Set<String> mPrefKeyFilter = new HashSet<String>();
 
     private static boolean mIsRunning;
@@ -165,7 +165,7 @@ public class SwitchService extends Service {
         return START_STICKY;
     }
 
-    public class RecentsReceiver extends BroadcastReceiver {
+    public static class RecentsReceiver extends BroadcastReceiver {
         public static final String ACTION_SHOW_OVERLAY = "org.omnirom.omniswitch.ACTION_SHOW_OVERLAY";
         public static final String ACTION_HIDE_OVERLAY = "org.omnirom.omniswitch.ACTION_HIDE_OVERLAY";
         public static final String ACTION_HANDLE_HIDE = "org.omnirom.omniswitch.ACTION_HANDLE_HIDE";

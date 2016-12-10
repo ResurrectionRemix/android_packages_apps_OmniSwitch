@@ -44,6 +44,7 @@ public class SwitchConfiguration {
     public int mOverlayIconBorderPx = 2;
     public int mIconBorder = 8; // in dp
     public float mDensity;
+    public int mDensityDpi;
     public int mMaxWidth;
     public boolean mShowRambar = true;
     public int mStartYRelative;
@@ -119,6 +120,7 @@ public class SwitchConfiguration {
 
     private SwitchConfiguration(Context context) {
         mDensity = context.getResources().getDisplayMetrics().density;
+        mDensityDpi =  context.getResources().getDisplayMetrics().densityDpi;
 
         mWindowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);

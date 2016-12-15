@@ -125,8 +125,6 @@ public class SwitchConfiguration {
         mWindowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
 
-        Point size = new Point();
-        mWindowManager.getDefaultDisplay().getSize(size);
         mDefaultColor = context.getResources()
                 .getColor(R.color.default_drag_handle_color);
         mDefaultHandleHeight = Math.round(100 * mDensity);

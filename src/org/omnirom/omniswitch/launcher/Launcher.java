@@ -25,6 +25,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.TaskStackBuilder;
+import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,6 +35,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -126,15 +128,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
     private ImageView mEssentialsButton;
     private boolean mEssentialsPanelVisibile;
     private ImageView mCameraButton;
-
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (Intent.ACTION_WALLPAPER_CHANGED.equals(action)) {
-            }
-        }
-    };
 
     private Runnable mLongPressRunnable = new Runnable(){
     @Override
@@ -253,6 +246,11 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         wallpaperButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                WallpaperManager wpm = WallpaperManager.getInstance(Launcher.this);
+                WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                Point size = new Point();
+                wm.getDefaultDisplay().getSize(size);
+                wpm.suggestDesiredDimensions(size.x, size.y);
                 Intent pickWallpaper = new Intent(Intent.ACTION_SET_WALLPAPER);
                 startActivity(pickWallpaper);
             }
@@ -707,9 +705,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        final IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_WALLPAPER_CHANGED);
-        registerReceiver(mReceiver, filter);
         // DONT use listener to mPrefs cause it MUST be after mConfiguration update
         mConfiguration.registerOnSharedPreferenceChangeListener(mPrefsListener);
         mAttached = true;
@@ -719,7 +714,6 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if (mAttached) {
-            unregisterReceiver(mReceiver);
             mConfiguration.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
             mAttached = false;
         }

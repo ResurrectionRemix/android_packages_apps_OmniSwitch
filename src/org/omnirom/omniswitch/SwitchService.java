@@ -98,7 +98,6 @@ public class SwitchService extends Service {
             filter.addAction(RecentsReceiver.ACTION_HIDE_OVERLAY);
             filter.addAction(RecentsReceiver.ACTION_HANDLE_HIDE);
             filter.addAction(RecentsReceiver.ACTION_HANDLE_SHOW);
-            filter.addAction(RecentsReceiver.ACTION_TOGGLE_OVERLAY);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
             filter.addAction(Intent.ACTION_SHUTDOWN);
 
@@ -196,6 +195,9 @@ public class SwitchService extends Service {
                     }
                 } else if (ACTION_HIDE_OVERLAY.equals(action)) {
                     if (mManager.isShowing()) {
+                        if (DEBUG){
+                            Log.d(TAG, "ACTION_HIDE_OVERLAY " + System.currentTimeMillis());
+                        }
                         hide();
                     }
                 } else if (ACTION_HANDLE_SHOW.equals(action)){
@@ -205,6 +207,9 @@ public class SwitchService extends Service {
                 } else if (ACTION_HANDLE_HIDE.equals(action)){
                     mManager.getSwitchGestureView().hide();
                 } else if (ACTION_TOGGLE_OVERLAY.equals(action)) {
+                    if (DEBUG){
+                        Log.d(TAG, "ACTION_TOGGLE_OVERLAY " + System.currentTimeMillis());
+                    }
                     if (mManager.isShowing()) {
                         hide();
                     } else {

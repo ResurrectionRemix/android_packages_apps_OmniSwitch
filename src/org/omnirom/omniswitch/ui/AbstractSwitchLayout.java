@@ -1077,6 +1077,9 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         if (!mShowing) {
             return;
         }
+		if (DEBUG) {
+			Log.d(TAG, "hide " + fast);
+		}
         preHide();
         if (mConfiguration.mAnimate && !fast) {
             toggleOverlay(false);
@@ -1143,7 +1146,10 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         if (mShowing) {
             return;
         }
-
+		
+		if (DEBUG) {
+			Log.d(TAG, "show");
+		}
         preShow();
 
         if (mConfiguration.mAnimate) {

@@ -146,4 +146,16 @@
   <string name="shortcut_label_toggle_overlay">Ligar/desligar sobreposição</string>
   <string name="adjust_handle_title_new">Configurar alça de arrastar</string>
   <string name="adjust_handle_summary">Configurar a posição do tamanho e cor</string>
+  <string name="settings_button_text">Configurações</string>
+  <string name="wallpaper_button_text">Papel de parede</string>
+  <string name="category_launcher_title">Modo de lançador</string>
+  <string name="launcher_mode_summary">Execute OmniSwitch também como seu lançador. Após precionar tecla inicio, selecione OmniSwitch</string>
+  <string name="launcher_mode_title">Ativado</string>
+  <string name="launcher_mode_enable_check">Desabilitar não é possível se o lançador modo está ativo. Será habilitado novamente quando o modo lançador fica ativo</string>
+  <string name="welcome_cling_header">Bem-vindo ao modo de lançador OmniSwitch</string>
+  <string name="welcome_cling_description">Divirta-se usando um lançador minimalista que se concentra na app lançamento e comutação. Araste em qualquer lugar para abrir OmniSwitch.</string>
+  <string name="welcome_cling_dismiss">Entendi</string>
+  <string name="launch_stats_title">Lançar as estatísticas</string>
+  <string name="launch_stats_summary">Recolha estatísticas sobre apps lançados. Dados não serão compartilhados e somente armazenados localmente</string>
+  <string name="favorite_apps_config_stat_title">Favoritos de estatística</string>
 </resources>

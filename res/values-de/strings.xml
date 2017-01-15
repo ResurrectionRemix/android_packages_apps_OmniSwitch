@@ -146,4 +146,26 @@
   <string name="shortcut_label_toggle_overlay">Überlagerung ein-/ausblenden</string>
   <string name="adjust_handle_title_new">Ziehpunkt konfigurieren</string>
   <string name="adjust_handle_summary">Position, Größe und Farbe konfigurieren</string>
+  <string name="settings_button_text">Einstellungen</string>
+  <string name="wallpaper_button_text">Hintergrundbild</string>
+  <string name="category_launcher_title">Startseitenmodus</string>
+  <string name="launcher_mode_summary">OmniSwitch auch als Startseite verwenden. Nach Aktivierung Home-Taste drücken und OmniSwitch wählen</string>
+  <string name="launcher_mode_title">Einschalten</string>
+  <string name="launcher_mode_enable_check">Deaktivieren ist nicht möglich, wenn der Startseitenmodus aktiv ist. Wird wieder aktiviert, wenn Startseitemodus aktiv wird</string>
+  <string name="welcome_cling_header">Willkommen beim OmniSwitch Startseitenmodus</string>
+  <string name="welcome_cling_description">Viel Spaß mit der minimalistischen Startseite, die sich auf das Starten und Umschalten von Apps spezialisiert. Wischen um OmniSwitch zu öffnen.</string>
+  <string name="welcome_cling_dismiss">Alles klar</string>
+  <string name="launch_stats_title">Aufruf-Statistiken</string>
+  <string name="launch_stats_summary">Statistiken über gestartete apps sammeln. Daten werden nicht geteilt und nur lokal gespeichert</string>
+  <string name="launch_stats_delete_title">Statistiken löschen</string>
+  <string name="launch_stats_delete_summary">Aktuell gesammelte Statistiken löschen</string>
+  <string name="favorite_apps_config_stat_title">Beliebte Statistiken</string>
+  <string name="favorite_apps_config_stat_summary">Erstellen einer Favoritenliste, basierend auf den gesammelten Aufruf-Statistiken</string>
+  <string name="launch_stats_delete_notice">Gelöschte Statistiken starten</string>
+  <string name="launch_stats_low_title">Favoriten verwalten</string>
+  <string name="launch_stats_low_notice">Unzureichende Daten vorhanden, um Liste der bevorzugten Anwendungen zu erstellen. Wollen Sie wirklich weitermachen?</string>
+  <string name="revert_recents_summary">Zuletzt verwendete Apps von unten auffüllen</string>
+  <string name="revert_recents_title">Liste der zuletzt verwendeten Anwendungen wiederherstellen</string>
+  <string name="dialog_overlay_perms_title">OmniSwitch Berechtigungsfehler</string>
+  <string name="dialog_overlay_perms_msg">Aktivieren Sie \u0022Draw über andere Anwendungen\u0022 Erlaubnis</string>
 </resources>

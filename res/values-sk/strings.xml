@@ -146,4 +146,26 @@
   <string name="shortcut_label_toggle_overlay">Prekrytie vyp/zap</string>
   <string name="adjust_handle_title_new">Nastaviť tiahlo</string>
   <string name="adjust_handle_summary">Nastaviť umiestnenie a farbu</string>
+  <string name="settings_button_text">Nastavenia</string>
+  <string name="wallpaper_button_text">Tapeta</string>
+  <string name="category_launcher_title">Režim spúšťač</string>
+  <string name="launcher_mode_summary">Používať OmniSwitch aj ako spúšťač. Po nastavení stlačte Domov a vyberte OmniSwitch</string>
+  <string name="launcher_mode_title">Zapnúť</string>
+  <string name="launcher_mode_enable_check">Zrušenie nie je možné pokiaľ je spúšťač aktívny. Bude znova povolený pri ďaľšej aktivácií</string>
+  <string name="welcome_cling_header">Vítajte v režime spuštača OmniSwitch</string>
+  <string name="welcome_cling_description">Zabávajte sa používaním minimalistického spúšťača, ktorý sa zameriava na spúštanie a prepínanie. Potiahnite kdekoľvek pre otvorenie OmniSwitch.</string>
+  <string name="welcome_cling_dismiss">Rozumiem</string>
+  <string name="launch_stats_title">Štatistika spustení</string>
+  <string name="launch_stats_summary">Ukladať štatistické informacie o spustených aplikáciách. Dáta nebudú s nikým zdieľane a budú uložené len lokálne</string>
+  <string name="launch_stats_delete_title">Vynulovať štatistiky</string>
+  <string name="launch_stats_delete_summary">Vynulovať aktuálne zhromaždené štatistiky spustení</string>
+  <string name="favorite_apps_config_stat_title">Obľúbená štatistika</string>
+  <string name="favorite_apps_config_stat_summary">Vytvoriť zoznam obľúbených aplikácií založený na zhromaždených štatistických údajoch</string>
+  <string name="launch_stats_delete_notice">Štatistika spustení bola vynulovaná</string>
+  <string name="launch_stats_low_title">Zorganizovať obľubené</string>
+  <string name="launch_stats_low_notice">Nedostatok dát na vytvorenie zoznamu obľúbených aplikácií. Skutočne chcete pokračovať?</string>
+  <string name="revert_recents_summary">Zoznam nedávnych aplikácií vyplniť z dola nahor</string>
+  <string name="revert_recents_title">Otočiť zoznam nedávnych aplikácií</string>
+  <string name="dialog_overlay_perms_title">Nedostatok práv pre OmniSwitch</string>
+  <string name="dialog_overlay_perms_msg">Povoliť \u0022Prekreslenie cez ostatné aplikácie\u0022</string>
 </resources>

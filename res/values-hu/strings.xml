@@ -146,4 +146,26 @@
   <string name="shortcut_label_toggle_overlay">Felület ki-be kapcsolása</string>
   <string name="adjust_handle_title_new">Fogópont beállítása</string>
   <string name="adjust_handle_summary">Állítsa be a pozíció méretét és a színét</string>
+  <string name="settings_button_text">Beállitások</string>
+  <string name="wallpaper_button_text">Háttérkép</string>
+  <string name="category_launcher_title">Indító mód</string>
+  <string name="launcher_mode_summary">OmniSwitch, mint indító futtatása. Engedélyezés után nyomja meg a kezdőlapot, majd válassza az OmniSwitch-t</string>
+  <string name="launcher_mode_title">Engedélyezés</string>
+  <string name="launcher_mode_enable_check">Letiltás nem lehetséges, ha az indító üzemmód aktív. Amikor indító mód aktív lesz, újra aktiválódik</string>
+  <string name="welcome_cling_header">Üdvözöljük az OmniSwitch indító módban</string>
+  <string name="welcome_cling_description">Élvezze egy minimalista indító használatát, mely az alkalmazások elindítására, és a köztük való váltásra összpontosít. Csúsztasson bárhol az OmniSwitch megnyitásához.</string>
+  <string name="welcome_cling_dismiss">Értem</string>
+  <string name="launch_stats_title">Indítási statisztika</string>
+  <string name="launch_stats_summary">Statisztika készítése az indított alkalmazásokról. Az adatok nem kerülnek megosztásra, és csak helyileg tároltak</string>
+  <string name="launch_stats_delete_title">Statisztika törlése</string>
+  <string name="launch_stats_delete_summary">Jelenlegi összegyűjtött statisztika törlése</string>
+  <string name="favorite_apps_config_stat_title">Kedvencek statisztika</string>
+  <string name="favorite_apps_config_stat_summary">Az indítási statisztika adatai alapján kedvencek lista létrehozása</string>
+  <string name="launch_stats_delete_notice">Indítási statisztika törölve</string>
+  <string name="launch_stats_low_title">Kedvencek kezelése</string>
+  <string name="launch_stats_low_notice">Nincs elegendő adat a kedvenc alkalmazások listájának létrehozásához. Tényleg folytatni kívánja?</string>
+  <string name="revert_recents_summary">Előzmények feltöltése aulról</string>
+  <string name="revert_recents_title">Fordított előzmények lista</string>
+  <string name="dialog_overlay_perms_title">OmniSwitch engedély hiba</string>
+  <string name="dialog_overlay_perms_msg">Engedélyezze a \u0022Megjelenítés más alkalmazások felett\u0022 engedélyt</string>
 </resources>

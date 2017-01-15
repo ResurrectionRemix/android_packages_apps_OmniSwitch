@@ -146,4 +146,26 @@
   <string name="shortcut_label_toggle_overlay">Preklopi prekrivnost</string>
   <string name="adjust_handle_title_new">Nastavi ročnik za vlečenje</string>
   <string name="adjust_handle_summary">Nastavi velikost in barvo položaja</string>
+  <string name="settings_button_text">Nastavitve</string>
+  <string name="wallpaper_button_text">Slika ozadja</string>
+  <string name="category_launcher_title">Način zaganjalnika</string>
+  <string name="launcher_mode_summary">Zaženi OmniSwitch tudi v zaganjalniku.  Po omogočanju pritisnite Domov in izberite OmniSwitch</string>
+  <string name="launcher_mode_title">Omogoči</string>
+  <string name="launcher_mode_enable_check">Onemogočanje ni mogoče, če je način zaganjalnika dejaven.  Ponovno bo omogočeno, ko način zaganjalnika postane dejaven</string>
+  <string name="welcome_cling_header">Dobrodošli v način zaganjalnika OmniSwitch</string>
+  <string name="welcome_cling_description">Zabavajte se z minimalističnim zaganjalnikom, ki se osredotoča na zaganjanje in preklapljanje programov.  Povlecite kjerkoli, da odprete OmniSwitch.</string>
+  <string name="welcome_cling_dismiss">Razumem</string>
+  <string name="launch_stats_title">Statistika zagonov</string>
+  <string name="launch_stats_summary">Zbirajte statistiko o zagnanih programih.  Podatki bodo zasebni in shranjeni samo krajevno</string>
+  <string name="launch_stats_delete_title">Počisti statistiko</string>
+  <string name="launch_stats_delete_summary">Počisti trenutno zbrano statistiko zagonov</string>
+  <string name="favorite_apps_config_stat_title">Priljubljena statistika</string>
+  <string name="favorite_apps_config_stat_summary">Ustvari seznam priljubljenih glede na zbrano statistiko zagonov</string>
+  <string name="launch_stats_delete_notice">Statistika zagonov počiščena</string>
+  <string name="launch_stats_low_title">Upravljaj s priljubljenimi</string>
+  <string name="launch_stats_low_notice">Nezadostni podatki za ustvarjanje seznama priljubljenih programov.  Ali res želite nadaljevati?</string>
+  <string name="revert_recents_summary">Izpolni nedavne programe od spodaj</string>
+  <string name="revert_recents_title">Obrni seznam nedavnih programov</string>
+  <string name="dialog_overlay_perms_title">Napaka dovoljenja OmniSwitch</string>
+  <string name="dialog_overlay_perms_msg">Omogočite \u0022dovoljenje \u0022za risanje preko drugih programov</string>
 </resources>

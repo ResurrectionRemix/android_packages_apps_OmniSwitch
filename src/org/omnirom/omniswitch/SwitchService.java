@@ -98,7 +98,7 @@ public class SwitchService extends Service {
             filter.addAction(RecentsReceiver.ACTION_HIDE_OVERLAY);
             filter.addAction(RecentsReceiver.ACTION_HANDLE_HIDE);
             filter.addAction(RecentsReceiver.ACTION_HANDLE_SHOW);
-			filter.addAction(RecentsReceiver.ACTION_TOGGLE_OVERLAY);
+            filter.addAction(RecentsReceiver.ACTION_TOGGLE_OVERLAY);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
             filter.addAction(Intent.ACTION_SHUTDOWN);
 

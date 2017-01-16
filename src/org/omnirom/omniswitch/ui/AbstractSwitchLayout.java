@@ -1146,7 +1146,6 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         if (mShowing) {
             return;
         }
-		
 		if (DEBUG) {
 			Log.d(TAG, "show");
 		}

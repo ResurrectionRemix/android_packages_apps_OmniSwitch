@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
 import android.content.ComponentName;
 import android.content.Context;
@@ -40,6 +41,8 @@ import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.WindowManagerGlobal;
+import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -200,7 +203,15 @@ public class Utils {
     }
 
     public static boolean isMultiStackEnabled(Context context) {
-        return "true".equals(SystemProperties.get("persist.sys.debug.multi_window"));
+        return ActivityManager.supportsMultiWindow();
+    }
+
+    public static boolean isDockingActive() {
+        try {
+            return WindowManagerGlobal.getWindowManagerService().getDockedStackSide() != WindowManager.DOCKED_INVALID;
+        } catch (RemoteException e) {
+        }
+        return false;
     }
 
     public static void updateFavoritesList(Context context, SwitchConfiguration config, List<String> favoriteList) {

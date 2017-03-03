@@ -26,6 +26,7 @@ import org.omnirom.omniswitch.ui.BitmapUtils;
 import org.omnirom.omniswitch.ui.IconPackHelper;
 
 import android.app.ActivityManager;
+import static android.app.ActivityManager.StackId.DOCKED_STACK_ID;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -60,6 +61,8 @@ public class RecentTasksLoader {
     private PreloadTaskRunnable mPreloadTasksRunnable;
     private boolean mHasThumbPermissions;
     private SwitchConfiguration mConfiguration;
+    private TaskDescription mDockedTask;
+    private int mTopHomeTaskId;
 
     final static BitmapFactory.Options sBitmapOptions;
 
@@ -103,6 +106,10 @@ public class RecentTasksLoader {
 
     public List<TaskDescription> getLoadedTasks() {
         return mLoadedTasks;
+    }
+
+    private TaskDescription getDockedTask() {
+        return mDockedTask;
     }
 
     public void remove(TaskDescription td) {
@@ -209,7 +216,7 @@ public class RecentTasksLoader {
             if (DEBUG){
                 Log.d(TAG, "recents preloaded " + mLoadedTasks);
             }
-            mSwitchManager.update(mLoadedTasks);
+            mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTaskId);
             return;
         }
         if (DEBUG){
@@ -218,6 +225,8 @@ public class RecentTasksLoader {
         mPreloaded = true;
         mState = State.LOADING;
         mLoadedTasks.clear();
+        mDockedTask = null;
+        mTopHomeTaskId = -1;
         BitmapCache.getInstance(mContext).clearThumbs();
 
         final long currentTime = System.currentTimeMillis();
@@ -232,7 +241,7 @@ public class RecentTasksLoader {
                         if (DEBUG){
                             Log.d(TAG, "recents loaded");
                         }
-                        mSwitchManager.update(mLoadedTasks);
+                        mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTaskId);
                     } else {
                         if (DEBUG){
                             Log.d(TAG, "recents preloaded");
@@ -249,7 +258,6 @@ public class RecentTasksLoader {
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
                         .getRecentTasks(ActivityManager.getMaxRecentTasksStatic(),
-                                ActivityManager.RECENT_IGNORE_HOME_STACK_TASKS |
                                 ActivityManager.RECENT_IGNORE_UNAVAILABLE |
                                 ActivityManager.RECENT_INCLUDE_PROFILES |
                                 ActivityManager.RECENT_WITH_EXCLUDED) ;
@@ -275,6 +283,10 @@ public class RecentTasksLoader {
                             == Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
 
                     if (isExcluded && !isFirstValidTask) {
+                        // this includes activities that have set exclude from recents
+                        if (recentInfo.stackId != DOCKED_STACK_ID && mTopHomeTaskId == -1) {
+                            mTopHomeTaskId = recentInfo.persistentId;
+                        }
                         continue;
                     }
 
@@ -299,6 +311,11 @@ public class RecentTasksLoader {
                     // dont load AOSP recents - com.android.systemui/.recents.RecentsActivity
                     if (intent.getComponent().flattenToShortString().contains(".recents.RecentsActivity")) {
                         continue;
+                    }
+
+                    // this includes activities that have set exclude from recents
+                    if (recentInfo.stackId != DOCKED_STACK_ID && mTopHomeTaskId == -1) {
+                        mTopHomeTaskId = recentInfo.persistentId;
                     }
 
                     boolean activeTask = true;
@@ -344,6 +361,9 @@ public class RecentTasksLoader {
 
                     if (item != null) {
                         mLoadedTasks.add(item);
+                        if (recentInfo.stackId == DOCKED_STACK_ID) {
+                            mDockedTask = item;
+                        }
                         if (activeTask) {
                             loadTaskIcon(item);
                             if (mHasThumbPermissions && preloadedThumbNum < THUMB_INIT_LOAD) {

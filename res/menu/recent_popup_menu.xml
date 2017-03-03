@@ -29,14 +29,6 @@
         android:id="@+id/package_lock_task"
         android:title="@string/package_lock_task_title"/>
     <item
-        android:id="@+id/package_top_task"
-        android:title="@string/package_top_task_title"/>
-    <item
-        android:id="@+id/package_bottom_task"
-        android:title="@string/package_bottom_task_title"/>
-    <item
-        android:id="@+id/package_full_task"
-        android:title="@string/package_full_task_title"/>
-
-
+        android:id="@+id/package_dock_task"
+        android:title="@string/package_dock_task_title"/>
 </menu>

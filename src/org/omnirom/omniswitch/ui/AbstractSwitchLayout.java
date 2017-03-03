@@ -812,31 +812,14 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         if (!Utils.isLockToAppEnabled(mContext)) {
             popup.getMenu().removeItem(R.id.package_lock_task);
         }
-        if (Utils.isMultiStackEnabled(mContext)) {
-            if (mConfiguration.isLandscape()) {
-                popup.getMenu().findItem(R.id.package_top_task).setTitle(R.string.package_left_task_title);
-                popup.getMenu().findItem(R.id.package_bottom_task).setTitle(R.string.package_right_task_title);
-            }
-            if (ad.getTaskId() < 0) {
-                popup.getMenu().findItem(R.id.package_top_task).setEnabled(false);
-                popup.getMenu().findItem(R.id.package_bottom_task).setEnabled(false);
-                popup.getMenu().removeItem(R.id.package_full_task);
-            } else {
-                int taskPlace = mRecentsManager.getTaskPlace(ad);
-                if (taskPlace == 2) {
-                    popup.getMenu().removeItem(R.id.package_full_task);
-                }
-                if (taskPlace == 0) {
-                    popup.getMenu().removeItem(R.id.package_top_task);
-                }
-                if (taskPlace == 1) {
-                    popup.getMenu().removeItem(R.id.package_bottom_task);
-                }
-            }
+        if (!Utils.isMultiStackEnabled(mContext)) {
+            popup.getMenu().removeItem(R.id.package_dock_task);
         } else {
-            popup.getMenu().removeItem(R.id.package_top_task);
-            popup.getMenu().removeItem(R.id.package_bottom_task);
-            popup.getMenu().removeItem(R.id.package_full_task);
+            if (Utils.isDockingActive()) {
+                if (mRecentsManager.isDockedTask(ad)) {
+                    popup.getMenu().findItem(R.id.package_dock_task).setTitle(R.string.package_undock_task_title);
+                }
+            }
         }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
@@ -857,12 +840,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                     }
                     mRecentsManager.stopLockToApp(false);
                     mRecentsManager.lockToApp(ad, mAutoClose);
-                } else if (item.getItemId() == R.id.package_top_task) {
-                    mRecentsManager.placeTask(ad, 0);
-                } else if (item.getItemId() == R.id.package_bottom_task) {
-                    mRecentsManager.placeTask(ad, 1);
-                } else if (item.getItemId() == R.id.package_full_task) {
-                    mRecentsManager.placeTask(ad, 2);
+                } else if (item.getItemId() == R.id.package_dock_task) {
+                    mRecentsManager.dockTask(ad, mAutoClose);
                 } else {
                     return false;
                 }

@@ -62,7 +62,8 @@ public class RecentTasksLoader {
     private boolean mHasThumbPermissions;
     private SwitchConfiguration mConfiguration;
     private TaskDescription mDockedTask;
-    private int mTopHomeTaskId;
+    private TaskDescription mTopHomeTask;
+    private TaskDescription mPlaceholderTask;
 
     final static BitmapFactory.Options sBitmapOptions;
 
@@ -108,10 +109,6 @@ public class RecentTasksLoader {
         return mLoadedTasks;
     }
 
-    private TaskDescription getDockedTask() {
-        return mDockedTask;
-    }
-
     public void remove(TaskDescription td) {
         mLoadedTasks.remove(td);
     }
@@ -131,7 +128,7 @@ public class RecentTasksLoader {
     // Create an TaskDescription, returning null if the title or icon is null
     TaskDescription createTaskDescription(int taskId, int persistentTaskId, int stackId,
             Intent baseIntent, ComponentName origActivity,
-            CharSequence description, boolean activeTask) {
+            CharSequence description) {
         // clear source bounds to find matching package intent
         baseIntent.setSourceBounds(null);
         Intent intent = new Intent(baseIntent);
@@ -153,8 +150,7 @@ public class RecentTasksLoader {
 
                 TaskDescription ad = new TaskDescription(taskId,
                         persistentTaskId, resolveInfo, baseIntent,
-                        info.packageName, description, activeTask,
-                        stackId);
+                        info.packageName, description, stackId);
                 ad.setLabel(title);
 
                 return ad;
@@ -172,7 +168,7 @@ public class RecentTasksLoader {
             if (DEBUG){
                 Log.d(TAG, "preload start " + System.currentTimeMillis());
             }
-            loadTasksInBackground();
+            loadTasksInBackground(0, true);
         }
     }
 
@@ -198,11 +194,14 @@ public class RecentTasksLoader {
             mPreloadTasksRunnable = null;
         }
         mLoadedTasks.clear();
+        mDockedTask = null;
+        mTopHomeTask = null;
+        mPlaceholderTask = null;
         mPreloaded = false;
         mState = State.IDLE;
     }
 
-    public void loadTasksInBackground() {
+    public void loadTasksInBackground(int maxNumTasks, boolean withThumbs) {
         if (DEBUG){
             Log.d(TAG, "loadTasksInBackground " + mSwitchManager + " start " + System.currentTimeMillis());
         }
@@ -216,7 +215,7 @@ public class RecentTasksLoader {
             if (DEBUG){
                 Log.d(TAG, "recents preloaded " + mLoadedTasks);
             }
-            mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTaskId);
+            mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask);
             return;
         }
         if (DEBUG){
@@ -226,8 +225,11 @@ public class RecentTasksLoader {
         mState = State.LOADING;
         mLoadedTasks.clear();
         mDockedTask = null;
-        mTopHomeTaskId = -1;
-        BitmapCache.getInstance(mContext).clearThumbs();
+        mPlaceholderTask = null;
+        mTopHomeTask = null;
+        if (withThumbs) {
+            BitmapCache.getInstance(mContext).clearThumbs();
+        }
 
         final long currentTime = System.currentTimeMillis();
         final long bootTimeMillis = currentTime - SystemClock.elapsedRealtime();
@@ -241,7 +243,7 @@ public class RecentTasksLoader {
                         if (DEBUG){
                             Log.d(TAG, "recents loaded");
                         }
-                        mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTaskId);
+                        mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask);
                     } else {
                         if (DEBUG){
                             Log.d(TAG, "recents preloaded");
@@ -257,7 +259,7 @@ public class RecentTasksLoader {
                 final PackageManager pm = mContext.getPackageManager();
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
-                        .getRecentTasks(ActivityManager.getMaxRecentTasksStatic(),
+                        .getRecentTasks(maxNumTasks == 0 ? ActivityManager.getMaxRecentTasksStatic() : maxNumTasks,
                                 ActivityManager.RECENT_IGNORE_UNAVAILABLE |
                                 ActivityManager.RECENT_INCLUDE_PROFILES |
                                 ActivityManager.RECENT_WITH_EXCLUDED) ;
@@ -276,21 +278,13 @@ public class RecentTasksLoader {
                     final ActivityManager.RecentTaskInfo recentInfo = recentTasks
                             .get(i);
 
-                    // Check the first non-recents task, include this task even if it is marked as excluded
-                    // from recents if we are currently in the app.  In other words, only remove excluded
-                    // tasks if it is not the first active task.
-                    boolean isExcluded = (recentInfo.baseIntent.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-                            == Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
-
-                    if (isExcluded && !isFirstValidTask) {
-                        // this includes activities that have set exclude from recents
-                        if (recentInfo.stackId != DOCKED_STACK_ID && mTopHomeTaskId == -1) {
-                            mTopHomeTaskId = recentInfo.persistentId;
-                        }
-                        continue;
+                    if (DEBUG) {
+                        Log.d(TAG, "" + i + " recent item = " + recentInfo.baseIntent);
                     }
-
-                    isFirstValidTask = false;
+                    TaskDescription item = createTaskDescription(recentInfo.id,
+                            recentInfo.persistentId, recentInfo.stackId,
+                            recentInfo.baseIntent, recentInfo.origActivity,
+                            recentInfo.description);
 
                     Intent intent = new Intent(recentInfo.baseIntent);
                     if (recentInfo.origActivity != null) {
@@ -302,22 +296,23 @@ public class RecentTasksLoader {
                         continue;
                     }
 
-                    // Don't load ourselves
-                    if (intent.getComponent().getPackageName()
-                            .equals(mContext.getPackageName())) {
+                    final String componentString = intent.getComponent().flattenToShortString();
+                    if (componentString.contains(".recents.RecentsActivity") ||
+                            componentString.contains("com.android.settings/.FallbackHome")) {
                         continue;
                     }
 
-                    // dont load AOSP recents - com.android.systemui/.recents.RecentsActivity
-                    if (intent.getComponent().flattenToShortString().contains(".recents.RecentsActivity")) {
-                        continue;
+                    // always remember our own placeholder activity
+                    // this is the fallback if no other top task is available
+                    if (componentString.contains("PlaceholderActivity")) {
+                        mPlaceholderTask = item;
                     }
-
-                    // this includes activities that have set exclude from recents
-                    if (recentInfo.stackId != DOCKED_STACK_ID && mTopHomeTaskId == -1) {
-                        mTopHomeTaskId = recentInfo.persistentId;
+                    // always add the docked task and put on first place
+                    if (recentInfo.stackId == DOCKED_STACK_ID) {
+                        mDockedTask = item;
+                        item.setDocked();
+                        mLoadedTasks.add(0, item);
                     }
-
                     boolean activeTask = true;
                     if (mConfiguration.mFilterActive) {
                         long lastActiveTime = recentInfo.lastActiveTime;
@@ -334,10 +329,10 @@ public class RecentTasksLoader {
                         }
                         if (activeTask) {
                             // filter older then time
-                            if (DEBUG) {
-                                Log.d(TAG, intent.getComponent().getPackageName() + ": filter app not active since " + mConfiguration.mFilterTime);
-                            }
                             if (mConfiguration.mFilterTime != 0 && lastActiveTime < currentTime - mConfiguration.mFilterTime) {
+                                if (DEBUG) {
+                                    Log.d(TAG, intent.getComponent().getPackageName() + ": filter app not active since " + mConfiguration.mFilterTime);
+                                }
                                 activeTask = false;
                             }
                         }
@@ -352,28 +347,46 @@ public class RecentTasksLoader {
                     }
 
                     if (!activeTask) {
+                        if (DEBUG) {
+                            Log.d(TAG, "skip inactive task =" + recentInfo.baseIntent);
+                        }
                         continue;
                     }
-                    TaskDescription item = createTaskDescription(recentInfo.id,
-                            recentInfo.persistentId, recentInfo.stackId,
-                            recentInfo.baseIntent, recentInfo.origActivity,
-                            recentInfo.description, activeTask);
 
-                    if (item != null) {
+                    // this can include activities that have set exclude from recents
+                    if (recentInfo.stackId != DOCKED_STACK_ID && mTopHomeTask == null) {
+                        if (DEBUG) {
+                            Log.d(TAG, "mTopHomeTask=" + recentInfo.baseIntent);
+                        }
+                        mTopHomeTask = item;
+                    }
+
+                    // skip our own package activites from the list to show
+                    // we have already saved it above if we ever need it
+                    if (intent.getComponent().getPackageName()
+                            .equals(mContext.getPackageName())) {
+                        continue;
+                    }
+
+                    // Check the first non-recents task, include this task even if it is marked as excluded
+                    boolean isExcluded = (recentInfo.baseIntent.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+                            == Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+
+                    if (isExcluded && !isFirstValidTask) {
+                        continue;
+                    }
+                    isFirstValidTask = false;
+
+                    if (recentInfo.stackId != DOCKED_STACK_ID) {
                         mLoadedTasks.add(item);
-                        if (recentInfo.stackId == DOCKED_STACK_ID) {
-                            mDockedTask = item;
+                    }
+                    loadTaskIcon(item);
+                    if (withThumbs && mHasThumbPermissions && preloadedThumbNum < THUMB_INIT_LOAD) {
+                        Bitmap b = getThumbnail(item.persistentTaskId);
+                        if (b != null) {
+                            item.setThumbPreloaded(b);
                         }
-                        if (activeTask) {
-                            loadTaskIcon(item);
-                            if (mHasThumbPermissions && preloadedThumbNum < THUMB_INIT_LOAD) {
-                                Bitmap b = getThumbnail(item.persistentTaskId);
-                                if (b != null) {
-                                    item.setThumbPreloaded(b);
-                                }
-                                preloadedThumbNum++;
-                            }
-                        }
+                        preloadedThumbNum++;
                     }
                 }
                 if (!isCancelled()) {
@@ -464,9 +477,6 @@ public class RecentTasksLoader {
 
     public void loadThumbnail(final TaskDescription td) {
         if (!mHasThumbPermissions) {
-            return;
-        }
-        if (!td.isActive()) {
             return;
         }
         if (td.isThumbPreloaded()) {

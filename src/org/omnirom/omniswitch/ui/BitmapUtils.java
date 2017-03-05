@@ -215,7 +215,7 @@ public class BitmapUtils {
     public static Drawable overlay(Resources resources, Bitmap b,
             Drawable icon, int width, int height, String label, float density,
             int iconSize, boolean bgStyle, boolean showLabel, boolean sideHeader,
-            int iconBorderSizePx) {
+            int iconBorderSizePx, boolean dockedTask) {
         final Canvas canvas = new Canvas();
         final int iconSizePx = Math.round(iconSize * density);
         final int textInsetPx = Math.round(5 * density);
@@ -249,6 +249,9 @@ public class BitmapUtils {
             bgPaint.setStyle(Paint.Style.FILL);
             bgPaint.setColor(resources.getColor(R.color.button_bg_flat_color));
             if (sideHeader)  {
+                if (dockedTask) {
+                    bgPaint.setColor(resources.getColor(R.color.docked_task_bg_color));
+                }
                 canvas.drawRect(0, 0, iconBorderSizePx, height, bgPaint);
             } else {
                 canvas.drawRect(0, 0, width, iconBorderSizePx, bgPaint);

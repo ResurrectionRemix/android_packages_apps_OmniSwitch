@@ -40,14 +40,16 @@
         <receiver android:name="org.omnirom.omniswitch.SwitchService$RecentsReceiver" >
             <intent-filter>
                 <action android:name="org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY" />
+                <action android:name="org.omnirom.omniswitch.ACTION_RESTORE_HOME_STACK" />
             </intent-filter>
         </receiver>
         <activity
             android:name="org.omnirom.omniswitch.SettingsActivity"
-            android:launchMode="singleTop"
+            android:excludeFromRecents="true"
             android:theme="@style/SettingsTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -56,6 +58,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="org.omnirom.omniswitch.PlaceholderActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/PlaceholderTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

@@ -17,23 +17,30 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="package_stop_task_title">停止</string>
   <string name="package_inspect_item_title">アプリ情報</string>
   <string name="start_on_boot_title">起動時に開始</string>
   <string name="start_on_boot_summary">端末の起動時に自動で開始します</string>
   <string name="opacity_title">不透明度</string>
+  <string name="opacity_summary">オーバーレイ表示時の背景の不透明度</string>
   <string name="animate_title">アニメーション</string>
+  <string name="animate_title_summary">オーバーレイ表示および非表示時のアニメーション</string>
   <string name="adjust_handle_help">ドラッグハンドルを移動したりリサイズ出来ます</string>
   <string name="icon_size_normal">標準</string>
   <string name="icon_size_small">小</string>
   <string name="icon_size_large">大</string>
   <string name="icon_size_title">アイコンサイズ</string>
+  <string name="ok">OK</string>
   <string name="cancel">キャンセル</string>
   <string name="drag_handle_color_title">色</string>
   <string name="drag_handle_color_dialog_title">色</string>
+  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> 空き</string>
+  <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> 使用中</string>
   <string name="show_rambar_title">メモリ使用量を表示する</string>
   <string name="show_rambar_summary">使用メモリと未使用メモリの量を表示する</string>
   <string name="show_app_labels">アプリ名を表示</string>
   <string name="show_app_labels_summary">アイコンとアプリケーション名を表示する</string>
+  <string name="category_overlay_title">オーバーレイ</string>
   <string name="category_drag_handle_title">ドラッグハンドル</string>
   <string name="category_favorite_title">お気に入り</string>
   <string name="favorite_apps_config_title">お気に入りを管理</string>
@@ -42,6 +49,7 @@
   <string name="favorite_add">追加\u2026</string>
   <string name="location_left">左</string>
   <string name="location_right">右</string>
+  <string name="reset">デフォルト</string>
   <string name="toggle_last_app">最後に使用したアプリ</string>
   <string name="toggle_last_app_help">最後に使用したアプリに切り替える</string>
   <string name="kill_all_apps_help">全てのアプリを終了する</string>
@@ -53,15 +61,19 @@
   <string name="settings">設定</string>
   <string name="home">ホーム</string>
   <string name="buttons_title">ボタン</string>
+  <string name="buttons_summary">オーバーレイ表示時のアクションボタンを設定</string>
   <string name="auto_hide_handle">自動的に隠す</string>
   <string name="auto_hide_handle_summary">二回スワイプで表示</string>
   <string name="no_recent_apps_title">最近使ったアプリはありません</string>
   <string name="drag_handle_opacity_title">不透明度</string>
   <string name="drag_handle_enable_title">有効にする</string>
   <string name="drag_handle_enable_summary">他の起動方法を使っている時のみ無効に出来ます</string>
+  <string name="allapps_help">アプリドロワー</string>
   <string name="allapps">アプリ</string>
   <string name="dim_behind_title">暗い背景</string>
   <string name="dim_behind_summary">画面全体に不透明度を適用します</string>
+  <string name="gravity_title">水平重力</string>
+  <string name="gravity_center">中央</string>
   <string name="gravity_drag">ドラッグハンドル側</string>
   <string name="dialog_pick_iconpack_title">アイコンパックを選択</string>
   <string name="default_iconpack_title">デフォルトアイコン</string>
@@ -76,10 +88,19 @@
   <string name="back_help">戻る</string>
   <string name="kill_current">現在のアプリを終了</string>
   <string name="kill_current_help">現在のアプリを終了する</string>
+  <string name="speed_switch_color_summary">青 - 最近使ったアプリ　緑 - お気に入り　赤 - アクション</string>
+  <string name="speed_switch_color">背景色のレベル</string>
+  <string name="speed_switch_limit_summary">制限エリアのレベル変更</string>
+  <string name="speed_switch_limit">エリアのレベルを変更</string>
   <string name="speed_switch_button_title">ボタン</string>
   <string name="speed_switch_button_summary">クイックスイッチャーのアクションボタンを設定</string>
+  <string name="speed_switch_items_summary">項目の最大数</string>
+  <string name="speed_switch_item">項目の制限</string>
+  <string name="immersive_mode">拡張デスクトップモード</string>
+  <string name="immersive_mode_help">拡張デスクトップモードの切り替え</string>
   <string name="package_add_favorite_title">お気に入りに追加</string>
   <string name="package_remove_favorite_title">お気に入りから削除</string>
+  <string name="open_favorite_help">お気に入りビューの開く / 閉じる</string>
   <string name="button_pos_title">ボタンの位置</string>
   <string name="button_pos_top">上/左</string>
   <string name="button_pos_bottom">下/右</string>
@@ -88,6 +109,8 @@
   <string name="bg_style_transparent">透明</string>
   <string name="bg_style_title">背景のスタイル</string>
   <string name="lock_to_app">アプリをピン止め</string>
+  <string name="lock_app_help">現在のアプリを終了する</string>
+  <string name="app_filter_category_title">アプリ フィルター</string>
   <string name="app_filter_boot_title">ブート時に起動</string>
   <string name="layout_style_title">スタイル</string>
   <string name="layout_style_1">水平方向</string>
@@ -100,18 +123,27 @@
   <string name="one_day">1日</string>
   <string name="two_days">2日</string>
   <string name="one_week">1週間</string>
+  <string name="app_filter_time_title">アクティブするまで</string>
+  <string name="close_help">オーバーレイを閉じる</string>
+  <string name="close">閉じる</string>
   <string name="thumb_size_title">サムネイルサイズ</string>
   <string name="thumb_size_normal">標準</string>
   <string name="thumb_size_small">小</string>
   <string name="thumb_size_medium">中</string>
   <string name="package_lock_task_title">アプリをピン止め</string>
+  <string name="lock_app_not_enabled">セキュリティの設定で画面の固定が有効になっていません</string>
+  <string name="app_filter_running_title">実行中のみ</string>
   <string name="menu">メニュー</string>
   <string name="menu_help">メニュー</string>
   <string name="enable_title">有効にする</string>
   <string name="adjust_handle_width">幅</string>
   <string name="adjust_handle_position">位置</string>
+  <string name="package_top_task_title">上詰め</string>
   <string name="package_left_task_title">左</string>
+  <string name="package_bottom_task_title">下詰め</string>
   <string name="package_right_task_title">右</string>
+  <string name="package_full_task_title">フルサイズ</string>
+  <string name="shortcut_label_toggle_overlay">トグル オーバーレイ</string>
   <string name="adjust_handle_title_new">ドラッグハンドルの設定</string>
   <string name="adjust_handle_summary">位置とサイズと色を設定する</string>
   <string name="settings_button_text">設定</string>
@@ -135,4 +167,5 @@
   <string name="revert_recents_summary">最も最近開いたアプリを下にする</string>
   <string name="revert_recents_title">アプリのリストを反転させる</string>
   <string name="dialog_overlay_perms_title">OmniSwitch パーミッションエラー</string>
+  <string name="dialog_overlay_perms_msg">他のアプリを上書きする権限を有効にする</string>
 </resources>

@@ -16,4 +16,48 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"></resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="package_stop_task_title">Заустави</string>
+  <string name="package_inspect_item_title">Подаци о апликацији</string>
+  <string name="start_on_boot_title">Покрени при подизању система</string>
+  <string name="start_on_boot_summary">Покретање и укључивање при подизању система</string>
+  <string name="opacity_title">Прозирност</string>
+  <string name="opacity_summary">Zatamnjenost pozadine preklapanje prikaza</string>
+  <string name="animate_title">Анимирај</string>
+  <string name="animate_title_summary">Animiranje emisiju i sakriti preklapanje prikaza</string>
+  <string name="adjust_handle_help">Rotirate i prevucite regulator</string>
+  <string name="icon_size_normal">Нормална</string>
+  <string name="icon_size_small">Мала</string>
+  <string name="icon_size_large">Велика</string>
+  <string name="icon_size_title">Величина иконе</string>
+  <string name="ok">У реду</string>
+  <string name="cancel">Одустани</string>
+  <string name="drag_handle_color_title">Боја</string>
+  <string name="drag_handle_color_dialog_title">Боја</string>
+  <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> слободно</string>
+  <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> у употреби</string>
+  <string name="show_rambar_title">Прикажи употребу меморије</string>
+  <string name="show_rambar_summary">Приказ слободне и меморије у употреби</string>
+  <string name="show_app_labels">Прикажи назив апликације</string>
+  <string name="show_app_labels_summary">Ime aplikacije će biti prikazana sa ikonom</string>
+  <string name="category_overlay_title">Preklapanje</string>
+  <string name="category_drag_handle_title">Prevlačenje regulatora</string>
+  <string name="category_favorite_title">Омиљене</string>
+  <string name="favorite_apps_config_title">Управљај омиљенима</string>
+  <string name="favorite_apps_config_summary">Definisanje apps u prikazu \"Omiljene lokacije\"</string>
+  <string name="favorite_apps_add_dialog_title">Додај апликације</string>
+  <string name="favorite_add">Додај\u2026</string>
+  <string name="location_left">Тастер са стрелицом налево</string>
+  <string name="location_right">Десно</string>
+  <string name="reset">Подразумевана</string>
+  <string name="toggle_last_app">Претходна апликација</string>
+  <string name="toggle_last_app_help">Prebacivanje na poslednji app</string>
+  <string name="kill_all_apps_help">Ubiti sve aplikacije</string>
+  <string name="kill_other_apps_help">Ubij ostale aplikacije</string>
+  <string name="gravity_center">Тастер са централном стрелицом</string>
+  <string name="gravity_drag">Prevucite regulator strani</string>
+  <string name="dialog_pick_iconpack_title">Изабери пакет икона</string>
+  <string name="default_iconpack_title">Подразумеване иконе</string>
+  <string name="icon_packs_title">Пакети икона</string>
+  <string name="no_iconpacks_summary">Нема инсталираних пакета са иконама</string>
+</resources>

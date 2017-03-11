@@ -32,19 +32,17 @@ public final class TaskDescription {
     final int taskId; // application task id for curating apps
     final int persistentTaskId; // persistent id
     final Intent intent; // launch intent for application
-    final String packageName; // used to override animations (see onClick())
-    final CharSequence description;
     final int stackId;
     private Drawable mIcon; // application package icon
-    private CharSequence mLabel; // application package label
     private boolean mIsActive;
     private boolean mKilled;
-    private ActivityInfo mActivityInfo;
     private ThumbChangeListener mListener;
     private boolean mThumbLoading;
     private boolean mThumbPreloaded;
     private Bitmap mThumb;
     private boolean mDocked;
+    private boolean mDefaultIcon;
+    private String mLabel;
 
     public static interface ThumbChangeListener {
         public void thumbChanged(int pesistentTaskId, Bitmap thumb);
@@ -52,41 +50,13 @@ public final class TaskDescription {
     }
 
     public TaskDescription(int _taskId, int _persistentTaskId,
-            ResolveInfo _resolveInfo, Intent _intent, String _packageName,
-            CharSequence _description, int _stackId) {
+            ResolveInfo _resolveInfo, Intent _intent,
+            int _stackId) {
         resolveInfo = _resolveInfo;
         intent = _intent;
         taskId = _taskId;
         persistentTaskId = _persistentTaskId;
         stackId = _stackId;
-
-        description = _description;
-        packageName = _packageName;
-        mActivityInfo = resolveInfo.activityInfo;
-    }
-
-    public TaskDescription() {
-        resolveInfo = null;
-        intent = null;
-        taskId = -1;
-        persistentTaskId = -1;
-        stackId = -1;
-
-        description = null;
-        packageName = null;
-    }
-
-    public boolean isNull() {
-        return resolveInfo == null;
-    }
-
-    // mark all these as locked?
-    public CharSequence getLabel() {
-        return mLabel;
-    }
-
-    public void setLabel(CharSequence label) {
-        mLabel = label;
     }
 
     public Drawable getIcon() {
@@ -95,6 +65,16 @@ public final class TaskDescription {
 
     public void setIcon(Drawable icon) {
         mIcon = icon;
+        mDefaultIcon = false;
+    }
+
+    public void setDefaultIcon(Drawable icon) {
+        mIcon = icon;
+        mDefaultIcon = true;
+    }
+
+    public boolean isPreloadedTask() {
+        return !mDefaultIcon;
     }
 
     public int getTaskId() {
@@ -113,8 +93,16 @@ public final class TaskDescription {
         return stackId;
     }
 
+    public void setLabel(String label) {
+        mLabel = label;
+    }
+
+    public String getLabel() {
+        return mLabel;
+    }
+
     public String getPackageName() {
-        return packageName;
+        return resolveInfo.activityInfo.packageName;
     }
 
     public boolean isKilled() {
@@ -126,12 +114,12 @@ public final class TaskDescription {
     }
 
     public ActivityInfo getActivityInfo() {
-        return mActivityInfo;
+        return resolveInfo.activityInfo;
     }
 
     @Override
     public String toString() {
-        return mLabel.toString();
+        return intent.toString();
     }
 
     public void setThumb(Bitmap thumb) {

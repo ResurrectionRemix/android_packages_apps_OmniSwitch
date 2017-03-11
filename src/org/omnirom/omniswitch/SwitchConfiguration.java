@@ -201,7 +201,7 @@ public class SwitchConfiguration {
                 false);
         mDragHandleShow = prefs.getBoolean(
                 SettingsActivity.PREF_DRAG_HANDLE_ENABLE, true);
-        mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, true);
+        mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, false);
         String gravity = prefs.getString(SettingsActivity.PREF_GRAVITY, "0");
         mGravity = Integer.valueOf(gravity);
         mDefaultDragHandleWidth = Math.round(20 * mDensity);

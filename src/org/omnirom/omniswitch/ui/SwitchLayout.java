@@ -90,16 +90,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
                 item = (PackageTextView) convertView;
             }
             item.setTask(ad, false);
-
-            if (mConfiguration.mShowLabels) {
-                item.setText(ad.getLabel());
-            } else {
-                item.setText("");
-            }
-            Drawable d = BitmapCache.getInstance(mContext).getResized(
-                    mContext.getResources(), ad, ad.getIcon(), mConfiguration,
-                    mConfiguration.mIconSize);
-            item.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            item.setTaskInfo(mConfiguration);
             return item;
         }
     }

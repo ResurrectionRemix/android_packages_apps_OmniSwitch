@@ -214,7 +214,7 @@ public class BitmapUtils {
 
     public static Drawable overlay(Resources resources, Bitmap b,
             Drawable icon, int width, int height, String label, float density,
-            int iconSize, boolean bgStyle, boolean showLabel, boolean sideHeader,
+            int iconSize, boolean bgStyle, boolean sideHeader,
             int iconBorderSizePx, boolean dockedTask) {
         final Canvas canvas = new Canvas();
         final int iconSizePx = Math.round(iconSize * density);
@@ -242,7 +242,6 @@ public class BitmapUtils {
         final int startTextPx = iconBorderSizePx + textInsetPx;
         final int textSize = Math.round(14 * density);
         textPaint.setTextSize(textSize);
-        label = TextUtils.ellipsize(label, textPaint, width - startTextPx - textInsetPx, TextUtils.TruncateAt.END).toString();
 
         if (bgStyle) {
             final Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -259,7 +258,8 @@ public class BitmapUtils {
         }
         final float iconInset = (iconBorderSizePx - iconSizePx) / 2;
         canvas.drawBitmap(((BitmapDrawable) iconResized).getBitmap(), iconInset, iconInset, null);
-        if (showLabel) {
+        if (label != null) {
+            label = TextUtils.ellipsize(label, textPaint, width - startTextPx - textInsetPx, TextUtils.TruncateAt.END).toString();
             if (sideHeader) {
                 canvas.save();
                 int xPos = (int) ((iconBorderSizePx / 2) - ((textPaint.descent() + textPaint.ascent()) / 2)) ; 

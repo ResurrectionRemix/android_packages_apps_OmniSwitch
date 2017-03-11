@@ -18,8 +18,8 @@
 package org.omnirom.omniswitch;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.omnirom.omniswitch.ui.BitmapCache;
 import org.omnirom.omniswitch.ui.BitmapUtils;
@@ -49,9 +49,12 @@ public class RecentTasksLoader {
     private static final boolean DEBUG = false;
     private static final int MAX_TASKS = 50;
     private static final int THUMB_INIT_LOAD = 5;
+    private static final int TASK_INIT_LOAD = 8;
 
     private Context mContext;
     private AsyncTask<Void, List<TaskDescription>, Void> mTaskLoader;
+    private AsyncTask<Void, Void, Void> mTaskInfoLoader;
+    private AsyncTask<Void, TaskDescription, Void> mThumbnailLoader;
     private Handler mHandler;
     private List<TaskDescription> mLoadedTasks;
     private boolean mPreloaded;
@@ -64,6 +67,8 @@ public class RecentTasksLoader {
     private TaskDescription mDockedTask;
     private TaskDescription mTopHomeTask;
     private TaskDescription mPlaceholderTask;
+    private PackageManager mPackageManager;
+    private Drawable mDefaultAppIcon;
 
     final static BitmapFactory.Options sBitmapOptions;
 
@@ -94,15 +99,16 @@ public class RecentTasksLoader {
     private RecentTasksLoader(Context context) {
         mContext = context;
         mHandler = new Handler();
-        mLoadedTasks = new ArrayList<TaskDescription>();
+        mLoadedTasks = new CopyOnWriteArrayList<TaskDescription>();
         mActivityManager = (ActivityManager)
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
-
+        mPackageManager = mContext.getPackageManager();
         mDefaultThumbnail = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
         mDefaultThumbnail.setHasAlpha(true);
         mDefaultThumbnail.eraseColor(0x00ffffff);
         mHasThumbPermissions = hasSystemPermission(context);
         mConfiguration = SwitchConfiguration.getInstance(mContext);
+        mDefaultAppIcon = BitmapUtils.getDefaultActivityIcon(mContext);
     }
 
     public List<TaskDescription> getLoadedTasks() {
@@ -116,9 +122,8 @@ public class RecentTasksLoader {
     private boolean isCurrentHomeActivity(ComponentName component,
             ActivityInfo homeInfo) {
         if (homeInfo == null) {
-            final PackageManager pm = mContext.getPackageManager();
             homeInfo = new Intent(Intent.ACTION_MAIN).addCategory(
-                    Intent.CATEGORY_HOME).resolveActivityInfo(pm, 0);
+                    Intent.CATEGORY_HOME).resolveActivityInfo(mPackageManager, 0);
         }
         return homeInfo != null
                 && homeInfo.packageName.equals(component.getPackageName())
@@ -127,37 +132,22 @@ public class RecentTasksLoader {
 
     // Create an TaskDescription, returning null if the title or icon is null
     TaskDescription createTaskDescription(int taskId, int persistentTaskId, int stackId,
-            Intent baseIntent, ComponentName origActivity,
-            CharSequence description) {
+            Intent baseIntent, ComponentName origActivity) {
         // clear source bounds to find matching package intent
         baseIntent.setSourceBounds(null);
         Intent intent = new Intent(baseIntent);
         if (origActivity != null) {
             intent.setComponent(origActivity);
         }
-        final PackageManager pm = mContext.getPackageManager();
         intent.setFlags((intent.getFlags() & ~Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
-        final ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
+        final ResolveInfo resolveInfo = mPackageManager.resolveActivity(intent, 0);
         if (resolveInfo != null) {
-            final ActivityInfo info = resolveInfo.activityInfo;
-            final String title = info.loadLabel(pm).toString();
-
-            if (title != null && title.length() > 0) {
-                if (DEBUG)
-                    Log.v(TAG, "creating activity desc for id="
-                            + persistentTaskId + ", label=" + title);
-
-                TaskDescription ad = new TaskDescription(taskId,
-                        persistentTaskId, resolveInfo, baseIntent,
-                        info.packageName, description, stackId);
-                ad.setLabel(title);
-
-                return ad;
-            } else {
-                if (DEBUG)
-                    Log.v(TAG, "SKIPPING item " + persistentTaskId);
-            }
+            if (DEBUG)
+                Log.v(TAG, "creating activity desc for id=" + persistentTaskId);
+            TaskDescription ad = new TaskDescription(taskId,
+                    persistentTaskId, resolveInfo, baseIntent, stackId);
+            return ad;
         }
         return null;
     }
@@ -165,10 +155,10 @@ public class RecentTasksLoader {
     private class PreloadTaskRunnable implements Runnable {
         @Override
         public void run() {
-            if (DEBUG){
+            if (DEBUG) {
                 Log.d(TAG, "preload start " + System.currentTimeMillis());
             }
-            loadTasksInBackground(0, true);
+            loadTasksInBackground(0, true, true);
         }
     }
 
@@ -182,12 +172,20 @@ public class RecentTasksLoader {
     }
 
     public void cancelLoadingTasks() {
-        if (DEBUG){
+        if (DEBUG) {
             Log.d(TAG, "cancelLoadingTasks state = " + mState);
         }
         if (mTaskLoader != null) {
-            mTaskLoader.cancel(false);
+            mTaskLoader.cancel(true);
             mTaskLoader = null;
+        }
+        if (mTaskInfoLoader != null) {
+            mTaskInfoLoader.cancel(true);
+            mTaskInfoLoader = null;
+        }
+        if (mThumbnailLoader != null) {
+            mThumbnailLoader.cancel(true);
+            mThumbnailLoader = null;
         }
         if (mPreloadTasksRunnable != null) {
             mHandler.removeCallbacks(mPreloadTasksRunnable);
@@ -201,24 +199,22 @@ public class RecentTasksLoader {
         mState = State.IDLE;
     }
 
-    public void loadTasksInBackground(int maxNumTasks, boolean withThumbs) {
-        if (DEBUG){
-            Log.d(TAG, "loadTasksInBackground " + mSwitchManager + " start " + System.currentTimeMillis());
-        }
+    public void loadTasksInBackground(int maxNumTasks, boolean withIcons, boolean withThumbs) {
         if (mPreloaded && mState != State.IDLE) {
-            if (DEBUG){
+            if (DEBUG) {
                 Log.d(TAG, "recents preloaded: waiting for done");
             }
             return;
         }
-        if(mPreloaded && mSwitchManager != null){
-            if (DEBUG){
+        if (mPreloaded && mSwitchManager != null) {
+            if (DEBUG) {
                 Log.d(TAG, "recents preloaded " + mLoadedTasks);
             }
             mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask);
+            loadMissingTaskInfo();
             return;
         }
-        if (DEBUG){
+        if (DEBUG) {
             Log.d(TAG, "recents load");
         }
         mPreloaded = true;
@@ -239,13 +235,14 @@ public class RecentTasksLoader {
             protected void onProgressUpdate(
                     List<TaskDescription>... values) {
                 if (!isCancelled()) {
-                    if (mSwitchManager != null){
-                        if (DEBUG){
+                    if (mSwitchManager != null) {
+                        if (DEBUG) {
                             Log.d(TAG, "recents loaded");
                         }
                         mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask);
+                        loadMissingTaskInfo();
                     } else {
-                        if (DEBUG){
+                        if (DEBUG) {
                             Log.d(TAG, "recents preloaded");
                         }
                     }
@@ -254,9 +251,13 @@ public class RecentTasksLoader {
 
             @Override
             protected Void doInBackground(Void... params) {
+                long start = System.currentTimeMillis();
+                if (DEBUG) {
+                    Log.d(TAG, "loadTasksInBackground " + mSwitchManager + " start " + start);
+                }
+
                 final int origPri = Process.getThreadPriority(Process.myTid());
-                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                final PackageManager pm = mContext.getPackageManager();
+                Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
 
                 final List<ActivityManager.RecentTaskInfo> recentTasks = mActivityManager
                         .getRecentTasks(maxNumTasks == 0 ? ActivityManager.getMaxRecentTasksStatic() : maxNumTasks,
@@ -265,11 +266,12 @@ public class RecentTasksLoader {
                                 ActivityManager.RECENT_WITH_EXCLUDED) ;
 
                 int numTasks = recentTasks.size();
-                ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN)
-                        .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(
-                                pm, 0);
+                final ActivityInfo homeInfo = new Intent(Intent.ACTION_MAIN)
+                        .addCategory(Intent.CATEGORY_HOME).resolveActivityInfo(mPackageManager, 0);
                 boolean isFirstValidTask = true;
                 int preloadedThumbNum = 0;
+                int preloadTaskNum = 0;
+                final boolean withIconPack = IconPackHelper.getInstance(mContext).isIconPackLoaded();
 
                 for (int i = 0; i < numTasks && i < MAX_TASKS; ++i) {
                     if (isCancelled()) {
@@ -279,12 +281,11 @@ public class RecentTasksLoader {
                             .get(i);
 
                     if (DEBUG) {
-                        Log.d(TAG, "" + i + " recent item = " + recentInfo.baseIntent);
+                        Log.d(TAG, "" + i + " recent item = " + recentInfo.baseIntent + " " + recentInfo.taskDescription.getLabel());
                     }
                     TaskDescription item = createTaskDescription(recentInfo.id,
                             recentInfo.persistentId, recentInfo.stackId,
-                            recentInfo.baseIntent, recentInfo.origActivity,
-                            recentInfo.description);
+                            recentInfo.baseIntent, recentInfo.origActivity);
 
                     Intent intent = new Intent(recentInfo.baseIntent);
                     if (recentInfo.origActivity != null) {
@@ -380,7 +381,13 @@ public class RecentTasksLoader {
                     if (recentInfo.stackId != DOCKED_STACK_ID) {
                         mLoadedTasks.add(item);
                     }
-                    loadTaskIcon(item);
+                    if (withIcons && preloadTaskNum < TASK_INIT_LOAD) {
+                        loadTaskIcon(item, withIconPack);
+                        item.setLabel(item.resolveInfo.loadLabel(mPackageManager).toString());
+                        preloadTaskNum++;
+                    } else {
+                        item.setDefaultIcon(mDefaultAppIcon);
+                    }
                     if (withThumbs && mHasThumbPermissions && preloadedThumbNum < THUMB_INIT_LOAD) {
                         Bitmap b = getThumbnail(item.persistentTaskId);
                         if (b != null) {
@@ -392,8 +399,8 @@ public class RecentTasksLoader {
                 if (!isCancelled()) {
                     publishProgress(mLoadedTasks);
                 }
-                if (DEBUG){
-                    Log.d(TAG, "loadTasksInBackground end " + System.currentTimeMillis());
+                if (DEBUG) {
+                    Log.d(TAG, "loadTasksInBackground end " + (System.currentTimeMillis() - start));
                 }
                 mState = State.IDLE;
                 Process.setThreadPriority(origPri);
@@ -425,54 +432,40 @@ public class RecentTasksLoader {
         return thumbnail;
     }
 
-    void loadTaskIcon(TaskDescription td) {
-        final PackageManager pm = mContext.getPackageManager();
-        Drawable icon = getFullResIcon(td.resolveInfo, pm);
-
-        synchronized (td) {
-            if (icon == null) {
-                icon = BitmapUtils.getDefaultActivityIcon(mContext);
-            }
-            td.setIcon(icon);
+    void loadTaskIcon(TaskDescription td, boolean withIconPack) {
+        Drawable icon = getFullResIcon(td.resolveInfo, withIconPack);
+        if (icon == null) {
+            icon = mDefaultAppIcon;
         }
+        td.setIcon(icon);
     }
 
-    private Drawable getFullResIcon(ResolveInfo info,
-            PackageManager packageManager) {
+    private Drawable getFullResIcon(ResolveInfo info, boolean withIconPack) {
         Resources resources;
-        final Drawable defaultIcon = BitmapUtils.getDefaultActivityIcon(mContext);
         try {
-            resources = packageManager
+            resources = mPackageManager
                     .getResourcesForApplication(info.activityInfo.applicationInfo);
         } catch (PackageManager.NameNotFoundException e) {
             resources = null;
         }
         if (resources != null) {
             int iconId = 0;
-            if (IconPackHelper.getInstance(mContext).isIconPackLoaded()){
+            if (withIconPack) {
                 iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
                 if (iconId != 0) {
-                    Drawable icon = IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
-                    if (icon == null) {
-                        icon = defaultIcon;
-                    }
-                    return icon;
+                    return IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
                 }
             }
+
             iconId = info.activityInfo.getIconResource();
             if (iconId != 0) {
                 try {
-                    Drawable icon = resources.getDrawable(iconId, null);
-                    if (icon == null) {
-                        icon = defaultIcon;
-                    }
-                    return icon;
-                } catch(Exception e){
-                    // ignore and use default below
+                    return resources.getDrawable(iconId, null);
+                } catch (Exception e) {
                 }
             }
         }
-        return defaultIcon;
+        return null;
     }
 
     public void loadThumbnail(final TaskDescription td) {
@@ -482,7 +475,7 @@ public class RecentTasksLoader {
         if (td.isThumbPreloaded()) {
             Bitmap b = td.getThumbPreloaded();
             if (b != null) {
-                if (DEBUG){
+                if (DEBUG) {
                     Log.d(TAG, "use preloaded thumb " + td + " " + td.persistentTaskId);
                 }
                 td.setThumb(b);
@@ -492,16 +485,16 @@ public class RecentTasksLoader {
         if (td.isThumbLoading()) {
             return;
         }
-        AsyncTask<Void, TaskDescription, Void> thumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
+        mThumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
             @Override
             protected void onProgressUpdate(TaskDescription... values) {
             }
             @Override
             protected Void doInBackground(Void... params) {
                 final int origPri = Process.getThreadPriority(Process.myTid());
-                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+                Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
 
-                if (DEBUG){
+                if (DEBUG) {
                     Log.d(TAG, "late load thumb " + td + " " + td.persistentTaskId);
                 }
                 td.setThumbLoading(true);
@@ -514,7 +507,55 @@ public class RecentTasksLoader {
                 return null;
             }
         };
-        thumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        mThumbnailLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public void loadTaskInfo(final TaskDescription td) {
+        synchronized(td) {
+            if (!td.isPreloadedTask()) {
+                final boolean withIconPack = IconPackHelper.getInstance(mContext).isIconPackLoaded();
+                Drawable icon = getFullResIcon(td.resolveInfo, withIconPack);
+                if (icon == null) {
+                    icon = mDefaultAppIcon;
+                }
+                td.setIcon(icon);
+                td.setLabel(td.resolveInfo.loadLabel(mPackageManager).toString());
+            }
+        }
+    }
+
+    public void loadMissingTaskInfo() {
+        mTaskInfoLoader = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onProgressUpdate(Void... values) {
+            }
+            @Override
+            protected Void doInBackground(Void... params) {
+                long start = System.currentTimeMillis();
+                final int origPri = Process.getThreadPriority(Process.myTid());
+                Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+
+                for (TaskDescription td : mLoadedTasks) {
+                    if (isCancelled()) {
+                        break;
+                    }
+                    synchronized(td) {
+                        if (!td.isPreloadedTask()) {
+                            if (DEBUG) {
+                                Log.d(TAG, "late load task info " + td + " " + td.persistentTaskId);
+                            }
+                            loadTaskInfo(td);
+                        }
+                    }
+                }
+                if (DEBUG) {
+                    Log.d(TAG, "loadMissingTaskInfo end " + (System.currentTimeMillis() - start));
+                }
+                Process.setThreadPriority(origPri);
+                return null;
+            }
+        };
+        mTaskInfoLoader.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private boolean hasSystemPermission(Context context) {

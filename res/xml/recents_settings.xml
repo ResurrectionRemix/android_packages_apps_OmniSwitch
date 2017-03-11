@@ -59,7 +59,6 @@
 			android:title="@string/opacity_title" />
 
 		<CheckBoxPreference
-			android:defaultValue="true"
 			android:key="dim_behind"
 			android:summary="@string/dim_behind_summary"
 			android:title="@string/dim_behind_title" />

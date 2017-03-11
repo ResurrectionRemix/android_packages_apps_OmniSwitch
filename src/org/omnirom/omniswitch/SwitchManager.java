@@ -97,7 +97,7 @@ public class SwitchManager {
             clearTasks();
             RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
             RecentTasksLoader.getInstance(mContext).setSwitchManager(this);
-            RecentTasksLoader.getInstance(mContext).loadTasksInBackground(0, true);
+            RecentTasksLoader.getInstance(mContext).loadTasksInBackground(0, true, true);
 
             // show immediately
             mLayout.show();
@@ -195,7 +195,7 @@ public class SwitchManager {
                         ad.getPersistentTaskId(),  options.toBundle());
             SwitchStatistics.getInstance(mContext).traceStartIntent(ad.getIntent());
             if (DEBUG){
-                Log.d(TAG, "switch to " + ad.getPackageName() + " " + ad.getStackId());
+                Log.d(TAG, "switch to " + ad.getLabel() + " " + ad.getStackId());
             }
         } catch (Exception e) {
         }
@@ -208,7 +208,7 @@ public class SwitchManager {
 
         mAm.removeTask(ad.getPersistentTaskId());
         if (DEBUG){
-            Log.d(TAG, "kill " + ad.getPackageName());
+            Log.d(TAG, "kill " + ad.getLabel());
         }
         ad.setKilled();
         mLoadedTasks.remove(ad);
@@ -240,7 +240,7 @@ public class SwitchManager {
             TaskDescription ad = nextTask.next();
             mAm.removeTask(ad.getPersistentTaskId());
             if (DEBUG){
-                Log.d(TAG, "kill " + ad.getPackageName());
+                Log.d(TAG, "kill " + ad.getLabel());
             }
             ad.setKilled();
         }
@@ -265,7 +265,7 @@ public class SwitchManager {
             TaskDescription ad = nextTask.next();
             mAm.removeTask(ad.getPersistentTaskId());
             if (DEBUG){
-                Log.d(TAG, "kill " + ad.getPackageName());
+                Log.d(TAG, "kill " + ad.getLabel());
             }
             ad.setKilled();
         }
@@ -290,7 +290,7 @@ public class SwitchManager {
             TaskDescription ad = getTasks().get(0);
             mAm.removeTask(ad.getPersistentTaskId());
             if (DEBUG){
-                Log.d(TAG, "kill " + ad.getPackageName());
+                Log.d(TAG, "kill " + ad.getLabel());
             }
             ad.setKilled();
         }
@@ -480,7 +480,7 @@ public class SwitchManager {
                 switchTask(ad, false, false);
                 ActivityManagerNative.getDefault().startSystemLockTaskMode(ad.getPersistentTaskId());
                 if (DEBUG){
-                    Log.d(TAG, "lock app " + ad.getPackageName() + " " + ad.getPersistentTaskId());
+                    Log.d(TAG, "lock app " + ad.getLabel() + " " + ad.getPersistentTaskId());
                 }
             }
         } catch(RemoteException e) {
@@ -645,7 +645,7 @@ public class SwitchManager {
             mRestoreStack = true;
             RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
             RecentTasksLoader.getInstance(mContext).setSwitchManager(this);
-            RecentTasksLoader.getInstance(mContext).loadTasksInBackground(10, false);
+            RecentTasksLoader.getInstance(mContext).loadTasksInBackground(10, false, false);
         }
     }
 }

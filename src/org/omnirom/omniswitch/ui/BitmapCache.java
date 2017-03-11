@@ -126,7 +126,7 @@ public class BitmapCache {
         return d;
     }
 
-    public Drawable getResized(Resources resources, TaskDescription ad, Drawable icon, SwitchConfiguration configuration, int iconSize) {
+    public Drawable getResized(Resources resources, TaskDescription ad, Drawable icon, SwitchConfiguration configuration, int iconSize, String label) {
         String key = bitmapHash(ad.getIntent(), iconSize);
         Drawable d = getBitmapFromMemCache(key);
         if (d == null){
@@ -134,7 +134,7 @@ public class BitmapCache {
             if (getIconPackHelper().isIconPackLoaded() && (getIconPackHelper()
                     .getResourceIdForActivityIcon(ad.getActivityInfo()) == 0)) {
                 icon = BitmapUtils.compose(resources,
-                        icon, mContext, getIconPackHelper().getIconBackFor(ad.getLabel()),
+                        icon, mContext, getIconPackHelper().getIconBackFor(label),
                         getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
                         getIconPackHelper().getIconScale(), iconSize, configuration.mDensity);
             }

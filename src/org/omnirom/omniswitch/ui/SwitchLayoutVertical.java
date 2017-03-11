@@ -88,7 +88,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             } else {
                 item = (PackageTextView) convertView;
             }
-            item.setLabel(ad.getLabel());
             item.setTask(ad, true);
 
             // load thumb if not loaded so far

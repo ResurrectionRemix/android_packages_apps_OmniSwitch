@@ -107,7 +107,7 @@ public class SwitchGestureView {
             mRecentsManager.hideHidden();
             mLongPress = true;
             mHandleRecentsUpdate = true;
-            RecentTasksLoader.getInstance(mContext).loadTasksInBackground(0, true);
+            RecentTasksLoader.getInstance(mContext).loadTasksInBackground(0, true, true);
         }};
     private PackageTextView[] mCurrentItemEnv= new PackageTextView[3];
 
@@ -723,7 +723,6 @@ public class SwitchGestureView {
             TaskDescription ad = nextTask.next();
             PackageTextView item = getPackageItemTemplate();
             item.setThumbRatio(mThumbRatio);
-            item.setLabel(ad.getLabel());
             item.setTask(ad, true);
             item.loadTaskThumb();
             mRecentList.add(item);
@@ -808,7 +807,7 @@ public class SwitchGestureView {
                 continue;
             }
             item.setIntent(packageItem.getIntent());
-            item.setLabel(packageItem.getTitle());
+            item.setLabel(packageItem.getTitle().toString());
             Drawable d = BitmapCache.getInstance(mContext).getResizedUncached(mContext.getResources(),
                     packageItem, mConfiguration, 100);
             item.setOriginalImage(d);

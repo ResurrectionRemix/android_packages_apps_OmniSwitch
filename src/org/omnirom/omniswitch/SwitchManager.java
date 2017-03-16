@@ -57,7 +57,6 @@ public class SwitchManager {
     private TaskDescription mDockedTask;
     private TaskDescription mTopHomeTask;
     private boolean mRestoreStack;
-    private boolean mPlaceholderStarted;
     private TaskDescription mPlaceholderTask;
 
     public SwitchManager(Context context, int layoutStyle) {
@@ -395,8 +394,7 @@ public class SwitchManager {
         Intent mainActivity = new Intent(context,
                 SettingsActivity.class);
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         context.startActivity(mainActivity);
     }
 
@@ -533,13 +531,12 @@ public class SwitchManager {
             Log.d(TAG, "setFocusStack " + Utils.isDockingActive());
         }
         if (Utils.isDockingActive()){
-            if (!mPlaceholderStarted) {
+            if (mPlaceholderTask == null) {
                 if (DEBUG){
                     Log.d(TAG, "start placeholder activity");
                 }
-                // always start the placeholder activity to linger in the bg
+                // make sure the placeholder activity gets activated if needed
                 startPlaceholderActivity(mContext);
-                mPlaceholderStarted = true;
             }
             try {
                 TaskDescription activateTask = null;
@@ -602,14 +599,11 @@ public class SwitchManager {
             // get it before changing anything
             TaskDescription topUndocked = getUndockedTopTask(ad);
 
-            if (!mPlaceholderStarted) {
-                if (DEBUG){
-                    Log.d(TAG, "start placeholder activity");
-                }
-                // always start the placeholder activity to linger in the bg
-                startPlaceholderActivity(mContext);
-                mPlaceholderStarted = true;
+            if (DEBUG){
+                Log.d(TAG, "start placeholder activity");
             }
+            // always start the placeholder activity to linger in the bg
+            startPlaceholderActivity(mContext);
 
             int createMode = ActivityManager.DOCKED_STACK_CREATE_MODE_TOP_OR_LEFT;
             ActivityOptions options = ActivityOptions.makeBasic();

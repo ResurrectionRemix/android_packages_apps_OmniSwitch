@@ -305,9 +305,14 @@ public class RecentTasksLoader {
 
                     // always remember our own placeholder activity
                     // this is the fallback if no other top task is available
-                    if (componentString.contains("PlaceholderActivity")) {
+                    if (componentString.contains(getPlaceholderActivity())) {
+                        if (DEBUG) {
+                            Log.d(TAG, "mPlaceholderTask=" + recentInfo.baseIntent);
+                        }
                         mPlaceholderTask = item;
+                        continue;
                     }
+
                     // always add the docked task and put on first place
                     if (recentInfo.stackId == DOCKED_STACK_ID) {
                         mDockedTask = item;
@@ -355,18 +360,22 @@ public class RecentTasksLoader {
                     }
 
                     // this can include activities that have set exclude from recents
-                    if (recentInfo.stackId != DOCKED_STACK_ID && mTopHomeTask == null) {
+                    // but never the placeholder task
+                    if (recentInfo.stackId != DOCKED_STACK_ID && mTopHomeTask == null
+                            && !componentString.contains(getPlaceholderActivity())) {
                         if (DEBUG) {
                             Log.d(TAG, "mTopHomeTask=" + recentInfo.baseIntent);
                         }
                         mTopHomeTask = item;
                     }
 
-                    // skip our own package activites from the list to show
-                    // we have already saved it above if we ever need it
-                    if (intent.getComponent().getPackageName()
-                            .equals(mContext.getPackageName())) {
-                        continue;
+                    // both activities live in the same task so we can also accept that as
+                    // placeholder if needed
+                    if (componentString.contains(getSettingsActivity()) && mPlaceholderTask == null) {
+                        if (DEBUG) {
+                            Log.d(TAG, "settings activity as mPlaceholderTask=" + recentInfo.baseIntent);
+                        }
+                        mPlaceholderTask = item;
                     }
 
                     // Check the first non-recents task, include this task even if it is marked as excluded
@@ -566,5 +575,13 @@ public class RecentTasksLoader {
 
     public Bitmap getDefaultThumb() {
         return mDefaultThumbnail;
+    }
+
+    private String getPlaceholderActivity() {
+        return mContext.getPackageName() + "/.PlaceholderActivity";
+    }
+
+    private String getSettingsActivity() {
+        return mContext.getPackageName() + "/.SettingsActivity";
     }
 }

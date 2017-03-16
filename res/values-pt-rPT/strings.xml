@@ -40,7 +40,7 @@
   <string name="show_rambar_summary">Mostrar a quantidade de memória livre e usada</string>
   <string name="show_app_labels">Mostrar nome da aplicação</string>
   <string name="show_app_labels_summary">O nome da aplicação será mostrado com o ícone</string>
-  <string name="category_overlay_title">Sobreposição</string>
+  <string name="category_overlay_title">Camada</string>
   <string name="category_drag_handle_title">Alça de arraste</string>
   <string name="category_favorite_title">Favoritos</string>
   <string name="favorite_apps_config_title">Gerir favoritos</string>
@@ -63,7 +63,7 @@
   <string name="buttons_title">Botões</string>
   <string name="buttons_summary">Configurar os botões de ação no modo de sobreposição</string>
   <string name="auto_hide_handle">Ocultar automaticamente</string>
-  <string name="auto_hide_handle_summary">Dois deslizes para mostrar a sobreposição</string>
+  <string name="auto_hide_handle_summary">Dois deslizes para mostrar a vista sobreposta</string>
   <string name="no_recent_apps_title">Sem aplicações recentes</string>
   <string name="drag_handle_opacity_title">Opacidade</string>
   <string name="drag_handle_enable_title">Ativar</string>
@@ -124,7 +124,7 @@
   <string name="two_days">2 dias</string>
   <string name="one_week">1 semana</string>
   <string name="app_filter_time_title">Ativo há…</string>
-  <string name="close_help">Fechar sobreposição</string>
+  <string name="close_help">Fechar camada</string>
   <string name="close">Fechar</string>
   <string name="thumb_size_title">Tamanho da miniatura</string>
   <string name="thumb_size_normal">Normal</string>
@@ -143,7 +143,7 @@
   <string name="package_bottom_task_title">Baixo</string>
   <string name="package_right_task_title">Direita</string>
   <string name="package_full_task_title">Tamanho Inteiro</string>
-  <string name="shortcut_label_toggle_overlay">Comutador de sobreposição</string>
+  <string name="shortcut_label_toggle_overlay">Alterar camada</string>
   <string name="adjust_handle_title_new">Configurar alça de arraste</string>
   <string name="adjust_handle_summary">Configurar a posição, tamanho e cor</string>
   <string name="settings_button_text">Definições</string>
@@ -168,4 +168,6 @@
   <string name="revert_recents_title">Inverter a lista de aplicações recentes</string>
   <string name="dialog_overlay_perms_title">Erro de permissões do OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Ativar a permissão para \u0022Desenhar sobre outras aplicações\u0022</string>
+  <string name="package_dock_task_title">Ancorar</string>
+  <string name="package_undock_task_title">Desancorar</string>
 </resources>

@@ -168,4 +168,6 @@
   <string name="revert_recents_title">Відновити перелік нещодавніх додатків</string>
   <string name="dialog_overlay_perms_title">Помилка дозволів OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Надати дозвіл розміщувати поверх інших вікон</string>
+  <string name="package_dock_task_title">Закріпити</string>
+  <string name="package_undock_task_title">Відкріпити</string>
 </resources>

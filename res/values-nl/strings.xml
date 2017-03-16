@@ -25,11 +25,11 @@
   <string name="opacity_summary">Achtergrond doorzichtigheid van overlayweergave</string>
   <string name="animate_title">Animeren</string>
   <string name="animate_title_summary">Animeren van weergeven en verbergen van overlayweergave</string>
-  <string name="adjust_handle_help">Sleep-punt aanpassen</string>
+  <string name="adjust_handle_help">Sleeppunt aanpassen</string>
   <string name="icon_size_normal">Normaal</string>
   <string name="icon_size_small">Klein</string>
   <string name="icon_size_large">Groot</string>
-  <string name="icon_size_title">Icoon grootte</string>
+  <string name="icon_size_title">Pictogram afmeting</string>
   <string name="ok">OK</string>
   <string name="cancel">Annuleren</string>
   <string name="drag_handle_color_title">Kleur</string>
@@ -75,12 +75,12 @@
   <string name="gravity_title">Horizontale zwaartekracht</string>
   <string name="gravity_center">Midden</string>
   <string name="gravity_drag">Sleep-punt kant</string>
-  <string name="dialog_pick_iconpack_title">Icoon pakket kiezen</string>
-  <string name="default_iconpack_title">Standaard iconen</string>
-  <string name="icon_packs_title">Icoon pakketten</string>
-  <string name="no_iconpacks_summary">Geen icoon pakketten geïnstalleerd</string>
-  <string name="icon_pack_title">Icoon pakket</string>
-  <string name="icon_pack_summary">Gebruik icoon pakket voor app-iconen</string>
+  <string name="dialog_pick_iconpack_title">Pictogrampakket kiezen</string>
+  <string name="default_iconpack_title">Standaard pictogrammen</string>
+  <string name="icon_packs_title">Pictogrampakketten</string>
+  <string name="no_iconpacks_summary">Geen pictogrampakketten geïnstalleerd</string>
+  <string name="icon_pack_title">Pictogrampakket</string>
+  <string name="icon_pack_summary">Gebruik een pictogrampakket voor app pictogrammen</string>
   <string name="category_speed_switcher_title">Snelle Switcher</string>
   <string name="speed_switcher_enable_summary">Sleep-punt lang indrukken om te activeren</string>
   <string name="speed_switcher_enable_title">Inschakelen</string>
@@ -168,4 +168,6 @@
   <string name="revert_recents_title">Recente apps-lijst herstellen</string>
   <string name="dialog_overlay_perms_title">Fout in permissies van OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">\U0022Draw over andere apps\u0022-machtiging inschakelen</string>
+  <string name="package_dock_task_title">Vastzetten</string>
+  <string name="package_undock_task_title">Loskoppelen</string>
 </resources>

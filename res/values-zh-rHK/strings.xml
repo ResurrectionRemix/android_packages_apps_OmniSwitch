@@ -168,4 +168,6 @@
   <string name="revert_recents_title">恢復最近的應用程式清單</string>
   <string name="dialog_overlay_perms_title">OmniSwitch 許可權錯誤</string>
   <string name="dialog_overlay_perms_msg">啟用 \u0022 在其他應用程式上顯示 \u0022 許可權</string>
+  <string name="package_dock_task_title">停駐</string>
+  <string name="package_undock_task_title">取消停駐</string>
 </resources>

@@ -165,7 +165,9 @@
   <string name="launch_stats_low_title">管理收藏夹</string>
   <string name="launch_stats_low_notice">没有足够的数据来创建我的收藏列表。您确实要继续吗？</string>
   <string name="revert_recents_summary">从底部填充最近使用的应用</string>
-  <string name="revert_recents_title">撤销最近使用的应用</string>
+  <string name="revert_recents_title">还原最近应用列表</string>
   <string name="dialog_overlay_perms_title">OmniSwitch 权限错误</string>
   <string name="dialog_overlay_perms_msg">启用 \u0022在其它应用上层显示\u0022 权限</string>
+  <string name="package_dock_task_title">固定</string>
+  <string name="package_undock_task_title">取消固定</string>
 </resources>

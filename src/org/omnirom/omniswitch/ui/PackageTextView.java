@@ -224,10 +224,9 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
                 RecentTasksLoader.getInstance(mContext).loadTaskInfo(getTask());
                 mLabel = getTask().getLabel();
             }
-            Drawable d = BitmapCache.getInstance(mContext).getResized(
-                    mContext.getResources(), getTask(), getTask().getIcon(), configuration,
-                    configuration.mIconSize, getLabel());
-            setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            Drawable d= getTask().getIcon();
+            d.setBounds(0, 0, configuration.mIconSizePx, configuration.mIconSizePx);
+            setCompoundDrawables(null, d, null, null);
 
             if (configuration.mShowLabels) {
                 setText(getLabel());

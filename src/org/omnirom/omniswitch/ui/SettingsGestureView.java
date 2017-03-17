@@ -238,7 +238,7 @@ public class SettingsGestureView implements DialogInterface.OnDismissListener {
 
         mDragHandleWidthBar = (SeekBar) mView.findViewById(R.id.drag_handle_width);
         double min = mConfiguration.mDefaultDragHandleWidth * 0.5f;
-        double max = mConfiguration.mDefaultDragHandleWidth * 1.5f;
+        double max = mConfiguration.mDefaultDragHandleWidth * 2.0f;
         double value = mConfiguration.mDragHandleWidth;
         double progressValue = scaleValue(value, min, max, 1f, 100f);
         mDragHandleWidthBar.setProgress((int) progressValue);
@@ -246,11 +246,11 @@ public class SettingsGestureView implements DialogInterface.OnDismissListener {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 double progressValue = seekBar.getProgress();
-                // 50 = mConfiguration.mDefaultDragHandleWidth
-                // max = 1.5 * mConfiguration.mDefaultDragHandleWidth
+                // 20 = mConfiguration.mDefaultDragHandleWidth
+                // max = 2,0 * mConfiguration.mDefaultDragHandleWidth
                 // min = mConfiguration.mDefaultDragHandleWidth / 2
-                // 1-100 -> 0.5-1.5
-                double scaleFactor= scaleValue(progressValue, 1f, 100f, 0.5f, 1.5f);
+                // 1-100 -> 0.5-2.0 -> 10-40
+                double scaleFactor= scaleValue(progressValue, 1f, 100f, 0.5f, 2.0f);
                 mDragHandleWidth = (int) (mConfiguration.mDefaultDragHandleWidth * scaleFactor);
                 updateDragHandleLayoutParams();
             }
@@ -453,7 +453,7 @@ public class SettingsGestureView implements DialogInterface.OnDismissListener {
         mStartY = mConfiguration.getDefaultOffsetStart();
         mEndY = mConfiguration.getDefaultOffsetEnd();
         mDragHandleWidth = mConfiguration.mDefaultDragHandleWidth;
-        mDragHandleWidthBar.setProgress(50);
+        mDragHandleWidthBar.setProgress(40);
         mColor = mConfiguration.mDefaultColor;
         updateColorRect();
         updateLayout();

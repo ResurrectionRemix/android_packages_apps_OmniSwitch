@@ -24,25 +24,30 @@ import java.util.List;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.WindowManager;
 
 public class SwitchConfiguration {
+    private final static String TAG = "SwitchConfiguration";
+    private static boolean DEBUG = false;
+
     public float mBackgroundOpacity = 0.7f;
     public boolean mDimBehind = true;
     public int mLocation = 0; // 0 = right 1 = left
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
-    public int mIconSizeSettings = 52; // in dip
+    public int mIconSizePx = 60;
     public int mQSActionSize = 60; // in dp
     public int mActionSizePx = 48; // in px
     public int mOverlayIconSizeDp = 30;
     public int mOverlayIconSizePx = 30;
     public int mOverlayIconBorderDp = 2;
     public int mOverlayIconBorderPx = 2;
-    public int mIconBorder = 8; // in dp
+    public int mIconBorderDp = 6; // in dp
+    public int mIconBorderPx = 6;
     public float mDensity;
     public int mDensityDpi;
     public int mMaxWidth;
@@ -87,10 +92,13 @@ public class SwitchConfiguration {
     public int mLayoutStyle;
     public float mThumbRatio = 1.0f;
     public IconSize mIconSizeDesc = IconSize.NORMAL;
-    public int mIconBorderHorizontal = 8; // in dp
+    public int mIconBorderHorizontalDp = 8; // in dp
+    public int mIconBorderHorizontalPx = 8; // in px
     public BgStyle mBgStyle = BgStyle.SOLID_LIGHT;
     public boolean mLaunchStatsEnabled;
     public boolean mRevertRecents;
+    public int mIconSizeQuickDp = 100; // dpi
+    public int mIconSizeQuickPx = 100;
 
     // old pref slots
     private static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
@@ -119,14 +127,34 @@ public class SwitchConfiguration {
     }
 
     private SwitchConfiguration(Context context) {
-        mDensity = context.getResources().getDisplayMetrics().density;
-        mDensityDpi =  context.getResources().getDisplayMetrics().densityDpi;
-
         mWindowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
 
         mDefaultColor = context.getResources()
                 .getColor(R.color.default_drag_handle_color);
+        setDensityConfiguration(context);
+        updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
+    }
+
+    public boolean onConfigurationChanged(Context context) {
+        final float newDensity = context.getResources().getDisplayMetrics().density;
+        if(DEBUG){
+            Log.d(TAG, "onConfigurationChanged " + mDensity + " " + newDensity);
+        }
+        if (newDensity != mDensity) {
+            setDensityConfiguration(context);
+            return true;
+        }
+        return false;
+    }
+
+    private void setDensityConfiguration(Context context) {
+        mDensity = context.getResources().getDisplayMetrics().density;
+        mDensityDpi =  context.getResources().getDisplayMetrics().densityDpi;
+        if(DEBUG){
+            Log.d(TAG, "setDensityConfiguration " + mDensity);
+        }
+
         mDefaultHandleHeight = Math.round(100 * mDensity);
         mRestrictedMode = !hasSystemPermission(context);
         mLevelHeight = Math.round(80 * mDensity);
@@ -134,7 +162,9 @@ public class SwitchConfiguration {
         mActionSizePx = Math.round(48 * mDensity);
         mOverlayIconSizePx = Math.round(mOverlayIconSizeDp * mDensity);
         mOverlayIconBorderPx =  Math.round(mOverlayIconBorderDp * mDensity);
-        mIconBorderHorizontal = Math.round(mIconBorderHorizontal * mDensity);
+        mIconBorderHorizontalPx = Math.round(mIconBorderHorizontalDp * mDensity);
+        mIconSizeQuickPx = Math.round(mIconSizeQuickDp * mDensity);
+        mIconBorderPx = Math.round(mIconBorderDp * mDensity);
         // Render the default thumbnail background
         mThumbnailWidth = (int) context.getResources().getDimensionPixelSize(
                 R.dimen.thumbnail_width);
@@ -142,7 +172,6 @@ public class SwitchConfiguration {
                 .getDimensionPixelSize(R.dimen.thumbnail_height);
         mMemDisplaySize = (int) context.getResources().getDimensionPixelSize(
                 R.dimen.ram_display_size);
-        updatePrefs(PreferenceManager.getDefaultSharedPreferences(context), "");
     }
 
     public void initDefaults(Context context) {
@@ -162,6 +191,9 @@ public class SwitchConfiguration {
     }
 
     public void updatePrefs(SharedPreferences prefs, String key) {
+        if(DEBUG){
+            Log.d(TAG, "updatePrefs");
+        }
         mLocation = prefs.getInt(SettingsActivity.PREF_DRAG_HANDLE_LOCATION, 0);
         int opacity = prefs.getInt(SettingsActivity.PREF_OPACITY, 70);
         mBackgroundOpacity = (float) opacity / 100.0f;
@@ -189,11 +221,12 @@ public class SwitchConfiguration {
         mDragHandleHeight = prefs.getInt(SettingsActivity.PREF_HANDLE_HEIGHT,
                 mDefaultHandleHeight);
 
-        mMaxWidth = Math.round((mIconSize + mIconBorder) * mDensity);
-        mMaxHeight = Math.round((mIconSize + mIconBorder) * mDensity);
+        mIconSizePx = Math.round(mIconSize * mDensity);
+        mMaxWidth = Math.round((mIconSize + mIconBorderDp) * mDensity);
+        mMaxHeight = Math.round((mIconSize + mIconBorderDp) * mDensity);
         mLabelFontSize = 14f;
         // add a small gap
-        mLabelFontSizePx = Math.round((mLabelFontSize + mIconBorder) * mDensity);
+        mLabelFontSizePx = Math.round((mLabelFontSize + mIconBorderDp) * mDensity);
 
         mDragHandleColor = prefs.getInt(
                     SettingsActivity.PREF_DRAG_HANDLE_COLOR_NEW, mDefaultColor);
@@ -247,6 +280,9 @@ public class SwitchConfiguration {
         mRevertRecents = prefs.getBoolean(SettingsActivity.PREF_REVERT_RECENTS, false);
 
         for(OnSharedPreferenceChangeListener listener : mPrefsListeners) {
+            if(DEBUG){
+                Log.d(TAG, "onSharedPreferenceChanged " + listener.getClass().getName());
+            }
             listener.onSharedPreferenceChanged(prefs, key);
         }
     }
@@ -321,7 +357,7 @@ public class SwitchConfiguration {
     public int calcHorizontalDivider(boolean fullscreen) {
         int horizontalDividerWidth = 0;
         int width = fullscreen ? getCurrentDisplayWidth() : getCurrentOverlayWidth();
-        int columnWidth = mMaxWidth + mIconBorderHorizontal;
+        int columnWidth = mMaxWidth + mIconBorderHorizontalPx;
         int numColumns = width / columnWidth;
         if (numColumns > 1) {
             int equalWidth = width / numColumns;

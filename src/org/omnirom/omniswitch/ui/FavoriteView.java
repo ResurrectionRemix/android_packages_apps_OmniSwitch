@@ -90,10 +90,9 @@ public class FavoriteView extends GridView {
             } else {
                 item.setText("");
             }
-            Drawable d = BitmapCache.getInstance(mContext).getResized(
-                    mContext.getResources(), packageItem, mConfiguration,
-                    mConfiguration.mIconSize);
-            item.setCompoundDrawablesWithIntrinsicBounds(null, d, null, null);
+            Drawable d = BitmapCache.getInstance(mContext).getPackageIconCached(getResources(), packageItem, mConfiguration);
+            d.setBounds(0, 0, mConfiguration.mIconSizePx, mConfiguration.mIconSizePx);
+            item.setCompoundDrawables(null, d, null, null);
             return item;
         }
     }
@@ -152,6 +151,7 @@ public class FavoriteView extends GridView {
         item.setEllipsize(TextUtils.TruncateAt.END);
         item.setGravity(Gravity.CENTER);
         item.setLayoutParams(getListItemParams());
+        item.setPadding(0, mConfiguration.mIconBorderPx, 0, 0);
         item.setMaxLines(1);
         Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
         item.setTypeface(font);
@@ -185,7 +185,7 @@ public class FavoriteView extends GridView {
     }
 
     private void updateLayout() {
-        setColumnWidth(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal);
+        setColumnWidth(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontalPx);
         int dividerHeight = mConfiguration.calcVerticalDivider(getHeight());
         setVerticalSpacing(dividerHeight);
         requestLayout();

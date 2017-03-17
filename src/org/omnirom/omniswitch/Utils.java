@@ -238,7 +238,8 @@ public class Utils {
                 key.equals(SettingsActivity.PREF_SHOW_LABELS) ||
                 key.equals(SettingsActivity.PREF_ICON_SIZE) ||
                 key.equals(SettingsActivity.PREF_ICONPACK) ||
-                key.equals(SettingsActivity.PREF_THUMB_SIZE)) {
+                key.equals(SettingsActivity.PREF_THUMB_SIZE) ||
+                key.equals(SwitchService.DPI_CHANGE)) {
             return true;
         }
         return false;

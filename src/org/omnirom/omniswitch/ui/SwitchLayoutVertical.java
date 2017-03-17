@@ -326,7 +326,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     }
 
     protected LinearLayout.LayoutParams getListParams() {
-        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal,
+        return new LinearLayout.LayoutParams(mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontalPx,
                 LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
@@ -361,7 +361,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     @Override
     protected LinearLayout.LayoutParams getAppDrawerParams() {
         return new LinearLayout.LayoutParams(getAppDrawerColumns()
-                * (mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontal),
+                * (mConfiguration.mMaxWidth + mConfiguration.mIconBorderHorizontalPx),
                 LinearLayout.LayoutParams.MATCH_PARENT);
     }
 
@@ -425,10 +425,11 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             }
             addMemoryDisplay();
         }
-        if (mOpenFavorite == null) {
-            createOpenFavoriteButton();
-        }
+        // must be recreated on dpi changes
+        createOpenFavoriteButton();
         addOpenFavoriteButton();
+        enableOpenFavoriteButton(!mShowAppDrawer);
+
         if (mView != null) {
             if (key.equals(SettingsActivity.PREF_BUTTON_POS)) {
                 selectButtonContainer();
@@ -544,6 +545,9 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     }
 
     private void updateStyle() {
+        if (DEBUG) {
+            Log.d(TAG, "updateStyle");
+        }
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
             mNoRecentApps.setTextColor(Color.BLACK);
             mNoRecentApps.setShadowLayer(0, 0, 0, Color.BLACK);
@@ -667,6 +671,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     private void createOpenFavoriteButton() {
         mOpenFavorite = getActionButtonTemplate(mContext.getResources()
                 .getDrawable(R.drawable.ic_expand));
+        mOpenFavorite.setRotation(getExpandRotation());
 
         mOpenFavorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

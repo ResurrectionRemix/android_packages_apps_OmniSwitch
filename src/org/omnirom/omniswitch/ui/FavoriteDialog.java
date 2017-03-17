@@ -57,7 +57,6 @@ public class FavoriteDialog extends AlertDialog implements
     private FavoriteListAdapter mFavoriteAdapter;
     private DragSortListView mFavoriteConfigList;
     private AlertDialog mAddFavoriteDialog;
-    private int mIconSize;
     private SwitchConfiguration mConfiguration;
     private IEditFavoriteActivity mEditor;
 
@@ -97,8 +96,8 @@ public class FavoriteDialog extends AlertDialog implements
             PackageManager.PackageItem packageItem = PackageManager.getInstance(getContext()).getPackageItem(intent);
             holder.item.setText(packageItem.getTitle());
             holder.image.setImageDrawable(BitmapCache.getInstance(getContext())
-                        .getResized(getContext().getResources(), packageItem,
-                        mConfiguration, mIconSize));
+                        .getPackageIconCached(getContext().getResources(), packageItem,
+                        mConfiguration));
             return convertView;
         }
     }
@@ -162,7 +161,6 @@ public class FavoriteDialog extends AlertDialog implements
 
         mConfiguration = SwitchConfiguration.getInstance(context);
 
-        mIconSize = mConfiguration.mIconSizeSettings;
         mFavoriteConfigList = (DragSortListView) view
                 .findViewById(R.id.favorite_apps);
         mFavoriteAdapter = new FavoriteListAdapter(context, mFavoriteList);
@@ -307,8 +305,8 @@ public class FavoriteDialog extends AlertDialog implements
                 PackageItem applicationInfo = getItem(position);
                 holder.item.setText(applicationInfo.getTitle());
                 holder.image.setImageDrawable(BitmapCache.getInstance(getContext())
-                        .getResized(getContext().getResources(), applicationInfo,
-                        mConfiguration, mIconSize));
+                        .getPackageIconCached(getContext().getResources(), applicationInfo,
+                        mConfiguration));
                 holder.check.setChecked(mChangedFavoriteListSet
                         .contains(applicationInfo.getIntent()));
 

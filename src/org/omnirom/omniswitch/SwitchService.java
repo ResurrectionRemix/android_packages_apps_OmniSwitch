@@ -47,6 +47,7 @@ public class SwitchService extends Service {
 
     private static final int START_SERVICE_ERROR_ID = 0;
     private static final int START_PERMISSION_SETTINGS_ID = 1;
+    public static final String DPI_CHANGE = "dpi_change";
 
     private RecentsReceiver mReceiver;
     private static SwitchManager mManager;
@@ -254,8 +255,14 @@ public class SwitchService extends Service {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        if(DEBUG){
+            Log.d(TAG, "onConfigurationChanged");
+        }
         try {
             if (mIsRunning) {
+                if (mConfiguration.onConfigurationChanged(this)) {
+                    updatePrefs(mPrefs, DPI_CHANGE);
+                }
                 mManager.updateLayout();
             }
         } catch(Exception e) {

@@ -808,10 +808,11 @@ public class SwitchGestureView {
             }
             item.setIntent(packageItem.getIntent());
             item.setLabel(packageItem.getTitle().toString());
-            Drawable d = BitmapCache.getInstance(mContext).getResizedUncached(mContext.getResources(),
-                    packageItem, mConfiguration, 100);
+            Drawable d = BitmapCache.getInstance(mContext).getPackageIconUncached(mContext.getResources(),
+                    packageItem, mConfiguration, mConfiguration.mIconSizeQuickPx);
+            d.setBounds(0, 0, mConfiguration.mIconSizeQuickPx, mConfiguration.mIconSizeQuickPx);
             item.setOriginalImage(d);
-            item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
+            item.setCompoundDrawables(null, d, null, null);
             if (mConfiguration.mShowLabels) {
                 item.setText(item.getLabel());
             }
@@ -1152,7 +1153,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1170,7 +1171,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1188,7 +1189,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1206,7 +1207,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1224,7 +1225,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1242,7 +1243,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             mLockToAppButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1268,7 +1269,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1286,7 +1287,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
 
@@ -1342,7 +1343,7 @@ public class SwitchGestureView {
 
     private int getListItemWidth(int level) {
         if (level == 1){
-            return (int)(mConfiguration.mThumbnailWidth * mThumbRatio) + mConfiguration.mIconBorder;
+            return (int)(mConfiguration.mThumbnailWidth * mThumbRatio) + mConfiguration.mIconBorderDp;
         }
         return mConfiguration.getCurrentOverlayWidth() / 3;
     }
@@ -1523,7 +1524,7 @@ public class SwitchGestureView {
             d = BitmapUtils.resize(mContext.getResources(),
                     d,
                     mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorder,
+                    mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
             mLockToAppButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
         }

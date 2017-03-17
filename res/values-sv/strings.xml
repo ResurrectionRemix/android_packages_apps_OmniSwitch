@@ -168,4 +168,6 @@
   <string name="revert_recents_title">Återgå till senaste applista</string>
   <string name="dialog_overlay_perms_title">OmniSwitch tillståndsfel</string>
   <string name="dialog_overlay_perms_msg">Aktivera \u0022Draw över andra appars\u0022 tillstånd</string>
+  <string name="package_dock_task_title">Docka</string>
+  <string name="package_undock_task_title">Avdocka</string>
 </resources>

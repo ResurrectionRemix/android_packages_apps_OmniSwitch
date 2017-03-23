@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2013-2016 The OmniROM Project
+ *  Copyright (C) 2017 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,10 +233,10 @@ public class BitmapUtils {
             final Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             bgPaint.setStyle(Paint.Style.FILL);
             bgPaint.setColor(resources.getColor(R.color.button_bg_flat_color));
+            if (dockedTask) {
+                bgPaint.setColor(resources.getColor(R.color.docked_task_bg_color));
+            }
             if (sideHeader)  {
-                if (dockedTask) {
-                    bgPaint.setColor(resources.getColor(R.color.docked_task_bg_color));
-                }
                 canvas.drawRect(0, 0, iconBorderSizePx, height, bgPaint);
             } else {
                 canvas.drawRect(0, 0, width, iconBorderSizePx, bgPaint);

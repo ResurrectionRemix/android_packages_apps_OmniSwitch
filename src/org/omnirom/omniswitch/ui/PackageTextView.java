@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2014 The OmniROM Project
+ *  Copyright (C) 2017 The OmniROM Project
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@ package org.omnirom.omniswitch.ui;
 import org.omnirom.omniswitch.SwitchConfiguration;
 import org.omnirom.omniswitch.TaskDescription;
 import org.omnirom.omniswitch.RecentTasksLoader;
+import org.omnirom.omniswitch.R;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -227,7 +228,9 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
             Drawable d= getTask().getIcon();
             d.setBounds(0, 0, configuration.mIconSizePx, configuration.mIconSizePx);
             setCompoundDrawables(null, d, null, null);
-
+            if (getTask().isDocked()) {
+                setBackgroundColor(getResources().getColor(R.color.docked_task_bg_color));
+            }
             if (configuration.mShowLabels) {
                 setText(getLabel());
             } else {

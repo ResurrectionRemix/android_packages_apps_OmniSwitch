@@ -39,12 +39,12 @@
   <string name="show_rambar_title">Показати використання пам\'яті</string>
   <string name="show_rambar_summary">Відображати кількість вільної та використаної пам\'яті</string>
   <string name="show_app_labels">Показувати назву додатків</string>
-  <string name="show_app_labels_summary">Ім\'я програми буде відображатися з ярликом</string>
+  <string name="show_app_labels_summary">Ім\'я програми буде відображатися з іконкою</string>
   <string name="category_overlay_title">Шари</string>
   <string name="category_drag_handle_title">Перетягніть маркер</string>
-  <string name="category_favorite_title">Уподобання</string>
-  <string name="favorite_apps_config_title">Керувати уподобанням</string>
-  <string name="favorite_apps_config_summary">Визначити додатки, що показують в обраному перегляду</string>
+  <string name="category_favorite_title">Обране</string>
+  <string name="favorite_apps_config_title">Керувати обраним</string>
+  <string name="favorite_apps_config_summary">Визначити додатки, що показують в обраному</string>
   <string name="favorite_apps_add_dialog_title">Додати додаток</string>
   <string name="favorite_add">Додати\u2026</string>
   <string name="location_left">Зліва</string>
@@ -102,7 +102,7 @@
   <string name="package_remove_favorite_title">Видалити з обраного</string>
   <string name="open_favorite_help">Відкрити/закрити перегляд обраного</string>
   <string name="button_pos_title">Положення кнопки</string>
-  <string name="button_pos_top">Зверху/Зліва</string>
+  <string name="button_pos_top">Лівий верхній кут</string>
   <string name="button_pos_bottom">Правий нижній кут</string>
   <string name="bg_style_solid_light">Світлий</string>
   <string name="bg_style_solid_dark">Темний</string>
@@ -152,8 +152,8 @@
   <string name="launcher_mode_summary">Запускати OmniSwitch як ваш лаунчер. Після увімкнення натисніть кнопку додому і виберіть OmniSwitch</string>
   <string name="launcher_mode_title">Увімкнути</string>
   <string name="launcher_mode_enable_check">Вимкнення неможливе, якщо активовано режим запуску. Буде знову ввімкнено, коли режим запуску стане активним</string>
-  <string name="welcome_cling_header">Ласкаво просимо в  програму запуску -- OmniSwith</string>
-  <string name="welcome_cling_description">Отримуйте задоволення за допомогою мінімалістичного запуску, яка фокусується на запуск додатків і їх перемикань. Проведіть де завгодно, щоб відкрити OmniSwitch.</string>
+  <string name="welcome_cling_header">Ласкаво просимо в  програму запуску OmniSwith</string>
+  <string name="welcome_cling_description">Отримуйте задоволення за допомогою мінімалістичного запуску, який фокусується на запуску додатків і їх перемиканні. Проведіть де завгодно, щоб відкрити OmniSwitch.</string>
   <string name="welcome_cling_dismiss">Зрозуміло</string>
   <string name="launch_stats_title">Статистика запусків</string>
   <string name="launch_stats_summary">Збір статистичних даних про запущені додатки. Дані не будуть передані третім особам і зберігаються тільки на пристрої</string>

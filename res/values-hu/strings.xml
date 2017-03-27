@@ -22,7 +22,7 @@
   <string name="start_on_boot_title">Indítás bekapcsolásakor</string>
   <string name="start_on_boot_summary">Indítás és engedélyezés készülék indításakor</string>
   <string name="opacity_title">Átlátszóság</string>
-  <string name="opacity_summary">Háttér átlászósága átfedő nézetben</string>
+  <string name="opacity_summary">Háttér átlátszósága átfedő nézetben</string>
   <string name="animate_title">Animálás</string>
   <string name="animate_title_summary">Átfedő nézet megjelenítésének és elrejtésének animálása</string>
   <string name="adjust_handle_help">Fogópont mozgatása és áthelyezése</string>

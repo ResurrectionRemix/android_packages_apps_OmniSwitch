@@ -22,9 +22,9 @@
   <string name="start_on_boot_title">Uruchom przy starcie</string>
   <string name="start_on_boot_summary">Uruchom i włącz podczas rozruchu urządzenia</string>
   <string name="opacity_title">Przezroczystość</string>
-  <string name="opacity_summary">Przezroczystość tła nakładki widoku</string>
+  <string name="opacity_summary">Przezroczystość tła widoku nakładki</string>
   <string name="animate_title">Animowany</string>
-  <string name="animate_title_summary">Animuj pokazywanie i ukrywanie nakładki widoku</string>
+  <string name="animate_title_summary">Animuj pokazywanie i ukrywanie widoku nakładki</string>
   <string name="adjust_handle_help">Przemieść i zmień rozmiar uchwytu przeciągania</string>
   <string name="icon_size_normal">Normalne</string>
   <string name="icon_size_small">Mały</string>
@@ -57,11 +57,11 @@
   <string name="settings_help">Ustawienia</string>
   <string name="home_help">Strona Główna</string>
   <string name="kill_all_apps">Zabij wszystkie</string>
-  <string name="kill_other_apps">Zabij inne aplikacje</string>
+  <string name="kill_other_apps">Zabij inne</string>
   <string name="settings">Ustawienia</string>
   <string name="home">Strona Główna</string>
   <string name="buttons_title">Przyciski</string>
-  <string name="buttons_summary">Przyciski aplikacji wyświetlane w nadrzędnym widoku</string>
+  <string name="buttons_summary">Skonfiguruj przyciski akcji w widoku nakładki</string>
   <string name="auto_hide_handle">Autoukrywanie</string>
   <string name="auto_hide_handle_summary">Dwa przesunięcia palcem, aby pokazać nadrzędny widok</string>
   <string name="no_recent_apps_title">Brak ostatnich aplikacji</string>

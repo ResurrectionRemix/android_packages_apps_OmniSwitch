@@ -36,7 +36,7 @@
   <string name="drag_handle_color_dialog_title">Couleur</string>
   <string name="service_background_processes"><xliff:g id="memory">%1$s</xliff:g> libre</string>
   <string name="service_foreground_processes"><xliff:g id="memory">%1$s</xliff:g> utilisé</string>
-  <string name="show_rambar_title">Afficher l\'utilisation mémoire</string>
+  <string name="show_rambar_title">Afficher l\'utilisation de la mémoire</string>
   <string name="show_rambar_summary">Afficher la taille mémoire libre et utilisée</string>
   <string name="show_app_labels">Afficher le nom de l\'application</string>
   <string name="show_app_labels_summary">Afficher le nom des applications avec l\'icône</string>
@@ -68,7 +68,7 @@
   <string name="drag_handle_opacity_title">Transparence</string>
   <string name="drag_handle_enable_title">Activer</string>
   <string name="drag_handle_enable_summary">Désactiver uniquement si vous utilisez une autre méthode d’activation</string>
-  <string name="allapps_help">Tiroir d\'applications</string>
+  <string name="allapps_help">Tiroir d\'application</string>
   <string name="allapps">Applications</string>
   <string name="dim_behind_title">Assombrir l\'arrière-plan</string>
   <string name="dim_behind_summary">Appliquer l’opacité à l\'écran complet</string>
@@ -89,7 +89,7 @@
   <string name="kill_current">Arrêter l\'application actuelle</string>
   <string name="kill_current_help">Arrêter l\'application actuelle</string>
   <string name="speed_switch_color_summary">Bleu - applications récentes. Vert - favoris. Rouge - actions</string>
-  <string name="speed_switch_color">Couleurs du niveau d\'arrière plan</string>
+  <string name="speed_switch_color">Niveau de couleurs de l\'arrière-plan</string>
   <string name="speed_switch_limit_summary">Zone de limite pour les changements de niveau</string>
   <string name="speed_switch_limit">Zone du changement de niveau</string>
   <string name="speed_switch_button_title">Boutons</string>

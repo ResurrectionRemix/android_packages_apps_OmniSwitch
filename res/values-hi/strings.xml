@@ -117,4 +117,5 @@
   <string name="category_launcher_title">लांचर मोड</string>
   <string name="launcher_mode_summary">OmniSwitch भी अपने लांचर के रूप में चलाएँ। सक्षम करने के बाद घर दबाएँ और OmniSwitch का चयन करें</string>
   <string name="launcher_mode_title">सक्षम करें</string>
+  <string name="welcome_cling_dismiss">समझ गया</string>
 </resources>

@@ -157,9 +157,9 @@
   <string name="welcome_cling_dismiss">Begrepen</string>
   <string name="launch_stats_title">Start statistieken</string>
   <string name="launch_stats_summary">Verzamel statistieken over gelanceerde apps. Gegevens zullen niet worden gedeeld en alleen lokaal worden opgeslagen</string>
-  <string name="launch_stats_delete_title">Statistieken wissen</string>
-  <string name="launch_stats_delete_summary">Verwijder huidige verzamelde start statistieken</string>
-  <string name="favorite_apps_config_stat_title">Statistieke favorieten</string>
+  <string name="launch_stats_delete_title">Wis statistieken</string>
+  <string name="launch_stats_delete_summary">Verwijder verzamelde start statistieken</string>
+  <string name="favorite_apps_config_stat_title">Statistische favorieten</string>
   <string name="favorite_apps_config_stat_summary">Maak een favorieten lijst op basis van verzamelde start statistieken</string>
   <string name="launch_stats_delete_notice">Start statistieken verwijderd</string>
   <string name="launch_stats_low_title">Favorieten beheren</string>

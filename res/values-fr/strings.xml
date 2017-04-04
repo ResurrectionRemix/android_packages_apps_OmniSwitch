@@ -41,7 +41,7 @@
   <string name="show_app_labels">Afficher le nom de l\'application</string>
   <string name="show_app_labels_summary">Afficher le nom des applications avec l\'icône</string>
   <string name="category_overlay_title">Superposition</string>
-  <string name="category_drag_handle_title">Poignée de déplacement</string>
+  <string name="category_drag_handle_title">Poignée d\'accès rapide</string>
   <string name="category_favorite_title">Favoris</string>
   <string name="favorite_apps_config_title">Configurer les favoris</string>
   <string name="favorite_apps_config_summary">Définir les applications à afficher dans la vue des favoris</string>
@@ -101,16 +101,16 @@
   <string name="package_add_favorite_title">Ajouter aux favoris</string>
   <string name="package_remove_favorite_title">Supprimer des favoris</string>
   <string name="open_favorite_help">Ouvrir/fermer la vue des favoris</string>
-  <string name="button_pos_title">Position du bouton</string>
+  <string name="button_pos_title">Position des boutons</string>
   <string name="button_pos_top">Haut/Gauche</string>
   <string name="button_pos_bottom">Bas/Droit</string>
   <string name="bg_style_solid_light">Léger</string>
   <string name="bg_style_solid_dark">Sombre</string>
   <string name="bg_style_transparent">Transparent</string>
-  <string name="bg_style_title">Style de l\'arrière-plan</string>
+  <string name="bg_style_title">Préférence d\'arrière-plan</string>
   <string name="lock_to_app">Épingler l\'application</string>
   <string name="lock_app_help">Épingler l\'application actuelle</string>
-  <string name="app_filter_category_title">Filtre de l\'application</string>
+  <string name="app_filter_category_title">Filtrage des applications</string>
   <string name="app_filter_boot_title">Actif depuis le démarrage</string>
   <string name="layout_style_title">Mode d\'affichage</string>
   <string name="layout_style_1">Horizontal</string>
@@ -132,7 +132,7 @@
   <string name="thumb_size_medium">Moyen</string>
   <string name="package_lock_task_title">Épingler l\'application</string>
   <string name="lock_app_not_enabled">L\'épinglage d\'écran n\'est pas activé dans les paramètres de sécurité</string>
-  <string name="app_filter_running_title">En cours d\'exécution seulement</string>
+  <string name="app_filter_running_title">Uniquement les applications en cours</string>
   <string name="menu">Menu</string>
   <string name="menu_help">Menu</string>
   <string name="enable_title">Activer</string>

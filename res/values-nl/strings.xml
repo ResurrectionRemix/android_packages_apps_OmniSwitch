@@ -97,7 +97,7 @@
   <string name="speed_switch_items_summary">Maximum aantal niveau onderdelen</string>
   <string name="speed_switch_item">Niveau itemlimiet</string>
   <string name="immersive_mode">Schermvullende modus</string>
-  <string name="immersive_mode_help">Schermvullende modus in-/uitschakelen</string>
+  <string name="immersive_mode_help">Schermvullende modus in- of uitschakelen</string>
   <string name="package_add_favorite_title">Aan favorieten toevoegen</string>
   <string name="package_remove_favorite_title">Uit favorieten verwijderen</string>
   <string name="open_favorite_help">Open/sluit favorietenweergave</string>
@@ -143,7 +143,7 @@
   <string name="package_bottom_task_title">Onder</string>
   <string name="package_right_task_title">Rechts</string>
   <string name="package_full_task_title">Volledige grootte</string>
-  <string name="shortcut_label_toggle_overlay">Schermlagen in-/uitschakelen</string>
+  <string name="shortcut_label_toggle_overlay">Schermlagen in- of uitschakelen</string>
   <string name="adjust_handle_title_new">Configureer sleep-punt</string>
   <string name="adjust_handle_summary">Configureer positie, grootte en kleur</string>
   <string name="settings_button_text">Instellingen</string>

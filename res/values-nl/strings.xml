@@ -67,7 +67,7 @@
   <string name="no_recent_apps_title">Geen recente apps</string>
   <string name="drag_handle_opacity_title">Doorzichtigheid</string>
   <string name="drag_handle_enable_title">Inschakelen</string>
-  <string name="drag_handle_enable_summary">Alleen uitschakelen als u een andere activeringsmethode gebruikt</string>
+  <string name="drag_handle_enable_summary">Alleen uitschakelen als je ook nog een andere activeringsmethode gebruikt</string>
   <string name="allapps_help">App lade</string>
   <string name="allapps"> Apps</string>
   <string name="dim_behind_title">Achtergrond dimmen</string>
@@ -149,7 +149,7 @@
   <string name="settings_button_text">Instellingen</string>
   <string name="wallpaper_button_text">Achtergrond</string>
   <string name="category_launcher_title">Launcher modus</string>
-  <string name="launcher_mode_summary">OmniSwitch ook gebruiken als uw launcher. Druk na inschakeling op home en selecteer OmniSwitch</string>
+  <string name="launcher_mode_summary">OmniSwitch ook gebruiken als je launcher. Druk na inschakeling op home en selecteer OmniSwitch</string>
   <string name="launcher_mode_title">Inschakelen</string>
   <string name="launcher_mode_enable_check">Uitschakelen is niet mogelijk als launcher modus actief is. Zal opnieuw worden ingeschakeld wanneer launcher modus actief wordt</string>
   <string name="welcome_cling_header">Welkom bij OmniSwitch launcher modus</string>
@@ -163,7 +163,7 @@
   <string name="favorite_apps_config_stat_summary">Maak een favorieten lijst op basis van verzamelde start statistieken</string>
   <string name="launch_stats_delete_notice">Start statistieken verwijderd</string>
   <string name="launch_stats_low_title">Favorieten beheren</string>
-  <string name="launch_stats_low_notice">Er zijn onvoldoende gegevens om favoriete appslijst te maken. Wilt u doorgaan?</string>
+  <string name="launch_stats_low_notice">Er zijn onvoldoende gegevens om favoriete appslijst te maken. Wil je doorgaan?</string>
   <string name="revert_recents_summary">Recente apps vanaf onderkant vullen</string>
   <string name="revert_recents_title">Recente apps-lijst herstellen</string>
   <string name="dialog_overlay_perms_title">Fout in machtigingen van OmniSwitch</string>

@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 import android.hardware.input.InputManager;
 import android.os.Build;
 import android.os.Handler;
@@ -270,5 +271,11 @@ public class Utils {
 
     public static boolean isNycOrAbove() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    }
+
+    public static boolean canResolveIntent(Context context, Intent intent) {
+        List<ResolveInfo> installedAppsInfo = context.getPackageManager().queryIntentActivities(
+                intent, 0);
+        return installedAppsInfo.size() != 0;
     }
 }

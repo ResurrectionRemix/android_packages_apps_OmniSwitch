@@ -110,6 +110,11 @@
 			android:key="revert_recents"
 			android:summary="@string/revert_recents_summary"
 			android:title="@string/revert_recents_title" />
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="swipe_thumb_update"
+			android:summary="@string/swipe_thumb_update_summary"
+			android:title="@string/swipe_thumb_update_title" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="app_filter_category"

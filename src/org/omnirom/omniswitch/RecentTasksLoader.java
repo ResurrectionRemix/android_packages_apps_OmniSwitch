@@ -48,7 +48,7 @@ public class RecentTasksLoader {
     private static final String TAG = "RecentTasksLoader";
     private static final boolean DEBUG = false;
     private static final int MAX_TASKS = 50;
-    private static final int THUMB_INIT_LOAD = 5;
+    private static final int THUMB_INIT_LOAD = 6;
     private static final int TASK_INIT_LOAD = 8;
 
     private Context mContext;
@@ -75,6 +75,7 @@ public class RecentTasksLoader {
     static {
         sBitmapOptions = new BitmapFactory.Options();
         sBitmapOptions.inMutable = true;
+        sBitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;
     }
 
     private enum State {

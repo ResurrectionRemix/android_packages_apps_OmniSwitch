@@ -99,6 +99,8 @@ public class SwitchConfiguration {
     public boolean mRevertRecents;
     public int mIconSizeQuickDp = 100; // dpi
     public int mIconSizeQuickPx = 100;
+    // TODO do we need a setting for this
+    public boolean mLoadThumbOnSwipe = true;
 
     // old pref slots
     private static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
@@ -278,6 +280,7 @@ public class SwitchConfiguration {
         mFilterRunning = prefs.getBoolean(SettingsActivity.PREF_APP_FILTER_RUNNING, false);
         mLaunchStatsEnabled = prefs.getBoolean(SettingsActivity.PREF_LAUNCH_STATS, false);
         mRevertRecents = prefs.getBoolean(SettingsActivity.PREF_REVERT_RECENTS, false);
+        mLoadThumbOnSwipe = prefs.getBoolean(SettingsActivity.PREF_SWIPE_THUMB_UPDATE, true);
 
         for(OnSharedPreferenceChangeListener listener : mPrefsListeners) {
             if(DEBUG){

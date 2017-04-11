@@ -274,8 +274,6 @@ public class Utils {
     }
 
     public static boolean canResolveIntent(Context context, Intent intent) {
-        List<ResolveInfo> installedAppsInfo = context.getPackageManager().queryIntentActivities(
-                intent, 0);
-        return installedAppsInfo.size() != 0;
+        return intent.resolveActivity(context.getPackageManager()) != null;
     }
 }

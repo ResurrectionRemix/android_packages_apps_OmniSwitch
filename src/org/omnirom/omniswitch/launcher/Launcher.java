@@ -831,40 +831,40 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         startActivity(cameraIntent);
     }
 
-    private void launchVoiceAssist() {
+    private Intent getVoiceAssistIntent() {
         final Intent assistIntent = new Intent(Intent.ACTION_VOICE_ASSIST);
         assistIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 // that will always trigger the voice search page
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        startActivity(assistIntent);
+        return assistIntent;
+    }
+
+    private void launchVoiceAssist() {
+        startActivity(getVoiceAssistIntent());
     }
 
     private boolean canLaunchVoiceAssist() {
-        final Intent assistIntent = new Intent(Intent.ACTION_VOICE_ASSIST);
-        assistIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                // that will always trigger the voice search page
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        return Utils.canResolveIntent(this, assistIntent);
+        return Utils.canResolveIntent(this, getVoiceAssistIntent());
     }
 
-    private void launchAssist() {
+    private Intent getAssistIntent() {
         final Intent assistIntent = new Intent(Intent.ACTION_ASSIST);
         assistIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        startActivity(assistIntent);
+        return assistIntent;
+    }
+
+    private void launchAssist() {
+        startActivity(getAssistIntent());
+    }
+
+    private boolean canLaunchAssist() {
+        return Utils.canResolveIntent(this, getAssistIntent());
     }
 
     private boolean isEssentialsExpanded() {
         return mPrefs.getBoolean(STATE_ESSENTIALS_EXPANDED, false);
-    }
-
-    private boolean canLaunchAssist() {
-        final Intent assistIntent = new Intent(Intent.ACTION_ASSIST);
-        assistIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        return Utils.canResolveIntent(this, assistIntent);
     }
 
     private void setEssentialsExpanded(boolean value) {

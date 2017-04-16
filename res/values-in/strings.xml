@@ -22,7 +22,7 @@
   <string name="start_on_boot_title">Mulai saat boot</string>
   <string name="start_on_boot_summary">Memulai dan mengaktifkan saat perangkat boot</string>
   <string name="opacity_title">Keburaman</string>
-  <string name="opacity_summary">Kepekatan latar belakang dari tampilan overlay</string>
+  <string name="opacity_summary">Keburaman latar belakang dari tampilan overlay</string>
   <string name="animate_title">Animasi</string>
   <string name="animate_title_summary">Animasi muncul dan sembunyi dari tampilan overlay</string>
   <string name="adjust_handle_help">Memindah dan mengubah ukuran tuas tarikan</string>

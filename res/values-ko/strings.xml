@@ -24,6 +24,7 @@
   <string name="opacity_title">투명도</string>
   <string name="opacity_summary">오버레이 보기의 배경 투명도</string>
   <string name="animate_title">애니메이션 활성화</string>
+  <string name="adjust_handle_help">핸들을 움직여 크기조정</string>
   <string name="icon_size_normal">일반</string>
   <string name="icon_size_small">작게</string>
   <string name="icon_size_large">크게</string>
@@ -44,6 +45,7 @@
   <string name="favorite_apps_config_title">즐겨찾기 관리</string>
   <string name="favorite_apps_config_summary">즐겨찾기에서 앱 보기 정의</string>
   <string name="favorite_apps_add_dialog_title">앱 추가</string>
+  <string name="favorite_add">추가\u2026</string>
   <string name="location_left">왼쪽</string>
   <string name="location_right">오른쪽</string>
   <string name="reset">기본 값</string>

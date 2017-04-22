@@ -564,7 +564,13 @@ public class SwitchLayout extends AbstractSwitchLayout {
                     .getDrawable(R.drawable.overlay_bg_button_flat));
             mButtonListContainer.setOutlineProvider(BUTTON_OUTLINE_PROVIDER);
         } else {
-            mButtonListContainer.setBackground(null);
+            if (mConfiguration.mDimActionButton) {
+                mButtonListContainer.setBackground(mContext.getResources().getDrawable(
+                        R.drawable.overlay_bg));
+                mButtonListContainer.getBackground().setAlpha(50);
+            } else {
+                mButtonListContainer.setBackground(null);
+            }
             mButtonListContainer.setOutlineProvider(null);
         }
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {

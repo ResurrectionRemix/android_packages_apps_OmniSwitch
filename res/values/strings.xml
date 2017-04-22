@@ -173,4 +173,6 @@
         <string name="package_undock_task_title">Undock</string>
         <string name="swipe_thumb_update_summary">Thumbnails will be updated during overlay show</string>
         <string name="swipe_thumb_update_title">Asynchronous thumbnail loading</string>
+        <string name="dim_action_buttons_summary">Add extra background dim to action buttons</string>
+        <string name="dim_action_buttons_title">Dim action button background</string>
 </resources>

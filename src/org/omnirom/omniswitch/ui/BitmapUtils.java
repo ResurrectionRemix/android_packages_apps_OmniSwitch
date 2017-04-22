@@ -111,15 +111,21 @@ public class BitmapUtils {
         return image;
     }
 
-    public static Drawable shadow(Resources resources, Drawable image) {
-        if (!(image instanceof BitmapDrawable)) {
-            return image;
-        }
-        Bitmap b = ((BitmapDrawable) image).getBitmap();
+    public static BitmapDrawable shadow(Resources resources, Drawable image) {
+        final Canvas canvas = new Canvas();
+        canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.ANTI_ALIAS_FLAG,
+                Paint.FILTER_BITMAP_FLAG));
+        final int imageWidth = image.getIntrinsicWidth();
+        final int imageHeight = image.getIntrinsicHeight();
+        final Bitmap b = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
+        canvas.setBitmap(b);
+        image.setBounds(0, 0, imageWidth, imageHeight);
+        image.draw(canvas);
 
         BlurMaskFilter blurFilter = new BlurMaskFilter(5,
                 BlurMaskFilter.Blur.OUTER);
         Paint shadowPaint = new Paint();
+        shadowPaint.setColor(Color.BLACK);
         shadowPaint.setMaskFilter(blurFilter);
 
         int[] offsetXY = new int[2];
@@ -128,13 +134,9 @@ public class BitmapUtils {
         Bitmap bmResult = Bitmap.createBitmap(b.getWidth(), b.getHeight(),
                 Bitmap.Config.ARGB_8888);
 
-        final Canvas canvas = new Canvas();
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.ANTI_ALIAS_FLAG,
-                Paint.FILTER_BITMAP_FLAG));
-
         canvas.setBitmap(bmResult);
-        canvas.drawBitmap(b2, 0, 0, null);
-        canvas.drawBitmap(b, -offsetXY[0], -offsetXY[1], null);
+        canvas.drawBitmap(b2, offsetXY[0], offsetXY[1], null);
+        canvas.drawBitmap(b, 0, 0, null);
 
         return new BitmapDrawable(resources, bmResult);
     }

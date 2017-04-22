@@ -551,22 +551,22 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
             mNoRecentApps.setTextColor(Color.BLACK);
             mNoRecentApps.setShadowLayer(0, 0, 0, Color.BLACK);
-            updateOpenFavoriteButton(mContext.getResources().getDrawable(
-                    R.drawable.ic_expand));
         } else {
             mNoRecentApps.setTextColor(Color.WHITE);
             mNoRecentApps.setShadowLayer(5, 0, 0, Color.BLACK);
-            updateOpenFavoriteButton(BitmapUtils.shadow(
-                    mContext.getResources(),
-                    mContext.getResources().getDrawable(
-                            R.drawable.ic_expand)));
         }
         if (mConfiguration.mBgStyle != SwitchConfiguration.BgStyle.TRANSPARENT) {
             mButtonListContainer.setBackground(mContext.getResources()
                     .getDrawable(R.drawable.overlay_bg_button_gradient));
             mButtonListContainer.setOutlineProvider(BUTTON_OUTLINE_PROVIDER);
         } else {
-            mButtonListContainer.setBackground(null);
+            if (mConfiguration.mDimActionButton) {
+                mButtonListContainer.setBackground(mContext.getResources().getDrawable(
+                        R.drawable.overlay_bg));
+                mButtonListContainer.getBackground().setAlpha(50);
+            } else {
+                mButtonListContainer.setBackground(null);
+            }
             mButtonListContainer.setOutlineProvider(null);
         }
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
@@ -692,12 +692,5 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
                 return true;
             }
         });
-    }
-
-    private void updateOpenFavoriteButton(Drawable d) {
-        if (mOpenFavorite != null) {
-            ImageView openFavoriteImage = (ImageView) mOpenFavorite.findViewById(R.id.action_button_image);
-            openFavoriteImage.setImageDrawable(d);
-        }
     }
 }

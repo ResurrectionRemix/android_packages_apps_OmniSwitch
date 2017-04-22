@@ -696,7 +696,8 @@ public class SwitchGestureView {
         item.setTextColor(Color.WHITE);
         item.setShadowLayer(5, 0, 0, Color.BLACK);
         item.setTextSize(20f);
-        item.setTypeface(item.getTypeface(), Typeface.BOLD);
+        Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
+        item.setTypeface(font);
         item.setEllipsize(TextUtils.TruncateAt.END);
         item.setGravity(Gravity.CENTER_HORIZONTAL);
         item.setMaxLines(1);
@@ -1155,7 +1156,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.home_help));
             item.setAction(new Runnable(){
@@ -1173,7 +1174,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.back));
             item.setAction(new Runnable(){
@@ -1191,7 +1192,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.kill_current));
             item.setAction(new Runnable(){
@@ -1209,7 +1210,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.kill_all_apps));
             item.setAction(new Runnable(){
@@ -1227,7 +1228,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.kill_other_apps));
             item.setAction(new Runnable(){
@@ -1245,7 +1246,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            mLockToAppButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            mLockToAppButton.setOriginalImage(d);
 
             mLockToAppButton.setLabel(mContext.getResources().getString(R.string.lock_to_app));
             mLockToAppButton.setAction(new Runnable(){
@@ -1271,7 +1272,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.toggle_last_app));
             item.setAction(new Runnable(){
@@ -1289,7 +1290,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            item.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.menu));
             item.setAction(new Runnable(){
@@ -1526,7 +1527,7 @@ public class SwitchGestureView {
                     mConfiguration.mQSActionSize,
                     mConfiguration.mIconBorderDp,
                     mConfiguration.mDensity);
-            mLockToAppButton.setOriginalImage(BitmapUtils.shadow(mContext.getResources(), d));
+            mLockToAppButton.setOriginalImage(d);
         }
     }
 }

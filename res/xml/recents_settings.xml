@@ -63,6 +63,11 @@
 			android:summary="@string/dim_behind_summary"
 			android:title="@string/dim_behind_title" />
 
+		<CheckBoxPreference
+			android:key="dim_action_buttons"
+			android:summary="@string/dim_action_buttons_summary"
+			android:title="@string/dim_action_buttons_title" />
+
 		<ListPreference
 			android:entries="@array/gravity_entries"
 			android:entryValues="@array/gravity_values"

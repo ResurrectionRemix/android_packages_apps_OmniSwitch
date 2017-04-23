@@ -55,11 +55,11 @@
   <string name="kill_all_apps_help">Kilövi az összes alkalmazást</string>
   <string name="kill_other_apps_help">Kilövi a többi alkalmazást</string>
   <string name="settings_help">Beállítások</string>
-  <string name="home_help">Home</string>
+  <string name="home_help">Kezdőoldal</string>
   <string name="kill_all_apps">Összes kilövése</string>
   <string name="kill_other_apps">Többi kilövése</string>
   <string name="settings">Beállítások</string>
-  <string name="home">Home</string>
+  <string name="home">Kezdőoldal</string>
   <string name="buttons_title">Gombok</string>
   <string name="buttons_summary">Művelet gombok megjelenitése</string>
   <string name="auto_hide_handle">Automatikus elrejtés</string>
@@ -77,9 +77,9 @@
   <string name="gravity_drag">Fogantyú oldala</string>
   <string name="dialog_pick_iconpack_title">Ikoncsomag választása</string>
   <string name="default_iconpack_title">Alapértelmezett ikonok</string>
-  <string name="icon_packs_title">Ikon csomagok</string>
+  <string name="icon_packs_title">Ikoncsomagok</string>
   <string name="no_iconpacks_summary">Nincs ikoncsomag telepitve</string>
-  <string name="icon_pack_title">Ikon csomag</string>
+  <string name="icon_pack_title">Ikoncsomag</string>
   <string name="icon_pack_summary">Ikoncsomag használata alkalmazás ikonokhoz</string>
   <string name="category_speed_switcher_title">Gyors váltó</string>
   <string name="speed_switcher_enable_summary">Hosszan nyomja a fogantyút az aktiváláshoz</string>
@@ -149,7 +149,7 @@
   <string name="settings_button_text">Beállítások</string>
   <string name="wallpaper_button_text">Háttérkép</string>
   <string name="category_launcher_title">Indító mód</string>
-  <string name="launcher_mode_summary">Futassa az OmniSwitchet indítóként. Engedélyezés után nyomja meg a kezdőlapot, majd válassza az OmniSwitchet</string>
+  <string name="launcher_mode_summary">OmniSwitch, mint indító futtatása. Engedélyezés után nyomja meg a kezdőlapot, majd válassza az OmniSwitch-t</string>
   <string name="launcher_mode_title">Engedélyez</string>
   <string name="launcher_mode_enable_check">Letiltás nem lehetséges, ha az indító üzemmód aktív. Amikor indító mód aktív lesz, újra aktiválódik</string>
   <string name="welcome_cling_header">Üdvözöljük az OmniSwitch indító módban</string>

@@ -54,6 +54,7 @@
   <string name="toggle_last_app_help">Prebacivanje na poslednji app</string>
   <string name="kill_all_apps_help">Ubiti sve aplikacije</string>
   <string name="kill_other_apps_help">Ubij ostale aplikacije</string>
+  <string name="settings_help">Поставке</string>
   <string name="gravity_center">Тастер са централном стрелицом</string>
   <string name="gravity_drag">Prevucite regulator strani</string>
   <string name="dialog_pick_iconpack_title">Изабери пакет икона</string>

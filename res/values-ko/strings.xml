@@ -21,11 +21,11 @@
   <string name="package_inspect_item_title">앱 정보</string>
   <string name="start_on_boot_title">부팅 시 시작</string>
   <string name="start_on_boot_summary">기기 부팅 시 기능 활성화</string>
-  <string name="opacity_title">투명도</string>
+  <string name="opacity_title">불투명도</string>
   <string name="opacity_summary">오버레이 보기의 배경 투명도</string>
   <string name="animate_title">애니메이션 활성화</string>
   <string name="animate_title_summary">오버레이 뷰의 표시와 숨김 애니메이션화</string>
-  <string name="adjust_handle_help">핸들을 움직여 크기조정</string>
+  <string name="adjust_handle_help">핸들을 움직여 크기 조정</string>
   <string name="icon_size_normal">일반</string>
   <string name="icon_size_small">작게</string>
   <string name="icon_size_large">크게</string>

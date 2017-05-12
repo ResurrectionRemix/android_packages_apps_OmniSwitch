@@ -64,7 +64,7 @@
   <string name="buttons_summary">إعداد خيارات الأزرار في ال...</string>
   <string name="auto_hide_handle">إخفاء تلقائي</string>
   <string name="auto_hide_handle_summary">السحب مرتان لإظهار عرض الطبقات</string>
-  <string name="no_recent_apps_title">لا توجد تطبيقات</string>
+  <string name="no_recent_apps_title">لا توجد تطبيقات حديثة</string>
   <string name="drag_handle_opacity_title">الشفافية</string>
   <string name="drag_handle_enable_title">تمكين</string>
   <string name="drag_handle_enable_summary">تعطيل فقط إذا كنت تستخدم أسلوب تنشيط آخر</string>
@@ -88,7 +88,7 @@
   <string name="back_help">عودة</string>
   <string name="kill_current">إنهاء الحالي</string>
   <string name="kill_current_help">إنهاء التطبيق الحالي</string>
-  <string name="speed_switch_color_summary">الأزرق-التطبيقات الأخيرة. الأخضر-المفضلة. الأحمر-الإجراءات</string>
+  <string name="speed_switch_color_summary">الأزرق -التطبيقات الأخيرة. الأخضر -المفضلات. الأحمر -الإجراءات</string>
   <string name="speed_switch_color">تسوية ألوان الخلفية</string>
   <string name="speed_switch_limit_summary">تحديد المنطقة من أجل تغييرات المستوى</string>
   <string name="speed_switch_limit">تسوية منطقة التغير</string>
@@ -164,8 +164,8 @@
   <string name="launch_stats_delete_notice">تم حذف إحصاءات التشغيل</string>
   <string name="launch_stats_low_title">ادارة المفضلة</string>
   <string name="launch_stats_low_notice">بيانات غير كافية لإنشاء قائمة التطبيقات المفضلة. تريد حقاً الإستمرار؟</string>
-  <string name="revert_recents_summary">ملئ التطبيقات الأخيرة من الأسفل</string>
-  <string name="revert_recents_title">العودة لقائمة التطبيقات الآخيرة</string>
+  <string name="revert_recents_summary">ملئ التطبيقات الحديثة من الأسفل</string>
+  <string name="revert_recents_title">إسترجاع قائمة التطبيقات الحديثة</string>
   <string name="dialog_overlay_perms_title">خطأ بإذن OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">تفعيل \u0022إذن\u0022 الظهور فوق التطبيقات الأخرى</string>
   <string name="package_dock_task_title">إرساء</string>

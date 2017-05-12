@@ -68,9 +68,9 @@
   <string name="drag_handle_opacity_title">Độ trong suốt</string>
   <string name="drag_handle_enable_title">Bật</string>
   <string name="drag_handle_enable_summary">Chỉ tắt khi bạn sử dụng cách kích hoạt khác</string>
-  <string name="allapps_help">Ngăn ứng dụng</string>
+  <string name="allapps_help">Ngăn chứa ứng dụng</string>
   <string name="allapps">Ứng dụng</string>
-  <string name="dim_behind_title">Nền mờ</string>
+  <string name="dim_behind_title">Làm mờ hình nền</string>
   <string name="dim_behind_summary">Áp dụng độ mờ cho toàn bộ màn hình</string>
   <string name="gravity_title">Canh theo chiều ngang</string>
   <string name="gravity_center">Giữa</string>

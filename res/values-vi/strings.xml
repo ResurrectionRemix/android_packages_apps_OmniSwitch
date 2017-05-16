@@ -84,8 +84,8 @@
   <string name="category_speed_switcher_title">Bộ chuyển nhanh</string>
   <string name="speed_switcher_enable_summary">Nhấn giữ chốt kéo để kích hoạt</string>
   <string name="speed_switcher_enable_title">Bật</string>
-  <string name="back">Trở lại</string>
-  <string name="back_help">Trở lại</string>
+  <string name="back">Quay lại</string>
+  <string name="back_help">Quay lại</string>
   <string name="kill_current">Tắt ứng dụng hiện tại</string>
   <string name="kill_current_help">Tắt ứng dụng hiện tại</string>
   <string name="speed_switch_color_summary">Màu xanh - ứng dụng gần đây. Màu xanh lá cây - mục yêu thích. Màu đỏ - hành động</string>
@@ -93,7 +93,7 @@
   <string name="speed_switch_limit_summary">Khu vực giới hạn cho các thay đổi mức độ</string>
   <string name="speed_switch_limit">Khu vực thay đổi mức độ</string>
   <string name="speed_switch_button_title">Nút bấm</string>
-  <string name="speed_switch_button_summary">Cấu hình các nút hành động trong bộ chuyển nhanh</string>
+  <string name="speed_switch_button_summary">Điều chỉnh hành vi các nút trong bộ chuyển nhanh</string>
   <string name="speed_switch_items_summary">Số lượng tối đa của các mục cấp</string>
   <string name="speed_switch_item">Giới hạn cấp mục</string>
   <string name="immersive_mode">Chế độ toàn màn hình</string>

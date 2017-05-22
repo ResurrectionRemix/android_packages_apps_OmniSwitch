@@ -57,7 +57,7 @@ public class BitmapUtils {
                     true);
             canvas.drawBitmap(bitmapResized, border / 2, border / 2, null);
             return new BitmapDrawable(resources, bmResult);
-        } else if (image instanceof VectorDrawable) {
+        } else {
             // create a border around the icon
             Bitmap bmResult = Bitmap.createBitmap(size + border, size + border,
                     Bitmap.Config.ARGB_8888);
@@ -67,7 +67,6 @@ public class BitmapUtils {
             d.draw(canvas);
             return new BitmapDrawable(resources, bmResult);
         }
-        return image;
     }
 
     public static Drawable resize(Resources resources, Drawable image,
@@ -85,7 +84,7 @@ public class BitmapUtils {
             Bitmap bitmapResized = Bitmap.createScaledBitmap(b, size, size, true);
             canvas.drawBitmap(bitmapResized, 0, 0, null);
             return new BitmapDrawable(resources, bmResult);
-        } else if (image instanceof VectorDrawable) {
+        } else {
             Bitmap bmResult = Bitmap.createBitmap(size, size,
                     Bitmap.Config.ARGB_8888);
             canvas.setBitmap(bmResult);
@@ -94,7 +93,6 @@ public class BitmapUtils {
             d.draw(canvas);
             return new BitmapDrawable(resources, bmResult);
         }
-        return image;
     }
 
     public static Drawable colorize(Resources resources, int color,
@@ -103,12 +101,9 @@ public class BitmapUtils {
         color = color & ~0xff000000;
         color = color | 0xff000000;
 
-        if (image instanceof BitmapDrawable || image instanceof VectorDrawable) {
-            Drawable d = image.mutate();
-            d.setColorFilter(color, Mode.SRC_ATOP);
-            return d;
-        }
-        return image;
+        Drawable d = image.mutate();
+        d.setColorFilter(color, Mode.SRC_ATOP);
+        return d;
     }
 
     public static BitmapDrawable shadow(Resources resources, Drawable image) {
@@ -157,7 +152,7 @@ public class BitmapUtils {
             Bitmap b = ((BitmapDrawable) icon).getBitmap();
             width = b.getWidth();
             height = b.getHeight();
-        } else if (icon instanceof VectorDrawable) {
+        } else {
             width = height = iconSize;
         }
         if (width <= 0 || height <= 0) {

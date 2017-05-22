@@ -68,7 +68,7 @@
   <string name="drag_handle_opacity_title">Opacidade</string>
   <string name="drag_handle_enable_title">Ativar</string>
   <string name="drag_handle_enable_summary">Desativar apenas se usar outro método de ativação</string>
-  <string name="allapps_help">Gaveta de aplicações</string>
+  <string name="allapps_help">Painel de aplicações</string>
   <string name="allapps">Aplicações</string>
   <string name="dim_behind_title">Escurecer o fundo</string>
   <string name="dim_behind_summary">Aplicar opacidade ao ecrã completo</string>

@@ -40,7 +40,7 @@ public class SwitchConfiguration {
     public boolean mAnimate = true;
     public int mIconSize = 60; // in dip
     public int mIconSizePx = 60;
-    public int mQSActionSize = 60; // in dp
+    public int mQSActionSizePx = 60; // in px
     public int mActionSizePx = 48; // in px
     public int mOverlayIconSizeDp = 30;
     public int mOverlayIconSizePx = 30;
@@ -97,7 +97,6 @@ public class SwitchConfiguration {
     public BgStyle mBgStyle = BgStyle.SOLID_LIGHT;
     public boolean mLaunchStatsEnabled;
     public boolean mRevertRecents;
-    public int mIconSizeQuickDp = 100; // dpi
     public int mIconSizeQuickPx = 100;
     // TODO do we need a setting for this
     public boolean mLoadThumbOnSwipe = true;
@@ -163,10 +162,11 @@ public class SwitchConfiguration {
         mLevelHeight = Math.round(80 * mDensity);
         mItemChangeWidthX = Math.round(40 * mDensity);
         mActionSizePx = Math.round(48 * mDensity);
+        mQSActionSizePx = Math.round(60 * mDensity);
         mOverlayIconSizePx = Math.round(mOverlayIconSizeDp * mDensity);
         mOverlayIconBorderPx =  Math.round(mOverlayIconBorderDp * mDensity);
         mIconBorderHorizontalPx = Math.round(mIconBorderHorizontalDp * mDensity);
-        mIconSizeQuickPx = Math.round(mIconSizeQuickDp * mDensity);
+        mIconSizeQuickPx = Math.round(100 * mDensity);
         mIconBorderPx = Math.round(mIconBorderDp * mDensity);
         // Render the default thumbnail background
         mThumbnailWidth = (int) context.getResources().getDimensionPixelSize(

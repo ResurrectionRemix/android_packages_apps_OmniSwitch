@@ -47,7 +47,6 @@ import android.util.Log;
 public class RecentTasksLoader {
     private static final String TAG = "RecentTasksLoader";
     private static final boolean DEBUG = false;
-    private static final int MAX_TASKS = 50;
     private static final int THUMB_INIT_LOAD = 6;
     private static final int TASK_INIT_LOAD = 8;
 
@@ -274,7 +273,7 @@ public class RecentTasksLoader {
                 int preloadTaskNum = 0;
                 final boolean withIconPack = IconPackHelper.getInstance(mContext).isIconPackLoaded();
 
-                for (int i = 0; i < numTasks && i < MAX_TASKS; ++i) {
+                for (int i = 0; i < numTasks; ++i) {
                     if (isCancelled()) {
                         break;
                     }
@@ -392,8 +391,9 @@ public class RecentTasksLoader {
                         mLoadedTasks.add(item);
                     }
                     if (withIcons && preloadTaskNum < TASK_INIT_LOAD) {
-                        loadTaskIcon(item, withIconPack);
-                        item.setLabel(item.resolveInfo.loadLabel(mPackageManager).toString());
+                        String label = item.resolveInfo.loadLabel(mPackageManager).toString();
+                        loadTaskIcon(item, withIconPack, label);
+                        item.setLabel(label);
                         preloadTaskNum++;
                     } else {
                         item.setDefaultIcon(mDefaultAppIcon);
@@ -442,15 +442,19 @@ public class RecentTasksLoader {
         return thumbnail;
     }
 
-    void loadTaskIcon(TaskDescription td, boolean withIconPack) {
-        Drawable icon = getFullResIcon(td.resolveInfo, withIconPack);
+    void loadTaskIcon(TaskDescription td, boolean withIconPack, String label) {
+        Drawable icon = getFullResIcon(td.resolveInfo, withIconPack, label);
         if (icon == null) {
             icon = mDefaultAppIcon;
         }
         td.setIcon(icon);
     }
 
-    private Drawable getFullResIcon(ResolveInfo info, boolean withIconPack) {
+    private IconPackHelper getIconPackHelper() {
+        return IconPackHelper.getInstance(mContext);
+    }
+
+    private Drawable getFullResIcon(ResolveInfo info, boolean withIconPack, String label) {
         Resources resources;
         try {
             resources = mPackageManager
@@ -461,16 +465,22 @@ public class RecentTasksLoader {
         if (resources != null) {
             int iconId = 0;
             if (withIconPack) {
-                iconId = IconPackHelper.getInstance(mContext).getResourceIdForActivityIcon(info.activityInfo);
+                iconId = getIconPackHelper().getResourceIdForActivityIcon(info.activityInfo);
                 if (iconId != 0) {
                     return IconPackHelper.getInstance(mContext).getIconPackResources().getDrawable(iconId);
                 }
             }
-
             iconId = info.activityInfo.getIconResource();
             if (iconId != 0) {
                 try {
-                    return resources.getDrawable(iconId, null);
+                    Drawable d = resources.getDrawable(iconId, null);
+                    if (withIconPack) {
+                        d = BitmapUtils.compose(resources,
+                                d, mContext, getIconPackHelper().getIconBackFor(label),
+                                getIconPackHelper().getIconMask(), getIconPackHelper().getIconUpon(),
+                                getIconPackHelper().getIconScale(), mConfiguration.mIconSize, mConfiguration.mDensity);
+                    }
+                    return d;
                 } catch (Exception e) {
                 }
             }
@@ -523,13 +533,14 @@ public class RecentTasksLoader {
     public void loadTaskInfo(final TaskDescription td) {
         synchronized(td) {
             if (!td.isPreloadedTask()) {
+                String label = td.resolveInfo.loadLabel(mPackageManager).toString();
                 final boolean withIconPack = IconPackHelper.getInstance(mContext).isIconPackLoaded();
-                Drawable icon = getFullResIcon(td.resolveInfo, withIconPack);
+                Drawable icon = getFullResIcon(td.resolveInfo, withIconPack, label);
                 if (icon == null) {
                     icon = mDefaultAppIcon;
                 }
                 td.setIcon(icon);
-                td.setLabel(td.resolveInfo.loadLabel(mPackageManager).toString());
+                td.setLabel(label);
             }
         }
     }

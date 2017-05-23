@@ -137,8 +137,11 @@ public class PackageTextView extends TextView implements TaskDescription.ThumbCh
                     RecentTasksLoader.getInstance(mContext).loadTaskInfo(getTask());
                     mLabel = getTask().getLabel();
                 }
+                Drawable iconResized = BitmapUtils.resize(mContext.getResources(), getTask().getIcon(),
+                        configuration.mOverlayIconSizeDp, 0, configuration.mDensity);
+
                 Drawable d = BitmapUtils.overlay(mContext.getResources(), thumb,
-                        getTask().getIcon(),
+                        iconResized,
                         (int)(configuration.mThumbnailWidth * mThumbRatio),
                         (int)(configuration.mThumbnailHeight * mThumbRatio),
                         (configuration.mShowLabels ? getLabel() : null),

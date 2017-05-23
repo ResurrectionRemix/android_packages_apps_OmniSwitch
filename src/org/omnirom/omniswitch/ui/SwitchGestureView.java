@@ -1138,7 +1138,9 @@ public class SwitchGestureView {
                 PackageTextView item = getActionButton(key);
                 if (item != null){
                     mActionList.add(item);
-                    item.setCompoundDrawablesWithIntrinsicBounds(null, item.getOriginalImage(), null, null);
+                    Drawable d = item.getOriginalImage();
+                    d.setBounds(0, 0, mConfiguration.mQSActionSizePx, mConfiguration.mQSActionSizePx);
+                    item.setCompoundDrawables(null, d, null, null);
                 }
             }
         }
@@ -1151,11 +1153,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_HOME){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_home);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.home_help));
@@ -1169,11 +1166,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_BACK){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.ic_sysbar_back);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.back));
@@ -1187,11 +1179,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_KILL_CURRENT){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.kill_current);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.kill_current));
@@ -1205,11 +1192,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_KILL_ALL){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.kill_all);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.kill_all_apps));
@@ -1223,11 +1205,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_KILL_OTHER){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.kill_other);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.kill_other_apps));
@@ -1241,11 +1218,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_LOCK_APP){
             mLockToAppButton = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.ic_pin);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             mLockToAppButton.setOriginalImage(d);
 
             mLockToAppButton.setLabel(mContext.getResources().getString(R.string.lock_to_app));
@@ -1267,11 +1239,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_TOGGLE_APP){
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.ic_lastapp);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.toggle_last_app));
@@ -1285,11 +1252,6 @@ public class SwitchGestureView {
         if (buttonId == SettingsActivity.BUTTON_SPEED_SWITCH_MENU) {
             item = getPackageItemTemplate();
             d = mContext.getResources().getDrawable(R.drawable.ic_menu);
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             item.setOriginalImage(d);
 
             item.setLabel(mContext.getResources().getString(R.string.menu));
@@ -1522,11 +1484,6 @@ public class SwitchGestureView {
             } else {
                 d = mContext.getResources().getDrawable(R.drawable.ic_pin);
             }
-            d = BitmapUtils.resize(mContext.getResources(),
-                    d,
-                    mConfiguration.mQSActionSize,
-                    mConfiguration.mIconBorderDp,
-                    mConfiguration.mDensity);
             mLockToAppButton.setOriginalImage(d);
         }
     }

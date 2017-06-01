@@ -93,7 +93,7 @@
   <string name="speed_switch_limit_summary">Khu vực giới hạn cho các thay đổi mức độ</string>
   <string name="speed_switch_limit">Khu vực thay đổi mức độ</string>
   <string name="speed_switch_button_title">Nút bấm</string>
-  <string name="speed_switch_button_summary">Điều chỉnh hành vi các nút trong bộ chuyển nhanh</string>
+  <string name="speed_switch_button_summary">Cấu hình các nút hành động trong bộ chuyển nhanh</string>
   <string name="speed_switch_items_summary">Số lượng tối đa của các mục cấp</string>
   <string name="speed_switch_item">Giới hạn cấp mục</string>
   <string name="immersive_mode">Chế độ toàn màn hình</string>
@@ -123,7 +123,7 @@
   <string name="one_day">1 ngày</string>
   <string name="two_days">2 ngày</string>
   <string name="one_week">1 tuần</string>
-  <string name="app_filter_time_title">Hoạt động từ</string>
+  <string name="app_filter_time_title">Hoạt động khi</string>
   <string name="close_help">Đóng overlay</string>
   <string name="close">Đóng</string>
   <string name="thumb_size_title">Kích cỡ hình thu nhỏ</string>

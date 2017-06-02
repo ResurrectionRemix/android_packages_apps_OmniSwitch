@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Bật \u0022Draw trên các quyền apps\u0022 khác</string>
   <string name="package_dock_task_title">Thu nhỏ</string>
   <string name="package_undock_task_title">Bỏ thu nhỏ</string>
+  <string name="swipe_thumb_update_summary">Hình thu nhỏ sẽ được cập nhật trong quá trình hiển thị lớp phủ</string>
+  <string name="swipe_thumb_update_title">Tải hình thu nhỏ không đồng bộ</string>
+  <string name="dim_action_buttons_summary">Thêm mờ nền phụ cho nút hành động</string>
+  <string name="dim_action_buttons_title">Nền nút hành động mờ</string>
 </resources>

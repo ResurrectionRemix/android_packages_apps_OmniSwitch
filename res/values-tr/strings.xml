@@ -61,7 +61,7 @@
   <string name="settings">Ayarlar</string>
   <string name="home">Ana sayfa</string>
   <string name="buttons_title">Tuşlar</string>
-  <string name="buttons_summary">Hareket tuşlarını yer paylaşım görünümünde yapılandır</string>
+  <string name="buttons_summary">Eylem tuşlarını yer paylaşım görünümünde yapılandır</string>
   <string name="auto_hide_handle">Otomatik gizle</string>
   <string name="auto_hide_handle_summary">Sürükleyiciyi göstermek için iki parmakla sürükle</string>
   <string name="no_recent_apps_title">Son kullanılan uygulama yok</string>
@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Etkin \u0022Diğer uygulamalar üzerinde\u0022 izin</string>
   <string name="package_dock_task_title">Tak</string>
   <string name="package_undock_task_title">Çıkart</string>
+  <string name="swipe_thumb_update_summary">Küçük resimler, yer paylaşımı gösterimi sırasında güncellenecektir</string>
+  <string name="swipe_thumb_update_title">Eşzamansız küçük resim yükleme</string>
+  <string name="dim_action_buttons_summary">Eylem tuşlarının arka planına ekstra karartma ekleyin</string>
+  <string name="dim_action_buttons_title">Eylem tuşlarının arka planını karart</string>
 </resources>

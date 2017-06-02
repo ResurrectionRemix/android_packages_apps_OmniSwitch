@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">啟用 \u0022 在其他應用程式上顯示 \u0022 許可權</string>
   <string name="package_dock_task_title">停駐</string>
   <string name="package_undock_task_title">取消停駐</string>
+  <string name="swipe_thumb_update_summary">縮圖將更新期間重疊顯示</string>
+  <string name="swipe_thumb_update_title">非同步縮圖載入</string>
+  <string name="dim_action_buttons_summary">新增額外背景昏暗的動作按鈕</string>
+  <string name="dim_action_buttons_title">昏暗的動作按鈕背景</string>
 </resources>

@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Включите \u0022Наложение поверх других окон\u0022 разрешение</string>
   <string name="package_dock_task_title">Закрепить</string>
   <string name="package_undock_task_title">Открепить</string>
+  <string name="swipe_thumb_update_summary">Эскизы будут обновлены во время показа наложения</string>
+  <string name="swipe_thumb_update_title">Асинхронная загрузка эскизов</string>
+  <string name="dim_action_buttons_summary">Добавить дополнительное затемнение фона для кнопок действий</string>
+  <string name="dim_action_buttons_title">Затемнение фона кнопки действий</string>
 </resources>

@@ -281,7 +281,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             return;
         }
         if (DEBUG) {
-            Log.d(TAG, "updateRecentsAppsList2");
+            Log.d(TAG, "updateRecentsAppsList before notifyDataSetChanged " + System.currentTimeMillis());
         }
         mRecentListAdapter.notifyDataSetChanged();
 

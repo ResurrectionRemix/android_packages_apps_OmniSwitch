@@ -103,6 +103,28 @@ public class SwitchManager {
         }
     }
 
+    public void showPreloaded() {
+        if (!isShowing()) {
+            if (DEBUG){
+                Log.d(TAG, "showPreloaded");
+            }
+
+            // show immediately
+            mLayout.show();
+        }
+    }
+
+    public void beforePreloadTasks() {
+        if (!isShowing()) {
+            if (DEBUG){
+                Log.d(TAG, "beforePreloadTasks");
+            }
+            clearTasks();
+            mLayout.setHandleRecentsUpdate(true);
+            mRestoreStack = false;
+        }
+    }
+
     public void showHidden() {
         if (!isShowing()) {
             if (DEBUG){

@@ -40,7 +40,9 @@
         <receiver android:name="org.omnirom.omniswitch.SwitchService$RecentsReceiver" >
             <intent-filter>
                 <action android:name="org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY" />
+                <action android:name="org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY2" />
                 <action android:name="org.omnirom.omniswitch.ACTION_RESTORE_HOME_STACK" />
+                <action android:name="org.omnirom.omniswitch.ACTION_PRELOAD_TASKS" />
             </intent-filter>
         </receiver>
         <activity

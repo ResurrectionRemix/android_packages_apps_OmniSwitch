@@ -170,4 +170,6 @@
   <string name="dialog_overlay_perms_msg">Activer l\'autorisation \u0022Se de se superposer aux autres applications\u0022</string>
   <string name="package_dock_task_title">Connecter</string>
   <string name="package_undock_task_title">Déconnecter</string>
+  <string name="swipe_thumb_update_summary">Les vignettes seront actualisées au cours pendant que la superposition s\'affiche</string>
+  <string name="swipe_thumb_update_title">Chargement asynchrone des miniatures</string>
 </resources>

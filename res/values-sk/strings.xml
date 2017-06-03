@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Umožniť \u0022Draw cez iné aplikácie\u0022 povolenia</string>
   <string name="package_dock_task_title">Dokovacia stanica</string>
   <string name="package_undock_task_title">Vybratie z doku</string>
+  <string name="swipe_thumb_update_summary">Miniatúry sa aktualizujú počas zobrazovania prekrytia</string>
+  <string name="swipe_thumb_update_title">Asynchrónne načítanie miniatúr</string>
+  <string name="dim_action_buttons_summary">Pridať ďalšie pozadie tieňovania akčných tlačidiel</string>
+  <string name="dim_action_buttons_title">Tieňovanie pozadia akčného tlačidla</string>
 </resources>

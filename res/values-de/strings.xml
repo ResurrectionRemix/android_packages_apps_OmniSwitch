@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Erlaube \u0022über andere Apps einblenden\u0022 Berechtigung</string>
   <string name="package_dock_task_title">Dock</string>
   <string name="package_undock_task_title">Entdock</string>
+  <string name="swipe_thumb_update_summary">Miniaturansichten werden während der Overlay-Anzeige aktualisiert</string>
+  <string name="swipe_thumb_update_title">Asynchrones Laden der Miniaturansichten</string>
+  <string name="dim_action_buttons_summary">Extra Hintergrund-Abdunklung zur Schaltfläche hinzufügen</string>
+  <string name="dim_action_buttons_title">Dimme Schaltflächenhintergrund</string>
 </resources>

@@ -70,7 +70,7 @@
   <string name="drag_handle_enable_summary">Desabilite apenas se você usar outro método de ativação</string>
   <string name="allapps_help">Gaveta de apps</string>
   <string name="allapps">Aplicativos</string>
-  <string name="dim_behind_title">Escurecer fundo</string>
+  <string name="dim_behind_title">Fundo escuro</string>
   <string name="dim_behind_summary">Aplicar opacidade para a tela completa</string>
   <string name="gravity_title">Gravidade horizontal</string>
   <string name="gravity_center">Centralizar</string>
@@ -170,8 +170,8 @@
   <string name="dialog_overlay_perms_msg">Habilitar o \u0022Sobrepor sobre outros apps\u0022 permissão</string>
   <string name="package_dock_task_title">Ancorar</string>
   <string name="package_undock_task_title">Desancorar</string>
-  <string name="swipe_thumb_update_summary">As miniaturas serão atualizadas ao mostrar a sobreposição</string>
+  <string name="swipe_thumb_update_summary">As miniaturas serão atualizadas por sobreposição durante a exibição</string>
   <string name="swipe_thumb_update_title">Carregamento assíncrono de miniaturas</string>
   <string name="dim_action_buttons_summary">Adicionar escurecimento extra ao fundo dos botões de ação</string>
-  <string name="dim_action_buttons_title">Escurecer fundo dos botões de ação</string>
+  <string name="dim_action_buttons_title">Fundo escuro do botão de ação</string>
 </resources>

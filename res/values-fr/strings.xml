@@ -65,7 +65,7 @@
   <string name="auto_hide_handle">Masquage automatique</string>
   <string name="auto_hide_handle_summary">Balayer deux fois sur le halo d\'ouverture pour afficher la vue superposée</string>
   <string name="no_recent_apps_title">Aucune application récente</string>
-  <string name="drag_handle_opacity_title">Transparence</string>
+  <string name="drag_handle_opacity_title">Opacité</string>
   <string name="drag_handle_enable_title">Activer</string>
   <string name="drag_handle_enable_summary">Désactiver uniquement si vous utilisez une autre méthode d’activation</string>
   <string name="allapps_help">Tiroir d\'application</string>
@@ -74,7 +74,7 @@
   <string name="dim_behind_summary">Appliquer le filtre sur toute la surface de l\'écran</string>
   <string name="gravity_title">Gravité horizontale</string>
   <string name="gravity_center">Centré</string>
-  <string name="gravity_drag">Sur le coté du glissement</string>
+  <string name="gravity_drag">Faites glisser la poignée d\'un côté</string>
   <string name="dialog_pick_iconpack_title">Choisir un pack d\'icônes</string>
   <string name="default_iconpack_title">Icônes par défaut</string>
   <string name="icon_packs_title">Packs d\'icônes</string>
@@ -167,9 +167,9 @@
   <string name="revert_recents_summary">Ajouter les applications récentes à partir du bas</string>
   <string name="revert_recents_title">Inverser le classement de la liste des applications récentes</string>
   <string name="dialog_overlay_perms_title">Erreur, une autorisation est requis pour OmniSwitch</string>
-  <string name="dialog_overlay_perms_msg">Activer l\'autorisation \u0022Se de se superposer aux autres applications\u0022</string>
+  <string name="dialog_overlay_perms_msg">Autoriser à \u0022De se superposer aux autres applications\u0022</string>
   <string name="package_dock_task_title">Connecter</string>
   <string name="package_undock_task_title">Déconnecter</string>
-  <string name="swipe_thumb_update_summary">Les vignettes seront actualisées au cours pendant que la superposition s\'affiche</string>
+  <string name="swipe_thumb_update_summary">Les miniatures seront actualisées pendant l\'affichage</string>
   <string name="swipe_thumb_update_title">Chargement asynchrone des miniatures</string>
 </resources>

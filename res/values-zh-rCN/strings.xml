@@ -171,4 +171,8 @@
   <string name="dialog_overlay_perms_msg">启用 \u0022在其它应用上层显示\u0022 权限</string>
   <string name="package_dock_task_title">固定</string>
   <string name="package_undock_task_title">取消固定</string>
+  <string name="swipe_thumb_update_summary">缩略图将在叠加层展示时更新</string>
+  <string name="swipe_thumb_update_title">非同步的缩略图加载</string>
+  <string name="dim_action_buttons_summary">对操作按钮添加额外的暗色背景</string>
+  <string name="dim_action_buttons_title">暗色的动作按钮背景</string>
 </resources>

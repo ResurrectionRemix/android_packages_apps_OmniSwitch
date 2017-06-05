@@ -22,7 +22,7 @@
   <string name="start_on_boot_title">Açılışta başlat</string>
   <string name="start_on_boot_summary">Cihaz açılışında başlat ve aktif et</string>
   <string name="opacity_title">Saydamlık</string>
-  <string name="opacity_summary">Bindirme görünümü arka plan saydamlığı</string>
+  <string name="opacity_summary">Arayüz görünümü arka plan saydamlığı</string>
   <string name="animate_title">Animasyon</string>
   <string name="animate_title_summary">Görünüm yüklerken animasyon göster ve gizle</string>
   <string name="adjust_handle_help">Sürükleme yöneticisini taşı ve yeniden boyutlandır</string>
@@ -61,7 +61,7 @@
   <string name="settings">Ayarlar</string>
   <string name="home">Ana sayfa</string>
   <string name="buttons_title">Tuşlar</string>
-  <string name="buttons_summary">Eylem tuşlarını yer paylaşım görünümünde yapılandır</string>
+  <string name="buttons_summary">Eylem tuşlarını arayüz görünümünde yapılandır</string>
   <string name="auto_hide_handle">Otomatik gizle</string>
   <string name="auto_hide_handle_summary">Sürükleyiciyi göstermek için iki parmakla sürükle</string>
   <string name="no_recent_apps_title">Son kullanılan uygulama yok</string>
@@ -124,7 +124,7 @@
   <string name="two_days">2 gün</string>
   <string name="one_week">1 hafta</string>
   <string name="app_filter_time_title">Açılıştan beri etkin</string>
-  <string name="close_help">Bindirmeyi kapat</string>
+  <string name="close_help">Arayüzü kapat</string>
   <string name="close">Kapat</string>
   <string name="thumb_size_title">Küçük resim boyutu</string>
   <string name="thumb_size_normal">Standart</string>
@@ -143,7 +143,7 @@
   <string name="package_bottom_task_title">Alt</string>
   <string name="package_right_task_title">Sağ</string>
   <string name="package_full_task_title">Tam boyut</string>
-  <string name="shortcut_label_toggle_overlay">Bindirme geçişi</string>
+  <string name="shortcut_label_toggle_overlay">Arayüz geçişi</string>
   <string name="adjust_handle_title_new">Sürükleme yöneticisini ayarla</string>
   <string name="adjust_handle_summary">Pozisyon boyutunu ve rengini yapılandır</string>
   <string name="settings_button_text">Ayarlar</string>
@@ -170,7 +170,7 @@
   <string name="dialog_overlay_perms_msg">Etkin \u0022Diğer uygulamalar üzerinde\u0022 izin</string>
   <string name="package_dock_task_title">Tak</string>
   <string name="package_undock_task_title">Çıkart</string>
-  <string name="swipe_thumb_update_summary">Küçük resimler, yer paylaşımı gösterimi sırasında güncellenecektir</string>
+  <string name="swipe_thumb_update_summary">Küçük resimler, arayüz gösterimi sırasında güncellenecektir</string>
   <string name="swipe_thumb_update_title">Eşzamansız küçük resim yükleme</string>
   <string name="dim_action_buttons_summary">Eylem tuşlarının arka planına ekstra karartma ekleyin</string>
   <string name="dim_action_buttons_title">Eylem tuşlarının arka planını karart</string>

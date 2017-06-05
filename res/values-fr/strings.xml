@@ -172,4 +172,6 @@
   <string name="package_undock_task_title">Déconnecter</string>
   <string name="swipe_thumb_update_summary">Les miniatures seront actualisées pendant l\'affichage</string>
   <string name="swipe_thumb_update_title">Chargement asynchrone des miniatures</string>
+  <string name="dim_action_buttons_summary">Ajouter un arrière-plan aux boutons d\'actions Dim</string>
+  <string name="dim_action_buttons_title">Arrière-plan du bouton d\'action Dim</string>
 </resources>

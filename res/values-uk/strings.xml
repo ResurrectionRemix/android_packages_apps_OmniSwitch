@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Надати дозвіл розміщувати поверх інших вікон</string>
   <string name="package_dock_task_title">Закріпити</string>
   <string name="package_undock_task_title">Відкріпити</string>
+  <string name="swipe_thumb_update_summary">Ескізи оновляться під час показу накладання</string>
+  <string name="swipe_thumb_update_title">Асинхронне завантаження ескізів</string>
+  <string name="dim_action_buttons_summary">Додати затемнення фону для кнопок дії</string>
+  <string name="dim_action_buttons_title">Затемнення фону кнопки дії</string>
 </resources>

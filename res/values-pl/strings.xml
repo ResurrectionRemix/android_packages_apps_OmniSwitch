@@ -170,6 +170,7 @@
   <string name="dialog_overlay_perms_msg">Aktywuj pozwolenie na \u0022Rysowanie nad innymi aplikacjami\u0022</string>
   <string name="package_dock_task_title">Zadokuj</string>
   <string name="package_undock_task_title">Oddokuj</string>
+  <string name="swipe_thumb_update_summary">Miniatury zostaną zaktualizowane podczas wyświetlania nakładki</string>
   <string name="swipe_thumb_update_title">Asynchroniczne ładowanie miniaturek</string>
   <string name="dim_action_buttons_summary">Dodaj przyciemnione tło do przycisków akcji</string>
   <string name="dim_action_buttons_title">Przyciemnij tło przycisków akcji</string>

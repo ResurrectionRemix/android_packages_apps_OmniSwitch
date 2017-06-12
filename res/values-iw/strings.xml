@@ -86,7 +86,11 @@
   <string name="kill_current">להרוג את הנוכחי</string>
   <string name="kill_current_help">להרוג את היישום הנוכחי</string>
   <string name="speed_switch_color_summary">כחול - אפליקציות אחרונות. ירוק - מועדפים. אדום - פעולות</string>
+  <string name="immersive_mode">מצב מסך מלא</string>
+  <string name="immersive_mode_help">החלף מצב מסך מלא</string>
   <string name="package_add_favorite_title">הוסף למועדפים</string>
+  <string name="package_remove_favorite_title">הסר ממועדפים</string>
+  <string name="open_favorite_help">פתח/סגור את תצוגת המעודפים</string>
   <string name="button_pos_title">מיקום לחצן</string>
   <string name="button_pos_top">למעלה שמאל</string>
   <string name="button_pos_bottom">למטה ימין</string>

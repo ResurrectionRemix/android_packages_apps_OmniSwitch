@@ -170,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Omogućite dopuštenje za \u0022povlačenje preko drugih aplikacija\u0022.</string>
   <string name="package_dock_task_title">Spoji</string>
   <string name="package_undock_task_title">Odspoji</string>
+  <string name="swipe_thumb_update_summary">Sličice će se ažurirati tijekom prikaza sloja</string>
+  <string name="swipe_thumb_update_title">Asinkrono učitavanje sličica</string>
+  <string name="dim_action_buttons_summary">Dodajte dodatnu blijeđenje pozadine gumbima radnji.</string>
+  <string name="dim_action_buttons_title">Blijeđenje pozadine gumba</string>
 </resources>

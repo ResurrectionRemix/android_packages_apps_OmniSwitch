@@ -58,6 +58,7 @@ public class SwitchService extends Service {
     private Set<String> mPrefKeyFilter = new HashSet<String>();
     private static boolean mIsRunning;
     private static boolean mCommitSuicide;
+    private static boolean mPreloadDone;
 
     public static boolean isRunning() {
         return mIsRunning;
@@ -199,8 +200,15 @@ public class SwitchService extends Service {
                     if (mManager.isShowing()) {
                         mManager.hide(false);
                     } else {
-                        mManager.showPreloaded();
+                        if (mPreloadDone) {
+                            mManager.showPreloaded();
+                        } else {
+                            // just in case
+                            Log.e(TAG, "ACTION_TOGGLE_OVERLAY2 called without preload - fallback to ACTION_TOGGLE_OVERLAY");
+                            mManager.show();
+                        }
                     }
+                    mPreloadDone = false;
                 } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
                     int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
                     Log.d(TAG, "user switch " + mUserId + "->" + userId);
@@ -228,6 +236,7 @@ public class SwitchService extends Service {
                         RecentTasksLoader.getInstance(context).cancelLoadingTasks();
                         RecentTasksLoader.getInstance(context).setSwitchManager(mManager);
                         RecentTasksLoader.getInstance(context).preloadTasks();
+                        mPreloadDone = true;
                     }
                 }
             } catch(Exception e) {

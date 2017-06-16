@@ -25,6 +25,7 @@
 
 	<PreferenceCategory
 		android:key="category_overlay"
+		android:dependency="enable"
 		android:title="@string/category_overlay_title" >
 		<CheckBoxPreference
 			android:defaultValue="true"
@@ -123,6 +124,7 @@
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="app_filter_category"
+		android:dependency="enable"
 		android:title="@string/app_filter_category_title" >
 		<CheckBoxPreference
 			android:defaultValue="false"
@@ -140,6 +142,7 @@
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_drag_handle"
+		android:dependency="enable"
 		android:title="@string/category_drag_handle_title" >
 		<SwitchPreference
 			android:defaultValue="true"
@@ -162,6 +165,7 @@
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_speed_switcher"
+		android:dependency="enable"
 		android:title="@string/category_speed_switcher_title" >
 		<SwitchPreference
 			android:defaultValue="true"
@@ -198,6 +202,7 @@
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="category_favorite"
+		android:dependency="enable"
 		android:title="@string/category_favorite_title" >
 		<Preference
 			android:key="favorite_apps_config"
@@ -224,6 +229,7 @@
 
         <PreferenceCategory
 		android:key="category_launcher"
+		android:dependency="enable"
 		android:title="@string/category_launcher_title" >
 		<SwitchPreference
 			android:key="launcher_mode"

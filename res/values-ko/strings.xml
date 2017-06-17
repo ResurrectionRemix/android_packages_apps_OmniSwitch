@@ -135,7 +135,6 @@
   <string name="app_filter_running_title">실행 중인 앱만 표시</string>
   <string name="menu">메뉴</string>
   <string name="menu_help">메뉴</string>
-  <string name="enable_title">활성화</string>
   <string name="adjust_handle_width">폭</string>
   <string name="adjust_handle_position">위치</string>
   <string name="package_top_task_title">위</string>

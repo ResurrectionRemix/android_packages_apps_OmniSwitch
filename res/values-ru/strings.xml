@@ -135,7 +135,6 @@
   <string name="app_filter_running_title">Только запущенные</string>
   <string name="menu">Меню</string>
   <string name="menu_help">Меню</string>
-  <string name="enable_title">Включить</string>
   <string name="adjust_handle_width">Ширина</string>
   <string name="adjust_handle_position">Расположение</string>
   <string name="package_top_task_title">Сверху</string>

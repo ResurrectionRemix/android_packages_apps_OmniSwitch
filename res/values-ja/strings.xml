@@ -135,7 +135,6 @@
   <string name="app_filter_running_title">実行中のみ</string>
   <string name="menu">メニュー</string>
   <string name="menu_help">メニュー</string>
-  <string name="enable_title">有効にする</string>
   <string name="adjust_handle_width">幅</string>
   <string name="adjust_handle_position">位置</string>
   <string name="package_top_task_title">上詰め</string>

@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">仅运行中</string>
   <string name="menu">菜单</string>
   <string name="menu_help">菜单</string>
+  <string name="enable_title">启用自定义行为</string>
   <string name="adjust_handle_width">宽度</string>
   <string name="adjust_handle_position">位置</string>
   <string name="package_top_task_title">上</string>

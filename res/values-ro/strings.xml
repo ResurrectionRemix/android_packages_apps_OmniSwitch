@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">Doar rulare</string>
   <string name="menu">Meniu</string>
   <string name="menu_help">Meniu</string>
+  <string name="enable_title">Activați personalizările</string>
   <string name="adjust_handle_width">Lătime</string>
   <string name="adjust_handle_position">Poziție</string>
   <string name="package_top_task_title">Deasupra</string>

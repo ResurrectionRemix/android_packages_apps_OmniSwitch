@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">Yalnızca çalışan</string>
   <string name="menu">Menü</string>
   <string name="menu_help">Menü</string>
+  <string name="enable_title">Özelleştirmeleri etkinleştir</string>
   <string name="adjust_handle_width">Genişlik</string>
   <string name="adjust_handle_position">Konum</string>
   <string name="package_top_task_title">Üst</string>

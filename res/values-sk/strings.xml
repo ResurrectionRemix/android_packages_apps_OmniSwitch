@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">Len bežiace</string>
   <string name="menu">Ponuka</string>
   <string name="menu_help">Ponuka</string>
+  <string name="enable_title">Povoliť prispôsobenie</string>
   <string name="adjust_handle_width">Šírka</string>
   <string name="adjust_handle_position">Pozícia</string>
   <string name="package_top_task_title">Hore</string>

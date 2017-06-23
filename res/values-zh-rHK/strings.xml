@@ -135,7 +135,7 @@
   <string name="app_filter_running_title">只執行</string>
   <string name="menu">選單</string>
   <string name="menu_help">選單</string>
-  <string name="enable_title">啟用自訂動作</string>
+  <string name="enable_title">啟用自定義功能</string>
   <string name="adjust_handle_width">闊度</string>
   <string name="adjust_handle_position">位置</string>
   <string name="package_top_task_title">上方</string>

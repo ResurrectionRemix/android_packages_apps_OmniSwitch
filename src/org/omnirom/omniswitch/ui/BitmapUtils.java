@@ -121,8 +121,8 @@ public class BitmapUtils {
         canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.ANTI_ALIAS_FLAG,
                 Paint.FILTER_BITMAP_FLAG));
 
-        int width = iconSize;
-        int height = iconSize;
+        int width = size;
+        int height = size;
 
         // TODO
         if (iconBack == null && iconMask == null && iconUpon == null){

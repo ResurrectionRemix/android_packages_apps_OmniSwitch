@@ -52,7 +52,9 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
 
     public final static String[] sSupportedActions = new String[] {
         "org.adw.launcher.THEMES",
-        "com.gau.go.launcherex.theme"
+        "com.gau.go.launcherex.theme",
+        "com.dlto.atom.launcher.THEME",
+        "com.novalauncher.THEME"
     };
 
     public static final String[] sSupportedCategories = new String[] {
@@ -80,8 +82,10 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
     public static IconPackHelper getInstance(Context context) {
         if (sInstance == null){
             sInstance = new IconPackHelper();
+            sInstance.setContext(context);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            sInstance.init(prefs);
         }
-        sInstance.setContext(context);
         return sInstance;
     }
 
@@ -620,6 +624,13 @@ public class IconPackHelper implements DialogInterface.OnDismissListener {
                 loadIconPack();
             }
             PackageManager.getInstance(mContext).updatePackageIcons();
+        }
+    }
+
+    private void init(SharedPreferences prefs) {
+        mCurrentIconPack = prefs.getString(SettingsActivity.PREF_ICONPACK, "");
+        if (!TextUtils.isEmpty(mCurrentIconPack)){
+            loadIconPack();
         }
     }
 }

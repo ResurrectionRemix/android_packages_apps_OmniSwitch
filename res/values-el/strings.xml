@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">Τρέχουν μόνο</string>
   <string name="menu">Μενού</string>
   <string name="menu_help">Μενού</string>
+  <string name="enable_title">Ενεργοποίηση προσαρμογών</string>
   <string name="adjust_handle_width">Πλάτος</string>
   <string name="adjust_handle_position">Θέση</string>
   <string name="package_top_task_title">Κορυφή</string>

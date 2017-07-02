@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">実行中のみ</string>
   <string name="menu">メニュー</string>
   <string name="menu_help">メニュー</string>
+  <string name="enable_title">カスタマイズを有効にします。</string>
   <string name="adjust_handle_width">幅</string>
   <string name="adjust_handle_position">位置</string>
   <string name="package_top_task_title">上詰め</string>
@@ -169,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">他のアプリを上書きする権限を有効にする</string>
   <string name="package_dock_task_title">ドック</string>
   <string name="package_undock_task_title">ドック解除</string>
+  <string name="swipe_thumb_update_summary">オーバーレイ表示時にサムネイルが更新されます。</string>
+  <string name="swipe_thumb_update_title">非同期のサムネイル読み込み</string>
+  <string name="dim_action_buttons_summary">アクションボタンに余分な背景を追加する</string>
+  <string name="dim_action_buttons_title">暗いアクションボタンの背景</string>
 </resources>

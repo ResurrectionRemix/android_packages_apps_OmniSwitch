@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">Endast körande</string>
   <string name="menu">Meny</string>
   <string name="menu_help">Meny</string>
+  <string name="enable_title">Aktivera anpassningar</string>
   <string name="adjust_handle_width">Bredd</string>
   <string name="adjust_handle_position">Position</string>
   <string name="package_top_task_title">Överst</string>
@@ -169,4 +170,8 @@
   <string name="dialog_overlay_perms_msg">Aktivera \u0022Draw över andra appars\u0022 tillstånd</string>
   <string name="package_dock_task_title">Docka</string>
   <string name="package_undock_task_title">Avdocka</string>
+  <string name="swipe_thumb_update_summary">Miniatyrer kommer att uppdateras vid visning av overlay</string>
+  <string name="swipe_thumb_update_title">Asynkron laddning av miniatyrer</string>
+  <string name="dim_action_buttons_summary">Lägg till extra bakgrundsdimnimg på händelseknappar</string>
+  <string name="dim_action_buttons_title">Dimma bakgrund på händelseknapp</string>
 </resources>

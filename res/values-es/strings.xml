@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">Sólo ejecutar</string>
   <string name="menu">Menú</string>
   <string name="menu_help">Menú</string>
+  <string name="enable_title">Permitir las personalizaciones</string>
   <string name="adjust_handle_width">Ancho</string>
   <string name="adjust_handle_position">Posición</string>
   <string name="package_top_task_title">Arriba</string>

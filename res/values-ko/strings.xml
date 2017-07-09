@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">실행 중인 앱만 표시</string>
   <string name="menu">메뉴</string>
   <string name="menu_help">메뉴</string>
+  <string name="enable_title">사용자 설정 활성화</string>
   <string name="adjust_handle_width">폭</string>
   <string name="adjust_handle_position">위치</string>
   <string name="package_top_task_title">위</string>
@@ -170,5 +171,6 @@
   <string name="package_dock_task_title">도킹</string>
   <string name="package_undock_task_title">도킹 해제</string>
   <string name="swipe_thumb_update_summary">썸네일은 오버레이가 표시되는 동안 업데이트 됩니다.</string>
+  <string name="swipe_thumb_update_title">비동기 썸네일 로딩</string>
   <string name="dim_action_buttons_title">기능 버튼 배경 어둡게 하기</string>
 </resources>

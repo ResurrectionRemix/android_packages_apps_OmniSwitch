@@ -175,4 +175,5 @@
         <string name="swipe_thumb_update_title">Asynchronous thumbnail loading</string>
         <string name="dim_action_buttons_summary">Add extra background dim to action buttons</string>
         <string name="dim_action_buttons_title">Dim action button background</string>
+        <string name="package_force_stop_title">Force stop</string>
 </resources>

@@ -824,7 +824,9 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.package_stop_task) {
-                    mRecentsManager.killTask(ad);
+                    mRecentsManager.killTask(ad, true);
+                } else if (item.getItemId() == R.id.package_force_stop) {
+                    mRecentsManager.forceStop(ad, true);
                 } else if (item.getItemId() == R.id.package_inspect_item) {
                     mRecentsManager.startApplicationDetailsActivity(ad
                             .getPackageName());

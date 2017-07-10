@@ -188,7 +188,7 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
                         }
                         try {
                             TaskDescription ad = mRecentsManager.getTasks().get(position);
-                            mRecentsManager.killTask(ad);
+                            mRecentsManager.killTask(ad, false);
                         } catch (IndexOutOfBoundsException e) {
                             // ignored
                         }

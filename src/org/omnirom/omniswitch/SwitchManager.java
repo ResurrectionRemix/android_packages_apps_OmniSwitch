@@ -222,21 +222,28 @@ public class SwitchManager {
         }
     }
 
-    public void killTask(TaskDescription ad) {
+    public void killTask(TaskDescription ad, boolean close) {
         if (mConfiguration.mRestrictedMode){
             return;
+        }
+
+        if(close){
+            hide(false);
         }
 
         mAm.removeTask(ad.getPersistentTaskId());
         if (DEBUG){
             Log.d(TAG, "kill " + ad.getLabel());
         }
-        ad.setKilled();
-        mLoadedTasks.remove(ad);
-        // make sure we stay on the correct focus
-        // and killing is not changing it - overlay stays open here
-        restoreHomeStack();
-        mLayout.refresh();
+
+        if (!close) {
+            ad.setKilled();
+            mLoadedTasks.remove(ad);
+            // make sure we stay on the correct focus
+            // and killing is not changing it - overlay stays open here
+            restoreHomeStack();
+            mLayout.refresh();
+        }
     }
 
     /**
@@ -662,6 +669,30 @@ public class SwitchManager {
             RecentTasksLoader.getInstance(mContext).cancelLoadingTasks();
             RecentTasksLoader.getInstance(mContext).setSwitchManager(this);
             RecentTasksLoader.getInstance(mContext).loadTasksInBackground(10, false, false);
+        }
+    }
+
+    public void forceStop(TaskDescription ad, boolean close) {
+        if (mConfiguration.mRestrictedMode){
+            return;
+        }
+
+        if(close){
+            hide(false);
+        }
+
+        mAm.forceStopPackage(ad.getPackageName());
+        if (DEBUG){
+            Log.d(TAG, "forceStop " + ad.getLabel());
+        }
+
+        if (!close) {
+            ad.setKilled();
+            mLoadedTasks.remove(ad);
+            // make sure we stay on the correct focus
+            // and killing is not changing it - overlay stays open here
+            restoreHomeStack();
+            mLayout.refresh();
         }
     }
 }

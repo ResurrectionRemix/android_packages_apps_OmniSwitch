@@ -20,6 +20,9 @@
         android:id="@+id/package_stop_task"
         android:title="@string/package_stop_task_title"/>
     <item
+        android:id="@+id/package_force_stop"
+        android:title="@string/package_force_stop_title"/>
+    <item
         android:id="@+id/package_inspect_item"
         android:title="@string/package_inspect_item_title"/>
     <item

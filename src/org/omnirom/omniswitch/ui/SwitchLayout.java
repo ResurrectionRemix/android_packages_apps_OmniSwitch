@@ -191,7 +191,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
                         try {
                             TaskDescription ad = mRecentsManager.getTasks()
                                     .get(reverseSortedPositions[0]);
-                            mRecentsManager.killTask(ad);
+                            mRecentsManager.killTask(ad, false);
                         } catch (IndexOutOfBoundsException e) {
                             // ignored
                         }

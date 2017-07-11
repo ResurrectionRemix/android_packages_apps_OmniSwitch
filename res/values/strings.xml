@@ -169,11 +169,15 @@
         <string name="revert_recents_title">Revert recent apps list</string>
         <string name="dialog_overlay_perms_title">OmniSwitch permission error</string>
         <string name="dialog_overlay_perms_msg">Enable \u0022Draw over other apps\u0022 permission</string>
-        <string name="package_dock_task_title">Dock</string>
-        <string name="package_undock_task_title">Undock</string>
+        <string name="package_dock_task_title">Dock app</string>
+        <string name="package_undock_task_title">Undock app</string>
         <string name="swipe_thumb_update_summary">Thumbnails will be updated during overlay show</string>
         <string name="swipe_thumb_update_title">Asynchronous thumbnail loading</string>
         <string name="dim_action_buttons_summary">Add extra background dim to action buttons</string>
         <string name="dim_action_buttons_title">Dim action button background</string>
         <string name="package_force_stop_title">Force stop</string>
+        <string name="package_lock_app_title">Lock app</string>
+        <string name="package_unlock_app_title">Unlock app</string>
+        <string name="locked_apps_sort_summary">Locked apps will be displayed first in list</string>
+        <string name="locked_apps_sort_title">Sort locked apps</string>
 </resources>

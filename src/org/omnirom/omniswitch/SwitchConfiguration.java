@@ -101,6 +101,8 @@ public class SwitchConfiguration {
     // TODO do we need a setting for this
     public boolean mLoadThumbOnSwipe = true;
     public boolean mDimActionButton;
+    public List<String> mLockedAppList = new ArrayList<String>();
+    public boolean mTopSortLockedApps;
 
     // old pref slots
     private static final String PREF_DRAG_HANDLE_COLOR = "drag_handle_color";
@@ -283,6 +285,10 @@ public class SwitchConfiguration {
         mRevertRecents = prefs.getBoolean(SettingsActivity.PREF_REVERT_RECENTS, false);
         mLoadThumbOnSwipe = prefs.getBoolean(SettingsActivity.PREF_SWIPE_THUMB_UPDATE, true);
         mDimActionButton = prefs.getBoolean(SettingsActivity.PREF_DIM_ACTION_BUTTON, false);
+        mLockedAppList.clear();
+        String lockedAppsListString = prefs.getString(SettingsActivity.PREF_LOCKED_APPS_LIST, "");
+        Utils.parseLockedApps(lockedAppsListString, mLockedAppList);
+        mTopSortLockedApps = prefs.getBoolean(SettingsActivity.PREF_LOCKED_APPS_SORT, false);
 
         for(OnSharedPreferenceChangeListener listener : mPrefsListeners) {
             if(DEBUG){

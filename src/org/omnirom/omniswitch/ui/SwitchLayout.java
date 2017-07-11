@@ -199,7 +199,14 @@ public class SwitchLayout extends AbstractSwitchLayout {
 
                     @Override
                     public boolean canDismiss(int position) {
-                        return position < mRecentsManager.getTasks().size();
+                        if (position < mRecentsManager.getTasks().size()) {
+                            TaskDescription ad = mRecentsManager.getTasks().get(position);
+                            /*if (ad.isLocked()) {
+                                return false;
+                            }*/
+                            return true;
+                        }
+                        return false;
                     }
                 });
 

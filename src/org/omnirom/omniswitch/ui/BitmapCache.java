@@ -152,7 +152,7 @@ public class BitmapCache {
         return mThumbnailMap.get(key);
     }
 
-    public void putSharedThumbnail(Resources resources, TaskDescription ad, Drawable thumb) {
+    public void putSharedThumbnail(TaskDescription ad, Drawable thumb) {
         String key = String.valueOf(ad.getPersistentTaskId());
         mThumbnailMap.put(key, thumb);
     }

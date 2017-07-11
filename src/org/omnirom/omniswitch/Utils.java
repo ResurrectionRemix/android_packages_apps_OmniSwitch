@@ -38,6 +38,7 @@ import android.os.SystemProperties;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
@@ -275,5 +276,38 @@ public class Utils {
 
     public static boolean canResolveIntent(Context context, Intent intent) {
         return intent.resolveActivity(context.getPackageManager()) != null;
+    }
+
+    public static void removedFromLockedApps(Context context, String packageName, List<String> appsList) {
+        if (appsList.contains(packageName)){
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            appsList.remove(packageName);
+            prefs.edit().putString(SettingsActivity.PREF_LOCKED_APPS_LIST,
+                    TextUtils.join(",", appsList)).commit();
+        }
+    }
+
+    public static void addToLockedApps(Context context, String packageName, List<String> appsList) {
+        if (!appsList.contains(packageName)){
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            appsList.add(packageName);
+            prefs.edit().putString(SettingsActivity.PREF_LOCKED_APPS_LIST,
+                    TextUtils.join(",", appsList)).commit();
+        }
+    }
+
+    public static void parseLockedApps(String lockedAppsListString, List<String> appsList) {
+        if (lockedAppsListString.length() == 0){
+            return;
+        }
+
+        if (lockedAppsListString.indexOf(",") == -1){
+            appsList.add(lockedAppsListString);
+            return;
+        }
+        String[] split = lockedAppsListString.split(",");
+        for (int i = 0; i < split.length; i++) {
+            appsList.add(split[i]);
+        }
     }
 }

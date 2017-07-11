@@ -21,9 +21,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.omnirom.omniswitch.ui.BitmapCache;
 import org.omnirom.omniswitch.ui.BitmapUtils;
@@ -40,6 +42,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class PackageManager {
@@ -159,6 +162,7 @@ public class PackageManager {
     public synchronized void updatePackageList() {
         if (DEBUG) Log.d(TAG, "updatePackageList");
         final android.content.pm.PackageManager pm = mContext.getPackageManager();
+        Set<String> packageNameList = new HashSet<String>();
 
         mInstalledPackages.clear();
         mInstalledPackagesList.clear();
@@ -173,6 +177,7 @@ public class PackageManager {
 
             final PackageItem item = new PackageItem();
             item.packageName = appInfo.packageName;
+            packageNameList.add(item.packageName);
 
             ActivityInfo activity = info.activityInfo;
             item.activity = activity;
@@ -194,6 +199,7 @@ public class PackageManager {
         }
 
         updateFavorites();
+        updateLockedApps(packageNameList);
 
         Collections.sort(mInstalledPackagesList);
         mInitDone = true;
@@ -269,6 +275,30 @@ public class PackageManager {
         if (changed) {
             prefs.edit()
                     .putString(SettingsActivity.PREF_FAVORITE_APPS, Utils.flattenFavorites(newFavoriteList))
+                    .commit();
+        }
+    }
+
+    private synchronized void updateLockedApps(Set<String> packageNameList) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String appListString = prefs.getString(SettingsActivity.PREF_LOCKED_APPS_LIST, "");
+        List<String> appsList = new ArrayList<String>();
+        Utils.parseLockedApps(appListString, appsList);
+        boolean changed = false;
+
+        List<String> newAppsList = new ArrayList<String>();
+        Iterator<String> nextApp = appsList.iterator();
+        while (nextApp.hasNext()) {
+            String packageName = nextApp.next();
+            if (!packageNameList.contains(packageName)){
+                changed = true;
+                continue;
+            }
+            newAppsList.add(packageName);
+        }
+        if (changed) {
+            prefs.edit()
+                    .putString(SettingsActivity.PREF_LOCKED_APPS_LIST, TextUtils.join(",", newAppsList))
                     .commit();
         }
     }

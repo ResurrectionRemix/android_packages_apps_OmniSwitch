@@ -92,6 +92,10 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
             // load thumb if not loaded so far
             if (mShowThumbs) {
+                if (ad.isNeedsUpdate()) {
+                    item.reloadTaskThumb();
+                    ad.setNeedsUpdate(false);
+                }
                 item.loadTaskThumb();
             }
             return item;
@@ -196,7 +200,14 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
 
                     @Override
                     public boolean canDismiss(int position) {
-                        return position < mRecentsManager.getTasks().size();
+                        if (position < mRecentsManager.getTasks().size()) {
+                            TaskDescription ad = mRecentsManager.getTasks().get(position);
+                            /*if (ad.isLocked()) {
+                                return false;
+                            }*/
+                            return true;
+                        }
+                        return false;
                     }
                 });
 

@@ -121,6 +121,11 @@
 			android:key="swipe_thumb_update"
 			android:summary="@string/swipe_thumb_update_summary"
 			android:title="@string/swipe_thumb_update_title" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="locked_apps_sort"
+			android:summary="@string/locked_apps_sort_summary"
+			android:title="@string/locked_apps_sort_title" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="app_filter_category"

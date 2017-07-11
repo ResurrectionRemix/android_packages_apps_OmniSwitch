@@ -99,6 +99,8 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_REVERT_RECENTS = "revert_recents";
     public static final String PREF_SWIPE_THUMB_UPDATE = "swipe_thumb_update";
     public static final String PREF_DIM_ACTION_BUTTON ="dim_action_buttons";
+    public static final String PREF_LOCKED_APPS_LIST ="locked_apps_list";
+    public static final String PREF_LOCKED_APPS_SORT ="locked_apps_sort";
 
     public static int BUTTON_KILL_ALL = 0;
     public static int BUTTON_KILL_OTHER = 1;

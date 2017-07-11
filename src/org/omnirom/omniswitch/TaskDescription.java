@@ -43,6 +43,8 @@ public final class TaskDescription {
     private boolean mDocked;
     private boolean mDefaultIcon;
     private String mLabel;
+    private boolean mLocked;
+    private boolean mNeedsUpdate;
 
     public static interface ThumbChangeListener {
         public void thumbChanged(int pesistentTaskId, Bitmap thumb);
@@ -166,5 +168,21 @@ public final class TaskDescription {
 
     public boolean isDocked() {
         return mDocked;
+    }
+
+    public void setLocked(boolean value) {
+        mLocked = value;
+    }
+
+    public boolean isLocked() {
+        return mLocked;
+    }
+
+    public boolean isNeedsUpdate() {
+        return mNeedsUpdate;
+    }
+
+    public void setNeedsUpdate(boolean value) {
+        mNeedsUpdate = value;
     }
 }

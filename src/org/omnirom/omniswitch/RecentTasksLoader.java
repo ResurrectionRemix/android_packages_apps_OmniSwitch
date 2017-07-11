@@ -18,7 +18,9 @@
 package org.omnirom.omniswitch;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.omnirom.omniswitch.ui.BitmapCache;
@@ -68,6 +70,7 @@ public class RecentTasksLoader {
     private TaskDescription mPlaceholderTask;
     private PackageManager mPackageManager;
     private Drawable mDefaultAppIcon;
+    private Set<String> mLockedAppsList;
 
     final static BitmapFactory.Options sBitmapOptions;
 
@@ -100,6 +103,7 @@ public class RecentTasksLoader {
         mContext = context;
         mHandler = new Handler();
         mLoadedTasks = new CopyOnWriteArrayList<TaskDescription>();
+        mLockedAppsList = new HashSet<String>();
         mActivityManager = (ActivityManager)
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
         mPackageManager = mContext.getPackageManager();
@@ -229,6 +233,8 @@ public class RecentTasksLoader {
 
         final long currentTime = System.currentTimeMillis();
         final long bootTimeMillis = currentTime - SystemClock.elapsedRealtime();
+        mLockedAppsList.clear();
+        mLockedAppsList.addAll(mConfiguration.mLockedAppList);
 
         mTaskLoader = new AsyncTask<Void, List<TaskDescription>, Void>() {
             @Override
@@ -286,6 +292,10 @@ public class RecentTasksLoader {
                     TaskDescription item = createTaskDescription(recentInfo.id,
                             recentInfo.persistentId, recentInfo.stackId,
                             recentInfo.baseIntent, recentInfo.origActivity);
+
+                    if (mLockedAppsList.contains(item.getPackageName())) {
+                        item.setLocked(true);
+                    }
 
                     Intent intent = new Intent(recentInfo.baseIntent);
                     if (recentInfo.origActivity != null) {
@@ -388,7 +398,11 @@ public class RecentTasksLoader {
                     isFirstValidTask = false;
 
                     if (recentInfo.stackId != DOCKED_STACK_ID) {
-                        mLoadedTasks.add(item);
+                        if (item.isLocked() && mConfiguration.mTopSortLockedApps) {
+                            mLoadedTasks.add(mDockedTask != null ? 1 : 0, item);
+                        } else {
+                            mLoadedTasks.add(item);
+                        }
                     }
                     if (withIcons && preloadTaskNum < TASK_INIT_LOAD) {
                         String label = item.resolveInfo.loadLabel(mPackageManager).toString();
@@ -488,11 +502,11 @@ public class RecentTasksLoader {
         return null;
     }
 
-    public void loadThumbnail(final TaskDescription td) {
+    public void loadThumbnail(final TaskDescription td, boolean force) {
         if (!mHasThumbPermissions) {
             return;
         }
-        if (td.isThumbPreloaded()) {
+        if (td.isThumbPreloaded() && !force) {
             Bitmap b = td.getThumbPreloaded();
             if (b != null) {
                 if (DEBUG) {
@@ -520,6 +534,7 @@ public class RecentTasksLoader {
                 td.setThumbLoading(true);
                 Bitmap b = getThumbnail(td.persistentTaskId);
                 if (b != null) {
+                    td.setThumbLoading(false);
                     td.setThumb(b);
                 }
 

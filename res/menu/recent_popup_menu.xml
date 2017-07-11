@@ -23,9 +23,6 @@
         android:id="@+id/package_force_stop"
         android:title="@string/package_force_stop_title"/>
     <item
-        android:id="@+id/package_inspect_item"
-        android:title="@string/package_inspect_item_title"/>
-    <item
         android:id="@+id/package_add_favorite"
         android:title="@string/package_add_favorite_title"/>
     <item
@@ -34,4 +31,10 @@
     <item
         android:id="@+id/package_dock_task"
         android:title="@string/package_dock_task_title"/>
+    <item
+        android:id="@+id/package_lock_app"
+        android:title="@string/package_lock_app_title"/>
+    <item
+        android:id="@+id/package_inspect_item"
+        android:title="@string/package_inspect_item_title"/>
 </menu>

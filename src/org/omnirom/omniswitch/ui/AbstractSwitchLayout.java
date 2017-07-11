@@ -797,7 +797,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         });
     }
 
-    protected void handleLongPressRecent(final TaskDescription ad, View view) {
+    protected void handleLongPressRecent(final TaskDescription ad, final View view) {
         final Context wrapper = new ContextThemeWrapper(mContext,
                 mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT
                 ? R.style.PopupMenuLight : R.style.PopupMenuDark);
@@ -821,6 +821,11 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 }
             }
         }
+        String packageName = ad.getPackageName();
+        final boolean isLockedApp = ad.isLocked();
+        if (isLockedApp) {
+            popup.getMenu().findItem(R.id.package_lock_app).setTitle(R.string.package_unlock_app_title);
+        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.package_stop_task) {
@@ -830,6 +835,8 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 } else if (item.getItemId() == R.id.package_inspect_item) {
                     mRecentsManager.startApplicationDetailsActivity(ad
                             .getPackageName());
+                } else if (item.getItemId() == R.id.package_lock_app) {
+                    mRecentsManager.toggleLockedApp(ad, isLockedApp, true);
                 } else if (item.getItemId() == R.id.package_add_favorite) {
                     if (intentStr == null) {
                         Log.d(TAG, "failed to add " + ad.getIntent().toUri(0));

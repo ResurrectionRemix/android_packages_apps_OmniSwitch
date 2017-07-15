@@ -420,18 +420,6 @@ public class SwitchLayout extends AbstractSwitchLayout {
         return params;
     }
 
-    private int getHorizontalGravity() {
-        if (mConfiguration.mGravity == 0) {
-            return Gravity.CENTER_HORIZONTAL;
-        } else {
-            if (mConfiguration.mLocation == 0) {
-                return Gravity.RIGHT;
-            } else {
-                return Gravity.LEFT;
-            }
-        }
-    }
-
     @Override
     public void updatePrefs(SharedPreferences prefs, String key) {
         super.updatePrefs(prefs, key);
@@ -546,7 +534,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
             mForegroundProcessText.setShadowLayer(0, 0, 0, Color.BLACK);
             mBackgroundProcessText.setShadowLayer(0, 0, 0, Color.BLACK);
-            mNoRecentApps.setTextColor(Color.BLACK);
+            mNoRecentApps.setTextColor(mContext.getResources().getColor(R.color.text_color_light));
             mNoRecentApps.setShadowLayer(0, 0, 0, Color.BLACK);
             ((ImageView) mOpenFavorite).setImageDrawable(BitmapUtils.colorize(
                     mContext.getResources(),
@@ -558,7 +546,7 @@ public class SwitchLayout extends AbstractSwitchLayout {
         } else {
             mForegroundProcessText.setShadowLayer(5, 0, 0, Color.BLACK);
             mBackgroundProcessText.setShadowLayer(5, 0, 0, Color.BLACK);
-            mNoRecentApps.setTextColor(Color.WHITE);
+            mNoRecentApps.setTextColor(mContext.getResources().getColor(R.color.text_color_dark));
             mNoRecentApps.setShadowLayer(5, 0, 0, Color.BLACK);
             ((ImageView) mOpenFavorite).setImageDrawable(BitmapUtils.shadow(
                     mContext.getResources(),

@@ -63,7 +63,6 @@ public class SwitchConfiguration {
     public boolean mAutoHide;
     public static final int AUTO_HIDE_DEFAULT = 3000; // 3s
     public boolean mDragHandleShow = true;
-    public int mGravity;
     public boolean mRestrictedMode;
     public int mLevelHeight; // in px
     public int mItemChangeWidthX; // in px - maximum value - can be lower if more items
@@ -240,8 +239,6 @@ public class SwitchConfiguration {
         mDragHandleShow = prefs.getBoolean(
                 SettingsActivity.PREF_DRAG_HANDLE_ENABLE, true);
         mDimBehind = prefs.getBoolean(SettingsActivity.PREF_DIM_BEHIND, false);
-        String gravity = prefs.getString(SettingsActivity.PREF_GRAVITY, "0");
-        mGravity = Integer.valueOf(gravity);
         mDefaultDragHandleWidth = Math.round(20 * mDensity);
         mDragHandleWidth = prefs.getInt(
                     SettingsActivity.PREF_HANDLE_WIDTH, mDefaultDragHandleWidth);

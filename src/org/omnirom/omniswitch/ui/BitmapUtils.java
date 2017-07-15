@@ -35,6 +35,8 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextPaint;
 import android.text.TextUtils;
 
@@ -44,12 +46,12 @@ public class BitmapUtils {
     private static Paint sDockedAppsPaint;
     private static Paint sDefaultBgPaint;
 
-    private static TextPaint getTextPaint() {
+    private static TextPaint getLabelTextPaint(Resources resources) {
         if (sTextPaint == null) {
             sTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
             Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
             sTextPaint.setTypeface(font);
-            sTextPaint.setColor(Color.WHITE);
+            sTextPaint.setColor(resources.getColor(R.color.text_color_dark));
             sTextPaint.setShadowLayer(5.0f, 0.0f, 0.0f, Color.BLACK);
             sTextPaint.setTextAlign(Paint.Align.LEFT);
         }
@@ -211,7 +213,7 @@ public class BitmapUtils {
                 width + (sideHeader ? iconBorderSizePx : 0), height + (sideHeader ? 0 : iconBorderSizePx));
         canvas.drawBitmap(b, src, dest, null);
 
-        final TextPaint textPaint = getTextPaint();
+        final TextPaint textPaint = getLabelTextPaint(resources);
         final int startTextPx = iconBorderSizePx + textInsetPx;
         final int textSize = Math.round(14 * density);
         textPaint.setTextSize(textSize);
@@ -256,7 +258,9 @@ public class BitmapUtils {
                 canvas.drawText(label, xPos, yPos, textPaint);
             }
         }
-        return new BitmapDrawable(resources, bmp);
+        RoundedBitmapDrawable dr = RoundedBitmapDrawableFactory.create(resources, bmp);
+        dr.setCornerRadius(8);
+        return dr;
     }
 
     public static Drawable memImage(Resources resources, int size,
@@ -273,7 +277,7 @@ public class BitmapUtils {
         final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
         textPaint.setTypeface(font);
-        textPaint.setColor(Color.WHITE);
+        textPaint.setColor(resources.getColor(R.color.text_color_dark));
         textPaint.setTextAlign(Paint.Align.LEFT);
         final int textSize = Math.round(14 * density);
         textPaint.setTextSize(textSize);

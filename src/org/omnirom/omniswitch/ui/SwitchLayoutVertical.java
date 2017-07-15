@@ -399,14 +399,6 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
         return params;
     }
 
-    private int getHorizontalGravity() {
-        if (mConfiguration.mLocation == 0) {
-            return Gravity.RIGHT;
-        } else {
-            return Gravity.LEFT;
-        }
-    }
-
     @Override
     public void updatePrefs(SharedPreferences prefs, String key) {
         super.updatePrefs(prefs, key);
@@ -452,10 +444,10 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
     private PackageTextView getRecentItemTemplate() {
         PackageTextView item = new PackageTextView(mContext);
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
-            item.setTextColor(Color.BLACK);
+            item.setTextColor(mContext.getResources().getColor(R.color.text_color_light));
             item.setShadowLayer(0, 0, 0, Color.BLACK);
         } else {
-            item.setTextColor(Color.WHITE);
+            item.setTextColor(mContext.getResources().getColor(R.color.text_color_dark));
             item.setShadowLayer(5, 0, 0, Color.BLACK);
         }
         item.setTextSize(mConfiguration.mLabelFontSize);
@@ -560,10 +552,10 @@ public class SwitchLayoutVertical extends AbstractSwitchLayout {
             Log.d(TAG, "updateStyle");
         }
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
-            mNoRecentApps.setTextColor(Color.BLACK);
+            mNoRecentApps.setTextColor(mContext.getResources().getColor(R.color.text_color_light));
             mNoRecentApps.setShadowLayer(0, 0, 0, Color.BLACK);
         } else {
-            mNoRecentApps.setTextColor(Color.WHITE);
+            mNoRecentApps.setTextColor(mContext.getResources().getColor(R.color.text_color_dark));
             mNoRecentApps.setShadowLayer(5, 0, 0, Color.BLACK);
         }
         if (mConfiguration.mBgStyle != SwitchConfiguration.BgStyle.TRANSPARENT) {

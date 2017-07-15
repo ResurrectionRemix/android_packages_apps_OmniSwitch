@@ -74,7 +74,6 @@ public class SettingsActivity extends PreferenceActivity implements
     public static final String PREF_DRAG_HANDLE_ENABLE = "drag_handle_enable";
     public static final String PREF_ENABLE = "enable";
     public static final String PREF_DIM_BEHIND = "dim_behind";
-    public static final String PREF_GRAVITY = "gravity";
     public static final String PREF_ICONPACK = "iconpack";
     public static final String PREF_SPEED_SWITCHER = "speed_switcher";
     public static final String PREF_SHOW_FAVORITE = "show_favorite";
@@ -132,7 +131,6 @@ public class SettingsActivity extends PreferenceActivity implements
     private String[] mButtonEntries;
     private Drawable[] mButtonImages;
     private String mButtons;
-    private ListPreference mGravity;
     private Preference mIconpack;
     private Switch mToggleServiceSwitch;
     private SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener;
@@ -152,6 +150,7 @@ public class SettingsActivity extends PreferenceActivity implements
     private SwitchPreference mLaunchStats;
     private Preference mFavoriteAppsConfigStat;
     private CheckBoxPreference mRevertRecents;
+    private CheckBoxPreference mThumbLoading;
 
     @Override
     public void onPause() {
@@ -199,12 +198,6 @@ public class SettingsActivity extends PreferenceActivity implements
         mButtonConfig = (Preference) findPreference(PREF_BUTTON_CONFIG);
         mButtons = mPrefs.getString(PREF_BUTTONS_NEW, PREF_BUTTON_DEFAULT_NEW);
         mFavoriteAppsConfig = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG);
-        mGravity = (ListPreference) findPreference(PREF_GRAVITY);
-        mGravity.setOnPreferenceChangeListener(this);
-        idx = mGravity.findIndexOfValue(mPrefs.getString(PREF_GRAVITY,
-                mGravity.getEntryValues()[0].toString()));
-        mGravity.setValueIndex(idx);
-        mGravity.setSummary(mGravity.getEntries()[idx]);
         mIconpack = (Preference) findPreference(PREF_ICONPACK);
         mSpeedSwitchItems = (NumberPickerPreference) findPreference(PREF_SPEED_SWITCHER_ITEMS);
         mSpeedSwitchItems.setMinValue(8);
@@ -248,13 +241,17 @@ public class SettingsActivity extends PreferenceActivity implements
                 mThumbSize.getEntryValues()[2].toString()));
         mThumbSize.setValueIndex(idx);
         mThumbSize.setSummary(mThumbSize.getEntries()[idx]);
+        mThumbLoading = (CheckBoxPreference) findPreference(PREF_SWIPE_THUMB_UPDATE);
         mLauncherMode = (SwitchPreference) findPreference(PREF_LAUNCHER_MODE);
         mLaunchStats = (SwitchPreference) findPreference(PREF_LAUNCH_STATS);
         mLaunchStatsDelete = (Preference) findPreference(PREF_LAUNCH_STATS_DELETE);
         mFavoriteAppsConfigStat = (Preference) findPreference(PREF_FAVORITE_APPS_CONFIG_STAT);
         mRevertRecents = (CheckBoxPreference) findPreference(PREF_REVERT_RECENTS);
-        mRevertRecents.setEnabled(mLayoutStyle.getValue().equals("1"));
-        mThumbSize.setEnabled(mLayoutStyle.getValue().equals("1"));
+
+        boolean vertical = mLayoutStyle.getValue().equals("1");
+        mRevertRecents.setEnabled(vertical);
+        mThumbSize.setEnabled(vertical);
+        mThumbLoading.setEnabled(vertical);
 
         mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs,
@@ -361,12 +358,6 @@ public class SettingsActivity extends PreferenceActivity implements
             float val = Float.parseFloat((String) newValue);
             mPrefs.edit().putInt(PREF_OPACITY, (int) val).commit();
             return true;
-        } else if (preference == mGravity) {
-            String value = (String) newValue;
-            int idx = mGravity.findIndexOfValue(value);
-            mGravity.setSummary(mGravity.getEntries()[idx]);
-            mGravity.setValueIndex(idx);
-            return true;
         } else if (preference == mButtonPos) {
             String value = (String) newValue;
             int idx = mButtonPos.findIndexOfValue(value);
@@ -384,8 +375,10 @@ public class SettingsActivity extends PreferenceActivity implements
             int idx = mLayoutStyle.findIndexOfValue(value);
             mLayoutStyle.setSummary(mLayoutStyle.getEntries()[idx]);
             mLayoutStyle.setValueIndex(idx);
-            mRevertRecents.setEnabled(mLayoutStyle.getValue().equals("1"));
-            mThumbSize.setEnabled(mLayoutStyle.getValue().equals("1"));
+            boolean vertical = mLayoutStyle.getValue().equals("1");
+            mRevertRecents.setEnabled(vertical);
+            mThumbSize.setEnabled(vertical);
+            mThumbLoading.setEnabled(vertical);
             return true;
         } else if (preference == mAppFilterTime) {
             String value = (String) newValue;

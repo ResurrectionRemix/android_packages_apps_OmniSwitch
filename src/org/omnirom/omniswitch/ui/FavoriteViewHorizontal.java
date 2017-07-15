@@ -64,6 +64,7 @@ public class FavoriteViewHorizontal extends HorizontalListView {
     private boolean mTransparent;
     protected List<String> mFavoriteList;
     private SwitchManager mRecentsManager;
+    private Typeface mLabelFont;
 
     public class FavoriteListAdapter extends ArrayAdapter<String> {
 
@@ -100,6 +101,7 @@ public class FavoriteViewHorizontal extends HorizontalListView {
     public FavoriteViewHorizontal(Context context, AttributeSet attrs) {
         super(context, attrs);
         mConfiguration = SwitchConfiguration.getInstance(mContext);
+        mLabelFont = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
         mFavoriteList = new ArrayList<String>();
         mFavoriteListAdapter = new FavoriteListAdapter(mContext,
                 android.R.layout.simple_list_item_single_choice, mFavoriteList);
@@ -134,14 +136,14 @@ public class FavoriteViewHorizontal extends HorizontalListView {
     protected PackageTextView getPackageItemTemplate() {
         PackageTextView item = new PackageTextView(mContext);
         if (mTransparent) {
-            item.setTextColor(Color.WHITE);
+            item.setTextColor(mContext.getResources().getColor(R.color.text_color_dark));
             item.setShadowLayer(5, 0, 0, Color.BLACK);
         } else {
             if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
-                item.setTextColor(Color.BLACK);
+                item.setTextColor(mContext.getResources().getColor(R.color.text_color_light));
                 item.setShadowLayer(0, 0, 0, Color.BLACK);
             } else {
-                item.setTextColor(Color.WHITE);
+                item.setTextColor(mContext.getResources().getColor(R.color.text_color_dark));
                 item.setShadowLayer(5, 0, 0, Color.BLACK);
             }
         }
@@ -151,8 +153,7 @@ public class FavoriteViewHorizontal extends HorizontalListView {
         item.setLayoutParams(getListItemParams());
         item.setPadding(0, mConfiguration.mIconBorderPx, 0, 0);
         item.setMaxLines(1);
-        Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
-        item.setTypeface(font);
+        item.setTypeface(mLabelFont);
         if (mTransparent) {
             item.setBackgroundResource(R.drawable.ripple_dark);
         } else {

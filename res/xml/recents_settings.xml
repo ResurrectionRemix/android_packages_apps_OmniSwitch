@@ -69,13 +69,6 @@
 			android:summary="@string/dim_action_buttons_summary"
 			android:title="@string/dim_action_buttons_title" />
 
-		<ListPreference
-			android:entries="@array/gravity_entries"
-			android:entryValues="@array/gravity_values"
-			android:key="gravity"
-			android:summary="@string/gravity_center"
-			android:title="@string/gravity_title" />
-
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="show_rambar"

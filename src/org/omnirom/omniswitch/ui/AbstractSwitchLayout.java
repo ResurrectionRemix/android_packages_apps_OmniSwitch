@@ -139,6 +139,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected LinearLayout mRecents;
     protected View mOpenFavorite;
     protected AnimatorSet mShowFavAnim;
+    private Typeface mLabelFont;
 
     protected GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
         @Override
@@ -317,6 +318,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
                 .getSystemService(Context.WINDOW_SERVICE);
         mPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mConfiguration = SwitchConfiguration.getInstance(mContext);
+        mLabelFont = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
         mInflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ViewConfiguration vc = ViewConfiguration.get(context);
@@ -348,6 +350,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected View getActionButtonTemplate(Drawable image) {
         View v = mInflater.inflate(R.layout.action_button, null, false);
         ImageView item = (ImageView) v.findViewById(R.id.action_button_image);
+        BitmapUtils.colorize(mContext.getResources(), mContext.getResources().getColor(R.color.text_color_dark), image);
         item.setImageDrawable(image);
         return v;
     }
@@ -646,10 +649,10 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected PackageTextView getPackageItemTemplate() {
         PackageTextView item = new PackageTextView(mContext);
         if (mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT) {
-            item.setTextColor(Color.BLACK);
+            item.setTextColor(mContext.getResources().getColor(R.color.text_color_light));
             item.setShadowLayer(0, 0, 0, Color.BLACK);
         } else {
-            item.setTextColor(Color.WHITE);
+            item.setTextColor(mContext.getResources().getColor(R.color.text_color_dark));
             item.setShadowLayer(5, 0, 0, Color.BLACK);
         }
         item.setTextSize(mConfiguration.mLabelFontSize);
@@ -658,8 +661,7 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
         item.setLayoutParams(getListItemParams());
         item.setPadding(0, mConfiguration.mIconBorderPx, 0, 0);
         item.setMaxLines(1);
-        Typeface font = Typeface.create("sans-serif-condensed", Typeface.NORMAL);
-        item.setTypeface(font);
+        item.setTypeface(mLabelFont);
         item.setBackgroundResource(mConfiguration.mBgStyle == SwitchConfiguration.BgStyle.SOLID_LIGHT ? R.drawable.ripple_dark
                 : R.drawable.ripple_light);
         return item;
@@ -1249,13 +1251,22 @@ public abstract class AbstractSwitchLayout implements ISwitchLayout {
     protected void updatePinAppButton() {
         if (mLockToAppButton != null) {
             ImageView lockAppButtonImage = (ImageView) mLockToAppButton.findViewById(R.id.action_button_image);
+            Drawable image = null;
             if (Utils.isInLockTaskMode()) {
-                lockAppButtonImage.setImageDrawable(mContext.getResources()
-                    .getDrawable(R.drawable.ic_pin_off));
+                image = mContext.getResources().getDrawable(R.drawable.ic_pin_off);
             } else {
-                lockAppButtonImage.setImageDrawable(mContext.getResources()
-                    .getDrawable(R.drawable.ic_pin));
+                image = mContext.getResources().getDrawable(R.drawable.ic_pin);
             }
+            BitmapUtils.colorize(mContext.getResources(), mContext.getResources().getColor(R.color.text_color_dark), image);
+            lockAppButtonImage.setImageDrawable(image);
+        }
+    }
+
+    protected int getHorizontalGravity() {
+        if (mConfiguration.mLocation == 0) {
+            return Gravity.RIGHT;
+        } else {
+            return Gravity.LEFT;
         }
     }
 }

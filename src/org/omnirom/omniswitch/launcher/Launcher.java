@@ -604,7 +604,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
 
     private void hideEssentialsPanel() {
         if (mEssentialsPanelVisibile) {
-            Animator rotateAnimator = ObjectAnimator.ofFloat(mEssentialsButton, View.ROTATION, ROTATE_180_DEGREE, ROTATE_0_DEGREE);
+            Animator rotateAnimator = ObjectAnimator.ofFloat(mEssentialsButton, View.ROTATION, ROTATE_0_DEGREE, ROTATE_180_DEGREE);
             rotateAnimator.setDuration(500);
             Animator fadeAnimator = ObjectAnimator.ofFloat(mEssentialsPanel, "alpha", 1f, 0f);
             fadeAnimator.setDuration(500);
@@ -644,7 +644,7 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
             mEssentialsPanel.setAlpha(0f);
             mEssentialsPanel.setVisibility(View.VISIBLE);
 
-            Animator rotateAnimator = ObjectAnimator.ofFloat(mEssentialsButton, View.ROTATION, ROTATE_0_DEGREE, ROTATE_180_DEGREE);
+            Animator rotateAnimator = ObjectAnimator.ofFloat(mEssentialsButton, View.ROTATION, ROTATE_180_DEGREE, ROTATE_0_DEGREE);
             rotateAnimator.setDuration(500);
             Animator fadeAnimator = ObjectAnimator.ofFloat(mEssentialsPanel, "alpha", 0f, 1f);
             fadeAnimator.setDuration(500);
@@ -685,9 +685,9 @@ public class Launcher extends Activity implements IEditFavoriteActivity {
         }
         if (mEssentialsPanelVisibile && mEssentialsPanel.getVisibility() == View.GONE) {
             mEssentialsPanel.setVisibility(View.VISIBLE);
-            mEssentialsButton.setRotation(ROTATE_180_DEGREE);
-        } else {
             mEssentialsButton.setRotation(ROTATE_0_DEGREE);
+        } else {
+            mEssentialsButton.setRotation(ROTATE_180_DEGREE);
         }
     }
 

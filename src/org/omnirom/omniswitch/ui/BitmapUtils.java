@@ -40,6 +40,9 @@ import android.text.TextUtils;
 
 public class BitmapUtils {
     private static TextPaint sTextPaint;
+    private static Paint sLockedAppsPaint;
+    private static Paint sDockedAppsPaint;
+    private static Paint sDefaultBgPaint;
 
     private static TextPaint getTextPaint() {
         if (sTextPaint == null) {
@@ -51,6 +54,33 @@ public class BitmapUtils {
             sTextPaint.setTextAlign(Paint.Align.LEFT);
         }
         return sTextPaint;
+    }
+
+    private static Paint getLockedAppsPaint(Resources resources) {
+        if (sLockedAppsPaint == null) {
+            sLockedAppsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            sLockedAppsPaint.setStyle(Paint.Style.FILL);
+            sLockedAppsPaint.setColor(resources.getColor(R.color.locked_task_bg_color));
+        }
+        return sLockedAppsPaint;
+    }
+
+    private static Paint geDockedAppsPaint(Resources resources) {
+        if (sDockedAppsPaint == null) {
+            sDockedAppsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            sDockedAppsPaint.setStyle(Paint.Style.FILL);
+            sDockedAppsPaint.setColor(resources.getColor(R.color.docked_task_bg_color));
+        }
+        return sDockedAppsPaint;
+    }
+
+    private static Paint getDefaultBgPaint(Resources resources) {
+        if (sDefaultBgPaint == null) {
+            sDefaultBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            sDefaultBgPaint.setStyle(Paint.Style.FILL);
+            sDefaultBgPaint.setColor(resources.getColor(R.color.button_bg_flat_color));
+        }
+        return sDefaultBgPaint;
     }
 
     public static Drawable resize(Resources resources, Drawable image,
@@ -163,7 +193,8 @@ public class BitmapUtils {
     public static Drawable overlay(Resources resources, Bitmap b,
             Drawable iconResized, int width, int height, String label, float density,
             int iconSize, boolean bgStyle, boolean sideHeader,
-            int iconBorderSizePx, boolean dockedTask, boolean lockedTask) {
+            int iconBorderSizePx, boolean dockedTask, boolean lockedTask,
+            float opacity) {
         final Canvas canvas = new Canvas();
         final int iconSizePx = Math.round(iconSize * density);
         final int textInsetPx = Math.round(5 * density);
@@ -185,14 +216,19 @@ public class BitmapUtils {
         final int textSize = Math.round(14 * density);
         textPaint.setTextSize(textSize);
 
-        if (bgStyle) {
-            final Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            bgPaint.setStyle(Paint.Style.FILL);
-            bgPaint.setColor(resources.getColor(R.color.button_bg_flat_color));
-            if (dockedTask) {
-                bgPaint.setColor(resources.getColor(R.color.docked_task_bg_color));
-            } else if (lockedTask) {
-                bgPaint.setColor(resources.getColor(R.color.locked_task_bg_color));
+        Paint bgPaint = null;
+        if (dockedTask) {
+            bgPaint = geDockedAppsPaint(resources);
+        } else if (lockedTask) {
+            bgPaint = getLockedAppsPaint(resources);
+        } else {
+            bgPaint = getDefaultBgPaint(resources);
+        }
+        if (bgPaint != null) {
+            if (bgStyle) {
+                bgPaint.setAlpha(255);
+            } else {
+                bgPaint.setAlpha((int) (255 * opacity));
             }
             if (sideHeader)  {
                 canvas.drawRect(0, 0, iconBorderSizePx, height, bgPaint);

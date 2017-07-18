@@ -58,6 +58,7 @@ public class RecentTasksLoader {
     private AsyncTask<Void, TaskDescription, Void> mThumbnailLoader;
     private Handler mHandler;
     private List<TaskDescription> mLoadedTasks;
+    private List<TaskDescription> mLoadedTasksOriginal;
     private boolean mPreloaded;
     private SwitchManager mSwitchManager;
     private ActivityManager mActivityManager;
@@ -103,6 +104,7 @@ public class RecentTasksLoader {
         mContext = context;
         mHandler = new Handler();
         mLoadedTasks = new CopyOnWriteArrayList<TaskDescription>();
+        mLoadedTasksOriginal = new CopyOnWriteArrayList<TaskDescription>();
         mLockedAppsList = new HashSet<String>();
         mActivityManager = (ActivityManager)
                 mContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -113,14 +115,6 @@ public class RecentTasksLoader {
         mHasThumbPermissions = hasSystemPermission(context);
         mConfiguration = SwitchConfiguration.getInstance(mContext);
         mDefaultAppIcon = BitmapUtils.getDefaultActivityIcon(mContext);
-    }
-
-    public List<TaskDescription> getLoadedTasks() {
-        return mLoadedTasks;
-    }
-
-    public void remove(TaskDescription td) {
-        mLoadedTasks.remove(td);
     }
 
     private boolean isCurrentHomeActivity(ComponentName component,
@@ -196,6 +190,7 @@ public class RecentTasksLoader {
             mPreloadTasksRunnable = null;
         }
         mLoadedTasks.clear();
+        mLoadedTasksOriginal.clear();
         mDockedTask = null;
         mTopHomeTask = null;
         mPlaceholderTask = null;
@@ -214,7 +209,7 @@ public class RecentTasksLoader {
             if (DEBUG) {
                 Log.d(TAG, "recents preloaded " + mLoadedTasks);
             }
-            mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask);
+            mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask, mLoadedTasksOriginal);
             loadMissingTaskInfo();
             return;
         }
@@ -224,6 +219,7 @@ public class RecentTasksLoader {
         mPreloaded = true;
         mState = State.LOADING;
         mLoadedTasks.clear();
+        mLoadedTasksOriginal.clear();
         mDockedTask = null;
         mPlaceholderTask = null;
         mTopHomeTask = null;
@@ -245,7 +241,7 @@ public class RecentTasksLoader {
                         if (DEBUG) {
                             Log.d(TAG, "recents loaded");
                         }
-                        mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask);
+                        mSwitchManager.update(mLoadedTasks, mDockedTask, mTopHomeTask, mPlaceholderTask, mLoadedTasksOriginal);
                         loadMissingTaskInfo();
                     } else {
                         if (DEBUG) {
@@ -396,6 +392,8 @@ public class RecentTasksLoader {
                         continue;
                     }
                     isFirstValidTask = false;
+
+                    mLoadedTasksOriginal.add(item);
 
                     if (recentInfo.stackId != DOCKED_STACK_ID) {
                         if (item.isLocked() && mConfiguration.mTopSortLockedApps) {
@@ -560,7 +558,7 @@ public class RecentTasksLoader {
         }
     }
 
-    public void loadMissingTaskInfo() {
+    private void loadMissingTaskInfo() {
         mTaskInfoLoader = new AsyncTask<Void, Void, Void>() {
             @Override
             protected void onProgressUpdate(Void... values) {

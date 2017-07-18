@@ -44,6 +44,7 @@
                 <action android:name="org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY2" />
                 <action android:name="org.omnirom.omniswitch.ACTION_RESTORE_HOME_STACK" />
                 <action android:name="org.omnirom.omniswitch.ACTION_PRELOAD_TASKS" />
+                <action android:name="org.omnirom.omniswitch.ACTION_HIDE_OVERLAY" />
             </intent-filter>
         </receiver>
         <activity

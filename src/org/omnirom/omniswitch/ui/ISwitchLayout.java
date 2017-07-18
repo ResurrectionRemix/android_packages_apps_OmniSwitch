@@ -54,4 +54,6 @@ public interface ISwitchLayout {
     void shutdownService();
 
     void resetRecentsState();
+
+    void notifiyRecentsListChanged();
 }

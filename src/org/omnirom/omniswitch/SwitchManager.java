@@ -184,8 +184,6 @@ public class SwitchManager {
             Log.d(TAG, "update mRestoreStack= " + mRestoreStack);
         }
         if (!mRestoreStack) {
-            mLoadedTasks.clear();
-            mLoadedTasks.addAll(taskList);
             mLoadedTasksOriginal = taskListOriginal;
         }
         mDockedTask = dockedTask;
@@ -194,6 +192,8 @@ public class SwitchManager {
         setFocusStack();
 
         if (!mRestoreStack) {
+            mLoadedTasks.clear();
+            mLoadedTasks.addAll(taskList);
             mLayout.update();
             mGestureView.update();
         }
@@ -481,6 +481,7 @@ public class SwitchManager {
     public void clearTasks() {
         mLoadedTasks.clear();
         mLoadedTasksOriginal.clear();
+        mLayout.notifiyRecentsListChanged();
     }
 
     private TaskDescription getCurrentTopTask() {
@@ -727,5 +728,6 @@ public class SwitchManager {
     private void removeTaskFromList(TaskDescription ad) {
         mLoadedTasks.remove(ad);
         mLoadedTasksOriginal.remove(ad);
+        mLayout.notifiyRecentsListChanged();
     }
 }

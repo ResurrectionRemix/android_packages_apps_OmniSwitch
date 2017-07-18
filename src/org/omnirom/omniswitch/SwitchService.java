@@ -170,6 +170,7 @@ public class SwitchService extends Service {
         public static final String ACTION_TOGGLE_OVERLAY2 = "org.omnirom.omniswitch.ACTION_TOGGLE_OVERLAY2";
         public static final String ACTION_RESTORE_HOME_STACK = "org.omnirom.omniswitch.ACTION_RESTORE_HOME_STACK";
         public static final String ACTION_PRELOAD_TASKS = "org.omnirom.omniswitch.ACTION_PRELOAD_TASKS";
+        public static final String ACTION_HIDE_OVERLAY = "org.omnirom.omniswitch.ACTION_HIDE_OVERLAY";
 
         @Override
         public void onReceive(final Context context, Intent intent) {
@@ -209,6 +210,13 @@ public class SwitchService extends Service {
                         }
                     }
                     mPreloadDone = false;
+                } else if (ACTION_HIDE_OVERLAY.equals(action)) {
+                    if (DEBUG){
+                        Log.d(TAG, "ACTION_HIDE_OVERLAY");
+                    }
+                    if (mManager.isShowing()) {
+                        mManager.hide(false);
+                    }
                 } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
                     int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
                     Log.d(TAG, "user switch " + mUserId + "->" + userId);

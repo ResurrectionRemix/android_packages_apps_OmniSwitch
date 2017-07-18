@@ -632,4 +632,12 @@ public class SwitchLayout extends AbstractSwitchLayout {
         item.setImageDrawable(image);
         return v;
     }
+
+    @Override
+    public void notifiyRecentsListChanged() {
+        if (DEBUG) {
+            Log.d(TAG, "notifiyRecentsListChanged");
+        }
+        mRecentListAdapter.notifyDataSetChanged();
+    }
 }

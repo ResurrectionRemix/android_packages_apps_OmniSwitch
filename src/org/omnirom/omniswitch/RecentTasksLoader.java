@@ -289,6 +289,10 @@ public class RecentTasksLoader {
                             recentInfo.persistentId, recentInfo.stackId,
                             recentInfo.baseIntent, recentInfo.origActivity);
 
+                    if (item == null) {
+                        continue;
+                    }
+
                     if (mLockedAppsList.contains(item.getPackageName())) {
                         item.setLocked(true);
                     }

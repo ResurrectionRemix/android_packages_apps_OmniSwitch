@@ -396,7 +396,9 @@ public class RecentTasksLoader {
                         item.setLabel(label);
                         preloadTaskNum++;
                     } else {
+                        if (item !=null) {
                         item.setDefaultIcon(mDefaultAppIcon);
+                        }
                     }
                     if (withThumbs && mHasThumbPermissions && preloadedThumbNum < THUMB_INIT_LOAD) {
                         Bitmap b = getThumbnail(item.persistentTaskId);

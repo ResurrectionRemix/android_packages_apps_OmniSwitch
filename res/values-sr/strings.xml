@@ -168,8 +168,6 @@
   <string name="revert_recents_title">Врати попис недавих апликација</string>
   <string name="dialog_overlay_perms_title">OmniSwitch грешка дозвола</string>
   <string name="dialog_overlay_perms_msg">Дозволи \u0022пиши преко апликација\u0022 овлашћења</string>
-  <string name="package_dock_task_title">Споји</string>
-  <string name="package_undock_task_title">Одкачи</string>
   <string name="swipe_thumb_update_summary">Умањене сличице ће бити ажуриране током приказа слоја</string>
   <string name="swipe_thumb_update_title">Асинхроно учитавање умањених сличица</string>
   <string name="dim_action_buttons_summary">Додајте додатно замућење позадини дугмића радњи</string>

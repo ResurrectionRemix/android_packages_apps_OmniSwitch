@@ -168,8 +168,6 @@
   <string name="revert_recents_title">Hoàn tác danh sách ứng dụng gần đây</string>
   <string name="dialog_overlay_perms_title">Lỗi quyền OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Cho phép quyền \u0022Vẽ trên các ứng dụng\u0022</string>
-  <string name="package_dock_task_title">Thu nhỏ</string>
-  <string name="package_undock_task_title">Bỏ thu nhỏ</string>
   <string name="swipe_thumb_update_summary">Hình thu nhỏ sẽ được cập nhật trong quá trình hiển thị lớp phủ</string>
   <string name="swipe_thumb_update_title">Tải hình thu nhỏ không đồng bộ</string>
   <string name="dim_action_buttons_summary">Thêm hình nền phụ mờ cho các nút hoạt động</string>

@@ -168,8 +168,6 @@
   <string name="revert_recents_title">Ripristina l\'elenco delle applicazioni recenti</string>
   <string name="dialog_overlay_perms_title">Errore di autorizzazione di OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Attiva \u0022 Visualizza sopra ad altre applicazioni \u0022 permesso</string>
-  <string name="package_dock_task_title">Inserire</string>
-  <string name="package_undock_task_title">Togliere</string>
   <string name="swipe_thumb_update_summary">Le anteprime verranno aggiornate mentre viene mostrato l\'overlay</string>
   <string name="swipe_thumb_update_title">Caricamento delle miniature asincrono</string>
   <string name="dim_action_buttons_summary">Aggiungi uno sfondo dim extra ai pulsanti di azione</string>

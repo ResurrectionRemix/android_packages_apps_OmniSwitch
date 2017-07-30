@@ -167,8 +167,6 @@
   <string name="revert_recents_title">إسترجاع قائمة التطبيقات الحديثة</string>
   <string name="dialog_overlay_perms_title">خطأ بإذن OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">تفعيل \u0022إذن\u0022 الظهور فوق التطبيقات الأخرى</string>
-  <string name="package_dock_task_title">إرساء</string>
-  <string name="package_undock_task_title">فك الإرساء</string>
   <string name="swipe_thumb_update_summary">سيتم تحديث الصور المصغرة خلال عرض الطبقات</string>
   <string name="swipe_thumb_update_title">تحميل الصور المصغرة غير المتزامنة</string>
   <string name="dim_action_buttons_summary">أضف تقتيم خلفية إضافية لأزرار الإجراءات</string>

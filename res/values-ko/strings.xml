@@ -168,8 +168,6 @@
   <string name="revert_recents_title">최근 앱 목록 되돌리기</string>
   <string name="dialog_overlay_perms_title">OmniSwitch 권한 오류</string>
   <string name="dialog_overlay_perms_msg">\u0022다른 앱 위에 표시\u0022 권한 활성화</string>
-  <string name="package_dock_task_title">도킹</string>
-  <string name="package_undock_task_title">도킹 해제</string>
   <string name="swipe_thumb_update_summary">썸네일은 오버레이가 표시되는 동안 업데이트 됩니다.</string>
   <string name="swipe_thumb_update_title">비동기 썸네일 로딩</string>
   <string name="dim_action_buttons_title">기능 버튼 배경 어둡게 하기</string>

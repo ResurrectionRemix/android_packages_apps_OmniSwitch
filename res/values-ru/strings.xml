@@ -168,8 +168,15 @@
   <string name="revert_recents_title">Вернуть список недавних приложений</string>
   <string name="dialog_overlay_perms_title">Ошибка разрешений OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Включите \u0022Наложение поверх других окон\u0022 разрешение</string>
+  <string name="package_dock_task_title">Заблокировать приложение</string>
+  <string name="package_undock_task_title">Разблокировать приложение</string>
   <string name="swipe_thumb_update_summary">Эскизы будут обновлены во время показа наложения</string>
   <string name="swipe_thumb_update_title">Асинхронная загрузка эскизов</string>
   <string name="dim_action_buttons_summary">Добавить дополнительное затемнение фона для кнопок действий</string>
   <string name="dim_action_buttons_title">Затемнение фона кнопки действий</string>
+  <string name="package_force_stop_title">Принудительно остановить</string>
+  <string name="package_lock_app_title">Заблокировать приложение</string>
+  <string name="package_unlock_app_title">Разблокировать приложение</string>
+  <string name="locked_apps_sort_summary">Заблокированные приложения будут отображаться первыми в списке</string>
+  <string name="locked_apps_sort_title">Сортировка заблокированных приложений</string>
 </resources>

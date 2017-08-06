@@ -172,4 +172,9 @@
   <string name="swipe_thumb_update_title">Асинхронне завантаження ескізів</string>
   <string name="dim_action_buttons_summary">Додати затемнення фону для кнопок дії</string>
   <string name="dim_action_buttons_title">Затемнення фону кнопки дії</string>
+  <string name="package_force_stop_title">Примусово зупинити</string>
+  <string name="package_lock_app_title">Заблокувати додаток</string>
+  <string name="package_unlock_app_title">Розблокувати додаток</string>
+  <string name="locked_apps_sort_summary">Заблоковані додатки будуть показані першими у списку</string>
+  <string name="locked_apps_sort_title">Сортувати заблоковані додатки</string>
 </resources>

@@ -172,4 +172,8 @@
   <string name="swipe_thumb_update_title">Caricamento delle miniature asincrono</string>
   <string name="dim_action_buttons_summary">Aggiungi uno sfondo dim extra ai pulsanti di azione</string>
   <string name="dim_action_buttons_title">Sfondo del pulsante di azione Dim</string>
+  <string name="package_force_stop_title">Arresto forzato</string>
+  <string name="package_lock_app_title">Blocca app</string>
+  <string name="package_unlock_app_title">Sblocca app</string>
+  <string name="locked_apps_sort_summary">Le applicazioni bloccate saranno visualizzate per prime nell\'elenco</string>
 </resources>

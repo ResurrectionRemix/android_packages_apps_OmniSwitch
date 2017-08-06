@@ -168,8 +168,15 @@
   <string name="revert_recents_title">Reverter a lista de apps recentes</string>
   <string name="dialog_overlay_perms_title">Erro de permissão do OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Habilitar o \u0022Sobrepor sobre outros apps\u0022 permissão</string>
+  <string name="package_dock_task_title">App da doca</string>
+  <string name="package_undock_task_title">Desencaixar o app</string>
   <string name="swipe_thumb_update_summary">As miniaturas serão atualizadas por sobreposição durante a exibição</string>
   <string name="swipe_thumb_update_title">Carregamento assíncrono de miniaturas</string>
   <string name="dim_action_buttons_summary">Adicionar escurecimento extra ao fundo dos botões de ação</string>
   <string name="dim_action_buttons_title">Fundo escuro do botão de ação</string>
+  <string name="package_force_stop_title">Forçar parada</string>
+  <string name="package_lock_app_title">App de bloqueio</string>
+  <string name="package_unlock_app_title">Desbloquear app</string>
+  <string name="locked_apps_sort_summary">Aplicativos fechados serão exibidos primeiro na lista</string>
+  <string name="locked_apps_sort_title">Ordenar aplicações bloqueadas</string>
 </resources>

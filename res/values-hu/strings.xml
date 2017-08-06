@@ -168,8 +168,15 @@
   <string name="revert_recents_title">Fordított előzmények lista</string>
   <string name="dialog_overlay_perms_title">OmniSwitch engedély hiba</string>
   <string name="dialog_overlay_perms_msg">Engedélyezze a \u0022Megjelenítés más alkalmazások felett\u0022 engedélyt</string>
+  <string name="package_dock_task_title">Alkalmazás dokkolása</string>
+  <string name="package_undock_task_title">Alk. dokkolásának feloldása</string>
   <string name="swipe_thumb_update_summary">Bélyegképek a fedvénybemutató során frissülnek</string>
   <string name="swipe_thumb_update_title">Aszinkron bélyegkép betöltés</string>
   <string name="dim_action_buttons_summary">Extra háttér homályosítás a műveletgombokhoz</string>
   <string name="dim_action_buttons_title">Műveletgomb hátterének homályossága</string>
+  <string name="package_force_stop_title">Kényszerített leállítás</string>
+  <string name="package_lock_app_title">Alkalmazás zárolása</string>
+  <string name="package_unlock_app_title">Alk. zárolásának feloldása</string>
+  <string name="locked_apps_sort_summary">Zárolt alkalmazások a lista elején jelennek meg</string>
+  <string name="locked_apps_sort_title">Zárolt alkalmazások rendezése</string>
 </resources>

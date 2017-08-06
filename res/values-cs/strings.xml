@@ -168,8 +168,15 @@
   <string name="revert_recents_title">Vrátit se na seznam nedávných aplikací</string>
   <string name="dialog_overlay_perms_title">Chyba oprávnění OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Povolit \u0022Draw nad jiné apps\u0022 oprávnění</string>
+  <string name="package_dock_task_title">Přidat aplikaci do doku</string>
+  <string name="package_undock_task_title">Vyjmout aplikaci z doku</string>
   <string name="swipe_thumb_update_summary">Miniatury se aktualizují během zobrazování překrytí</string>
   <string name="swipe_thumb_update_title">Asynchronní načítání miniatur</string>
   <string name="dim_action_buttons_summary">Přidat další pozadí stínování akčních tlačítek</string>
   <string name="dim_action_buttons_title">Stínování pozadí akčního tlačítka</string>
+  <string name="package_force_stop_title">Vynutit ukončení</string>
+  <string name="package_lock_app_title">Uzamknout aplikaci</string>
+  <string name="package_unlock_app_title">Odemknout aplikaci</string>
+  <string name="locked_apps_sort_summary">Uzamčené aplikace se zobrazí na začátku seznamu</string>
+  <string name="locked_apps_sort_title">Seřadit uzamčené aplikace</string>
 </resources>

@@ -168,6 +168,8 @@
   <string name="revert_recents_title">Ripristina l\'elenco delle applicazioni recenti</string>
   <string name="dialog_overlay_perms_title">Errore di autorizzazione di OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Attiva \u0022 Visualizza sopra ad altre applicazioni \u0022 permesso</string>
+  <string name="package_dock_task_title">Dock app</string>
+  <string name="package_undock_task_title">Sblocca app</string>
   <string name="swipe_thumb_update_summary">Le anteprime verranno aggiornate mentre viene mostrato l\'overlay</string>
   <string name="swipe_thumb_update_title">Caricamento delle miniature asincrono</string>
   <string name="dim_action_buttons_summary">Aggiungi uno sfondo dim extra ai pulsanti di azione</string>
@@ -175,5 +177,6 @@
   <string name="package_force_stop_title">Arresto forzato</string>
   <string name="package_lock_app_title">Blocca app</string>
   <string name="package_unlock_app_title">Sblocca app</string>
-  <string name="locked_apps_sort_summary">Le applicazioni bloccate saranno visualizzate per prime nell\'elenco</string>
+  <string name="locked_apps_sort_summary">Le applicazioni bloccate saranno visualizzate in cima alla lista</string>
+  <string name="locked_apps_sort_title">Ordina le app bloccate</string>
 </resources>

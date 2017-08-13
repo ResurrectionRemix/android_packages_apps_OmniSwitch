@@ -16,4 +16,15 @@
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"></resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="package_stop_task_title">หยุด</string>
+  <string name="package_inspect_item_title">ข้อมูลแอปพลิเคชั่น</string>
+  <string name="start_on_boot_title">เริ่มต้นในการบูต</string>
+  <string name="start_on_boot_summary">เริ่มต้น และเปิดใช้งานบนอุปกรณ์สำหรับเริ่มระบบ</string>
+  <string name="opacity_title">ความทึบ</string>
+  <string name="opacity_summary">พื้นหลังทึบมองซ้อนทับ</string>
+  <string name="animate_title">ทำให้เคลื่อนไหว</string>
+  <string name="animate_title_summary">เคลื่อนไหวแสดง และซ่อนมองซ้อนทับ</string>
+  <string name="adjust_handle_help">ย้าย และลากจุดจับปรับขนาด</string>
+  <string name="icon_size_normal">ปกติ</string>
+</resources>

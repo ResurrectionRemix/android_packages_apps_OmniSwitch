@@ -168,11 +168,13 @@
   <string name="revert_recents_title">Volver a lista de aplicaciones recientes</string>
   <string name="dialog_overlay_perms_title">Error de permiso de OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Habilitar \u0022Escribir sobre otras aplicaciones\u0022 permiso</string>
+  <string name="package_dock_task_title">Acoplar aplicación</string>
+  <string name="package_undock_task_title">Desacoplar app</string>
   <string name="swipe_thumb_update_summary">Las miniaturas se actualizarán durante la demostración de la superposición</string>
   <string name="swipe_thumb_update_title">Carga asincrónica de miniatura</string>
   <string name="dim_action_buttons_summary">Agregar fondo extra dim a botones de acción</string>
   <string name="dim_action_buttons_title">Fondo del botón de acción débil</string>
-  <string name="package_force_stop_title">Forzar parada</string>
+  <string name="package_force_stop_title">Forzar detención</string>
   <string name="package_lock_app_title">Bloquear aplicación</string>
   <string name="package_unlock_app_title">Desbloquear aplicación</string>
   <string name="locked_apps_sort_summary">Las aplicaciones bloqueadas se mostrarán las primeras en la lista</string>

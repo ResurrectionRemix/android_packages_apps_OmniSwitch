@@ -132,7 +132,7 @@
   <string name="thumb_size_medium">中</string>
   <string name="package_lock_task_title">固定應用程式</string>
   <string name="lock_app_not_enabled">螢幕固定未在安全設定中啟用</string>
-  <string name="app_filter_running_title">僅正在執行</string>
+  <string name="app_filter_running_title">僅限正在執行</string>
   <string name="menu">功能表</string>
   <string name="menu_help">功能表</string>
   <string name="enable_title">啟用自訂動作</string>

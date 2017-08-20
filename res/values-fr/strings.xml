@@ -172,4 +172,9 @@
   <string name="swipe_thumb_update_title">Chargement asynchrone des miniatures</string>
   <string name="dim_action_buttons_summary">Ajouter un arrière-plan aux boutons d\'actions Dim</string>
   <string name="dim_action_buttons_title">Arrière-plan du bouton d\'action Dim</string>
+  <string name="package_force_stop_title">Forcer l\'arrêt </string>
+  <string name="package_lock_app_title">Verrouiller l\'application</string>
+  <string name="package_unlock_app_title">Déverrouiller l\'application</string>
+  <string name="locked_apps_sort_summary">Les applications verrouillées seront affichées en premier dans la liste</string>
+  <string name="locked_apps_sort_title">Trier les applications verrouillées</string>
 </resources>

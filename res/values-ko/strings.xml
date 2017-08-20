@@ -171,4 +171,9 @@
   <string name="swipe_thumb_update_summary">썸네일은 오버레이가 표시되는 동안 업데이트 됩니다.</string>
   <string name="swipe_thumb_update_title">비동기 썸네일 로딩</string>
   <string name="dim_action_buttons_title">기능 버튼 배경 어둡게 하기</string>
+  <string name="package_force_stop_title">강제 중지</string>
+  <string name="package_lock_app_title">앱 잠금</string>
+  <string name="package_unlock_app_title">앱 잠금 해제</string>
+  <string name="locked_apps_sort_summary">잠긴 앱들이 먼저 목록 상단에 표시됩니다</string>
+  <string name="locked_apps_sort_title">잠긴 앱 보기</string>
 </resources>

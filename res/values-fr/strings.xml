@@ -168,6 +168,8 @@
   <string name="revert_recents_title">Inverser le classement de la liste des applications récentes</string>
   <string name="dialog_overlay_perms_title">Erreur, une autorisation est requis pour OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">Autoriser à \u0022De se superposer aux autres applications\u0022</string>
+  <string name="package_dock_task_title">Dock App</string>
+  <string name="package_undock_task_title">Undock App</string>
   <string name="swipe_thumb_update_summary">Les miniatures seront actualisées pendant l\'affichage</string>
   <string name="swipe_thumb_update_title">Chargement asynchrone des miniatures</string>
   <string name="dim_action_buttons_summary">Ajouter un arrière-plan aux boutons d\'actions Dim</string>

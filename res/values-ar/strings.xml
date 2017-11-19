@@ -17,9 +17,9 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="package_stop_task_title">توقف</string>
+  <string name="package_stop_task_title">إيقاف</string>
   <string name="package_inspect_item_title">معلومات التطبيق</string>
-  <string name="start_on_boot_title">بدء بعد إعادة التشغيل</string>
+  <string name="start_on_boot_title">بدء عند الإقلاع</string>
   <string name="start_on_boot_summary">بدء تشغيل وتمكين على جهاز التمهيد</string>
   <string name="opacity_title">الشفافية</string>
   <string name="opacity_summary">تعتيم الخلفية لعرض الطبقات</string>
@@ -135,6 +135,7 @@
   <string name="app_filter_running_title">العاملة فقط</string>
   <string name="menu">القائمة</string>
   <string name="menu_help">القائمة</string>
+  <string name="enable_title">تمكين التخصيصات</string>
   <string name="adjust_handle_width">العرض</string>
   <string name="adjust_handle_position">الموضع</string>
   <string name="package_top_task_title">أعلى</string>
@@ -167,8 +168,15 @@
   <string name="revert_recents_title">إسترجاع قائمة التطبيقات الحديثة</string>
   <string name="dialog_overlay_perms_title">خطأ بإذن OmniSwitch</string>
   <string name="dialog_overlay_perms_msg">تفعيل \u0022إذن\u0022 الظهور فوق التطبيقات الأخرى</string>
+  <string name="package_dock_task_title">شريط التطبيقات</string>
+  <string name="package_undock_task_title">إزالة من شريط التطبيقات</string>
   <string name="swipe_thumb_update_summary">سيتم تحديث الصور المصغرة خلال عرض الطبقات</string>
   <string name="swipe_thumb_update_title">تحميل الصور المصغرة غير المتزامنة</string>
   <string name="dim_action_buttons_summary">أضف تقتيم خلفية إضافية لأزرار الإجراءات</string>
   <string name="dim_action_buttons_title">خلفية زر إجراء التقتيم</string>
+  <string name="package_force_stop_title">ايقاف اجباري</string>
+  <string name="package_lock_app_title">تثبيت التطبيق</string>
+  <string name="package_unlock_app_title">إلغاء تثبيت التطبيق</string>
+  <string name="locked_apps_sort_summary">التطبيقات المثبته سيتم عرضها أولاً في القائمة</string>
+  <string name="locked_apps_sort_title">ترتيب التطبيقات المثبته</string>
 </resources>

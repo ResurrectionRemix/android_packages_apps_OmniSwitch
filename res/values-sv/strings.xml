@@ -168,8 +168,15 @@
   <string name="revert_recents_title">Återgå till senaste applista</string>
   <string name="dialog_overlay_perms_title">OmniSwitch tillståndsfel</string>
   <string name="dialog_overlay_perms_msg">Aktivera \u0022Draw över andra appars\u0022 tillstånd</string>
+  <string name="package_dock_task_title">Docka app</string>
+  <string name="package_undock_task_title">Upphör med att docka app</string>
   <string name="swipe_thumb_update_summary">Miniatyrer kommer att uppdateras vid visning av overlay</string>
   <string name="swipe_thumb_update_title">Asynkron laddning av miniatyrer</string>
   <string name="dim_action_buttons_summary">Lägg till extra bakgrundsdimnimg på händelseknappar</string>
   <string name="dim_action_buttons_title">Dimma bakgrund på händelseknapp</string>
+  <string name="package_force_stop_title">Tvinga stopp</string>
+  <string name="package_lock_app_title">Lås app</string>
+  <string name="package_unlock_app_title">Lås upp app</string>
+  <string name="locked_apps_sort_summary">Låsta appar kommer att visas först i listan</string>
+  <string name="locked_apps_sort_title">Sortera låsta appar</string>
 </resources>

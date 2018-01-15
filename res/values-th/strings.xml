@@ -62,11 +62,15 @@
   <string name="buttons_title">ปุ่ม</string>
   <string name="buttons_summary">กำหนดค่าปุ่มปฏิบัติการในมุมมองซ้อนทับ</string>
   <string name="auto_hide_handle">ซ่อนอัตโนมัติ</string>
+  <string name="auto_hide_handle_summary">ปัดสองครั้งเพื่อแสดงมุมมองซ้อน</string>
   <string name="no_recent_apps_title">ไม่​มี​แอปล่า​สุด</string>
   <string name="drag_handle_opacity_title">ความทึบ</string>
   <string name="drag_handle_enable_title">เปิดใช้งาน</string>
+  <string name="drag_handle_enable_summary">ปิดเฉพาะเมื่อคุณใช้วิธีเปิดใช้งานอื่น</string>
+  <string name="allapps_help">เมนูแอพ</string>
   <string name="allapps">แอปพลิเคชั่น</string>
   <string name="dim_behind_title">พื้นหลังมืด</string>
+  <string name="dim_behind_summary">ใช้ระดับความทึบสำหรับทั้งจอ</string>
   <string name="gravity_title">แนวแรงโน้มถ่วง</string>
   <string name="gravity_center">ศูนย์กลาง</string>
   <string name="gravity_drag">ลากที่จับด้านข้าง</string>
@@ -75,6 +79,7 @@
   <string name="icon_packs_title">Icon packs</string>
   <string name="no_iconpacks_summary">ไม่มี Icon packs ที่ติดตั้งอยู่</string>
   <string name="icon_pack_title">Icon packs</string>
+  <string name="icon_pack_summary">ใช้ชุดไอคอนสำหรับแอพ</string>
   <string name="category_speed_switcher_title">สลับอย่างรวดเร็ว</string>
   <string name="speed_switcher_enable_summary">ลากจุดเพื่อเปิดใช้งาน</string>
   <string name="speed_switcher_enable_title">เปิดใช้งาน</string>
@@ -85,7 +90,9 @@
   <string name="speed_switch_color_summary">สีฟ้า - แอปล่าสุด. สีเขียว - รายการโปรด. สีแดง - การดำเนินการ.</string>
   <string name="speed_switch_color">ระดับสีพื้นหลัง</string>
   <string name="speed_switch_limit_summary">ขีดจำกัดการเปลี่ยนแปลงระดับ</string>
+  <string name="speed_switch_limit">พื้นที่ระดับการเปลี่ยนแปลง</string>
   <string name="speed_switch_button_title">ปุ่ม</string>
+  <string name="speed_switch_button_summary">ตั้งค่าปุ่มแอคชั่นในมุมมองควิคสวิตเชอร์</string>
   <string name="immersive_mode_help">สลับโหมดใหญ่พิเศษ</string>
   <string name="package_add_favorite_title">เพิ่มเป็นรายการโปรด</string>
   <string name="package_remove_favorite_title">นำออกจากรายการโปรด</string>
